@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>使用帮助</title>
+    <style type="text/css">
+        td {
+            font-size: 16px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .listintd {
+            padding-left: 0px;
+        }
+
+        tr {
+            vertical-align: middle;
+        }
+
+        caption {
+            text-align: left;
+        }
+
+    </style>
+</head>
+
+<body>
+<table border="1">
+    <caption>说明</caption>
+    <tr>
+        <td>Python包管理</td>
+        <td class="listintd">
+            <ul>
+                <li>自动搜索：自动搜索常用位置的Python安装目录并添加到本Python环境列表保存。</li>
+                <li>手动添加：对于未搜索到的Python目录，你可以手动将路径添加到本Python环境列表以便下次使用。</li>
+                <li>删除选中项：将本Python环境列表中的选中项移除（仅从本Python环境列表中移除，不会删除Python目录）。
+                </li>
+                <li>清除失效项：将设置文件中（不显示在列表中）失效的Python目录路径清除（不会删除Python目录）。</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>全局镜像源设置</td>
+        <td class="listintd">
+            <ul>
+                <li>上部列表：
+                    <ul>
+                        <li>储存有不同的国内镜像源地址，每个地址都有一个唯一名称。</li>
+                        <li>储存的镜像源地址包括预设地址和用户手动添加的地址。</li>
+                        <li>选中列表项后可以点击列表右下方的"删除选中项"按钮来删除储存的地址。</li>
+                    </ul>
+                </li>
+                <li>中部编辑区：
+                    <ul>
+                        <li>点击上面列表中的条目，条目的内容会自动填充到本编辑区的相应位置。</li>
+                        <li>对于编辑区的内容，点击"清除编辑"按钮会清空编辑区的内容，但不会影响到上部列表。</li>
+                        <li>对于编辑区的内容，点击"保存到列表"按钮会将编辑区内容以新增条目的方式保存到上部列表。</li>
+                        <li>保存之前，管理器会检查新名称是否已在现有条目中存在，如已存在则不添加到列表。</li>
+                        <li>保存之前，管理器会检查地址是否符合格式（以"https://"开始，以"/simple"结束）。
+                        </li>
+                        <li>对于"编辑地址"输入框中的地址，点击"启用镜像源"按钮，则将该地址设置为PIP的全局镜像源地址。
+                        </li>
+                        <li>启用镜像源时管理器不关心"编辑名称"输入框中的内容。</li>
+                        <li>设置之前，管理器会检查地址是否符合格式，如不符合格式则提示用户。</li>
+                    </ul>
+                </li>
+                <li>下部显示区：
+                    <ul>
+                        <li>用于显示当前生效的PIP全局镜像源地址。</li>
+                        <li>该显示区并不会实时显示，需手动点击右侧"刷新"按钮以重新获取当前全局镜像源地址并显示。</li>
+                    </ul>
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>Python环境变量设置</td>
+        <td class="listintd">
+            <ul>
+                <li>此功能尚未完成。</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>
