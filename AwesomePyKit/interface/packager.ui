@@ -220,7 +220,7 @@
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
              <property name="columnCount">
-              <number>3</number>
+              <number>4</number>
              </property>
              <attribute name="horizontalHeaderHighlightSections">
               <bool>false</bool>
@@ -230,7 +230,7 @@
              </attribute>
              <column>
               <property name="text">
-               <string>包名称</string>
+               <string>模块/包/库名称</string>
               </property>
              </column>
              <column>
@@ -241,6 +241,11 @@
              <column>
               <property name="text">
                <string>最新版本</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>状态</string>
               </property>
              </column>
             </widget>
@@ -272,6 +277,13 @@
               <widget class="QPushButton" name="btn_up_grade_package">
                <property name="text">
                 <string>更新</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_up_grade_all">
+               <property name="text">
+                <string>全部更新</string>
                </property>
               </widget>
              </item>
