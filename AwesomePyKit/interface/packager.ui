@@ -129,7 +129,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="cb_check_all">
+              <widget class="QCheckBox" name="cb_check_uncheck_all">
                <property name="text">
                 <string>全选</string>
                </property>
