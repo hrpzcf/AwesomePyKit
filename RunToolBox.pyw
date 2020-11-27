@@ -3,7 +3,7 @@
 import os
 import sys
 
-from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtCore import QSize, QThread, Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (
     QApplication,
@@ -79,6 +79,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.setupUi(self)
         self._py_paths_list = load_conf('pths')
         self._py_envs_list = get_pyenv_list(self._py_paths_list)
+        self._running_thread_list = []
         self._cur_pkgs_info_list = []
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
@@ -96,13 +97,23 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.li_py_env_list.setCurrentRow(0)
         self._binding()
 
+    def closeEvent(self, event):
+        for running_thread in self._running_thread_list:
+            running_thread.exit()
+        event.accept()
+
+    def _clean_finished_thread(self):
+        for index, running_thread in enumerate(self._running_thread_list):
+            if running_thread.isFinished():
+                self._running_thread_list.pop(index)
+
     def _binding(self):
         self.btn_autosearch.clicked.connect(self._auto_search_py_envs)
         self.btn_clearexpired.clicked.connect(self._clear_expired)
         self.btn_delselected.clicked.connect(self._del_selected)
         self.btn_addmanully.clicked.connect(self._add_py_path_manully)
-        self.cb_check_all.clicked.connect(self._selected_all)
-        self.li_py_env_list.clicked.connect(self._show_pkgs_info_in_table)
+        self.cb_check_uncheck_all.clicked.connect(self._select_deselect_all)
+        self.li_py_env_list.clicked.connect(self._get_pkgs_info)
         self.btn_check_for_updates.clicked.connect(self._check_for_updates)
 
     def _list_widget_pyenvs_update(self):
@@ -128,14 +139,26 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
 
-    def _show_pkgs_info_in_table(self):
-        py_env_index_selected = self.li_py_env_list.currentRow()
-        if py_env_index_selected == -1:
+    def _get_pkgs_info(self):
+        index_selected = self.li_py_env_list.currentRow()
+        if index_selected == -1:
             return
-        pkgs_info = self._py_envs_list[py_env_index_selected].pkgs_info()
-        self._cur_pkgs_info_list.clear()
-        self._cur_pkgs_info_list.extend(pkgs_info)
-        self._table_widget_pkgs_info_update()
+
+        def get_pkgs_info():
+            pkgs_info = self._py_envs_list[index_selected].pkgs_info()
+            self._cur_pkgs_info_list.clear()
+            for pkg_info in pkgs_info:
+                self._cur_pkgs_info_list.append(list(pkg_info))
+
+        thread_get_pkgs_info = NewTask(get_pkgs_info)
+        thread_get_pkgs_info.started.connect(self._lock_widgets)
+        thread_get_pkgs_info.finished.connect(
+            self._table_widget_pkgs_info_update
+        )
+        thread_get_pkgs_info.finished.connect(self._release_widgets)
+        thread_get_pkgs_info.finished.connect(self._clean_finished_thread)
+        thread_get_pkgs_info.start()
+        self._running_thread_list.append(thread_get_pkgs_info)
 
     def _get_selected_row_index(self):
         row_indexs = []
@@ -145,13 +168,12 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
                 row_indexs.append(row_index)
         return row_indexs
 
-    def _selected_all(self):
-        is_checked = self.cb_check_all.isChecked()
+    def _select_deselect_all(self):
+        is_checked = self.cb_check_uncheck_all.isChecked()
         if is_checked:
             self.tw_installed_info.selectAll()
         else:
             self.tw_installed_info.clearSelection()
-        self._get_selected_row_index()
 
     def _auto_search_py_envs(self):
         cur_py_env_index = self.li_py_env_list.currentRow()
@@ -219,20 +241,59 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         cur_row = self.li_py_env_list.currentRow()
         if cur_row == -1:
             return
-        oudateds = self._py_envs_list[cur_row].outdated()
-        row_count = self.tw_installed_info.rowCount()
-        for pkg_name, _, latest_ver, _ in oudateds:
-            for row in range(row_count):
-                if self.tw_installed_info.item(row, 0).text() == pkg_name:
-                    table_item_latest_ver = self.tw_installed_info.item(row, 2)
-                    if table_item_latest_ver:
-                        table_item_latest_ver.setText(latest_ver)
-                    else:
-                        table_item_latest_ver = QTableWidgetItem()
-                        table_item_latest_ver.setText(latest_ver)
-                        self.tw_installed_info.setItem(
-                            row, 2, table_item_latest_ver
-                        )
+
+        def get_outdated():
+            outdateds = self._py_envs_list[cur_row].outdated()
+            for outdated_info in outdateds:
+                for row in self._cur_pkgs_info_list:
+                    if outdated_info[0] == row[0]:
+                        row.append(outdated_info[2])
+
+        thread_get_outdated = NewTask(get_outdated)
+        thread_get_outdated.started.connect(self._lock_widgets)
+        thread_get_outdated.finished.connect(
+            self._table_widget_pkgs_info_update
+        )
+        thread_get_outdated.finished.connect(self._release_widgets)
+        thread_get_outdated.finished.connect(self._clean_finished_thread)
+        thread_get_outdated.start()
+        self._running_thread_list.append(thread_get_outdated)
+
+    def _lock_widgets(self):
+        for widget in (
+            self.btn_autosearch,
+            self.btn_addmanully,
+            self.btn_delselected,
+            self.btn_clearexpired,
+            self.li_py_env_list,
+            self.cb_check_uncheck_all,
+            self.btn_check_for_updates,
+            self.tw_installed_info,
+            self.btn_set_temp_url,
+            self.btn_install_package,
+            self.btn_uninstall_package,
+            self.btn_up_grade_package,
+            self.btn_up_grade_all,
+        ):
+            widget.setEnabled(False)
+
+    def _release_widgets(self):
+        for widget in (
+            self.btn_autosearch,
+            self.btn_addmanully,
+            self.btn_delselected,
+            self.btn_clearexpired,
+            self.li_py_env_list,
+            self.cb_check_uncheck_all,
+            self.btn_check_for_updates,
+            self.tw_installed_info,
+            self.btn_set_temp_url,
+            self.btn_install_package,
+            self.btn_uninstall_package,
+            self.btn_up_grade_package,
+            self.btn_up_grade_all,
+        ):
+            widget.setEnabled(True)
 
 
 class MyInputDialog(QInputDialog):
@@ -388,6 +449,20 @@ class HelpPanelWindow(Ui_ImPanel, QWidget):
 
     def closeEvent(self, *args, **kwargs):
         self.resize(1, 1)
+
+
+class NewTask(QThread):
+    def __init__(self, target, args=tuple()):
+        if not isinstance(args, tuple):
+            raise TypeError('线程参数应使用元组打包。')
+        if not callable(target):
+            raise TypeError('线程目标应为可调用对象。')
+        super(NewTask, self).__init__()
+        self._args = args
+        self._target = target
+
+    def run(self):
+        self._target(*self._args)
 
 
 if __name__ == '__main__':
