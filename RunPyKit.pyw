@@ -79,10 +79,13 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.setupUi(self)
         self._py_paths_list = load_conf('pths')
         self._py_envs_list = get_pyenv_list(self._py_paths_list)
-        self._running_thread_list = []
         self._cur_pkgs_info_list = []
+        self._running_thread_list = []
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
+        )
+        self.tw_installed_info.horizontalHeader().setSectionResizeMode(
+            0, QHeaderView.Interactive
         )
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             1, QHeaderView.ResizeToContents
@@ -90,6 +93,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             2, QHeaderView.ResizeToContents
         )
+        self.tw_installed_info.setColumnWidth(0, 220)
 
     def show(self):
         super(PkgMgrWindow, self).show()
@@ -112,7 +116,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.btn_clearexpired.clicked.connect(self._clear_expired)
         self.btn_delselected.clicked.connect(self._del_selected)
         self.btn_addmanully.clicked.connect(self._add_py_path_manully)
-        self.cb_check_uncheck_all.clicked.connect(self._select_deselect_all)
+        self.cb_check_uncheck_all.clicked.connect(self._select_all_none)
         self.li_py_env_list.clicked.connect(self._get_pkgs_info)
         self.btn_check_for_updates.clicked.connect(self._check_for_updates)
 
@@ -126,8 +130,8 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.tw_installed_info.setRowCount(len(self._cur_pkgs_info_list))
         cur_row = self.li_py_env_list.currentRow()
         if cur_row != -1:
-            self.lb_pkgs_in_which_env.setText(
-                f'{str(self._py_envs_list[cur_row])} 的包信息：'
+            self.lb_installed_pkgs_info.setText(
+                f'【{str(self._py_envs_list[cur_row])}】:'
             )
         for rowind, info in enumerate(self._cur_pkgs_info_list):
             for colind, info_item in enumerate(info):
@@ -160,7 +164,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         thread_get_pkgs_info.start()
         self._running_thread_list.append(thread_get_pkgs_info)
 
-    def _get_selected_row_index(self):
+    def _index_selected_rows(self):
         row_indexs = []
         for item in self.tw_installed_info.selectedItems():
             row_index = item.row()
@@ -168,7 +172,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
                 row_indexs.append(row_index)
         return row_indexs
 
-    def _select_deselect_all(self):
+    def _select_all_none(self):
         is_checked = self.cb_check_uncheck_all.isChecked()
         if is_checked:
             self.tw_installed_info.selectAll()
@@ -266,10 +270,10 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self.btn_delselected,
             self.btn_clearexpired,
             self.li_py_env_list,
+            self.te_info_stream,
+            self.tw_installed_info,
             self.cb_check_uncheck_all,
             self.btn_check_for_updates,
-            self.tw_installed_info,
-            self.btn_set_temp_url,
             self.btn_install_package,
             self.btn_uninstall_package,
             self.btn_up_grade_package,
@@ -284,10 +288,10 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self.btn_delselected,
             self.btn_clearexpired,
             self.li_py_env_list,
+            self.te_info_stream,
+            self.tw_installed_info,
             self.cb_check_uncheck_all,
             self.btn_check_for_updates,
-            self.tw_installed_info,
-            self.btn_set_temp_url,
             self.btn_install_package,
             self.btn_uninstall_package,
             self.btn_up_grade_package,

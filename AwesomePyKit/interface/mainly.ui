@@ -43,10 +43,10 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>管理不同 Python 环境中的第三方包、库。</string>
+         <string>管理不同 Python 环境中的第三方模块、包、库。</string>
         </property>
         <property name="text">
-         <string>Python 包管理</string>
+         <string>模块/包/库管理</string>
         </property>
        </widget>
       </item>
@@ -62,7 +62,7 @@
          <string>设置 pip 全局镜像源地址。</string>
         </property>
         <property name="text">
-         <string>全局镜像源设置</string>
+         <string>镜像源设置</string>
         </property>
        </widget>
       </item>
@@ -81,7 +81,7 @@
          <string>（功能尚未完成）将 Python 安装目录路径添加进环境变量 PATH。</string>
         </property>
         <property name="text">
-         <string>Python环境变量设置</string>
+         <string>环境变量设置</string>
         </property>
        </widget>
       </item>

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>700</height>
+    <width>996</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="font">
@@ -19,280 +19,274 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Python 包管理器</string>
+   <string>包管理器</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="3,7">
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,4">
       <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string/>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="80,1,1,40">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout" stretch="1,90,1">
-             <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Python 环境：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QListWidget" name="li_py_env_list"/>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout">
-               <item>
-                <widget class="QPushButton" name="btn_autosearch">
-                 <property name="text">
-                  <string>自动搜索</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btn_addmanully">
-                 <property name="text">
-                  <string>手动添加</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btn_delselected">
-                 <property name="text">
-                  <string>删除选中项</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btn_clearexpired">
-                 <property name="text">
-                  <string>清除失效项</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>操作信息流：</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QTextEdit" name="te_infostream">
-             <property name="focusPolicy">
-              <enum>Qt::StrongFocus</enum>
-             </property>
-             <property name="contextMenuPolicy">
-              <enum>Qt::NoContextMenu</enum>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,9,0,0,0,5">
+        <item>
+         <widget class="QLabel" name="lb_python_dir">
+          <property name="text">
+           <string>Python 目录：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="li_py_env_list"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="btn_autosearch">
+            <property name="text">
+             <string>自动搜索</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_addmanully">
+            <property name="text">
+             <string>手动添加</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_delselected">
+            <property name="text">
+             <string>删除选中项</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btn_clearexpired">
+            <property name="text">
+             <string>清除失效项</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="te_info_stream">
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::NoContextMenu</enum>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox_2">
-        <property name="title">
-         <string/>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,1,1">
-             <item>
-              <widget class="QLabel" name="lb_pkgs_in_which_env">
-               <property name="text">
-                <string>已安装的包信息：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="cb_check_uncheck_all">
-               <property name="text">
-                <string>全选</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_check_for_updates">
-               <property name="text">
-                <string>检查更新</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QTableWidget" name="tw_installed_info">
-             <property name="palette">
-              <palette>
-               <active>
-                <colorrole role="Highlight">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>0</red>
-                   <green>170</green>
-                   <blue>255</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-                <colorrole role="HighlightedText">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>47</red>
-                   <green>47</green>
-                   <blue>47</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-               </active>
-               <inactive>
-                <colorrole role="Highlight">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>0</red>
-                   <green>170</green>
-                   <blue>255</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-                <colorrole role="HighlightedText">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>0</red>
-                   <green>0</green>
-                   <blue>0</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-               </inactive>
-               <disabled>
-                <colorrole role="Highlight">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>190</red>
-                   <green>190</green>
-                   <blue>190</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-                <colorrole role="HighlightedText">
-                 <brush brushstyle="SolidPattern">
-                  <color alpha="255">
-                   <red>255</red>
-                   <green>255</green>
-                   <blue>255</blue>
-                  </color>
-                 </brush>
-                </colorrole>
-               </disabled>
-              </palette>
-             </property>
-             <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
-             </property>
-             <property name="selectionMode">
-              <enum>QAbstractItemView::MultiSelection</enum>
-             </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectRows</enum>
-             </property>
-             <property name="columnCount">
-              <number>4</number>
-             </property>
-             <attribute name="horizontalHeaderHighlightSections">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="verticalHeaderHighlightSections">
-              <bool>false</bool>
-             </attribute>
-             <column>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="lb_installed_pkgs_info">
+          <property name="text">
+           <string>已安装的模块/包/库信息：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="tw_installed_info">
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="Highlight">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>0</red>
+                <green>170</green>
+                <blue>255</blue>
+               </color>
+              </brush>
+             </colorrole>
+             <colorrole role="HighlightedText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>47</red>
+                <green>47</green>
+                <blue>47</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="Highlight">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>0</red>
+                <green>170</green>
+                <blue>255</blue>
+               </color>
+              </brush>
+             </colorrole>
+             <colorrole role="HighlightedText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>0</red>
+                <green>0</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="Highlight">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>190</red>
+                <green>190</green>
+                <blue>190</blue>
+               </color>
+              </brush>
+             </colorrole>
+             <colorrole role="HighlightedText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>255</red>
+                <green>255</green>
+                <blue>255</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::MultiSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="cornerButtonEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="columnCount">
+           <number>4</number>
+          </property>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>模块/包/库名称</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>当前版本</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>最新版本</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>状态</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="3">
+           <widget class="QPushButton" name="btn_check_for_updates">
+            <property name="text">
+             <string>检查更新</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="btn_install_package">
+            <property name="text">
+             <string>安装</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="btn_uninstall_package">
+            <property name="text">
+             <string>卸载</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="btn_up_grade_package">
+            <property name="text">
+             <string>升级</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="btn_up_grade_all">
+            <property name="text">
+             <string>全部升级</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>模块/包/库名称</string>
+               <string/>
               </property>
-             </column>
-             <column>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cb_check_uncheck_all">
               <property name="text">
-               <string>当前版本</string>
+               <string>全选 / 取消</string>
               </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>最新版本</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>状态</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <widget class="QPushButton" name="btn_set_temp_url">
-               <property name="text">
-                <string>临时镜像源</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_install_package">
-               <property name="text">
-                <string>安装</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_uninstall_package">
-               <property name="text">
-                <string>卸载</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_up_grade_package">
-               <property name="text">
-                <string>更新</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_up_grade_all">
-               <property name="text">
-                <string>全部更新</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="lb_waiting">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
