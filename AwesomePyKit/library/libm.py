@@ -9,9 +9,9 @@ from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
 from pyregedit import REG_DWORD, REG_SZ, RegEdit
 
-conf_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config'
-)
+root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+conf_path = os.path.join(root_path, 'config')
+sources_path = os.path.join(root_path, 'sources')
 conf_path_py_paths = os.path.join(conf_path, 'PythonPaths.json')
 conf_path_index_urls = os.path.join(conf_path, 'IndexURLs.json')
 

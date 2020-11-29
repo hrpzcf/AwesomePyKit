@@ -4,7 +4,7 @@ import os
 import sys
 
 from PyQt5.QtCore import QSize, QThread, Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QMovie
 from PyQt5.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -77,10 +77,14 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
     def __init__(self):
         super(PkgMgrWindow, self).__init__()
         self.setupUi(self)
+        self._setupOthers()
         self._py_paths_list = load_conf('pths')
         self._py_envs_list = get_pyenv_list(self._py_paths_list)
+        self._running_threads = []
         self._cur_pkgs_info_list = []
-        self._running_thread_list = []
+
+    def _setupOthers(self):
+        self.tw_installed_info.setColumnWidth(0, 220)
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
         )
@@ -93,7 +97,16 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             2, QHeaderView.ResizeToContents
         )
-        self.tw_installed_info.setColumnWidth(0, 220)
+        self.loading_mov = QMovie(os.path.join(sources_path, 'loading.gif'))
+        self.loading_mov.setScaledSize(QSize(20, 20))
+        self.lb_loading_gif = QLabel()
+        self.lb_loading_tips = QLabel()
+        hlayout = QHBoxLayout()
+        hlayout.addWidget(self.lb_loading_gif)
+        hlayout.addWidget(self.lb_loading_tips)
+        hlayout.setStretch(0, 1)
+        hlayout.setStretch(1, 9)
+        self.glo_table_btns.addLayout(hlayout, 0, 0, 1, 2)
 
     def show(self):
         super(PkgMgrWindow, self).show()
@@ -102,14 +115,27 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self._binding()
 
     def closeEvent(self, event):
-        for running_thread in self._running_thread_list:
-            running_thread.exit()
+        self._stop_running_thread()
         event.accept()
 
+    def start_waiting(self, text):
+        self.lb_loading_tips.setText(text)
+        self.lb_loading_gif.setMovie(self.loading_mov)
+        self.loading_mov.start()
+
+    def stop_waiting(self):
+        self.loading_mov.stop()
+        self.lb_loading_gif.clear()
+        self.lb_loading_tips.clear()
+
     def _clean_finished_thread(self):
-        for index, running_thread in enumerate(self._running_thread_list):
+        for index, running_thread in enumerate(self._running_threads):
             if running_thread.isFinished():
-                self._running_thread_list.pop(index)
+                self._running_threads.pop(index)
+
+    def _stop_running_thread(self):
+        for running_thread in self._running_threads:
+            running_thread.exit()
 
     def _binding(self):
         self.btn_autosearch.clicked.connect(self._auto_search_py_envs)
@@ -156,13 +182,17 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
 
         thread_get_pkgs_info = NewTask(get_pkgs_info)
         thread_get_pkgs_info.started.connect(self._lock_widgets)
+        thread_get_pkgs_info.started.connect(
+            lambda: self.start_waiting('正在加载模块信息...')
+        )
         thread_get_pkgs_info.finished.connect(
             self._table_widget_pkgs_info_update
         )
+        thread_get_pkgs_info.finished.connect(self.stop_waiting)
         thread_get_pkgs_info.finished.connect(self._release_widgets)
         thread_get_pkgs_info.finished.connect(self._clean_finished_thread)
         thread_get_pkgs_info.start()
-        self._running_thread_list.append(thread_get_pkgs_info)
+        self._running_threads.append(thread_get_pkgs_info)
 
     def _index_selected_rows(self):
         row_indexs = []
@@ -255,13 +285,17 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
 
         thread_get_outdated = NewTask(get_outdated)
         thread_get_outdated.started.connect(self._lock_widgets)
+        thread_get_outdated.started.connect(
+            lambda: self.start_waiting('正在检查更新，请耐心等待...')
+        )
         thread_get_outdated.finished.connect(
             self._table_widget_pkgs_info_update
         )
+        thread_get_outdated.finished.connect(self.stop_waiting)
         thread_get_outdated.finished.connect(self._release_widgets)
         thread_get_outdated.finished.connect(self._clean_finished_thread)
         thread_get_outdated.start()
-        self._running_thread_list.append(thread_get_outdated)
+        self._running_threads.append(thread_get_outdated)
 
     def _lock_widgets(self):
         for widget in (

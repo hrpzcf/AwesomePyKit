@@ -19,6 +19,7 @@ from .libm import (
     multi_install,
     save_conf,
     set_index_url,
+    sources_path,
 )
 
 __all__ = [
@@ -40,4 +41,5 @@ __all__ = [
     'multi_install',
     'save_conf',
     'set_index_url',
+    'sources_path',
 ]
