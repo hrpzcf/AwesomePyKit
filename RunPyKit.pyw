@@ -178,7 +178,9 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             pkgs_info = self._py_envs_list[index_selected].pkgs_info()
             self._cur_pkgs_info_list.clear()
             for pkg_info in pkgs_info:
-                self._cur_pkgs_info_list.append(list(pkg_info))
+                pkg_info = list(pkg_info)
+                pkg_info.extend(('', ''))
+                self._cur_pkgs_info_list.append(pkg_info)
 
         thread_get_pkgs_info = NewTask(get_pkgs_info)
         thread_get_pkgs_info.started.connect(self._lock_widgets)
@@ -281,7 +283,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             for outdated_info in outdateds:
                 for row in self._cur_pkgs_info_list:
                     if outdated_info[0] == row[0]:
-                        row.append(outdated_info[2])
+                        row[2] = outdated_info[2]
 
         thread_get_outdated = NewTask(get_outdated)
         thread_get_outdated.started.connect(self._lock_widgets)
