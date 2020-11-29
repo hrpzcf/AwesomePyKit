@@ -96,6 +96,13 @@ def loop_install(pyenv, sequence, *, index_url='', upgrade=False):
         yield exit_status[0][0], exit_status[1]
 
 
+def loop_uninstall(pyenv, sequence):
+    '''循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.uninstall 卸载。'''
+    for name in sequence:
+        exit_status = pyenv.uninstall(name)
+        yield exit_status[0][0], exit_status[1]
+
+
 def multi_install(pyenv, sequence, *, index_url='', upgrade=False):
     '''
     一次安装包名列表 sequence 中所有的包。
@@ -103,6 +110,14 @@ def multi_install(pyenv, sequence, *, index_url='', upgrade=False):
     包都不会被安装，所以不是必须的情况下尽量不用这个函数来安装。
     '''
     return pyenv.install(*sequence, index_url=index_url, upgrade=upgrade)
+
+
+def multi_uninstall(pyenv, sequence):
+    '''
+    一次卸载包名列表 sequence 中所有的包。
+    注意：未安装的包则跳过卸载。
+    '''
+    return pyenv.uninstall(*sequence)
 
 
 def set_index_url(pyenv, index_url):
