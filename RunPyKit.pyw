@@ -110,7 +110,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
 
     def show(self):
         super(PkgMgrWindow, self).show()
-        self._list_widget_pyenvs_update()
+        self.list_widget_pyenvs_update()
         self.li_py_env_list.setCurrentRow(0)
         self._binding()
 
@@ -128,7 +128,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.lb_loading_gif.clear()
         self.lb_loading_tips.clear()
 
-    def _clean_finished_thread(self):
+    def clean_finished_thread(self):
         for index, running_thread in enumerate(self._running_threads):
             if running_thread.isFinished():
                 self._running_threads.pop(index)
@@ -146,10 +146,13 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.li_py_env_list.clicked.connect(self._get_pkgs_info)
         self.btn_check_for_updates.clicked.connect(self._check_for_updates)
 
-    def _list_widget_pyenvs_update(self):
+    def list_widget_pyenvs_update(self):
+        cur_py_env_index = self.li_py_env_list.currentRow()
         self.li_py_env_list.clear()
         for py_env in self._py_envs_list:
             self.li_py_env_list.addItem(str(py_env))
+        if cur_py_env_index != -1:
+            self.li_py_env_list.setCurrentRow(cur_py_env_index)
 
     def _table_widget_pkgs_info_update(self):
         self.tw_installed_info.clearContents()
@@ -165,7 +168,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
                     rowind, colind, QTableWidgetItem(info_item)
                 )
 
-    def _clear_table_widget(self):
+    def clear_table_widget(self):
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
 
@@ -183,7 +186,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
                 self._cur_pkgs_info_list.append(pkg_info)
 
         thread_get_pkgs_info = NewTask(get_pkgs_info)
-        thread_get_pkgs_info.started.connect(self._lock_widgets)
+        thread_get_pkgs_info.started.connect(self.lock_widgets)
         thread_get_pkgs_info.started.connect(
             lambda: self.start_waiting('正在加载模块信息...')
         )
@@ -191,8 +194,8 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self._table_widget_pkgs_info_update
         )
         thread_get_pkgs_info.finished.connect(self.stop_waiting)
-        thread_get_pkgs_info.finished.connect(self._release_widgets)
-        thread_get_pkgs_info.finished.connect(self._clean_finished_thread)
+        thread_get_pkgs_info.finished.connect(self.release_widgets)
+        thread_get_pkgs_info.finished.connect(self.clean_finished_thread)
         thread_get_pkgs_info.start()
         self._running_threads.append(thread_get_pkgs_info)
 
@@ -212,31 +215,39 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self.tw_installed_info.clearSelection()
 
     def _auto_search_py_envs(self):
-        cur_py_env_index = self.li_py_env_list.currentRow()
-        for py_path in all_py_paths():
-            if py_path in self._py_paths_list:
-                continue
-            try:
-                self._py_paths_list.append(py_path)
-                self._py_envs_list.append(PyEnv(py_path))
-            except Exception:
-                continue
-        self._list_widget_pyenvs_update()
-        if cur_py_env_index != -1:
-            self.li_py_env_list.setCurrentRow(cur_py_env_index)
-        save_conf(self._py_paths_list, 'pths')
-        self._clear_table_widget()
+        def search_envs():
+            for py_path in all_py_paths():
+                if py_path in self._py_paths_list:
+                    continue
+                try:
+                    self._py_paths_list.append(py_path)
+                    self._py_envs_list.append(PyEnv(py_path))
+                except Exception:
+                    continue
+
+        thread_search_envs = NewTask(search_envs)
+        thread_search_envs.started.connect(self.lock_widgets)
+        thread_search_envs.started.connect(
+            lambda: self.start_waiting('正在搜索Python目录...')
+        )
+        thread_search_envs.finished.connect(self.clear_table_widget)
+        thread_search_envs.finished.connect(self.list_widget_pyenvs_update)
+        thread_search_envs.finished.connect(self.stop_waiting)
+        thread_search_envs.finished.connect(self.release_widgets)
+        thread_search_envs.finished.connect(self.clean_finished_thread)
+        thread_search_envs.finished.connect(
+            lambda: save_conf(self._py_paths_list, 'pths')
+        )
+        thread_search_envs.start()
+        self._running_threads.append(thread_search_envs)
 
     def _clear_expired(self):
-        cur_py_env_index = self.li_py_env_list.currentRow()
         cleaned_py_paths = clean_py_paths(self._py_paths_list)
         self._py_paths_list.clear()
         self._py_paths_list.extend(cleaned_py_paths)
         self._py_envs_list.clear()
         self._py_envs_list.extend(get_pyenv_list(self._py_paths_list))
-        self._list_widget_pyenvs_update()
-        if cur_py_env_index != -1:
-            self.li_py_env_list.setCurrentRow(cur_py_env_index)
+        self.list_widget_pyenvs_update()
         save_conf(self._py_paths_list, 'pths')
 
     def _del_selected(self):
@@ -249,10 +260,9 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self.li_py_env_list.takeItem(cur_index)
         )
         save_conf(self._py_paths_list, 'pths')
-        self._clear_table_widget()
+        self.clear_table_widget()
 
     def _add_py_path_manully(self):
-        cur_py_env_index = self.li_py_env_list.currentRow()
         input_dialog = MyInputDialog(
             self, 560, 0, '添加Python环境', '请输入有效的Python目录路径：'
         )
@@ -266,9 +276,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             return self.statusbar.showMessage('要添加的Python目录已存在。')
         self._py_paths_list.append(py_path)
         self._py_envs_list.append(PyEnv(py_path))
-        self._list_widget_pyenvs_update()
-        if cur_py_env_index != -1:
-            self.li_py_env_list.setCurrentRow(cur_py_env_index)
+        self.list_widget_pyenvs_update()
         save_conf(self._py_paths_list, 'pths')
 
     def _check_for_updates(self):
@@ -286,7 +294,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
                         row[2] = outdated_info[2]
 
         thread_get_outdated = NewTask(get_outdated)
-        thread_get_outdated.started.connect(self._lock_widgets)
+        thread_get_outdated.started.connect(self.lock_widgets)
         thread_get_outdated.started.connect(
             lambda: self.start_waiting('正在检查更新，请耐心等待...')
         )
@@ -294,12 +302,12 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self._table_widget_pkgs_info_update
         )
         thread_get_outdated.finished.connect(self.stop_waiting)
-        thread_get_outdated.finished.connect(self._release_widgets)
-        thread_get_outdated.finished.connect(self._clean_finished_thread)
+        thread_get_outdated.finished.connect(self.release_widgets)
+        thread_get_outdated.finished.connect(self.clean_finished_thread)
         thread_get_outdated.start()
         self._running_threads.append(thread_get_outdated)
 
-    def _lock_widgets(self):
+    def lock_widgets(self):
         for widget in (
             self.btn_autosearch,
             self.btn_addmanully,
@@ -317,7 +325,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         ):
             widget.setEnabled(False)
 
-    def _release_widgets(self):
+    def release_widgets(self):
         for widget in (
             self.btn_autosearch,
             self.btn_addmanully,
@@ -337,7 +345,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
 
 
 class MyInputDialog(QInputDialog):
-    def __init__(self, parent, sw, sh, title, label):
+    def __init__(self, parent, sw=560, sh=0, title='', label=''):
         super(MyInputDialog, self).__init__(parent)
         self.resize(sw, sh)
         self.setFont(QFont('Microsoft YaHei UI'))
