@@ -143,7 +143,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.btn_delselected.clicked.connect(self._del_selected)
         self.btn_addmanully.clicked.connect(self._add_py_path_manully)
         self.cb_check_uncheck_all.clicked.connect(self._select_all_none)
-        self.lw_py_envs.clicked.connect(self._get_pkgs_info)
+        self.lw_py_envs.itemPressed.connect(self._get_pkgs_info)
         self.btn_check_for_updates.clicked.connect(self._check_for_updates)
 
     def list_widget_pyenvs_update(self):
