@@ -111,7 +111,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
     def show(self):
         super(PkgMgrWindow, self).show()
         self.list_widget_pyenvs_update()
-        self.li_py_env_list.setCurrentRow(0)
+        self.lw_py_envs.setCurrentRow(0)
         self._binding()
 
     def closeEvent(self, event):
@@ -143,21 +143,21 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.btn_delselected.clicked.connect(self._del_selected)
         self.btn_addmanully.clicked.connect(self._add_py_path_manully)
         self.cb_check_uncheck_all.clicked.connect(self._select_all_none)
-        self.li_py_env_list.clicked.connect(self._get_pkgs_info)
+        self.lw_py_envs.clicked.connect(self._get_pkgs_info)
         self.btn_check_for_updates.clicked.connect(self._check_for_updates)
 
     def list_widget_pyenvs_update(self):
-        cur_py_env_index = self.li_py_env_list.currentRow()
-        self.li_py_env_list.clear()
+        cur_py_env_index = self.lw_py_envs.currentRow()
+        self.lw_py_envs.clear()
         for py_env in self._py_envs_list:
-            self.li_py_env_list.addItem(str(py_env))
+            self.lw_py_envs.addItem(str(py_env))
         if cur_py_env_index != -1:
-            self.li_py_env_list.setCurrentRow(cur_py_env_index)
+            self.lw_py_envs.setCurrentRow(cur_py_env_index)
 
     def _table_widget_pkgs_info_update(self):
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(len(self._cur_pkgs_info_list))
-        cur_row = self.li_py_env_list.currentRow()
+        cur_row = self.lw_py_envs.currentRow()
         if cur_row != -1:
             self.lb_installed_pkgs_info.setText(
                 f'【{str(self._py_envs_list[cur_row])}】:'
@@ -173,7 +173,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.tw_installed_info.setRowCount(0)
 
     def _get_pkgs_info(self):
-        index_selected = self.li_py_env_list.currentRow()
+        index_selected = self.lw_py_envs.currentRow()
         if index_selected == -1:
             return
 
@@ -251,14 +251,12 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         save_conf(self._py_paths_list, 'pths')
 
     def _del_selected(self):
-        cur_index = self.li_py_env_list.currentRow()
+        cur_index = self.lw_py_envs.currentRow()
         if cur_index == -1:
             return
         del self._py_envs_list[cur_index]
         del self._py_paths_list[cur_index]
-        self.li_py_env_list.removeItemWidget(
-            self.li_py_env_list.takeItem(cur_index)
-        )
+        self.lw_py_envs.removeItemWidget(self.lw_py_envs.takeItem(cur_index))
         save_conf(self._py_paths_list, 'pths')
         self.clear_table_widget()
 
@@ -282,7 +280,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
     def _check_for_updates(self):
         if self.tw_installed_info.rowCount() == 0:
             return
-        cur_row = self.li_py_env_list.currentRow()
+        cur_row = self.lw_py_envs.currentRow()
         if cur_row == -1:
             return
 
@@ -313,8 +311,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self.btn_addmanully,
             self.btn_delselected,
             self.btn_clearexpired,
-            self.li_py_env_list,
-            self.te_info_stream,
+            self.lw_py_envs,
             self.tw_installed_info,
             self.cb_check_uncheck_all,
             self.btn_check_for_updates,
@@ -331,8 +328,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self.btn_addmanully,
             self.btn_delselected,
             self.btn_clearexpired,
-            self.li_py_env_list,
-            self.te_info_stream,
+            self.lw_py_envs,
             self.tw_installed_info,
             self.cb_check_uncheck_all,
             self.btn_check_for_updates,
