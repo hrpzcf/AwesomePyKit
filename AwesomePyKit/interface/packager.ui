@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>996</width>
+    <width>1016</width>
     <height>694</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,4">
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,3">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,9,0,0,0,5">
         <item>
