@@ -46,7 +46,7 @@
          <string>管理不同 Python 环境中的第三方模块、包、库。</string>
         </property>
         <property name="text">
-         <string>模块/包/库管理</string>
+         <string>便捷模块管理</string>
         </property>
        </widget>
       </item>

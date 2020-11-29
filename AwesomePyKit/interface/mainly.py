@@ -83,7 +83,7 @@ class Ui_MainWin(object):
         _translate = QtCore.QCoreApplication.translate
         MainWin.setWindowTitle(_translate("MainWin", "AwesomePyKit"))
         self.btn_manPacks.setToolTip(_translate("MainWin", "管理不同 Python 环境中的第三方模块、包、库。"))
-        self.btn_manPacks.setText(_translate("MainWin", "模块/包/库管理"))
+        self.btn_manPacks.setText(_translate("MainWin", "便捷模块管理"))
         self.btn_setIndex.setToolTip(_translate("MainWin", "设置 pip 全局镜像源地址。"))
         self.btn_setIndex.setText(_translate("MainWin", "镜像源设置"))
         self.btn_setPATH.setToolTip(_translate("MainWin", "（功能尚未完成）将 Python 安装目录路径添加进环境变量 PATH。"))
