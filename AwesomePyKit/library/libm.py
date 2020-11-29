@@ -7,6 +7,7 @@ import sys
 
 from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
+from PyQt5.QtCore import QThread
 from pyregedit import REG_DWORD, REG_SZ, RegEdit
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -172,3 +173,17 @@ class InfoOutStream(object):
         self._ui.te_infostream.verticalScrollBar().setValue(
             self._ui.te_infostream.verticalScrollBar().maximum()
         )
+
+
+class NewTask(QThread):
+    def __init__(self, target, args=tuple()):
+        if not isinstance(args, tuple):
+            raise TypeError('线程参数应使用元组打包。')
+        if not callable(target):
+            raise TypeError('线程目标应为可调用对象。')
+        super(NewTask, self).__init__()
+        self._args = args
+        self._target = target
+
+    def run(self):
+        self._target(*self._args)

@@ -499,20 +499,6 @@ class HelpPanelWindow(Ui_ImPanel, QWidget):
         self.resize(1, 1)
 
 
-class NewTask(QThread):
-    def __init__(self, target, args=tuple()):
-        if not isinstance(args, tuple):
-            raise TypeError('线程参数应使用元组打包。')
-        if not callable(target):
-            raise TypeError('线程目标应为可调用对象。')
-        super(NewTask, self).__init__()
-        self._args = args
-        self._target = target
-
-    def run(self):
-        self._target(*self._args)
-
-
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     main_interface_window = MainWindow()
