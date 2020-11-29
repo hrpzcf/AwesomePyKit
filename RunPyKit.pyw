@@ -3,8 +3,8 @@
 import os
 import sys
 
-from PyQt5.QtCore import QSize, QThread, Qt
-from PyQt5.QtGui import QFont, QMovie
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QFont, QMovie, QColor
 from PyQt5.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -80,8 +80,8 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self._setupOthers()
         self._py_paths_list = load_conf('pths')
         self._py_envs_list = get_pyenv_list(self._py_paths_list)
-        self._running_threads = []
-        self._cur_pkgs_info_list = []
+        self.cur_pkgs_info = []
+        self.running_threads = []
 
     def _setupOthers(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -129,13 +129,13 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.lb_loading_tips.clear()
 
     def clean_finished_thread(self):
-        for index, running_thread in enumerate(self._running_threads):
-            if running_thread.isFinished():
-                self._running_threads.pop(index)
+        for index, thread in enumerate(self.running_threads):
+            if thread.isFinished():
+                self.running_threads.pop(index)
 
     def _stop_running_thread(self):
-        for running_thread in self._running_threads:
-            running_thread.exit()
+        for thread in self.running_threads:
+            thread.exit()
 
     def _binding(self):
         self.btn_autosearch.clicked.connect(self._auto_search_py_envs)
@@ -143,8 +143,12 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.btn_delselected.clicked.connect(self._del_selected)
         self.btn_addmanully.clicked.connect(self._add_py_path_manully)
         self.cb_check_uncheck_all.clicked.connect(self._select_all_none)
-        self.lw_py_envs.itemPressed.connect(self._get_pkgs_info)
+        self.lw_py_envs.itemPressed.connect(lambda: self._get_pkgs_info(0))
         self.btn_check_for_updates.clicked.connect(self._check_for_updates)
+        self.btn_install_package.clicked.connect(self.install_pkgs)
+        self.btn_uninstall_package.clicked.connect(self.uninstall_pkgs)
+        self.btn_upgrade_package.clicked.connect(self.upgrade_pkgs)
+        self.btn_upgrade_all.clicked.connect(self.upgrade_all)
 
     def list_widget_pyenvs_update(self):
         cur_py_env_index = self.lw_py_envs.currentRow()
@@ -154,52 +158,53 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         if cur_py_env_index != -1:
             self.lw_py_envs.setCurrentRow(cur_py_env_index)
 
-    def _table_widget_pkgs_info_update(self):
+    def table_widget_pkgs_info_update(self):
         self.tw_installed_info.clearContents()
-        self.tw_installed_info.setRowCount(len(self._cur_pkgs_info_list))
-        cur_row = self.lw_py_envs.currentRow()
-        if cur_row != -1:
-            self.lb_installed_pkgs_info.setText(
-                f'【{str(self._py_envs_list[cur_row])}】:'
-            )
-        for rowind, info in enumerate(self._cur_pkgs_info_list):
-            for colind, info_item in enumerate(info):
-                self.tw_installed_info.setItem(
-                    rowind, colind, QTableWidgetItem(info_item)
-                )
+        self.tw_installed_info.setRowCount(len(self.cur_pkgs_info))
+        for rowind, info in enumerate(self.cur_pkgs_info):
+            for colind, item_text in enumerate(info):
+                item = QTableWidgetItem(item_text)
+                if colind == 3:
+                    if item_text == '升级成功' or item_text == '卸载成功':
+                        item.setForeground(QColor(0, 170, 0))
+                    elif item_text == '升级失败' or item_text == '卸载失败':
+                        item.setForeground(QColor(255, 0, 0))
+                    item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                self.tw_installed_info.setItem(rowind, colind, item)
 
     def clear_table_widget(self):
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
 
-    def _get_pkgs_info(self):
+    def _get_pkgs_info(self, no_connect):
         index_selected = self.lw_py_envs.currentRow()
         if index_selected == -1:
             return
 
-        def get_pkgs_info():
+        def do_get_pkgs_info():
             pkgs_info = self._py_envs_list[index_selected].pkgs_info()
-            self._cur_pkgs_info_list.clear()
+            self.cur_pkgs_info.clear()
             for pkg_info in pkgs_info:
                 pkg_info = list(pkg_info)
                 pkg_info.extend(('', ''))
-                self._cur_pkgs_info_list.append(pkg_info)
+                self.cur_pkgs_info.append(pkg_info)
 
-        thread_get_pkgs_info = NewTask(get_pkgs_info)
-        thread_get_pkgs_info.started.connect(self.lock_widgets)
-        thread_get_pkgs_info.started.connect(
-            lambda: self.start_waiting('正在加载模块信息...')
-        )
-        thread_get_pkgs_info.finished.connect(
-            self._table_widget_pkgs_info_update
-        )
-        thread_get_pkgs_info.finished.connect(self.stop_waiting)
-        thread_get_pkgs_info.finished.connect(self.release_widgets)
-        thread_get_pkgs_info.finished.connect(self.clean_finished_thread)
+        thread_get_pkgs_info = NewTask(do_get_pkgs_info)
+        if not no_connect:
+            thread_get_pkgs_info.started.connect(self.lock_widgets)
+            thread_get_pkgs_info.started.connect(
+                lambda: self.start_waiting('正在加载模块信息...')
+            )
+            thread_get_pkgs_info.finished.connect(
+                self.table_widget_pkgs_info_update
+            )
+            thread_get_pkgs_info.finished.connect(self.stop_waiting)
+            thread_get_pkgs_info.finished.connect(self.release_widgets)
+            thread_get_pkgs_info.finished.connect(self.clean_finished_thread)
         thread_get_pkgs_info.start()
-        self._running_threads.append(thread_get_pkgs_info)
+        self.running_threads.append(thread_get_pkgs_info)
 
-    def _index_selected_rows(self):
+    def indexs_selected_row(self):
         row_indexs = []
         for item in self.tw_installed_info.selectedItems():
             row_index = item.row()
@@ -239,7 +244,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             lambda: save_conf(self._py_paths_list, 'pths')
         )
         thread_search_envs.start()
-        self._running_threads.append(thread_search_envs)
+        self.running_threads.append(thread_search_envs)
 
     def _clear_expired(self):
         cleaned_py_paths = clean_py_paths(self._py_paths_list)
@@ -261,8 +266,8 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.clear_table_widget()
 
     def _add_py_path_manully(self):
-        input_dialog = MyInputDialog(
-            self, 560, 0, '添加Python环境', '请输入有效的Python目录路径：'
+        input_dialog = NewInputDialog(
+            self, 560, 0, '添加Python目录', '请输入Python目录路径：'
         )
         py_path, ok = input_dialog.getText()
         if not (ok and py_path):
@@ -283,27 +288,30 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         cur_row = self.lw_py_envs.currentRow()
         if cur_row == -1:
             return
+        self._get_pkgs_info(no_connect=1)
 
-        def get_outdated():
+        def do_get_outdated():
+            if self.running_threads:
+                self.running_threads[0].wait()
             outdateds = self._py_envs_list[cur_row].outdated()
             for outdated_info in outdateds:
-                for row in self._cur_pkgs_info_list:
+                for row in self.cur_pkgs_info:
                     if outdated_info[0] == row[0]:
                         row[2] = outdated_info[2]
 
-        thread_get_outdated = NewTask(get_outdated)
+        thread_get_outdated = NewTask(do_get_outdated)
         thread_get_outdated.started.connect(self.lock_widgets)
         thread_get_outdated.started.connect(
             lambda: self.start_waiting('正在检查更新，请耐心等待...')
         )
         thread_get_outdated.finished.connect(
-            self._table_widget_pkgs_info_update
+            self.table_widget_pkgs_info_update
         )
         thread_get_outdated.finished.connect(self.stop_waiting)
         thread_get_outdated.finished.connect(self.release_widgets)
         thread_get_outdated.finished.connect(self.clean_finished_thread)
         thread_get_outdated.start()
-        self._running_threads.append(thread_get_outdated)
+        self.running_threads.append(thread_get_outdated)
 
     def lock_widgets(self):
         for widget in (
@@ -317,8 +325,8 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self.btn_check_for_updates,
             self.btn_install_package,
             self.btn_uninstall_package,
-            self.btn_up_grade_package,
-            self.btn_up_grade_all,
+            self.btn_upgrade_package,
+            self.btn_upgrade_all,
         ):
             widget.setEnabled(False)
 
@@ -334,15 +342,178 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             self.btn_check_for_updates,
             self.btn_install_package,
             self.btn_uninstall_package,
-            self.btn_up_grade_package,
-            self.btn_up_grade_all,
+            self.btn_upgrade_package,
+            self.btn_upgrade_all,
         ):
             widget.setEnabled(True)
 
+    def install_pkgs(self):
+        cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
+        pkgs_to_install = NewInputDialog(
+            self, title='安装', label=f'注：多个名称请用空格隔开\n安装目标【{cur_py_env}】',
+        )
+        names, ok = pkgs_to_install.getText()
+        names = [name for name in names.split() if name]
+        if not (names and ok):
+            return
 
-class MyInputDialog(QInputDialog):
+        def do_install():
+            for _ in loop_install(cur_py_env, names):
+                pass
+
+        thread_install_pkgs = NewTask(do_install)
+        thread_install_pkgs.started.connect(self.lock_widgets)
+        thread_install_pkgs.started.connect(
+            lambda: self.start_waiting('正在安装，请稍候...')
+        )
+        thread_install_pkgs.finished.connect(lambda: self._get_pkgs_info(0))
+        thread_install_pkgs.finished.connect(self.stop_waiting)
+        thread_install_pkgs.finished.connect(self.clean_finished_thread)
+        thread_install_pkgs.start()
+        self.running_threads.append(thread_install_pkgs)
+
+    def uninstall_pkgs(self):
+        pkg_indexs = self.indexs_selected_row()
+        pkg_names = [self.cur_pkgs_info[index][0] for index in pkg_indexs]
+        if not pkg_names:
+            return
+        cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
+        len_pkgs = len(pkg_names)
+        names_text = (
+            '\n'.join(pkg_names)
+            if len_pkgs <= 10
+            else '\n'.join(('\n'.join(pkg_names[:10]), '......'))
+        )
+        uninstall_msg_box = QMessageBox(
+            QMessageBox.Question, '卸载', f'确定要卸载以下模块吗？\n{names_text}'
+        )
+        uninstall_msg_box.addButton('确定', QMessageBox.AcceptRole)
+        reject = uninstall_msg_box.addButton('取消', QMessageBox.RejectRole)
+        uninstall_msg_box.setDefaultButton(reject)
+        if uninstall_msg_box.exec() != 0:
+            return
+
+        def do_uninstall():
+            results = []
+            for _, code in loop_uninstall(cur_py_env, pkg_names):
+                results.append(code)
+            for ind, index in enumerate(pkg_indexs):
+                if results[ind]:
+                    self.cur_pkgs_info[index][3] = '卸载成功'
+                else:
+                    self.cur_pkgs_info[index][3] = '卸载失败'
+
+        thread_uninstall_pkgs = NewTask(do_uninstall)
+        thread_uninstall_pkgs.started.connect(self.lock_widgets)
+        thread_uninstall_pkgs.started.connect(
+            lambda: self.start_waiting('正在卸载，请稍候...')
+        )
+        thread_uninstall_pkgs.finished.connect(
+            self.table_widget_pkgs_info_update
+        )
+        thread_uninstall_pkgs.finished.connect(self.stop_waiting)
+        thread_uninstall_pkgs.finished.connect(self.release_widgets)
+        thread_uninstall_pkgs.finished.connect(self.clean_finished_thread)
+        thread_uninstall_pkgs.start()
+        self.running_threads.append(thread_uninstall_pkgs)
+
+    def upgrade_pkgs(self):
+        pkg_indexs = self.indexs_selected_row()
+        pkg_names = [self.cur_pkgs_info[index][0] for index in pkg_indexs]
+        if not pkg_names:
+            return
+        cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
+        len_pkgs = len(pkg_names)
+        names_text = (
+            '\n'.join(pkg_names)
+            if len_pkgs <= 10
+            else '\n'.join(('\n'.join(pkg_names[:10]), '......'))
+        )
+        uninstall_msg_box = QMessageBox(
+            QMessageBox.Question, '升级', f'确认升级以下模块？\n{names_text}'
+        )
+        uninstall_msg_box.addButton('确定', QMessageBox.AcceptRole)
+        reject = uninstall_msg_box.addButton('取消', QMessageBox.RejectRole)
+        uninstall_msg_box.setDefaultButton(reject)
+        if uninstall_msg_box.exec() != 0:
+            return
+
+        def do_upgrade():
+            results = []
+            for _, code in loop_install(cur_py_env, pkg_names, upgrade=1):
+                results.append(code)
+            for ind, index in enumerate(pkg_indexs):
+                if results[ind]:
+                    self.cur_pkgs_info[index][3] = '升级成功'
+                else:
+                    self.cur_pkgs_info[index][3] = '升级失败'
+
+        thread_upgrade_pkgs = NewTask(do_upgrade)
+        thread_upgrade_pkgs.started.connect(self.lock_widgets)
+        thread_upgrade_pkgs.started.connect(
+            lambda: self.start_waiting('正在升级，请稍候...')
+        )
+        thread_upgrade_pkgs.finished.connect(
+            self.table_widget_pkgs_info_update
+        )
+        thread_upgrade_pkgs.finished.connect(self.stop_waiting)
+        thread_upgrade_pkgs.finished.connect(self.release_widgets)
+        thread_upgrade_pkgs.finished.connect(self.clean_finished_thread)
+        thread_upgrade_pkgs.start()
+        self.running_threads.append(thread_upgrade_pkgs)
+
+    def upgrade_all(self):
+        upgradeable = [item[0] for item in self.cur_pkgs_info if item[2]]
+        if not upgradeable:
+            msg_box = QMessageBox(
+                QMessageBox.Information, '提示', '请先检查更新查看是否有可更新的模块。'
+            )
+            msg_box.addButton('确定', QMessageBox.AcceptRole)
+            msg_box.exec()
+            return
+        cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
+        len_pkgs = len(upgradeable)
+        names_text = (
+            '\n'.join(upgradeable)
+            if len_pkgs <= 10
+            else '\n'.join(('\n'.join(upgradeable[:10]), '......'))
+        )
+        upgrade_all_msg_box = QMessageBox(
+            QMessageBox.Question, '升级全部', f'确认升级以下模块？\n{names_text}'
+        )
+        upgrade_all_msg_box.addButton('确定', QMessageBox.AcceptRole)
+        reject = upgrade_all_msg_box.addButton('取消', QMessageBox.RejectRole)
+        upgrade_all_msg_box.setDefaultButton(reject)
+        if upgrade_all_msg_box.exec() != 0:
+            return
+
+        def do_upgrade():
+            for name, code in loop_install(cur_py_env, upgradeable, upgrade=1):
+                for item in self.cur_pkgs_info:
+                    if item[0] == name:
+                        if code:
+                            item[3] = '升级成功'
+                        else:
+                            item[3] = '升级失败'
+
+        thread_upgrade_pkgs = NewTask(do_upgrade)
+        thread_upgrade_pkgs.started.connect(self.lock_widgets)
+        thread_upgrade_pkgs.started.connect(
+            lambda: self.start_waiting('正在升级，请稍候...')
+        )
+        thread_upgrade_pkgs.finished.connect(
+            self.table_widget_pkgs_info_update
+        )
+        thread_upgrade_pkgs.finished.connect(self.stop_waiting)
+        thread_upgrade_pkgs.finished.connect(self.release_widgets)
+        thread_upgrade_pkgs.finished.connect(self.clean_finished_thread)
+        thread_upgrade_pkgs.start()
+        self.running_threads.append(thread_upgrade_pkgs)
+
+
+class NewInputDialog(QInputDialog):
     def __init__(self, parent, sw=560, sh=0, title='', label=''):
-        super(MyInputDialog, self).__init__(parent)
+        super(NewInputDialog, self).__init__(parent)
         self.resize(sw, sh)
         self.setFont(QFont('Microsoft YaHei UI'))
         self.setWindowTitle(title)
