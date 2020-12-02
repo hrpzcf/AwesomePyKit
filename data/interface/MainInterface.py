@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainly.ui'
+# Form implementation generated from reading ui file 'MainInterface.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -11,16 +11,16 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWin(object):
-    def setupUi(self, MainWin):
-        MainWin.setObjectName("MainWin")
-        MainWin.resize(420, 255)
-        MainWin.setMinimumSize(QtCore.QSize(420, 255))
-        MainWin.setMaximumSize(QtCore.QSize(420, 255))
+class Ui_MainInterface(object):
+    def setupUi(self, MainInterface):
+        MainInterface.setObjectName("MainInterface")
+        MainInterface.resize(420, 255)
+        MainInterface.setMinimumSize(QtCore.QSize(420, 255))
+        MainInterface.setMaximumSize(QtCore.QSize(420, 255))
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
-        MainWin.setFont(font)
-        self.centralwidget = QtWidgets.QWidget(MainWin)
+        MainInterface.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(MainInterface)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -52,43 +52,43 @@ class Ui_MainWin(object):
         self.btn_setPATH.setObjectName("btn_setPATH")
         self.verticalLayout.addWidget(self.btn_setPATH)
         self.verticalLayout_2.addLayout(self.verticalLayout)
-        MainWin.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWin)
+        MainInterface.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainInterface)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 420, 26))
         self.menubar.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.menubar.setObjectName("menubar")
         self.menu_help = QtWidgets.QMenu(self.menubar)
         self.menu_help.setObjectName("menu_help")
-        MainWin.setMenuBar(self.menubar)
-        self.description = QtWidgets.QAction(MainWin)
+        MainInterface.setMenuBar(self.menubar)
+        self.description = QtWidgets.QAction(MainInterface)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         self.description.setFont(font)
         self.description.setObjectName("description")
-        self.about = QtWidgets.QAction(MainWin)
+        self.about = QtWidgets.QAction(MainInterface)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         self.about.setFont(font)
         self.about.setObjectName("about")
-        self.contribution = QtWidgets.QAction(MainWin)
+        self.contribution = QtWidgets.QAction(MainInterface)
         self.contribution.setObjectName("contribution")
         self.menu_help.addAction(self.description)
         self.menu_help.addAction(self.about)
         self.menubar.addAction(self.menu_help.menuAction())
 
-        self.retranslateUi(MainWin)
-        QtCore.QMetaObject.connectSlotsByName(MainWin)
+        self.retranslateUi(MainInterface)
+        QtCore.QMetaObject.connectSlotsByName(MainInterface)
 
-    def retranslateUi(self, MainWin):
+    def retranslateUi(self, MainInterface):
         _translate = QtCore.QCoreApplication.translate
-        MainWin.setWindowTitle(_translate("MainWin", "AwesomePyKit"))
-        self.btn_manPacks.setToolTip(_translate("MainWin", "管理不同 Python 环境中的第三方模块、包、库。"))
-        self.btn_manPacks.setText(_translate("MainWin", "便捷模块管理"))
-        self.btn_setIndex.setToolTip(_translate("MainWin", "设置 pip 全局镜像源地址。"))
-        self.btn_setIndex.setText(_translate("MainWin", "镜像源设置"))
-        self.btn_setPATH.setToolTip(_translate("MainWin", "（功能尚未完成）将 Python 安装目录路径添加进环境变量 PATH。"))
-        self.btn_setPATH.setText(_translate("MainWin", "环境变量设置"))
-        self.menu_help.setTitle(_translate("MainWin", "其他信息"))
-        self.description.setText(_translate("MainWin", "功能说明"))
-        self.about.setText(_translate("MainWin", "关于软件"))
-        self.contribution.setText(_translate("MainWin", "参与贡献"))
+        MainInterface.setWindowTitle(_translate("MainInterface", "AwesomePyKit"))
+        self.btn_manPacks.setToolTip(_translate("MainInterface", "管理不同 Python 环境中的第三方模块、包、库。"))
+        self.btn_manPacks.setText(_translate("MainInterface", "包管理器"))
+        self.btn_setIndex.setToolTip(_translate("MainInterface", "设置 pip 全局镜像源地址。"))
+        self.btn_setIndex.setText(_translate("MainInterface", "镜像源设置"))
+        self.btn_setPATH.setToolTip(_translate("MainInterface", "（功能尚未完成）将 Python 安装目录路径添加进环境变量 PATH。"))
+        self.btn_setPATH.setText(_translate("MainInterface", "环境变量设置"))
+        self.menu_help.setTitle(_translate("MainInterface", "其他信息"))
+        self.description.setText(_translate("MainInterface", "功能说明"))
+        self.about.setText(_translate("MainInterface", "关于软件"))
+        self.contribution.setText(_translate("MainInterface", "参与贡献"))

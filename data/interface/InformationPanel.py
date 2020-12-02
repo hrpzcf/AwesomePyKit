@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'impanel.ui'
+# Form implementation generated from reading ui file 'InformationPanel.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -11,17 +11,17 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_ImPanel(object):
-    def setupUi(self, ImPanel):
-        ImPanel.setObjectName("ImPanel")
-        ImPanel.setWindowModality(QtCore.Qt.ApplicationModal)
-        ImPanel.resize(116, 45)
+class Ui_InformationPanel(object):
+    def setupUi(self, InformationPanel):
+        InformationPanel.setObjectName("InformationPanel")
+        InformationPanel.setWindowModality(QtCore.Qt.ApplicationModal)
+        InformationPanel.resize(116, 45)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
-        ImPanel.setFont(font)
-        self.verticalLayout = QtWidgets.QVBoxLayout(ImPanel)
+        InformationPanel.setFont(font)
+        self.verticalLayout = QtWidgets.QVBoxLayout(InformationPanel)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.help_panel = QtWidgets.QLabel(ImPanel)
+        self.help_panel = QtWidgets.QLabel(InformationPanel)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(10)
@@ -32,9 +32,9 @@ class Ui_ImPanel(object):
         self.help_panel.setObjectName("help_panel")
         self.verticalLayout.addWidget(self.help_panel)
 
-        self.retranslateUi(ImPanel)
-        QtCore.QMetaObject.connectSlotsByName(ImPanel)
+        self.retranslateUi(InformationPanel)
+        QtCore.QMetaObject.connectSlotsByName(InformationPanel)
 
-    def retranslateUi(self, ImPanel):
+    def retranslateUi(self, InformationPanel):
         _translate = QtCore.QCoreApplication.translate
-        ImPanel.setWindowTitle(_translate("ImPanel", "关于"))
+        InformationPanel.setWindowTitle(_translate("InformationPanel", "关于"))

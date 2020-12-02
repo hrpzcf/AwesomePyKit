@@ -140,8 +140,9 @@ dmypy.json
 cython_debug/
 
 # others
-AwesomePyKit/config/
+data/config/
 .vs/
 .idea/
 .vscode/
 test.py
+Build.py

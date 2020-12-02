@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PkgMgr</class>
- <widget class="QMainWindow" name="PkgMgr">
+ <class>PackageManager</class>
+ <widget class="QMainWindow" name="PackageManager">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -30,7 +30,7 @@
         <item>
          <widget class="QLabel" name="lb_python_dir">
           <property name="text">
-           <string>Python 目录：</string>
+           <string>Python 环境：</string>
           </property>
          </widget>
         </item>
@@ -48,8 +48,11 @@
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
            <widget class="QPushButton" name="btn_autosearch">
+            <property name="toolTip">
+             <string>在常用软件安装位置搜索Python环境。</string>
+            </property>
             <property name="text">
-             <string>自动搜索</string>
+             <string>搜索常用位置</string>
             </property>
            </widget>
           </item>
@@ -69,6 +72,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="btn_clearexpired">
+            <property name="toolTip">
+             <string>清除AwesomePyKit的配置文件中储存的失效的Python目录路径。注意，失效路径并不会显示在上面的Python环境列表中。</string>
+            </property>
             <property name="text">
              <string>清除失效项</string>
             </property>
@@ -90,7 +96,7 @@
         <item>
          <widget class="QLabel" name="lb_installed_pkgs_info">
           <property name="text">
-           <string>已安装的模块/包/库信息：</string>
+           <string>已安装的包信息：</string>
           </property>
          </widget>
         </item>
@@ -210,6 +216,11 @@
          <layout class="QGridLayout" name="glo_table_btns">
           <item row="0" column="3">
            <widget class="QPushButton" name="btn_check_for_updates">
+            <property name="toolTip">
+             <string>检查上方表格中的所有包是否有新版本。
+注意，Anaconda中Python环境可能无法检查更新，回到主界面，打开&quot;关于软件&quot;中的OpenSSL链接,下载安装OpenSSL即可。
+安装结束界面会有一个确认是否给OpenSSL捐款的勾，可以去掉。</string>
+            </property>
             <property name="text">
              <string>检查更新</string>
             </property>
@@ -217,6 +228,9 @@
           </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="btn_install_package">
+            <property name="toolTip">
+             <string>手动输入包名安装，输入的包将安装在左侧列表选中的Python环境中。</string>
+            </property>
             <property name="text">
              <string>安装</string>
             </property>
@@ -224,6 +238,9 @@
           </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="btn_uninstall_package">
+            <property name="toolTip">
+             <string>将上方表格中选中的包卸载。注意，卸载包时上方表格中的条目支持多选。</string>
+            </property>
             <property name="text">
              <string>卸载</string>
             </property>
@@ -231,6 +248,9 @@
           </item>
           <item row="1" column="2">
            <widget class="QPushButton" name="btn_upgrade_package">
+            <property name="toolTip">
+             <string>升级上方表格中被选中的包。注意，被选中的包如果没有新版本则什么都不做。此功能同样支持多选。</string>
+            </property>
             <property name="text">
              <string>升级</string>
             </property>
@@ -238,6 +258,9 @@
           </item>
           <item row="1" column="3">
            <widget class="QPushButton" name="btn_upgrade_all">
+            <property name="toolTip">
+             <string>升级上方表格中列出的所有有新版本的包，使用此功能前请先点击上方&quot;检查更新&quot;按钮以检查是否有新版本，再点击此按钮升级。</string>
+            </property>
             <property name="text">
              <string>全部升级</string>
             </property>

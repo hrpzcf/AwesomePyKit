@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ImPanel</class>
- <widget class="QWidget" name="ImPanel">
+ <class>InformationPanel</class>
+ <widget class="QWidget" name="InformationPanel">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'packager.ui'
+# Form implementation generated from reading ui file 'PackageManager.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -11,15 +11,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_PkgMgr(object):
-    def setupUi(self, PkgMgr):
-        PkgMgr.setObjectName("PkgMgr")
-        PkgMgr.setWindowModality(QtCore.Qt.ApplicationModal)
-        PkgMgr.resize(1016, 694)
+class Ui_PackageManager(object):
+    def setupUi(self, PackageManager):
+        PackageManager.setObjectName("PackageManager")
+        PackageManager.setWindowModality(QtCore.Qt.ApplicationModal)
+        PackageManager.resize(1016, 694)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
-        PkgMgr.setFont(font)
-        self.centralwidget = QtWidgets.QWidget(PkgMgr)
+        PackageManager.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(PackageManager)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
@@ -133,34 +133,43 @@ class Ui_PkgMgr(object):
         self.horizontalLayout_3.setStretch(0, 2)
         self.horizontalLayout_3.setStretch(2, 3)
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
-        PkgMgr.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(PkgMgr)
+        PackageManager.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(PackageManager)
         self.statusbar.setObjectName("statusbar")
-        PkgMgr.setStatusBar(self.statusbar)
+        PackageManager.setStatusBar(self.statusbar)
 
-        self.retranslateUi(PkgMgr)
-        QtCore.QMetaObject.connectSlotsByName(PkgMgr)
+        self.retranslateUi(PackageManager)
+        QtCore.QMetaObject.connectSlotsByName(PackageManager)
 
-    def retranslateUi(self, PkgMgr):
+    def retranslateUi(self, PackageManager):
         _translate = QtCore.QCoreApplication.translate
-        PkgMgr.setWindowTitle(_translate("PkgMgr", "包管理器"))
-        self.lb_python_dir.setText(_translate("PkgMgr", "Python 目录："))
-        self.btn_autosearch.setText(_translate("PkgMgr", "自动搜索"))
-        self.btn_addmanully.setText(_translate("PkgMgr", "手动添加"))
-        self.btn_delselected.setText(_translate("PkgMgr", "删除选中项"))
-        self.btn_clearexpired.setText(_translate("PkgMgr", "清除失效项"))
-        self.lb_installed_pkgs_info.setText(_translate("PkgMgr", "已安装的模块/包/库信息："))
+        PackageManager.setWindowTitle(_translate("PackageManager", "包管理器"))
+        self.lb_python_dir.setText(_translate("PackageManager", "Python 环境："))
+        self.btn_autosearch.setToolTip(_translate("PackageManager", "在常用软件安装位置搜索Python环境。"))
+        self.btn_autosearch.setText(_translate("PackageManager", "搜索常用位置"))
+        self.btn_addmanully.setText(_translate("PackageManager", "手动添加"))
+        self.btn_delselected.setText(_translate("PackageManager", "删除选中项"))
+        self.btn_clearexpired.setToolTip(_translate("PackageManager", "清除AwesomePyKit的配置文件中储存的失效的Python目录路径。注意，失效路径并不会显示在上面的Python环境列表中。"))
+        self.btn_clearexpired.setText(_translate("PackageManager", "清除失效项"))
+        self.lb_installed_pkgs_info.setText(_translate("PackageManager", "已安装的包信息："))
         item = self.tw_installed_info.horizontalHeaderItem(0)
-        item.setText(_translate("PkgMgr", "模块/包/库名称"))
+        item.setText(_translate("PackageManager", "模块/包/库名称"))
         item = self.tw_installed_info.horizontalHeaderItem(1)
-        item.setText(_translate("PkgMgr", "当前版本"))
+        item.setText(_translate("PackageManager", "当前版本"))
         item = self.tw_installed_info.horizontalHeaderItem(2)
-        item.setText(_translate("PkgMgr", "最新版本"))
+        item.setText(_translate("PackageManager", "最新版本"))
         item = self.tw_installed_info.horizontalHeaderItem(3)
-        item.setText(_translate("PkgMgr", "状态"))
-        self.btn_check_for_updates.setText(_translate("PkgMgr", "检查更新"))
-        self.btn_install_package.setText(_translate("PkgMgr", "安装"))
-        self.btn_uninstall_package.setText(_translate("PkgMgr", "卸载"))
-        self.btn_upgrade_package.setText(_translate("PkgMgr", "升级"))
-        self.btn_upgrade_all.setText(_translate("PkgMgr", "全部升级"))
-        self.cb_check_uncheck_all.setText(_translate("PkgMgr", "全选 / 取消"))
+        item.setText(_translate("PackageManager", "状态"))
+        self.btn_check_for_updates.setToolTip(_translate("PackageManager", "检查上方表格中的所有包是否有新版本。\n"
+"注意，Anaconda中Python环境可能无法检查更新，回到主界面，打开\"关于软件\"中的OpenSSL链接,下载安装OpenSSL即可。\n"
+"安装结束界面会有一个确认是否给OpenSSL捐款的勾，可以去掉。"))
+        self.btn_check_for_updates.setText(_translate("PackageManager", "检查更新"))
+        self.btn_install_package.setToolTip(_translate("PackageManager", "手动输入包名安装，输入的包将安装在左侧列表选中的Python环境中。"))
+        self.btn_install_package.setText(_translate("PackageManager", "安装"))
+        self.btn_uninstall_package.setToolTip(_translate("PackageManager", "将上方表格中选中的包卸载。注意，卸载包时上方表格中的条目支持多选。"))
+        self.btn_uninstall_package.setText(_translate("PackageManager", "卸载"))
+        self.btn_upgrade_package.setToolTip(_translate("PackageManager", "升级上方表格中被选中的包。注意，被选中的包如果没有新版本则什么都不做。此功能同样支持多选。"))
+        self.btn_upgrade_package.setText(_translate("PackageManager", "升级"))
+        self.btn_upgrade_all.setToolTip(_translate("PackageManager", "升级上方表格中列出的所有有新版本的包，使用此功能前请先点击上方\"检查更新\"按钮以检查是否有新版本，再点击此按钮升级。"))
+        self.btn_upgrade_all.setText(_translate("PackageManager", "全部升级"))
+        self.cb_check_uncheck_all.setText(_translate("PackageManager", "全选 / 取消"))

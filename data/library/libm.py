@@ -3,12 +3,12 @@
 import json
 import os
 import re
-import sys
+# import sys
 
 from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
 from PyQt5.QtCore import QThread
-from pyregedit import REG_DWORD, REG_SZ, RegEdit
+# from pyregedit import REG_DWORD, REG_SZ, RegEdit
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 conf_path = os.path.join(root_path, 'config')

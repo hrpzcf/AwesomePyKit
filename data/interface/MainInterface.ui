@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWin</class>
- <widget class="QMainWindow" name="MainWin">
+ <class>MainInterface</class>
+ <widget class="QMainWindow" name="MainInterface">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -46,7 +46,7 @@
          <string>管理不同 Python 环境中的第三方模块、包、库。</string>
         </property>
         <property name="text">
-         <string>便捷模块管理</string>
+         <string>包管理器</string>
         </property>
        </widget>
       </item>

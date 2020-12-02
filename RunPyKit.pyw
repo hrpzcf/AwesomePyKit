@@ -3,8 +3,16 @@
 import os
 import sys
 
-from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtGui import QFont, QMovie, QColor
+from PyQt5.QtCore import (
+    QSize,
+    Qt,
+)
+from PyQt5.QtGui import (
+    QColor,
+    QFont,
+    QIcon,
+    QMovie,
+)
 from PyQt5.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -18,14 +26,14 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from AwesomePyKit.interface import *
-from AwesomePyKit.library import *
-from AwesomePyKit.library.libm import PyEnv
+from data.interface import *
+from data.library import *
+from data.library.libm import PyEnv
 
 
-class MainWindow(Ui_MainWin, QMainWindow):
+class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super(MainInterfaceWindow, self).__init__()
         self.setupUi(self)
         self._binding()
 
@@ -38,13 +46,11 @@ class MainWindow(Ui_MainWin, QMainWindow):
     @staticmethod
     def _show_about():
         try:
-            with open(
-                'AwesomePyKit/help/About.html', encoding='utf-8'
-            ) as help_html:
+            with open('data/help/About.html', encoding='utf-8') as help_html:
                 info = help_html.read()
                 icon = QMessageBox.Information
         except Exception:
-            info = '"关于"信息文件(./AwesomePyKit/help/About.html)已丢失。'
+            info = '"关于"信息文件(data/help/About.html)已丢失。'
             icon = QMessageBox.Critical
         about_panel = QMessageBox(icon, '关于', info)
         about_panel.addButton('确定', QMessageBox.AcceptRole)
@@ -52,30 +58,30 @@ class MainWindow(Ui_MainWin, QMainWindow):
 
     @staticmethod
     def _show_usinghelp():
-        help_panel_window.setWindowTitle('使用帮助')
+        information_panel_window.setWindowTitle('使用帮助')
         try:
             with open(
-                'AwesomePyKit/help/UsingHelp.html', encoding='utf-8'
+                'data/help/UsingHelp.html', encoding='utf-8'
             ) as using_html:
-                help_panel_window.help_panel.setText(using_html.read())
+                information_panel_window.help_panel.setText(using_html.read())
         except Exception:
-            help_panel_window.help_panel.setText(
-                '"使用帮助"文件(./AwesomePyKit/help/UsingHelp.html)已丢失。'
+            information_panel_window.help_panel.setText(
+                '"使用帮助"文件(data/help/UsingHelp.html)已丢失。'
             )
-        help_panel_window.show()
+        information_panel_window.show()
 
     @staticmethod
     def _show_pkgmgr():
-        pkg_manager_window.show()
+        package_manager_window.show()
 
     @staticmethod
     def _show_indexmgr():
-        index_manager_window.show()
+        mirror_source_manager_window.show()
 
 
-class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
+class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def __init__(self):
-        super(PkgMgrWindow, self).__init__()
+        super(PackageManagerWindow, self).__init__()
         self.setupUi(self)
         self._setupOthers()
         self._py_paths_list = load_conf('pths')
@@ -109,7 +115,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         self.glo_table_btns.addLayout(hlayout, 0, 0, 1, 2)
 
     def show(self):
-        super(PkgMgrWindow, self).show()
+        super(PackageManagerWindow, self).show()
         self.list_widget_pyenvs_update()
         self.lw_py_envs.setCurrentRow(0)
         self._binding()
@@ -193,7 +199,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         if not no_connect:
             thread_get_pkgs_info.started.connect(self.lock_widgets)
             thread_get_pkgs_info.started.connect(
-                lambda: self.start_waiting('正在加载模块信息...')
+                lambda: self.start_waiting('正在加载包信息...')
             )
             thread_get_pkgs_info.finished.connect(
                 self.table_widget_pkgs_info_update
@@ -385,7 +391,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             else '\n'.join(('\n'.join(pkg_names[:10]), '......'))
         )
         uninstall_msg_box = QMessageBox(
-            QMessageBox.Question, '卸载', f'确定要卸载以下模块吗？\n{names_text}'
+            QMessageBox.Question, '卸载', f'确认卸载？\n{names_text}'
         )
         uninstall_msg_box.addButton('确定', QMessageBox.AcceptRole)
         reject = uninstall_msg_box.addButton('取消', QMessageBox.RejectRole)
@@ -430,7 +436,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             else '\n'.join(('\n'.join(pkg_names[:10]), '......'))
         )
         uninstall_msg_box = QMessageBox(
-            QMessageBox.Question, '升级', f'确认升级以下模块？\n{names_text}'
+            QMessageBox.Question, '升级', f'确认升级？\n{names_text}'
         )
         uninstall_msg_box.addButton('确定', QMessageBox.AcceptRole)
         reject = uninstall_msg_box.addButton('取消', QMessageBox.RejectRole)
@@ -466,7 +472,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
         upgradeable = [item[0] for item in self.cur_pkgs_info if item[2]]
         if not upgradeable:
             msg_box = QMessageBox(
-                QMessageBox.Information, '提示', '请先检查更新查看是否有可更新的模块。'
+                QMessageBox.Information, '提示', '请先检查更新确认是否有可更新的包。'
             )
             msg_box.addButton('确定', QMessageBox.AcceptRole)
             msg_box.exec()
@@ -479,7 +485,7 @@ class PkgMgrWindow(Ui_PkgMgr, QMainWindow):
             else '\n'.join(('\n'.join(upgradeable[:10]), '......'))
         )
         upgrade_all_msg_box = QMessageBox(
-            QMessageBox.Question, '升级全部', f'确认升级以下模块？\n{names_text}'
+            QMessageBox.Question, '升级全部', f'确认升级？\n{names_text}'
         )
         upgrade_all_msg_box.addButton('确定', QMessageBox.AcceptRole)
         reject = upgrade_all_msg_box.addButton('取消', QMessageBox.RejectRole)
@@ -527,15 +533,15 @@ class NewInputDialog(QInputDialog):
         return self.textValue(), self._confirm
 
 
-class IndexMgrWindow(Ui_IndexMgr, QMainWindow):
+class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
     def __init__(self):
-        super(IndexMgrWindow, self).__init__()
+        super(MirrorSourceManagerWindow, self).__init__()
         self.setupUi(self)
         self._urls_dict = load_conf('urls')
         self._binding()
 
     def show(self):
-        super(IndexMgrWindow, self).show()
+        super(MirrorSourceManagerWindow, self).show()
         self._list_widget_urls_update()
 
     @staticmethod
@@ -619,7 +625,7 @@ class IndexMgrWindow(Ui_IndexMgr, QMainWindow):
                 return PyEnv(cur_py_path())
             except Exception:
                 self.statusbar.showMessage(
-                    '没有找到pip可执行程序，请在"Python包管理"界面添加Python目录到列表。'
+                    '没有找到pip可执行文件，请在"包管理器"界面添加任意Python目录到列表。'
                 )
         else:
             for py_path in py_paths:
@@ -629,7 +635,7 @@ class IndexMgrWindow(Ui_IndexMgr, QMainWindow):
                     continue
             else:
                 self.statusbar.showMessage(
-                    '没有找到pip可执行程序，请在"Python包管理"界面添加Python目录到列表。'
+                    '没有找到pip可执行程序，请在"包管理器"界面添加Python目录到列表。'
                 )
 
     def _set_global_index_url(self):
@@ -657,20 +663,21 @@ class IndexMgrWindow(Ui_IndexMgr, QMainWindow):
             self.le_effectiveurl.setText('无法获取当前全局镜像源地址。')
 
 
-class HelpPanelWindow(Ui_ImPanel, QWidget):
+class InformationPanelWindow(Ui_InformationPanel, QWidget):
     def __init__(self):
-        super(HelpPanelWindow, self).__init__()
+        super(InformationPanelWindow, self).__init__()
         self.setupUi(self)
 
-    def closeEvent(self, *args, **kwargs):
+    def closeEvent(self, event):
         self.resize(1, 1)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    main_interface_window = MainWindow()
-    pkg_manager_window = PkgMgrWindow()
-    index_manager_window = IndexMgrWindow()
-    help_panel_window = HelpPanelWindow()
+    app.setWindowIcon(QIcon(os.path.join(sources_path, 'icon.ico')))
+    information_panel_window = InformationPanelWindow()
+    main_interface_window = MainInterfaceWindow()
+    package_manager_window = PackageManagerWindow()
+    mirror_source_manager_window = MirrorSourceManagerWindow()
     main_interface_window.show()
     sys.exit(app.exec_())
