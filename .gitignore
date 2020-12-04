@@ -140,7 +140,7 @@ dmypy.json
 cython_debug/
 
 # others
-data/config/
+config/
 .vs/
 .idea/
 .vscode/

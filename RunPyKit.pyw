@@ -26,9 +26,9 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from data.interface import *
-from data.library import *
-from data.library.libm import PyEnv
+from interface import *
+from library import *
+from library.libm import PyEnv
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
@@ -46,11 +46,11 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     @staticmethod
     def _show_about():
         try:
-            with open('data/help/About.html', encoding='utf-8') as help_html:
+            with open('help/About.html', encoding='utf-8') as help_html:
                 info = help_html.read()
                 icon = QMessageBox.Information
         except Exception:
-            info = '"关于"信息文件(data/help/About.html)已丢失。'
+            info = '"关于"信息文件(help/About.html)已丢失。'
             icon = QMessageBox.Critical
         about_panel = QMessageBox(icon, '关于', info)
         about_panel.addButton('确定', QMessageBox.AcceptRole)
@@ -60,13 +60,11 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     def _show_usinghelp():
         information_panel_window.setWindowTitle('使用帮助')
         try:
-            with open(
-                'data/help/UsingHelp.html', encoding='utf-8'
-            ) as using_html:
+            with open('help/UsingHelp.html', encoding='utf-8') as using_html:
                 information_panel_window.help_panel.setText(using_html.read())
         except Exception:
             information_panel_window.help_panel.setText(
-                '"使用帮助"文件(data/help/UsingHelp.html)已丢失。'
+                '"使用帮助"文件(help/UsingHelp.html)已丢失。'
             )
         information_panel_window.show()
 
