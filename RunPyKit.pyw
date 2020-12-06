@@ -82,10 +82,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         super(PackageManagerWindow, self).__init__()
         self.setupUi(self)
         self._setupOthers()
-        self._py_paths_list = load_conf('pths')
-        self._py_envs_list = get_pyenv_list(self._py_paths_list)
-        self.cur_pkgs_info = []
         self.running_threads = []
+        self.cur_pkgs_info = []
+        self._py_envs_list = get_pyenv_list(load_conf('pths'))
+        self._py_paths_list = [
+            py_env.env_path for py_env in self._py_envs_list
+        ]
 
     def _setupOthers(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -229,10 +231,11 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
                 if py_path in self._py_paths_list:
                     continue
                 try:
-                    self._py_paths_list.append(py_path)
-                    self._py_envs_list.append(PyEnv(py_path))
+                    py_env = PyEnv(py_path)
                 except Exception:
                     continue
+                self._py_envs_list.append(py_env)
+                self._py_paths_list.append(py_env.env_path)
 
         thread_search_envs = NewTask(search_envs)
         thread_search_envs.started.connect(self.lock_widgets)
@@ -257,8 +260,8 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         del self._py_envs_list[cur_index]
         del self._py_paths_list[cur_index]
         self.lw_py_envs.removeItemWidget(self.lw_py_envs.takeItem(cur_index))
-        save_conf(self._py_paths_list, 'pths')
         self.clear_table_widget()
+        save_conf(self._py_paths_list, 'pths')
 
     def _add_py_path_manully(self):
         input_dialog = NewInputDialog(
@@ -272,8 +275,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         py_path = os.path.join(py_path, '')
         if py_path in self._py_paths_list:
             return self.statusbar.showMessage('要添加的Python目录已存在。')
-        self._py_paths_list.append(py_path)
-        self._py_envs_list.append(PyEnv(py_path))
+        py_env = PyEnv(py_path)
+        self._py_envs_list.append(py_env)
+        self._py_paths_list.append(py_env.env_path)
         self.list_widget_pyenvs_update()
         save_conf(self._py_paths_list, 'pths')
 
@@ -472,7 +476,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             else '\n'.join(('\n'.join(upgradeable[:10]), '......'))
         )
         upgrade_all_msg_box = QMessageBox(
-            QMessageBox.Question, '升级全部', f'确认升级？\n{names_text}'
+            QMessageBox.Question, '全部升级', f'确认升级？\n{names_text}'
         )
         upgrade_all_msg_box.addButton('确定', QMessageBox.AcceptRole)
         reject = upgrade_all_msg_box.addButton('取消', QMessageBox.RejectRole)
