@@ -120,6 +120,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
 
     def closeEvent(self, event):
         self._stop_running_thread()
+        save_conf(self._py_paths_list, 'pths')
         event.accept()
 
     def start_waiting(self, text):
@@ -143,7 +144,6 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
 
     def _binding(self):
         self.btn_autosearch.clicked.connect(self._auto_search_py_envs)
-        self.btn_clearexpired.clicked.connect(self._clear_expired)
         self.btn_delselected.clicked.connect(self._del_selected)
         self.btn_addmanully.clicked.connect(self._add_py_path_manully)
         self.cb_check_uncheck_all.clicked.connect(self._select_all_none)
@@ -250,15 +250,6 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_search_envs.start()
         self.running_threads.append(thread_search_envs)
 
-    def _clear_expired(self):
-        cleaned_py_paths = clean_py_paths(self._py_paths_list)
-        self._py_paths_list.clear()
-        self._py_paths_list.extend(cleaned_py_paths)
-        self._py_envs_list.clear()
-        self._py_envs_list.extend(get_pyenv_list(self._py_paths_list))
-        self.list_widget_pyenvs_update()
-        save_conf(self._py_paths_list, 'pths')
-
     def _del_selected(self):
         cur_index = self.lw_py_envs.currentRow()
         if cur_index == -1:
@@ -322,7 +313,6 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             self.btn_autosearch,
             self.btn_addmanully,
             self.btn_delselected,
-            self.btn_clearexpired,
             self.lw_py_envs,
             self.tw_installed_info,
             self.cb_check_uncheck_all,
@@ -339,7 +329,6 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             self.btn_autosearch,
             self.btn_addmanully,
             self.btn_delselected,
-            self.btn_clearexpired,
             self.lw_py_envs,
             self.tw_installed_info,
             self.cb_check_uncheck_all,

@@ -70,16 +70,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="btn_clearexpired">
-            <property name="toolTip">
-             <string>清除AwesomePyKit的配置文件中储存的失效的Python目录路径。注意，失效路径并不会显示在上面的Python环境列表中。</string>
-            </property>
-            <property name="text">
-             <string>清除失效项</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
        </layout>
