@@ -83,7 +83,8 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.setupUi(self)
         self._setupOthers()
         self.running_threads = []
-        self.cur_pkgs_info = []
+        self.cur_pkgs_info = {}
+        self._reverseds = [True, False, False, False]
         self._py_envs_list = get_pyenv_list(load_conf('pths'))
         self._py_paths_list = [
             py_env.env_path for py_env in self._py_envs_list
@@ -155,6 +156,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.btn_uninstall_package.clicked.connect(self.uninstall_pkgs)
         self.btn_upgrade_package.clicked.connect(self.upgrade_pkgs)
         self.btn_upgrade_all.clicked.connect(self.upgrade_all)
+        self.tw_installed_info.horizontalHeader().sectionClicked[int].connect(
+            self.sort_by_col
+        )
 
     def list_widget_pyenvs_update(self):
         cur_py_env_index = self.lw_py_envs.currentRow()
@@ -167,16 +171,41 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def table_widget_pkgs_info_update(self):
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(len(self.cur_pkgs_info))
-        for rowind, info in enumerate(self.cur_pkgs_info):
-            for colind, item_text in enumerate(info):
+        for rowind, pkg_name in enumerate(self.cur_pkgs_info):
+            self.tw_installed_info.setItem(
+                rowind, 0, QTableWidgetItem(pkg_name)
+            )
+            for colind, item_text in enumerate(
+                self.cur_pkgs_info.get(pkg_name, ['', '', ''])
+            ):
                 item = QTableWidgetItem(item_text)
-                if colind == 3:
-                    if item_text == '升级成功' or item_text == '卸载成功':
+                if colind == 2:
+                    if item_text in ('升级成功', '卸载成功'):
                         item.setForeground(QColor(0, 170, 0))
-                    elif item_text == '升级失败' or item_text == '卸载失败':
+                    elif item_text in ('升级失败', '卸载失败'):
                         item.setForeground(QColor(255, 0, 0))
                     item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-                self.tw_installed_info.setItem(rowind, colind, item)
+                self.tw_installed_info.setItem(rowind, colind + 1, item)
+
+    def sort_by_col(self, colind):
+        if colind == 0:
+            self.cur_pkgs_info = dict(
+                sorted(
+                    self.cur_pkgs_info.items(),
+                    key=lambda x: x[0].lower(),
+                    reverse=self._reverseds[colind],
+                )
+            )
+        else:
+            self.cur_pkgs_info = dict(
+                sorted(
+                    self.cur_pkgs_info.items(),
+                    key=lambda x: x[1][colind - 1],
+                    reverse=self._reverseds[colind],
+                )
+            )
+        self.table_widget_pkgs_info_update()
+        self._reverseds[colind] = not self._reverseds[colind]
 
     def clear_table_widget(self):
         self.tw_installed_info.clearContents()
@@ -191,9 +220,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             pkgs_info = self._py_envs_list[index_selected].pkgs_info()
             self.cur_pkgs_info.clear()
             for pkg_info in pkgs_info:
-                pkg_info = list(pkg_info)
-                pkg_info.extend(('', ''))
-                self.cur_pkgs_info.append(pkg_info)
+                self.cur_pkgs_info[pkg_info[0]] = [pkg_info[1], '', '']
 
         thread_get_pkgs_info = NewTask(do_get_pkgs_info)
         if not no_connect:
@@ -294,9 +321,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
                 self.running_threads[0].wait()
             outdateds = self._py_envs_list[cur_row].outdated()
             for outdated_info in outdateds:
-                for row in self.cur_pkgs_info:
-                    if outdated_info[0] == row[0]:
-                        row[2] = outdated_info[2]
+                self.cur_pkgs_info.setdefault(outdated_info[0], ['', '', ''])[
+                    1
+                ] = outdated_info[2]
 
         thread_get_outdated = NewTask(do_get_outdated)
         thread_get_outdated.started.connect(self.lock_widgets)
@@ -370,8 +397,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.running_threads.append(thread_install_pkgs)
 
     def uninstall_pkgs(self):
+        cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
         pkg_indexs = self.indexs_selected_row()
-        pkg_names = [self.cur_pkgs_info[index][0] for index in pkg_indexs]
+        pkg_names = [cur_pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
             return
         cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
@@ -391,14 +419,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             return
 
         def do_uninstall():
-            results = []
-            for _, code in loop_uninstall(cur_py_env, pkg_names):
-                results.append(code)
-            for ind, index in enumerate(pkg_indexs):
-                if results[ind]:
-                    self.cur_pkgs_info[index][3] = '卸载成功'
+            for pkg_name, code in loop_uninstall(cur_py_env, pkg_names):
+                item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
+                if code:
+                    item[2] = '卸载成功'
                 else:
-                    self.cur_pkgs_info[index][3] = '卸载失败'
+                    item[2] = '卸载失败'
 
         thread_uninstall_pkgs = NewTask(do_uninstall)
         thread_uninstall_pkgs.started.connect(self.lock_widgets)
@@ -415,8 +441,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.running_threads.append(thread_uninstall_pkgs)
 
     def upgrade_pkgs(self):
+        cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
         pkg_indexs = self.indexs_selected_row()
-        pkg_names = [self.cur_pkgs_info[index][0] for index in pkg_indexs]
+        pkg_names = [cur_pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
             return
         cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
@@ -436,14 +463,14 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             return
 
         def do_upgrade():
-            results = []
-            for _, code in loop_install(cur_py_env, pkg_names, upgrade=1):
-                results.append(code)
-            for ind, index in enumerate(pkg_indexs):
-                if results[ind]:
-                    self.cur_pkgs_info[index][3] = '升级成功'
+            for pkg_name, code in loop_install(
+                cur_py_env, pkg_names, upgrade=1
+            ):
+                item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
+                if code:
+                    item[2] = '升级成功'
                 else:
-                    self.cur_pkgs_info[index][3] = '升级失败'
+                    item[2] = '升级失败'
 
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.started.connect(self.lock_widgets)
@@ -460,7 +487,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.running_threads.append(thread_upgrade_pkgs)
 
     def upgrade_all(self):
-        upgradeable = [item[0] for item in self.cur_pkgs_info if item[2]]
+        upgradeable = [
+            item[0] for item in self.cur_pkgs_info.items() if item[1][1]
+        ]
         if not upgradeable:
             msg_box = QMessageBox(
                 QMessageBox.Information, '提示', '请先检查更新确认是否有可更新的包。'
@@ -485,13 +514,14 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             return
 
         def do_upgrade():
-            for name, code in loop_install(cur_py_env, upgradeable, upgrade=1):
-                for item in self.cur_pkgs_info:
-                    if item[0] == name:
-                        if code:
-                            item[3] = '升级成功'
-                        else:
-                            item[3] = '升级失败'
+            for pkg_name, code in loop_install(
+                cur_py_env, upgradeable, upgrade=1
+            ):
+                item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
+                if code:
+                    item[2] = '升级成功'
+                else:
+                    item[2] = '升级失败'
 
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.started.connect(self.lock_widgets)
