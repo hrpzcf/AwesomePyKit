@@ -52,9 +52,8 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
         except Exception:
             info = '"关于"信息文件(help/About.html)已丢失。'
             icon = QMessageBox.Critical
-        about_panel = QMessageBox(icon, '关于', info)
-        about_panel.addButton('确定', QMessageBox.AcceptRole)
-        about_panel.exec()
+        about_panel = NewMessageBox('关于', info, icon)
+        about_panel.get_role()
 
     @staticmethod
     def _show_usinghelp():
@@ -66,6 +65,7 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
             information_panel_window.help_panel.setText(
                 '"使用帮助"文件(help/UsingHelp.html)已丢失。'
             )
+        information_panel_window.setGeometry(430, 100, 0, 0)
         information_panel_window.show()
 
     @staticmethod
@@ -82,9 +82,10 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         super(PackageManagerWindow, self).__init__()
         self.setupUi(self)
         self._setupOthers()
+        self._binding()
         self.running_threads = []
         self.cur_pkgs_info = {}
-        self._reverseds = [True, False, False, False]
+        self._reverseds = [True, True, True, True]
         self._py_envs_list = get_pyenv_list(load_conf('pths'))
         self._py_paths_list = [
             py_env.env_path for py_env in self._py_envs_list
@@ -105,24 +106,23 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             2, QHeaderView.ResizeToContents
         )
         self.loading_mov = QMovie(os.path.join(sources_path, 'loading.gif'))
-        self.loading_mov.setScaledSize(QSize(20, 20))
+        self.loading_mov.setScaledSize(QSize(18, 18))
         self.lb_loading_gif = QLabel()
         self.lb_loading_tips = QLabel()
         hlayout = QHBoxLayout()
         hlayout.addWidget(self.lb_loading_gif)
         hlayout.addWidget(self.lb_loading_tips)
-        hlayout.setStretch(0, 1)
         hlayout.setStretch(1, 9)
         self.glo_table_btns.addLayout(hlayout, 0, 0, 1, 2)
 
     def show(self):
-        super(PackageManagerWindow, self).show()
+        super().show()
         self.list_widget_pyenvs_update()
         self.lw_py_envs.setCurrentRow(0)
-        self._binding()
 
     def closeEvent(self, event):
         self._stop_running_thread()
+        self.clear_table_widget()
         save_conf(self._py_paths_list, 'pths')
         event.accept()
 
@@ -538,22 +538,6 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.running_threads.append(thread_upgrade_pkgs)
 
 
-class NewInputDialog(QInputDialog):
-    def __init__(self, parent, sw=560, sh=0, title='', label=''):
-        super(NewInputDialog, self).__init__(parent)
-        self.resize(sw, sh)
-        self.setFont(QFont('Microsoft YaHei UI'))
-        self.setWindowTitle(title)
-        self.setLabelText(label)
-        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
-        self.setOkButtonText('确定')
-        self.setCancelButtonText('取消')
-        self._confirm = self.exec()
-
-    def getText(self):
-        return self.textValue(), self._confirm
-
-
 class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
     def __init__(self):
         super(MirrorSourceManagerWindow, self).__init__()
@@ -691,6 +675,39 @@ class InformationPanelWindow(Ui_InformationPanel, QWidget):
 
     def closeEvent(self, event):
         self.resize(1, 1)
+
+
+class NewInputDialog(QInputDialog):
+    def __init__(self, parent, sw=560, sh=0, title='', label=''):
+        super(NewInputDialog, self).__init__(parent)
+        self.resize(sw, sh)
+        self.setFont(QFont('Microsoft YaHei UI'))
+        self.setWindowTitle(title)
+        self.setLabelText(label)
+        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        self.setOkButtonText('确定')
+        self.setCancelButtonText('取消')
+        self._confirm = self.exec()
+
+    def getText(self):
+        return self.textValue(), self._confirm
+
+
+class NewMessageBox(QMessageBox):
+    def __init__(
+        self, title, message, icon=QMessageBox.Information, buttons=('accept',)
+    ):
+        super().__init__(icon, title, message)
+        for btn in buttons:
+            if btn == 'accept':
+                self.addButton('确定', QMessageBox.AcceptRole)
+            elif btn == 'reject':
+                self.addButton('取消', QMessageBox.RejectRole)
+            elif btn == 'destructive':
+                self.addButton('拒绝', QMessageBox.DestructiveRole)
+
+    def get_role(self):
+        return self.exec()
 
 
 if __name__ == '__main__':
