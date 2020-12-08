@@ -132,7 +132,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.lb_loading_tip.clear()
 
     def showMessage(self, text):
-        self.lb_loading_gif.setText(text)
+        self.lb_loading_tip.setText(text)
 
     def clean_finished_thread(self):
         for index, thread in enumerate(self.running_threads):
