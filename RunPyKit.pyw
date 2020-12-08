@@ -106,14 +106,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             2, QHeaderView.ResizeToContents
         )
         self.loading_mov = QMovie(os.path.join(sources_path, 'loading.gif'))
-        self.loading_mov.setScaledSize(QSize(18, 18))
-        self.lb_loading_gif = QLabel()
-        self.lb_loading_tips = QLabel()
-        hlayout = QHBoxLayout()
-        hlayout.addWidget(self.lb_loading_gif)
-        hlayout.addWidget(self.lb_loading_tips)
-        hlayout.setStretch(1, 9)
-        self.glo_table_btns.addLayout(hlayout, 0, 0, 1, 2)
+        self.loading_mov.setScaledSize(QSize(15, 15))
 
     def show(self):
         super().show()
@@ -126,15 +119,20 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         save_conf(self._py_paths_list, 'pths')
         event.accept()
 
-    def start_waiting(self, text):
-        self.lb_loading_tips.setText(text)
+    def start_loading(self, text):
+        self.lb_loading_tip.clear()
+        self.lb_loading_tip.setText(text)
+        self.lb_loading_gif.clear()
         self.lb_loading_gif.setMovie(self.loading_mov)
         self.loading_mov.start()
 
-    def stop_waiting(self):
+    def stop_loading(self):
         self.loading_mov.stop()
         self.lb_loading_gif.clear()
-        self.lb_loading_tips.clear()
+        self.lb_loading_tip.clear()
+
+    def showMessage(self, text):
+        self.lb_loading_gif.setText(text)
 
     def clean_finished_thread(self):
         for index, thread in enumerate(self.running_threads):
@@ -226,12 +224,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         if not no_connect:
             thread_get_pkgs_info.started.connect(self.lock_widgets)
             thread_get_pkgs_info.started.connect(
-                lambda: self.start_waiting('正在加载包信息...')
+                lambda: self.start_loading('正在加载包信息...')
             )
             thread_get_pkgs_info.finished.connect(
                 self.table_widget_pkgs_info_update
             )
-            thread_get_pkgs_info.finished.connect(self.stop_waiting)
+            thread_get_pkgs_info.finished.connect(self.stop_loading)
             thread_get_pkgs_info.finished.connect(self.release_widgets)
             thread_get_pkgs_info.finished.connect(self.clean_finished_thread)
         thread_get_pkgs_info.start()
@@ -267,11 +265,11 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_search_envs = NewTask(search_envs)
         thread_search_envs.started.connect(self.lock_widgets)
         thread_search_envs.started.connect(
-            lambda: self.start_waiting('正在搜索Python目录...')
+            lambda: self.start_loading('正在搜索Python目录...')
         )
         thread_search_envs.finished.connect(self.clear_table_widget)
         thread_search_envs.finished.connect(self.list_widget_pyenvs_update)
-        thread_search_envs.finished.connect(self.stop_waiting)
+        thread_search_envs.finished.connect(self.stop_loading)
         thread_search_envs.finished.connect(self.release_widgets)
         thread_search_envs.finished.connect(self.clean_finished_thread)
         thread_search_envs.finished.connect(
@@ -298,10 +296,10 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         if not (ok and py_path):
             return
         if not check_py_path(py_path):
-            return self.statusbar.showMessage('无效的Python目录路径！')
+            return self.showMessage('无效的Python目录路径！')
         py_path = os.path.join(py_path, '')
         if py_path in self._py_paths_list:
-            return self.statusbar.showMessage('要添加的Python目录已存在。')
+            return self.showMessage('要添加的Python目录已存在。')
         py_env = PyEnv(py_path)
         self._py_envs_list.append(py_env)
         self._py_paths_list.append(py_env.env_path)
@@ -328,12 +326,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_get_outdated = NewTask(do_get_outdated)
         thread_get_outdated.started.connect(self.lock_widgets)
         thread_get_outdated.started.connect(
-            lambda: self.start_waiting('正在检查更新，请耐心等待...')
+            lambda: self.start_loading('正在检查更新，请耐心等待...')
         )
         thread_get_outdated.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_get_outdated.finished.connect(self.stop_waiting)
+        thread_get_outdated.finished.connect(self.stop_loading)
         thread_get_outdated.finished.connect(self.release_widgets)
         thread_get_outdated.finished.connect(self.clean_finished_thread)
         thread_get_outdated.start()
@@ -374,7 +372,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def install_pkgs(self):
         cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
         pkgs_to_install = NewInputDialog(
-            self, title='安装', label=f'注：多个名称请用空格隔开\n安装目标【{cur_py_env}】',
+            self, title='安装', label=f'注：多个名称请用空格隔开\n安装目标：{cur_py_env}',
         )
         names, ok = pkgs_to_install.getText()
         names = [name for name in names.split() if name]
@@ -388,10 +386,10 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_install_pkgs = NewTask(do_install)
         thread_install_pkgs.started.connect(self.lock_widgets)
         thread_install_pkgs.started.connect(
-            lambda: self.start_waiting('正在安装，请稍候...')
+            lambda: self.start_loading('正在安装，请稍候...')
         )
         thread_install_pkgs.finished.connect(lambda: self._get_pkgs_info(0))
-        thread_install_pkgs.finished.connect(self.stop_waiting)
+        thread_install_pkgs.finished.connect(self.stop_loading)
         thread_install_pkgs.finished.connect(self.clean_finished_thread)
         thread_install_pkgs.start()
         self.running_threads.append(thread_install_pkgs)
@@ -429,12 +427,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_uninstall_pkgs = NewTask(do_uninstall)
         thread_uninstall_pkgs.started.connect(self.lock_widgets)
         thread_uninstall_pkgs.started.connect(
-            lambda: self.start_waiting('正在卸载，请稍候...')
+            lambda: self.start_loading('正在卸载，请稍候...')
         )
         thread_uninstall_pkgs.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_uninstall_pkgs.finished.connect(self.stop_waiting)
+        thread_uninstall_pkgs.finished.connect(self.stop_loading)
         thread_uninstall_pkgs.finished.connect(self.release_widgets)
         thread_uninstall_pkgs.finished.connect(self.clean_finished_thread)
         thread_uninstall_pkgs.start()
@@ -475,12 +473,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.started.connect(self.lock_widgets)
         thread_upgrade_pkgs.started.connect(
-            lambda: self.start_waiting('正在升级，请稍候...')
+            lambda: self.start_loading('正在升级，请稍候...')
         )
         thread_upgrade_pkgs.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_upgrade_pkgs.finished.connect(self.stop_waiting)
+        thread_upgrade_pkgs.finished.connect(self.stop_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
         thread_upgrade_pkgs.finished.connect(self.clean_finished_thread)
         thread_upgrade_pkgs.start()
@@ -526,12 +524,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.started.connect(self.lock_widgets)
         thread_upgrade_pkgs.started.connect(
-            lambda: self.start_waiting('正在升级，请稍候...')
+            lambda: self.start_loading('正在升级，请稍候...')
         )
         thread_upgrade_pkgs.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_upgrade_pkgs.finished.connect(self.stop_waiting)
+        thread_upgrade_pkgs.finished.connect(self.stop_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
         thread_upgrade_pkgs.finished.connect(self.clean_finished_thread)
         thread_upgrade_pkgs.start()
@@ -592,16 +590,16 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
 
     def _check_name_url(self, name, url):
         if not name:
-            self.statusbar.showMessage('名称不能为空！')
+            self.showMessage('名称不能为空！')
             return False
         if not url:
-            self.statusbar.showMessage('地址不能为空！')
+            self.showMessage('地址不能为空！')
             return False
         if not check_index_url(url):
-            self.statusbar.showMessage('无效的镜像源地址！')
+            self.showMessage('无效的镜像源地址！')
             return False
         if name in self._urls_dict:
-            self.statusbar.showMessage(f'名称<{name}>已存在！')
+            self.showMessage(f'名称<{name}>已存在！')
             return False
         return True
 
@@ -616,7 +614,7 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
     def _del_index_url(self):
         item = self.li_indexurls.currentItem()
         if (self.li_indexurls.currentRow() == -1) or (not item):
-            self.statusbar.showMessage('没有选中列表内的任何条目。')
+            self.showMessage('没有选中列表内的任何条目。')
             return
         del self._urls_dict[item.text()]
         self._list_widget_urls_update()
@@ -629,9 +627,7 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
             try:
                 return PyEnv(cur_py_path())
             except Exception:
-                self.statusbar.showMessage(
-                    '没有找到pip可执行文件，请在"包管理器"界面添加任意Python目录到列表。'
-                )
+                self.showMessage('没有找到pip可执行文件，请在"包管理器"界面添加任意Python目录到列表。')
         else:
             for py_path in py_paths:
                 try:
@@ -639,24 +635,22 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
                 except Exception:
                     continue
             else:
-                self.statusbar.showMessage(
-                    '没有找到pip可执行程序，请在"包管理器"界面添加Python目录到列表。'
-                )
+                self.showMessage('没有找到pip可执行程序，请在"包管理器"界面添加Python目录到列表。')
 
     def _set_global_index_url(self):
         url = self.le_indexurl.text()
         if not url:
-            self.statusbar.showMessage('要设置为全局镜像源的地址不能为空！')
+            self.showMessage('要设置为全局镜像源的地址不能为空！')
             return
         if not check_index_url(url):
-            self.statusbar.showMessage('镜像源地址不符合pip镜像源地址格式。')
+            self.showMessage('镜像源地址不符合pip镜像源地址格式。')
             return
         pyenv = self._get_cur_pyenv()
         if not pyenv:
-            self.statusbar.showMessage('镜像源启用失败，未找到pip可执行文件。')
+            self.showMessage('镜像源启用失败，未找到pip可执行文件。')
             return
         pyenv.set_global_index(url)
-        self.statusbar.showMessage(f'已将"{url}"设置为全局镜像源地址。')
+        self.showMessage(f'已将"{url}"设置为全局镜像源地址。')
 
     def _display_effective_url(self):
         pyenv = self._get_cur_pyenv()
