@@ -476,6 +476,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             ):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
                 if code:
+                    item[0] = item[1]
                     item[2] = '升级成功'
                 else:
                     item[2] = '升级失败'
