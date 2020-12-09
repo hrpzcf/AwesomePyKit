@@ -155,37 +155,47 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.btn_upgrade_package.clicked.connect(self.upgrade_pkgs)
         self.btn_upgrade_all.clicked.connect(self.upgrade_all)
         self.tw_installed_info.horizontalHeader().sectionClicked[int].connect(
-            self.sort_by_col
+            self.sort_by_column
         )
 
     def list_widget_pyenvs_update(self):
+        row_size = QSize(0, 30)
         cur_py_env_index = self.lw_py_envs.currentRow()
         self.lw_py_envs.clear()
         for py_env in self._py_envs_list:
-            self.lw_py_envs.addItem(str(py_env))
+            item = QListWidgetItem(str(py_env))
+            item.setSizeHint(row_size)
+            self.lw_py_envs.addItem(item)
         if cur_py_env_index != -1:
             self.lw_py_envs.setCurrentRow(cur_py_env_index)
 
     def table_widget_pkgs_info_update(self):
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(len(self.cur_pkgs_info))
+        color_green = QColor(0, 170, 0)
+        color_red = QColor(255, 0, 0)
+        color_gray = QColor(243, 243, 243)
         for rowind, pkg_name in enumerate(self.cur_pkgs_info):
-            self.tw_installed_info.setItem(
-                rowind, 0, QTableWidgetItem(pkg_name)
-            )
+            even_num_row = rowind % 2
+            item = QTableWidgetItem(pkg_name)
+            self.tw_installed_info.setItem(rowind, 0, item)
+            if not even_num_row:
+                item.setBackground(color_gray)
             for colind, item_text in enumerate(
                 self.cur_pkgs_info.get(pkg_name, ['', '', ''])
             ):
                 item = QTableWidgetItem(item_text)
                 if colind == 2:
                     if item_text in ('升级成功', '卸载成功'):
-                        item.setForeground(QColor(0, 170, 0))
+                        item.setForeground(color_green)
                     elif item_text in ('升级失败', '卸载失败'):
-                        item.setForeground(QColor(255, 0, 0))
+                        item.setForeground(color_red)
                     item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                if not even_num_row:
+                    item.setBackground(color_gray)
                 self.tw_installed_info.setItem(rowind, colind + 1, item)
 
-    def sort_by_col(self, colind):
+    def sort_by_column(self, colind):
         if colind == 0:
             self.cur_pkgs_info = dict(
                 sorted(
