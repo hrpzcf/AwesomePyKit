@@ -199,9 +199,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             ):
                 item = QTableWidgetItem(item_text)
                 if colind == 2:
-                    if item_text in ('升级成功', '卸载成功'):
+                    if item_text in ('升级成功', '安装成功', '卸载成功'):
                         item.setForeground(color_green)
-                    elif item_text in ('升级失败', '卸载失败'):
+                    elif item_text in ('升级失败', '安装失败', '卸载失败'):
                         item.setForeground(color_red)
                     item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
                 if not even_num_row:
@@ -406,16 +406,25 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             return
 
         def do_install():
-            for _ in loop_install(cur_py_env, names):
-                pass
+            for name, code in loop_install(cur_py_env, names):
+                item = self.cur_pkgs_info.setdefault(name, ['', '', ''])
+                if not item[0]:
+                    item[0] = '————'
+                if code:
+                    item[2] = '安装成功'
+                else:
+                    item[2] = '安装失败'
 
         thread_install_pkgs = NewTask(do_install)
         thread_install_pkgs.started.connect(self.lock_widgets)
         thread_install_pkgs.started.connect(
             lambda: self.start_loading('正在安装，请稍候...')
         )
-        thread_install_pkgs.finished.connect(lambda: self._get_pkgs_info(0))
+        thread_install_pkgs.finished.connect(
+            self.table_widget_pkgs_info_update
+        )
         thread_install_pkgs.finished.connect(self.stop_loading)
+        thread_install_pkgs.finished.connect(self.release_widgets)
         thread_install_pkgs.finished.connect(self.clean_finished_thread)
         thread_install_pkgs.start()
         self.running_threads.append(thread_install_pkgs)
@@ -445,6 +454,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         def do_uninstall():
             for pkg_name, code in loop_uninstall(cur_py_env, pkg_names):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
+                item[0] = '————'
                 if code:
                     item[2] = '卸载成功'
                 else:
