@@ -31,7 +31,7 @@ from interface import *
 from library import *
 from library.libm import PyEnv
 
-__VERSION__ = '0.1.3'
+__VERSION__ = '0.1.5'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
