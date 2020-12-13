@@ -209,9 +209,7 @@
             <item row="0" column="3">
              <widget class="QPushButton" name="btn_check_for_updates">
               <property name="toolTip">
-               <string>检查上方表格中的所有包是否有新版本。
-注意，Anaconda中Python环境可能无法检查更新，回到主界面，打开&quot;关于软件&quot;中的OpenSSL链接,下载安装OpenSSL即可。
-安装结束界面会有一个确认是否给OpenSSL捐款的勾，可以去掉。</string>
+               <string>检查上方表格中的所有包是否有新版本。</string>
               </property>
               <property name="text">
                <string>检查更新</string>

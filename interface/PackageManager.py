@@ -142,7 +142,7 @@ class Ui_PackageManager(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.lb_loading_tip = QtWidgets.QLabel(self.centralwidget)
-        self.lb_loading_tip.setAlignment(QtCore.Qt.AlignBottom|QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing)
+        self.lb_loading_tip.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.lb_loading_tip.setObjectName("lb_loading_tip")
         self.horizontalLayout_3.addWidget(self.lb_loading_tip)
         self.lb_loading_gif = QtWidgets.QLabel(self.centralwidget)
@@ -174,9 +174,7 @@ class Ui_PackageManager(object):
         item.setText(_translate("PackageManager", "最新版本"))
         item = self.tw_installed_info.horizontalHeaderItem(3)
         item.setText(_translate("PackageManager", "状态"))
-        self.btn_check_for_updates.setToolTip(_translate("PackageManager", "检查上方表格中的所有包是否有新版本。\n"
-"注意，Anaconda中Python环境可能无法检查更新，回到主界面，打开\"关于软件\"中的OpenSSL链接,下载安装OpenSSL即可。\n"
-"安装结束界面会有一个确认是否给OpenSSL捐款的勾，可以去掉。"))
+        self.btn_check_for_updates.setToolTip(_translate("PackageManager", "检查上方表格中的所有包是否有新版本。"))
         self.btn_check_for_updates.setText(_translate("PackageManager", "检查更新"))
         self.btn_install_package.setToolTip(_translate("PackageManager", "手动输入包名安装，输入的包将安装在左侧列表选中的Python环境中。"))
         self.btn_install_package.setText(_translate("PackageManager", "安装"))
