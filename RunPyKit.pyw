@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import sys
 
 from PyQt5.QtCore import (
@@ -30,6 +31,8 @@ from interface import *
 from library import *
 from library.libm import PyEnv
 
+__VERSION__ = '0.1.3'
+
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     def __init__(self):
@@ -47,7 +50,9 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     def _show_about():
         try:
             with open('help/About.html', encoding='utf-8') as help_html:
-                info = help_html.read()
+                info = re.sub(
+                    r'(?<=\>)0.0.0(?=\<)', __VERSION__, help_html.read()
+                )
                 icon = QMessageBox.Information
         except Exception:
             info = '"关于"信息文件(help/About.html)已丢失。'
@@ -132,12 +137,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.lb_loading_tip.clear()
 
     def showMessage(self, text):
-        self.lb_loading_tip.setText(text)
+        self.lb_loading_gif.setText(text)
 
     def clean_finished_thread(self):
         for index, thread in enumerate(self.running_threads):
             if thread.isFinished():
-                self.running_threads.pop(index)
+                del self.running_threads[index]
 
     def _stop_running_thread(self):
         for thread in self.running_threads:
@@ -157,9 +162,16 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.tw_installed_info.horizontalHeader().sectionClicked[int].connect(
             self.sort_by_column
         )
+        self.tw_installed_info.clicked.connect(self.tip_num_selected_items)
+        self.cb_check_uncheck_all.clicked.connect(self.tip_num_selected_items)
+
+    def tip_num_selected_items(self):
+        self.lb_num_selected_items.setText(
+            f'当前选中数量：{len(self.indexs_selected_row())}'
+        )
 
     def list_widget_pyenvs_update(self):
-        row_size = QSize(0, 30)
+        row_size = QSize(0, 28)
         cur_py_env_index = self.lw_py_envs.currentRow()
         self.lw_py_envs.clear()
         for py_env in self._py_envs_list:
@@ -172,6 +184,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def table_widget_pkgs_info_update(self):
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(len(self.cur_pkgs_info))
+        self.lb_num_selected_items.clear()
         color_green = QColor(0, 170, 0)
         color_red = QColor(255, 0, 0)
         color_gray = QColor(243, 243, 243)
@@ -216,6 +229,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self._reverseds[colind] = not self._reverseds[colind]
 
     def clear_table_widget(self):
+        self.lb_num_selected_items.clear()
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
 
@@ -360,6 +374,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             self.btn_uninstall_package,
             self.btn_upgrade_package,
             self.btn_upgrade_all,
+            self.lb_num_selected_items,
         ):
             widget.setEnabled(False)
 
@@ -376,6 +391,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             self.btn_uninstall_package,
             self.btn_upgrade_package,
             self.btn_upgrade_all,
+            self.lb_num_selected_items,
         ):
             widget.setEnabled(True)
 
