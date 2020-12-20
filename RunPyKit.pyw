@@ -86,7 +86,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def __init__(self):
         super(PackageManagerWindow, self).__init__()
         self.setupUi(self)
-        self._setupOthers()
+        self._setup_other_ui()
         self._binding()
         self.running_threads = []
         self.cur_pkgs_info = {}
@@ -96,7 +96,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             py_env.env_path for py_env in self._py_envs_list
         ]
 
-    def _setupOthers(self):
+    def _setup_other_ui(self):
         self.tw_installed_info.setColumnWidth(0, 220)
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
@@ -119,55 +119,59 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.lw_py_envs.setCurrentRow(0)
 
     def closeEvent(self, event):
-        self._stop_running_thread()
+        self.stop_running_thread()
         self.clear_table_widget()
         save_conf(self._py_paths_list, 'pths')
         event.accept()
 
-    def start_loading(self, text):
+    def show_loading(self, text):
         self.lb_loading_tip.clear()
         self.lb_loading_tip.setText(text)
         self.lb_loading_gif.clear()
         self.lb_loading_gif.setMovie(self.loading_mov)
         self.loading_mov.start()
 
-    def stop_loading(self):
+    def hide_loading(self):
         self.loading_mov.stop()
         self.lb_loading_gif.clear()
         self.lb_loading_tip.clear()
 
-    def showMessage(self, text):
+    def show_message(self, text):
         self.lb_loading_gif.setText(text)
 
-    def clean_finished_thread(self):
+    def remove_finished_thread(self):
         for index, thread in enumerate(self.running_threads):
             if thread.isFinished():
                 del self.running_threads[index]
 
-    def _stop_running_thread(self):
+    def stop_running_thread(self):
         for thread in self.running_threads:
             thread.exit()
 
     def _binding(self):
-        self.btn_autosearch.clicked.connect(self._auto_search_py_envs)
-        self.btn_delselected.clicked.connect(self._del_selected)
-        self.btn_addmanully.clicked.connect(self._add_py_path_manully)
-        self.cb_check_uncheck_all.clicked.connect(self._select_all_none)
-        self.lw_py_envs.itemPressed.connect(lambda: self._get_pkgs_info(0))
-        self.btn_check_for_updates.clicked.connect(self._check_for_updates)
+        self.btn_autosearch.clicked.connect(self.auto_search_py_envs)
+        self.btn_delselected.clicked.connect(self.del_selected_py_env)
+        self.btn_addmanully.clicked.connect(self.add_py_path_manully)
+        self.cb_check_uncheck_all.clicked.connect(
+            self.select_all_or_cancel_all
+        )
+        self.lw_py_envs.itemPressed.connect(lambda: self.get_pkgs_info(0))
+        self.btn_check_for_updates.clicked.connect(
+            self.check_cur_pkgs_for_updates
+        )
         self.btn_install_package.clicked.connect(self.install_pkgs)
         self.btn_uninstall_package.clicked.connect(self.uninstall_pkgs)
         self.btn_upgrade_package.clicked.connect(self.upgrade_pkgs)
-        self.btn_upgrade_all.clicked.connect(self.upgrade_all)
+        self.btn_upgrade_all.clicked.connect(self.upgrade_all_pkgs)
         self.tw_installed_info.horizontalHeader().sectionClicked[int].connect(
             self.sort_by_column
         )
-        self.tw_installed_info.clicked.connect(self.tip_num_selected_items)
-        self.cb_check_uncheck_all.clicked.connect(self.tip_num_selected_items)
+        self.tw_installed_info.clicked.connect(self.show_tip_num_selected)
+        self.cb_check_uncheck_all.clicked.connect(self.show_tip_num_selected)
 
-    def tip_num_selected_items(self):
+    def show_tip_num_selected(self):
         self.lb_num_selected_items.setText(
-            f'当前选中数量：{len(self.indexs_selected_row())}'
+            f'当前选中数量：{len(self.indexs_of_selected_rows())}'
         )
 
     def list_widget_pyenvs_update(self):
@@ -233,7 +237,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
 
-    def _get_pkgs_info(self, no_connect):
+    def get_pkgs_info(self, no_connect):
         index_selected = self.lw_py_envs.currentRow()
         if index_selected == -1:
             return
@@ -248,18 +252,18 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         if not no_connect:
             thread_get_pkgs_info.started.connect(self.lock_widgets)
             thread_get_pkgs_info.started.connect(
-                lambda: self.start_loading('正在加载包信息...')
+                lambda: self.show_loading('正在加载包信息...')
             )
             thread_get_pkgs_info.finished.connect(
                 self.table_widget_pkgs_info_update
             )
-            thread_get_pkgs_info.finished.connect(self.stop_loading)
+            thread_get_pkgs_info.finished.connect(self.hide_loading)
             thread_get_pkgs_info.finished.connect(self.release_widgets)
-            thread_get_pkgs_info.finished.connect(self.clean_finished_thread)
+            thread_get_pkgs_info.finished.connect(self.remove_finished_thread)
         thread_get_pkgs_info.start()
         self.running_threads.append(thread_get_pkgs_info)
 
-    def indexs_selected_row(self):
+    def indexs_of_selected_rows(self):
         row_indexs = []
         for item in self.tw_installed_info.selectedItems():
             row_index = item.row()
@@ -267,14 +271,14 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
                 row_indexs.append(row_index)
         return row_indexs
 
-    def _select_all_none(self):
+    def select_all_or_cancel_all(self):
         is_checked = self.cb_check_uncheck_all.isChecked()
         if is_checked:
             self.tw_installed_info.selectAll()
         else:
             self.tw_installed_info.clearSelection()
 
-    def _auto_search_py_envs(self):
+    def auto_search_py_envs(self):
         def search_envs():
             for py_path in all_py_paths():
                 if py_path in self._py_paths_list:
@@ -289,20 +293,20 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_search_envs = NewTask(search_envs)
         thread_search_envs.started.connect(self.lock_widgets)
         thread_search_envs.started.connect(
-            lambda: self.start_loading('正在搜索Python目录...')
+            lambda: self.show_loading('正在搜索Python目录...')
         )
         thread_search_envs.finished.connect(self.clear_table_widget)
         thread_search_envs.finished.connect(self.list_widget_pyenvs_update)
-        thread_search_envs.finished.connect(self.stop_loading)
+        thread_search_envs.finished.connect(self.hide_loading)
         thread_search_envs.finished.connect(self.release_widgets)
-        thread_search_envs.finished.connect(self.clean_finished_thread)
+        thread_search_envs.finished.connect(self.remove_finished_thread)
         thread_search_envs.finished.connect(
             lambda: save_conf(self._py_paths_list, 'pths')
         )
         thread_search_envs.start()
         self.running_threads.append(thread_search_envs)
 
-    def _del_selected(self):
+    def del_selected_py_env(self):
         cur_index = self.lw_py_envs.currentRow()
         if cur_index == -1:
             return
@@ -312,7 +316,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.clear_table_widget()
         save_conf(self._py_paths_list, 'pths')
 
-    def _add_py_path_manully(self):
+    def add_py_path_manully(self):
         input_dialog = NewInputDialog(
             self, 560, 0, '添加Python目录', '请输入Python目录路径：'
         )
@@ -320,23 +324,23 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         if not (ok and py_path):
             return
         if not check_py_path(py_path):
-            return self.showMessage('无效的Python目录路径！')
+            return self.show_message('无效的Python目录路径！')
         py_path = os.path.join(py_path, '')
         if py_path in self._py_paths_list:
-            return self.showMessage('要添加的Python目录已存在。')
+            return self.show_message('要添加的Python目录已存在。')
         py_env = PyEnv(py_path)
         self._py_envs_list.append(py_env)
         self._py_paths_list.append(py_env.env_path)
         self.list_widget_pyenvs_update()
         save_conf(self._py_paths_list, 'pths')
 
-    def _check_for_updates(self):
+    def check_cur_pkgs_for_updates(self):
         if self.tw_installed_info.rowCount() == 0:
             return
         cur_row = self.lw_py_envs.currentRow()
         if cur_row == -1:
             return
-        self._get_pkgs_info(no_connect=1)
+        self.get_pkgs_info(no_connect=1)
 
         def do_get_outdated():
             if self.running_threads:
@@ -350,14 +354,14 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_get_outdated = NewTask(do_get_outdated)
         thread_get_outdated.started.connect(self.lock_widgets)
         thread_get_outdated.started.connect(
-            lambda: self.start_loading('正在检查更新，请耐心等待...')
+            lambda: self.show_loading('正在检查更新，请耐心等待...')
         )
         thread_get_outdated.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_get_outdated.finished.connect(self.stop_loading)
+        thread_get_outdated.finished.connect(self.hide_loading)
         thread_get_outdated.finished.connect(self.release_widgets)
-        thread_get_outdated.finished.connect(self.clean_finished_thread)
+        thread_get_outdated.finished.connect(self.remove_finished_thread)
         thread_get_outdated.start()
         self.running_threads.append(thread_get_outdated)
 
@@ -418,20 +422,20 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_install_pkgs = NewTask(do_install)
         thread_install_pkgs.started.connect(self.lock_widgets)
         thread_install_pkgs.started.connect(
-            lambda: self.start_loading('正在安装，请稍候...')
+            lambda: self.show_loading('正在安装，请稍候...')
         )
         thread_install_pkgs.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_install_pkgs.finished.connect(self.stop_loading)
+        thread_install_pkgs.finished.connect(self.hide_loading)
         thread_install_pkgs.finished.connect(self.release_widgets)
-        thread_install_pkgs.finished.connect(self.clean_finished_thread)
+        thread_install_pkgs.finished.connect(self.remove_finished_thread)
         thread_install_pkgs.start()
         self.running_threads.append(thread_install_pkgs)
 
     def uninstall_pkgs(self):
         cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
-        pkg_indexs = self.indexs_selected_row()
+        pkg_indexs = self.indexs_of_selected_rows()
         pkg_names = [cur_pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
             return
@@ -463,20 +467,20 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_uninstall_pkgs = NewTask(do_uninstall)
         thread_uninstall_pkgs.started.connect(self.lock_widgets)
         thread_uninstall_pkgs.started.connect(
-            lambda: self.start_loading('正在卸载，请稍候...')
+            lambda: self.show_loading('正在卸载，请稍候...')
         )
         thread_uninstall_pkgs.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_uninstall_pkgs.finished.connect(self.stop_loading)
+        thread_uninstall_pkgs.finished.connect(self.hide_loading)
         thread_uninstall_pkgs.finished.connect(self.release_widgets)
-        thread_uninstall_pkgs.finished.connect(self.clean_finished_thread)
+        thread_uninstall_pkgs.finished.connect(self.remove_finished_thread)
         thread_uninstall_pkgs.start()
         self.running_threads.append(thread_uninstall_pkgs)
 
     def upgrade_pkgs(self):
         cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
-        pkg_indexs = self.indexs_selected_row()
+        pkg_indexs = self.indexs_of_selected_rows()
         pkg_names = [cur_pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
             return
@@ -510,18 +514,18 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.started.connect(self.lock_widgets)
         thread_upgrade_pkgs.started.connect(
-            lambda: self.start_loading('正在升级，请稍候...')
+            lambda: self.show_loading('正在升级，请稍候...')
         )
         thread_upgrade_pkgs.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_upgrade_pkgs.finished.connect(self.stop_loading)
+        thread_upgrade_pkgs.finished.connect(self.hide_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
-        thread_upgrade_pkgs.finished.connect(self.clean_finished_thread)
+        thread_upgrade_pkgs.finished.connect(self.remove_finished_thread)
         thread_upgrade_pkgs.start()
         self.running_threads.append(thread_upgrade_pkgs)
 
-    def upgrade_all(self):
+    def upgrade_all_pkgs(self):
         upgradeable = [
             item[0] for item in self.cur_pkgs_info.items() if item[1][1]
         ]
@@ -561,14 +565,14 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.started.connect(self.lock_widgets)
         thread_upgrade_pkgs.started.connect(
-            lambda: self.start_loading('正在升级，请稍候...')
+            lambda: self.show_loading('正在升级，请稍候...')
         )
         thread_upgrade_pkgs.finished.connect(
             self.table_widget_pkgs_info_update
         )
-        thread_upgrade_pkgs.finished.connect(self.stop_loading)
+        thread_upgrade_pkgs.finished.connect(self.hide_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
-        thread_upgrade_pkgs.finished.connect(self.clean_finished_thread)
+        thread_upgrade_pkgs.finished.connect(self.remove_finished_thread)
         thread_upgrade_pkgs.start()
         self.running_threads.append(thread_upgrade_pkgs)
 
