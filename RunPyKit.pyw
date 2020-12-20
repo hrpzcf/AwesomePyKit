@@ -627,16 +627,16 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
 
     def _check_name_url(self, name, url):
         if not name:
-            self.showMessage('名称不能为空！')
+            self.statusbar.showMessage('名称不能为空！')
             return False
         if not url:
-            self.showMessage('地址不能为空！')
+            self.statusbar.showMessage('地址不能为空！')
             return False
         if not check_index_url(url):
-            self.showMessage('无效的镜像源地址！')
+            self.statusbar.showMessage('无效的镜像源地址！')
             return False
         if name in self._urls_dict:
-            self.showMessage(f'名称<{name}>已存在！')
+            self.statusbar.showMessage(f'名称<{name}>已存在！')
             return False
         return True
 
@@ -651,7 +651,7 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
     def _del_index_url(self):
         item = self.li_indexurls.currentItem()
         if (self.li_indexurls.currentRow() == -1) or (not item):
-            self.showMessage('没有选中列表内的任何条目。')
+            self.statusbar.showMessage('没有选中列表内的任何条目。')
             return
         del self._urls_dict[item.text()]
         self._list_widget_urls_update()
@@ -664,7 +664,9 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
             try:
                 return PyEnv(cur_py_path())
             except Exception:
-                self.showMessage('没有找到pip可执行文件，请在"包管理器"界面添加任意Python目录到列表。')
+                self.statusbar.showMessage(
+                    '没有找到pip可执行文件，请在"包管理器"界面添加任意Python目录到列表。'
+                )
         else:
             for py_path in py_paths:
                 try:
@@ -672,22 +674,24 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
                 except Exception:
                     continue
             else:
-                self.showMessage('没有找到pip可执行程序，请在"包管理器"界面添加Python目录到列表。')
+                self.statusbar.showMessage(
+                    '没有找到pip可执行程序，请在"包管理器"界面添加Python目录到列表。'
+                )
 
     def _set_global_index_url(self):
         url = self.le_indexurl.text()
         if not url:
-            self.showMessage('要设置为全局镜像源的地址不能为空！')
+            self.statusbar.showMessage('要设置为全局镜像源的地址不能为空！')
             return
         if not check_index_url(url):
-            self.showMessage('镜像源地址不符合pip镜像源地址格式。')
+            self.statusbar.showMessage('镜像源地址不符合pip镜像源地址格式。')
             return
         pyenv = self._get_cur_pyenv()
         if not pyenv:
-            self.showMessage('镜像源启用失败，未找到pip可执行文件。')
+            self.statusbar.showMessage('镜像源启用失败，未找到pip可执行文件。')
             return
         pyenv.set_global_index(url)
-        self.showMessage(f'已将"{url}"设置为全局镜像源地址。')
+        self.statusbar.showMessage(f'已将"{url}"设置为全局镜像源地址。')
 
     def _display_effective_url(self):
         pyenv = self._get_cur_pyenv()
@@ -732,10 +736,10 @@ class NewMessageBox(QMessageBox):
         for btn in buttons:
             if btn == 'accept':
                 self.addButton('确定', QMessageBox.AcceptRole)
-            elif btn == 'reject':
-                self.addButton('取消', QMessageBox.RejectRole)
             elif btn == 'destructive':
                 self.addButton('拒绝', QMessageBox.DestructiveRole)
+            elif btn == 'reject':
+                self.addButton('取消', QMessageBox.RejectRole)
 
     def get_role(self):
         return self.exec()
