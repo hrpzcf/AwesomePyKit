@@ -31,20 +31,28 @@ from interface import *
 from library import *
 from library.libm import PyEnv
 
-__VERSION__ = '0.1.6'
+__VERSION__ = '0.1.7'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     def __init__(self):
-        super(MainInterfaceWindow, self).__init__()
+        super().__init__()
         self.setupUi(self)
-        self._binding()
+        self._connect_signal_and_slot()
 
-    def _binding(self):
+    def _connect_signal_and_slot(self):
         self.about.triggered.connect(self._show_about)
         self.description.triggered.connect(self._show_usinghelp)
         self.btn_manPacks.clicked.connect(self._show_pkgmgr)
         self.btn_setIndex.clicked.connect(self._show_indexmgr)
+
+    def closeEvent(self, event):
+        if package_manager_window._threads.is_empty():
+            event.accept()
+        else:
+            msg_box = NewMessageBox('警告', '任务尚未完全安全退出，请稍等...')
+            msg_box.exec()
+            event.ignore()
 
     @staticmethod
     def _show_about():
@@ -84,19 +92,20 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
 
 class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def __init__(self):
-        super(PackageManagerWindow, self).__init__()
+        super().__init__()
         self.setupUi(self)
-        self._setup_other_ui()
-        self._binding()
-        self.running_threads = []
-        self.cur_pkgs_info = {}
-        self._reverseds = [True, True, True, True]
+        self._setup_others()
+        self._connect_signal_and_slot()
         self._py_envs_list = get_pyenv_list(load_conf('pths'))
         self._py_paths_list = [
             py_env.env_path for py_env in self._py_envs_list
         ]
+        self.cur_pkgs_info = {}
+        self._reverseds = [True, True, True, True]
+        self.cur_selected_env = 0
+        self._threads = ThreadRepo(300)
 
-    def _setup_other_ui(self):
+    def _setup_others(self):
         self.tw_installed_info.setColumnWidth(0, 220)
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
@@ -116,13 +125,27 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def show(self):
         super().show()
         self.list_widget_pyenvs_update()
-        self.lw_py_envs.setCurrentRow(0)
+        self.lw_py_envs.setCurrentRow(self.cur_selected_env)
+
+    @staticmethod
+    def stop_threads_before_close():
+        msg_if_stop_threads = NewMessageBox(
+            '警告',
+            '当前有任务正在运行！\n是否安全停止所有正在运行的任务并关闭窗口？',
+            QMessageBox.Question,
+            (('accept', '安全停止并关闭'), ('reject', '取消')),
+        )
+        return not msg_if_stop_threads.exec()
 
     def closeEvent(self, event):
-        self.stop_running_thread()
-        self.clear_table_widget()
-        save_conf(self._py_paths_list, 'pths')
-        event.accept()
+        if not self._threads.is_empty():
+            if self.stop_threads_before_close():
+                self._threads.stop_all()
+                self.clear_table_widget()
+                save_conf(self._py_paths_list, 'pths')
+                event.accept()
+            else:
+                event.ignore()
 
     def show_loading(self, text):
         self.lb_loading_tip.clear()
@@ -139,16 +162,10 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def show_message(self, text):
         self.lb_loading_gif.setText(text)
 
-    def remove_finished_thread(self):
-        for index, thread in enumerate(self.running_threads):
-            if thread.isFinished():
-                del self.running_threads[index]
+    def stop_threads(self):
+        self._threads.stop_all()
 
-    def stop_running_thread(self):
-        for thread in self.running_threads:
-            thread.exit()
-
-    def _binding(self):
+    def _connect_signal_and_slot(self):
         self.btn_autosearch.clicked.connect(self.auto_search_py_envs)
         self.btn_delselected.clicked.connect(self.del_selected_py_env)
         self.btn_addmanully.clicked.connect(self.add_py_path_manully)
@@ -238,12 +255,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.tw_installed_info.setRowCount(0)
 
     def get_pkgs_info(self, no_connect):
-        index_selected = self.lw_py_envs.currentRow()
-        if index_selected == -1:
+        self.cur_selected_env = self.lw_py_envs.currentRow()
+        if self.cur_selected_env == -1:
             return
 
         def do_get_pkgs_info():
-            pkgs_info = self._py_envs_list[index_selected].pkgs_info()
+            pkgs_info = self._py_envs_list[self.cur_selected_env].pkgs_info()
             self.cur_pkgs_info.clear()
             for pkg_info in pkgs_info:
                 self.cur_pkgs_info[pkg_info[0]] = [pkg_info[1], '', '']
@@ -259,9 +276,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             )
             thread_get_pkgs_info.finished.connect(self.hide_loading)
             thread_get_pkgs_info.finished.connect(self.release_widgets)
-            thread_get_pkgs_info.finished.connect(self.remove_finished_thread)
         thread_get_pkgs_info.start()
-        self.running_threads.append(thread_get_pkgs_info)
+        self._threads.put(thread_get_pkgs_info)
+        return thread_get_pkgs_info
 
     def indexs_of_selected_rows(self):
         row_indexs = []
@@ -272,8 +289,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         return row_indexs
 
     def select_all_or_cancel_all(self):
-        is_checked = self.cb_check_uncheck_all.isChecked()
-        if is_checked:
+        if self.cb_check_uncheck_all.isChecked():
             self.tw_installed_info.selectAll()
         else:
             self.tw_installed_info.clearSelection()
@@ -299,12 +315,11 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_search_envs.finished.connect(self.list_widget_pyenvs_update)
         thread_search_envs.finished.connect(self.hide_loading)
         thread_search_envs.finished.connect(self.release_widgets)
-        thread_search_envs.finished.connect(self.remove_finished_thread)
         thread_search_envs.finished.connect(
             lambda: save_conf(self._py_paths_list, 'pths')
         )
         thread_search_envs.start()
-        self.running_threads.append(thread_search_envs)
+        self._threads.put(thread_search_envs)
 
     def del_selected_py_env(self):
         cur_index = self.lw_py_envs.currentRow()
@@ -340,11 +355,10 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         cur_row = self.lw_py_envs.currentRow()
         if cur_row == -1:
             return
-        self.get_pkgs_info(no_connect=1)
+        thread_get_info = self.get_pkgs_info(no_connect=1)
 
         def do_get_outdated():
-            if self.running_threads:
-                self.running_threads[0].wait()
+            thread_get_info.wait()
             outdateds = self._py_envs_list[cur_row].outdated()
             for outdated_info in outdateds:
                 self.cur_pkgs_info.setdefault(outdated_info[0], ['', '', ''])[
@@ -361,9 +375,8 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         )
         thread_get_outdated.finished.connect(self.hide_loading)
         thread_get_outdated.finished.connect(self.release_widgets)
-        thread_get_outdated.finished.connect(self.remove_finished_thread)
         thread_get_outdated.start()
-        self.running_threads.append(thread_get_outdated)
+        self._threads.put(thread_get_outdated)
 
     def lock_widgets(self):
         for widget in (
@@ -402,7 +415,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def install_pkgs(self):
         cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
         pkgs_to_install = NewInputDialog(
-            self, title='安装', label=f'注：多个名称请用空格隔开\n安装目标：{cur_py_env}',
+            self, title='安装', label=f'注意，多个名称请用空格隔开。\n安装目标：{cur_py_env}',
         )
         names, ok = pkgs_to_install.getText()
         names = [name for name in names.split() if name]
@@ -429,9 +442,8 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         )
         thread_install_pkgs.finished.connect(self.hide_loading)
         thread_install_pkgs.finished.connect(self.release_widgets)
-        thread_install_pkgs.finished.connect(self.remove_finished_thread)
         thread_install_pkgs.start()
-        self.running_threads.append(thread_install_pkgs)
+        self._threads.put(thread_install_pkgs)
 
     def uninstall_pkgs(self):
         cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
@@ -474,9 +486,8 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         )
         thread_uninstall_pkgs.finished.connect(self.hide_loading)
         thread_uninstall_pkgs.finished.connect(self.release_widgets)
-        thread_uninstall_pkgs.finished.connect(self.remove_finished_thread)
         thread_uninstall_pkgs.start()
-        self.running_threads.append(thread_uninstall_pkgs)
+        self._threads.put(thread_uninstall_pkgs)
 
     def upgrade_pkgs(self):
         cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
@@ -521,9 +532,8 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         )
         thread_upgrade_pkgs.finished.connect(self.hide_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
-        thread_upgrade_pkgs.finished.connect(self.remove_finished_thread)
         thread_upgrade_pkgs.start()
-        self.running_threads.append(thread_upgrade_pkgs)
+        self._threads.put(thread_upgrade_pkgs)
 
     def upgrade_all_pkgs(self):
         upgradeable = [
@@ -572,20 +582,19 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         )
         thread_upgrade_pkgs.finished.connect(self.hide_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
-        thread_upgrade_pkgs.finished.connect(self.remove_finished_thread)
         thread_upgrade_pkgs.start()
-        self.running_threads.append(thread_upgrade_pkgs)
+        self._threads.put(thread_upgrade_pkgs)
 
 
 class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
     def __init__(self):
-        super(MirrorSourceManagerWindow, self).__init__()
+        super().__init__()
         self.setupUi(self)
         self._urls_dict = load_conf('urls')
-        self._binding()
+        self._connect_signal_and_slot()
 
     def show(self):
-        super(MirrorSourceManagerWindow, self).show()
+        super().show()
         self._list_widget_urls_update()
 
     @staticmethod
@@ -609,7 +618,7 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
             self.li_indexurls.addItem(li_item)
             self.li_indexurls.setItemWidget(li_item, item_widget)
 
-    def _binding(self):
+    def _connect_signal_and_slot(self):
         self.btn_clearle.clicked.connect(self._clear_line_edit)
         self.btn_saveurl.clicked.connect(self._save_index_urls)
         self.btn_delurl.clicked.connect(self._del_index_url)
@@ -709,7 +718,7 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
 
 class InformationPanelWindow(Ui_InformationPanel, QWidget):
     def __init__(self):
-        super(InformationPanelWindow, self).__init__()
+        super().__init__()
         self.setupUi(self)
 
     def closeEvent(self, event):
@@ -718,7 +727,7 @@ class InformationPanelWindow(Ui_InformationPanel, QWidget):
 
 class NewInputDialog(QInputDialog):
     def __init__(self, parent, sw=560, sh=0, title='', label=''):
-        super(NewInputDialog, self).__init__(parent)
+        super().__init__(parent)
         self.resize(sw, sh)
         self.setFont(QFont('Microsoft YaHei UI'))
         self.setWindowTitle(title)
@@ -734,16 +743,21 @@ class NewInputDialog(QInputDialog):
 
 class NewMessageBox(QMessageBox):
     def __init__(
-        self, title, message, icon=QMessageBox.Information, buttons=('accept',)
+        self,
+        title,
+        message,
+        icon=QMessageBox.Information,
+        buttons=(('accept', '确定'),),
     ):
         super().__init__(icon, title, message)
         for btn in buttons:
-            if btn == 'accept':
-                self.addButton('确定', QMessageBox.AcceptRole)
-            elif btn == 'destructive':
-                self.addButton('拒绝', QMessageBox.DestructiveRole)
-            elif btn == 'reject':
-                self.addButton('取消', QMessageBox.RejectRole)
+            role, text = btn
+            if role == 'accept':
+                self.addButton(text, QMessageBox.AcceptRole)
+            elif role == 'destructive':
+                self.addButton(text, QMessageBox.DestructiveRole)
+            elif role == 'reject':
+                self.addButton(text, QMessageBox.RejectRole)
 
     def get_role(self):
         return self.exec()
