@@ -23,6 +23,7 @@ from .libm import (
     save_conf,
     set_index_url,
     sources_path,
+    ThreadRepo,
 )
 
 __all__ = [
@@ -48,4 +49,5 @@ __all__ = [
     'save_conf',
     'set_index_url',
     'sources_path',
+    'ThreadRepo',
 ]

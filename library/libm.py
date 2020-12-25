@@ -3,12 +3,10 @@
 import json
 import os
 import re
-# import sys
 
 from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
-from PyQt5.QtCore import QThread
-# from pyregedit import REG_DWORD, REG_SZ, RegEdit
+from PyQt5.QtCore import QThread, QTimer, QMutex
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 conf_path = os.path.join(root_path, 'config')
@@ -144,7 +142,7 @@ def clean_index_urls(urls):
     return [url for url in urls if check_index_url(url)]
 
 
-class InfoOutStream(object):
+class InfoOutStream:
     INFO_TYPE = ('常规', '成功', '失败')
 
     def __init__(self, interface, limit=50):
@@ -192,13 +190,47 @@ class InfoOutStream(object):
 
 class NewTask(QThread):
     def __init__(self, target, args=tuple()):
-        if not isinstance(args, tuple):
-            raise TypeError('线程参数应使用元组打包。')
-        if not callable(target):
-            raise TypeError('线程目标应为可调用对象。')
-        super(NewTask, self).__init__()
+        super().__init__()
         self._args = args
         self._target = target
 
     def run(self):
         self._target(*self._args)
+
+    def __repr__(self):
+        return f'{self._target} with args:{self._args}'
+
+    __str__ = __repr__
+
+
+class ThreadRepo:
+    def __init__(self, interval):
+        self._thread_repo = []
+        self._timer_clths = QTimer()
+        self._mutex = QMutex()
+        self._timer_clths.timeout.connect(self.clean)
+        self._timer_clths.start(interval)
+
+    def put(self, threadhandle):
+        self._mutex.lock()
+        self._thread_repo.append(threadhandle)
+        self._mutex.unlock()
+
+    def clean(self):
+        '''清除已结束的线程。'''
+        self._mutex.lock()
+        index = 0
+        while index < len(self._thread_repo):
+            if self._thread_repo[index].isRunning():
+                index += 1
+                continue
+            del self._thread_repo[index]
+        self._mutex.unlock()
+
+    def stop_all(self):
+        '''停止所有线程。'''
+        for thread in self._thread_repo:
+            thread.quit()
+
+    def is_empty(self):
+        return not len(self._thread_repo)
