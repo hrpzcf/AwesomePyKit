@@ -205,32 +205,50 @@ class NewTask(QThread):
 
 class ThreadRepo:
     def __init__(self, interval):
+        '''interval: 清理已结束线程的时间间隔，单位毫秒。'''
         self._thread_repo = []
         self._timer_clths = QTimer()
         self._mutex = QMutex()
         self._timer_clths.timeout.connect(self.clean)
         self._timer_clths.start(interval)
+        self._flag_cleaning = False
 
-    def put(self, threadhandle):
+    def put(self, threadhandle, level=0):
+        '''将(线程句柄、重要等级)元组加入线程仓库。'''
         self._mutex.lock()
-        self._thread_repo.append(threadhandle)
+        self._thread_repo.append((threadhandle, level))
         self._mutex.unlock()
 
     def clean(self):
         '''清除已结束的线程。'''
+        if self._flag_cleaning:
+            return
         self._mutex.lock()
         index = 0
+        self._flag_cleaning = True
         while index < len(self._thread_repo):
-            if self._thread_repo[index].isRunning():
+            if self._thread_repo[index][0].isRunning():
                 index += 1
                 continue
             del self._thread_repo[index]
+        self._flag_cleaning = False
         self._mutex.unlock()
 
     def stop_all(self):
-        '''停止所有线程。'''
-        for thread in self._thread_repo:
-            thread.quit()
+        '''
+        按线程重要等级退出线程。
+        0级：重要，安全退出；
+        1级：不重要，立即退出；
+        其他：未知等级，安全退出。
+        '''
+        for thread, level in self._thread_repo:
+            if level == 0:
+                thread.quit()
+            elif level == 1:
+                thread.terminate()
+            else:
+                thread.exit()
 
     def is_empty(self):
-        return not len(self._thread_repo)
+        '''返回线程仓库是否为空。'''
+        return not self._thread_repo
