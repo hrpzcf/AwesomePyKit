@@ -162,9 +162,6 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def show_message(self, text):
         self.lb_loading_gif.setText(text)
 
-    def stop_threads(self):
-        self._threads.stop_all()
-
     def _connect_signal_and_slot(self):
         self.btn_autosearch.clicked.connect(self.auto_search_py_envs)
         self.btn_delselected.clicked.connect(self.del_selected_py_env)
@@ -339,10 +336,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         if not (ok and py_path):
             return
         if not check_py_path(py_path):
-            return self.show_message('无效的Python目录路径！')
+            self.show_message('无效的Python目录路径！')
+            return
         py_path = os.path.join(py_path, '')
         if py_path in self._py_paths_list:
-            return self.show_message('要添加的Python目录已存在。')
+            self.show_message('要添加的Python目录已存在。')
+            return
         py_env = PyEnv(py_path)
         self._py_envs_list.append(py_env)
         self._py_paths_list.append(py_env.env_path)
