@@ -274,7 +274,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             thread_get_pkgs_info.finished.connect(self.hide_loading)
             thread_get_pkgs_info.finished.connect(self.release_widgets)
         thread_get_pkgs_info.start()
-        self._threads.put(thread_get_pkgs_info)
+        self._threads.put(thread_get_pkgs_info, 1)
         return thread_get_pkgs_info
 
     def indexs_of_selected_rows(self):
@@ -316,7 +316,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             lambda: save_conf(self._py_paths_list, 'pths')
         )
         thread_search_envs.start()
-        self._threads.put(thread_search_envs)
+        self._threads.put(thread_search_envs, 0)
 
     def del_selected_py_env(self):
         cur_index = self.lw_py_envs.currentRow()
@@ -375,7 +375,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_get_outdated.finished.connect(self.hide_loading)
         thread_get_outdated.finished.connect(self.release_widgets)
         thread_get_outdated.start()
-        self._threads.put(thread_get_outdated)
+        self._threads.put(thread_get_outdated, 1)
 
     def lock_widgets(self):
         for widget in (
@@ -442,7 +442,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_install_pkgs.finished.connect(self.hide_loading)
         thread_install_pkgs.finished.connect(self.release_widgets)
         thread_install_pkgs.start()
-        self._threads.put(thread_install_pkgs)
+        self._threads.put(thread_install_pkgs, 0)
 
     def uninstall_pkgs(self):
         cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
@@ -486,7 +486,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_uninstall_pkgs.finished.connect(self.hide_loading)
         thread_uninstall_pkgs.finished.connect(self.release_widgets)
         thread_uninstall_pkgs.start()
-        self._threads.put(thread_uninstall_pkgs)
+        self._threads.put(thread_uninstall_pkgs, 0)
 
     def upgrade_pkgs(self):
         cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
@@ -532,7 +532,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_upgrade_pkgs.finished.connect(self.hide_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
         thread_upgrade_pkgs.start()
-        self._threads.put(thread_upgrade_pkgs)
+        self._threads.put(thread_upgrade_pkgs, 0)
 
     def upgrade_all_pkgs(self):
         upgradeable = [
@@ -582,7 +582,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_upgrade_pkgs.finished.connect(self.hide_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
         thread_upgrade_pkgs.start()
-        self._threads.put(thread_upgrade_pkgs)
+        self._threads.put(thread_upgrade_pkgs, 0)
 
 
 class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
