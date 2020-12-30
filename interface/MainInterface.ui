@@ -67,10 +67,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
+       <widget class="QPushButton" name="pb_pyi_tool">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -81,7 +78,7 @@
          <string>使用PyInstaller将py程序打包成exe可执行文件。</string>
         </property>
         <property name="text">
-         <string>程序打包助手</string>
+         <string>程序打包</string>
         </property>
        </widget>
       </item>

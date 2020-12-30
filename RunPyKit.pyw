@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 
 import os
 import re
@@ -45,6 +45,19 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
         self.description.triggered.connect(self._show_usinghelp)
         self.btn_manPacks.clicked.connect(self._show_pkgmgr)
         self.btn_setIndex.clicked.connect(self._show_indexmgr)
+        self.pb_pyi_tool.clicked.connect(self._show_pyinstaller_tool)
+
+    @staticmethod
+    def _show_pkgmgr():
+        package_manager_window.show()
+
+    @staticmethod
+    def _show_indexmgr():
+        mirror_source_manager_window.show()
+
+    @staticmethod
+    def _show_pyinstaller_tool():
+        pyinstaller_tool_window.show()
 
     def closeEvent(self, event):
         if package_manager_window._threads.is_empty():
@@ -80,14 +93,6 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
             )
         information_panel_window.setGeometry(430, 100, 0, 0)
         information_panel_window.show()
-
-    @staticmethod
-    def _show_pkgmgr():
-        package_manager_window.show()
-
-    @staticmethod
-    def _show_indexmgr():
-        mirror_source_manager_window.show()
 
 
 class PackageManagerWindow(Ui_PackageManager, QMainWindow):
@@ -128,7 +133,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.lw_py_envs.setCurrentRow(self.cur_selected_env)
 
     @staticmethod
-    def stop_threads_before_close():
+    def _stop_threads_before_close():
         msg_if_stop_threads = NewMessageBox(
             '警告',
             '当前有任务正在运行！\n是否安全停止所有正在运行的任务并关闭窗口？',
@@ -139,9 +144,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
 
     def closeEvent(self, event):
         if not self._threads.is_empty():
-            if self.stop_threads_before_close():
+            if self._stop_threads_before_close():
                 self._threads.stop_all()
-                self.clear_table_widget()
+                self._clear_table_widget()
                 save_conf(self._py_paths_list, 'pths')
                 event.accept()
             else:
@@ -178,12 +183,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.btn_upgrade_package.clicked.connect(self.upgrade_pkgs)
         self.btn_upgrade_all.clicked.connect(self.upgrade_all_pkgs)
         self.tw_installed_info.horizontalHeader().sectionClicked[int].connect(
-            self.sort_by_column
+            self._sort_by_column
         )
-        self.tw_installed_info.clicked.connect(self.show_tip_num_selected)
-        self.cb_check_uncheck_all.clicked.connect(self.show_tip_num_selected)
+        self.tw_installed_info.clicked.connect(self._show_tip_num_selected)
+        self.cb_check_uncheck_all.clicked.connect(self._show_tip_num_selected)
 
-    def show_tip_num_selected(self):
+    def _show_tip_num_selected(self):
         self.lb_num_selected_items.setText(
             f'当前选中数量：{len(self.indexs_of_selected_rows())}'
         )
@@ -226,7 +231,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
                     item.setBackground(color_gray)
                 self.tw_installed_info.setItem(rowind, colind + 1, item)
 
-    def sort_by_column(self, colind):
+    def _sort_by_column(self, colind):
         if colind == 0:
             self.cur_pkgs_info = dict(
                 sorted(
@@ -246,7 +251,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.table_widget_pkgs_info_update()
         self._reverseds[colind] = not self._reverseds[colind]
 
-    def clear_table_widget(self):
+    def _clear_table_widget(self):
         self.lb_num_selected_items.clear()
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
@@ -254,7 +259,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def get_pkgs_info(self, no_connect):
         self.cur_selected_env = self.lw_py_envs.currentRow()
         if self.cur_selected_env == -1:
-            return
+            return None
 
         def do_get_pkgs_info():
             pkgs_info = self._py_envs_list[self.cur_selected_env].pkgs_info()
@@ -308,7 +313,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_search_envs.started.connect(
             lambda: self.show_loading('正在搜索Python目录...')
         )
-        thread_search_envs.finished.connect(self.clear_table_widget)
+        thread_search_envs.finished.connect(self._clear_table_widget)
         thread_search_envs.finished.connect(self.list_widget_pyenvs_update)
         thread_search_envs.finished.connect(self.hide_loading)
         thread_search_envs.finished.connect(self.release_widgets)
@@ -325,7 +330,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         del self._py_envs_list[cur_index]
         del self._py_paths_list[cur_index]
         self.lw_py_envs.removeItemWidget(self.lw_py_envs.takeItem(cur_index))
-        self.clear_table_widget()
+        self._clear_table_widget()
         save_conf(self._py_paths_list, 'pths')
 
     def add_py_path_manully(self):
@@ -724,6 +729,56 @@ class InformationPanelWindow(Ui_InformationPanel, QWidget):
         self.resize(1, 1)
 
 
+class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self._connect_signal_slot()
+        self._pyit_cur_pyenv = None
+
+    def _connect_signal_slot(self):
+        self.pb_select_py_env.clicked.connect(
+            self._show_pyit_choose_env_window
+        )
+
+    @staticmethod
+    def _show_pyit_choose_env_window():
+        pyitool_choose_pyenv_window.show()
+
+    def set_cur_pyenv_update_info(self):
+        self._pyit_cur_pyenv = pyitool_choose_pyenv_window.pyic_pyenvs[
+            pyitool_choose_pyenv_window.lw_py_envs.currentRow()
+        ]
+        self.le_py_info.setText(self._pyit_cur_pyenv.py_info())
+
+
+class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self._connect_signal_slot()
+
+    def _connect_signal_slot(self):
+        self.lw_py_envs.pressed.connect(self.close)
+
+    def pyenv_list_update(self):
+        row_size = QSize(0, 28)
+        self.lw_py_envs.clear()
+        for py_env in self.pyic_pyenvs:
+            item = QListWidgetItem(str(py_env))
+            item.setSizeHint(row_size)
+            self.lw_py_envs.addItem(item)
+
+    def close(self):
+        super().close()
+        pyinstaller_tool_window.set_cur_pyenv_update_info()
+
+    def show(self):
+        self.pyic_pyenvs = get_pyenv_list(load_conf('pths'))
+        super().show()
+        self.pyenv_list_update()
+
+
 class NewInputDialog(QInputDialog):
     def __init__(self, parent, sw=560, sh=0, title='', label=''):
         super().__init__(parent)
@@ -769,5 +824,7 @@ if __name__ == '__main__':
     main_interface_window = MainInterfaceWindow()
     package_manager_window = PackageManagerWindow()
     mirror_source_manager_window = MirrorSourceManagerWindow()
+    pyinstaller_tool_window = PyInstallerToolWindow()
+    pyitool_choose_pyenv_window = PyiToolChoosePyEnvWindow()
     main_interface_window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
