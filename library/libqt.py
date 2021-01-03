@@ -9,10 +9,11 @@ from PyQt5.QtWidgets import QLineEdit, QTextEdit
 
 
 class QLineEditMod(QLineEdit):
-    def __init__(self, accept='dir'):
+    def __init__(self, accept='dir', file_filter=set()):
         super().__init__()
         self.setContextMenuPolicy(Qt.NoContextMenu)
         self._accept = accept
+        self._file_filter = file_filter
 
     @property
     def local_path(self):
@@ -20,7 +21,19 @@ class QLineEditMod(QLineEdit):
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
-            event.accept()
+            if self._accept == 'file':
+                path = event.mimeData().urls()[0].toLocalFile()
+                if (
+                    not self._file_filter
+                    or os.path.splitext(path)[1] in self._file_filter
+                ):
+                    event.accept()
+                else:
+                    event.ignore()
+            elif self._accept == 'dir':
+                event.accept()
+            else:
+                event.ignore()
         else:
             event.ignore()
 
@@ -33,10 +46,11 @@ class QLineEditMod(QLineEdit):
 
 
 class QTextEditMod(QTextEdit):
-    def __init__(self, accept='file'):
+    def __init__(self, accept='file', file_filter=set()):
         super().__init__()
         self.setContextMenuPolicy(Qt.NoContextMenu)
         self._accept = accept
+        self._file_filter = file_filter
 
     @property
     def local_paths(self):
@@ -49,9 +63,19 @@ class QTextEditMod(QTextEdit):
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
-            event.accept()
-            plain_text = self.toPlainText()
-            if plain_text and not plain_text.endswith('\n'):
+            if self._accept == 'file':
+                if not self._file_filter or set(
+                    os.path.splitext(path.toLocalFile())[1]
+                    for path in event.mimeData().urls()
+                ).issubset(self._file_filter):
+                    event.accept()
+                else:
+                    event.ignore()
+            elif self._accept == 'dir':
+                event.accept()
+            else:
+                event.ignore()
+            if not self.toPlainText().endswith('\n'):
                 self.append('')
         else:
             event.ignore()
