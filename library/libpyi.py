@@ -106,11 +106,49 @@ class PyiTool:
 
     def add_command(self, cmd_dict={}):
         ''' 从cmd_dict添加PyInstaller命令选项。'''
+        if cmd_dict.get('pack_to_one', 'dir') == 'dir':
+            self._commands.append('-D')
+        else:
+            self._commands.append('-F')
+        if spec_path := cmd_dict.get('spec_dir', ''):
+            self._commands.extend(('--specpath', spec_path))
+        if name := cmd_dict.get('exefile_specfile_name', ''):
+            self._commands.extend(('-n', name))
+        if datas_to_add := cmd_dict.get('other_data', []):
+            for data in datas_to_add:
+                self._commands.extend(('--add-data', f'{data};.'))
+        if module_search_paths := cmd_dict.get('module_search_path', []):
+            for module_path in module_search_paths:
+                self._commands.extend(('-p', module_path))
+        if key := cmd_dict.get('key', ''):
+            self._commands.extend(('--key', key))
+        if not cmd_dict.get('use_upx', False):
+            self._commands.append('--noupx')
+        if upx_excludes := cmd_dict.get('upx_exclude_files', []):
+            for exfile in upx_excludes:
+                self._commands.extend(('--upx-exclude', exfile))
+        if cmd_dict.get('execute_with_console', True):
+            self._commands.append('-c')
+        else:
+            self._commands.append('-w')
+        if ico_path := cmd_dict.get('file_icon_path', ''):
+            self._commands.extend(('-i', ico_path))
+        if ver_file := cmd_dict.get('version_file', ''):
+            self._commands.extend(('--version-file', ver_file))
+        if dist_path := cmd_dict.get('output_dir', ''):
+            self._commands.extend(('--distpath', dist_path))
+        if work_path := cmd_dict.get('temp_working_dir', ''):
+            self._commands.extend(('--workpath', work_path))
+        if cmd_dict.get('without_confirm', False):
+            self._commands.append('-y')
+        if upx_dir := cmd_dict.get('upx_search_path', ''):
+            self._commands.extend(('--upx-dir', upx_dir))
+        if cmd_dict.get('clean_before_build', False):
+            self._commands.append('--clean')
+        self._commands.extend('--log-level', cmd_dict.get('log_level', 'INFO'))
         self._commands.append(cmd_dict.get('program_entry', ''))
-        for module_search_path in cmd_dict.get('module_search_path', []):
-            self._commands.extend(('-p', module_search_path))
 
     def pyi_info(self):
         if self.pyi_ready:
             return get_cmd_o(self.pyi_path, '-v')
-        return '无法获取版本信息'
+        return 'Pyinstaller尚未准备就绪'
