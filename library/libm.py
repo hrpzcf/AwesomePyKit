@@ -5,10 +5,11 @@ __doc__ = '''包含AwesomePyKit的主要类、函数、配置文件路径等。'
 import json
 import os
 import re
+from subprocess import PIPE, Popen, TimeoutExpired
 
 from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
-from PyQt5.QtCore import QThread, QTimer, QMutex
+from PyQt5.QtCore import QMutex, QThread, QTimer
 
 _root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 conf_path = os.path.join(_root_path, 'config')
@@ -260,3 +261,15 @@ class ThreadRepo:
     def is_empty(self):
         '''返回线程仓库是否为空。'''
         return not self._thread_repo
+
+
+def get_cmd_o(*commands, regexp='', timeout=None):
+    ''' 用于从cmd命令执行输出的字符匹配想要的信息。'''
+    exec_f = Popen(commands, stdout=PIPE, text=True)
+    try:
+        strings, _ = exec_f.communicate(timeout=timeout)
+    except TimeoutExpired:
+        return ''
+    if not regexp:
+        return strings
+    return re.search(regexp, strings)
