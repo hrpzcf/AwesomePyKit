@@ -109,7 +109,7 @@
                 <item>
                  <widget class="QLabel" name="label_3">
                   <property name="text">
-                   <string>其他模块搜索路径：</string>
+                   <string>其他模块搜索目录：</string>
                   </property>
                  </widget>
                 </item>

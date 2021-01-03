@@ -407,7 +407,7 @@ class Ui_PyInstallerTool(object):
         self.pb_select_program_entry.setText(_translate("PyInstallerTool", "选择"))
         self.label_2.setText(_translate("PyInstallerTool", "项目根目录："))
         self.pb_select_project_root.setText(_translate("PyInstallerTool", "选择"))
-        self.label_3.setText(_translate("PyInstallerTool", "其他模块搜索路径："))
+        self.label_3.setText(_translate("PyInstallerTool", "其他模块搜索目录："))
         self.pb_clear_module_search_path.setText(_translate("PyInstallerTool", "清空"))
         self.pb_select_module_search_path.setText(_translate("PyInstallerTool", "选择"))
         self.label_4.setText(_translate("PyInstallerTool", "非源代码资源文件："))
