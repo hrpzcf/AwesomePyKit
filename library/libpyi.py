@@ -12,13 +12,15 @@ from subprocess import (
     Popen,
 )
 
+from library.libm import get_cmd_o
+
 
 class PyiTool:
     _stui = STARTUPINFO()
     _stui.dwFlags = STARTF_USESHOWWINDOW
     _stui.wShowWindow = SW_HIDE
 
-    def __init__(self, py_path, cwd):
+    def __init__(self, py_path, cwd=os.getcwd()):
         if self._check_path(py_path):
             self.py_path = py_path
         else:
@@ -38,6 +40,15 @@ class PyiTool:
                 print('py_path属性不可更改。')
         else:
             super().__setattr__(name, value)
+
+    @property
+    def cwd(self):
+        return self._cwd
+
+    @cwd.setter
+    def cwd(self, path):
+        if os.path.isdir(path):
+            self._cwd = path
 
     @staticmethod
     def _check_path(py_path):
@@ -98,3 +109,8 @@ class PyiTool:
         self._commands.append(cmd_dict.get('program_entry', ''))
         for module_search_path in cmd_dict.get('module_search_path', []):
             self._commands.extend(('-p', module_search_path))
+
+    def pyi_info(self):
+        if self.pyi_ready:
+            return get_cmd_o(self.pyi_path, '-v')
+        return '无法获取版本信息'
