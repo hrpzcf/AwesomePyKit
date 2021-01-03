@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+from platform import machine, platform
 
 from PyQt5.QtCore import (
     QSize,
@@ -738,8 +739,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.setupUi(self)
         self._setup_others()
         self._connect_signal_slot()
-        self._pyitool_cur_pyenv = ''
         self._def_conf = {}
+        self._pyitool_pyenv = None
         self.widget_group = (
             self.tabWidget,
             self.pb_select_py_env,
@@ -747,15 +748,23 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.le_exefile_specfile_name,
             self.pb_gen_executable,
         )
+        self.set_platform_info()
 
     def closeEvent(self, event):
+        self._pyi_tool = None
         self._get_last_status()
         save_conf(self._def_conf, 'pyic')
         event.accept()
 
     def show(self):
-        super().show()
         self._apply_def_conf()
+        super().show()
+        if self._pyitool_pyenv is None:
+            self._pyi_tool = None
+        else:
+            self._pyi_tool = PyiTool(self._pyitool_pyenv.env_path)
+        if self._pyi_tool:
+            self.set_pyi_info()
 
     def _setup_others(self):
         # 替换“项目根目录”LineEdit控件
@@ -799,66 +808,68 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         pyitool_choose_pyenv_window.show()
 
     def _set_pyenv_and_update_info(self):
-        self._pyitool_cur_pyenv = pyitool_choose_pyenv_window.pyi_pyenvs[
+        self._pyitool_pyenv = pyitool_choose_pyenv_window.pyi_pyenvs[
             pyitool_choose_pyenv_window.lw_py_envs.currentRow()
         ]
-        self.le_py_info.setText(self._pyitool_cur_pyenv.py_info())
+        self.le_py_info.setText(self._pyitool_pyenv.py_info())
+        self._pyi_tool = PyiTool(self._pyitool_pyenv.env_path)
+        self.set_pyi_info()
 
     def _apply_def_conf(self):
         if not self._def_conf:
             self._def_conf.update(load_conf('pyic'))
-        self.le_program_entry.setText(
-            self._def_conf.setdefault('program_entry', '')
-        )
-        self.le_project_root.setText(
-            self._def_conf.setdefault('project_root', '')
-        )
+        self.le_program_entry.setText(self._def_conf.get('program_entry', ''))
+        self.le_project_root.setText(self._def_conf.get('project_root', ''))
         self.te_module_search_path.setText(
-            '\n'.join(self._def_conf.setdefault('module_search_path', []))
+            '\n'.join(self._def_conf.get('module_search_path', []))
         )
         self.te_other_data.setText(
-            '\n'.join(self._def_conf.setdefault('other_data', []))
+            '\n'.join(self._def_conf.get('other_data', []))
         )
         self.le_file_icon_path.setText(
-            self._def_conf.setdefault('file_icon_path', '')
+            self._def_conf.get('file_icon_path', '')
         )
-        pack_to_one = self._def_conf.setdefault('pack_to_one', 'dir')
+        pack_to_one = self._def_conf.get('pack_to_one', 'dir')
         if pack_to_one == 'file':
             self.rb_pack_to_one_file.setChecked(True)
         else:
             self.rb_pack_to_one_dir.setChecked(True)
         self.cb_execute_with_console.setChecked(
-            self._def_conf.setdefault('execute_with_console', True)
+            self._def_conf.get('execute_with_console', True)
         )
         self.cb_without_confirm.setChecked(
-            self._def_conf.setdefault('without_confirm', False)
+            self._def_conf.get('without_confirm', False)
         )
-        self.cb_use_upx.setChecked(self._def_conf.setdefault('use_upx', False))
+        self.cb_use_upx.setChecked(self._def_conf.get('use_upx', False))
         self.cb_clean_before_build.setChecked(
-            self._def_conf.setdefault('clean_before_build', True)
+            self._def_conf.get('clean_before_build', True)
         )
         self.le_temp_working_dir.setText(
-            self._def_conf.setdefault('temp_working_dir', '')
+            self._def_conf.get('temp_working_dir', '')
         )
-        self.le_output_dir.setText(self._def_conf.setdefault('output_dir', ''))
-        self.le_spec_dir.setText(self._def_conf.setdefault('spec_dir', ''))
+        self.le_output_dir.setText(self._def_conf.get('output_dir', ''))
+        self.le_spec_dir.setText(self._def_conf.get('spec_dir', ''))
         self.le_upx_search_path.setText(
-            self._def_conf.setdefault('upx_search_path', '')
+            self._def_conf.get('upx_search_path', '')
         )
         self.le_version_file_old.setText(
-            self._def_conf.setdefault('version_file', '')
+            self._def_conf.get('version_file', '')
         )
         self.te_upx_exclude_files.setText(
-            '\n'.join(self._def_conf.setdefault('upx_exclude_files', []))
+            '\n'.join(self._def_conf.get('upx_exclude_files', []))
         )
-        self.le_py_info.setText(
-            PyEnv(self._def_conf.setdefault('py_info', '')).py_info()
-        )
+        py_path = self._def_conf.get('py_info', '')
+        if py_path:
+            try:
+                self._pyitool_pyenv = PyEnv(py_path)
+                self.le_py_info.setText(self._pyitool_pyenv.py_info())
+            except Exception:
+                pass
         self.le_exefile_specfile_name.setText(
-            self._def_conf.setdefault('exefile_specfile_name', '')
+            self._def_conf.get('exefile_specfile_name', '')
         )
         self.cb_log_level.setCurrentText(
-            self._def_conf.setdefault('log_level', 'INFO')
+            self._def_conf.get('log_level', 'INFO')
         )
 
     def _get_last_status(self):
@@ -890,14 +901,25 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             string.strip()
             for string in self.te_upx_exclude_files.toPlainText().split()
         ]
-        if not self._pyitool_cur_pyenv:
-            self._def_conf['py_info'] = self._pyitool_cur_pyenv
+        if self._pyitool_pyenv is None:
+            self._def_conf['py_info'] = None
         else:
-            self._def_conf['py_info'] = self._pyitool_cur_pyenv.env_path
+            self._def_conf['py_info'] = self._pyitool_pyenv.env_path
         self._def_conf[
             'exefile_specfile_name'
         ] = self.le_exefile_specfile_name.text()
         self._def_conf['log_level'] = self.cb_log_level.currentText()
+
+    def set_pyi_info(self):
+        if self._pyitool_pyenv is None:
+            self.le_pyi_info.setText('请先选择Python环境。')
+        else:
+            self.le_pyi_info.setText(
+                f'PyInstaller - {self._pyi_tool.pyi_info()}'
+            )
+
+    def set_platform_info(self):
+        self.le_platform_info.setText(f'{platform()}-{machine()}')
 
 
 class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
