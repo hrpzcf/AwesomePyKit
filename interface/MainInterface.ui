@@ -62,7 +62,7 @@
          <string>使用PyInstaller将py程序打包成exe可执行文件。</string>
         </property>
         <property name="text">
-         <string>程序打包</string>
+         <string>程序打包工具</string>
         </property>
        </widget>
       </item>

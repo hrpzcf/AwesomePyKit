@@ -42,6 +42,7 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowTitle(f'AwesomePyKit - {__VERSION__}')
         self._connect_signal_and_slot()
 
     def _connect_signal_and_slot(self):

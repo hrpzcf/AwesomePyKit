@@ -93,7 +93,7 @@ class Ui_MainInterface(object):
         self.btn_manPacks.setToolTip(_translate("MainInterface", "管理不同 Python 环境中的第三方模块、包、库。"))
         self.btn_manPacks.setText(_translate("MainInterface", "包管理器"))
         self.pb_pyi_tool.setToolTip(_translate("MainInterface", "使用PyInstaller将py程序打包成exe可执行文件。"))
-        self.pb_pyi_tool.setText(_translate("MainInterface", "程序打包"))
+        self.pb_pyi_tool.setText(_translate("MainInterface", "程序打包工具"))
         self.btn_setIndex.setToolTip(_translate("MainInterface", "设置 pip 全局镜像源地址。"))
         self.btn_setIndex.setText(_translate("MainInterface", "镜像源设置"))
         self.btn_setPATH.setToolTip(_translate("MainInterface", "（功能尚未完成）将 Python 安装目录路径添加进环境变量 PATH。"))
