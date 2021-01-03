@@ -16,6 +16,7 @@ from PyQt5.QtGui import (
 )
 from PyQt5.QtWidgets import (
     QApplication,
+    QFileDialog,
     QHBoxLayout,
     QHeaderView,
     QInputDialog,
@@ -30,6 +31,8 @@ from PyQt5.QtWidgets import (
 from interface import *
 from library import *
 from library.libm import PyEnv
+from library.libpyi import PyiTool
+from library.libqt import QLineEditMod, QTextEditMod, TextStream
 
 __VERSION__ = '0.1.7'
 
@@ -733,8 +736,58 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self._setup_others()
         self._connect_signal_slot()
-        self._pyit_cur_pyenv = None
+        self._pyitool_cur_pyenv = ''
+        self._def_conf = {}
+        self.widget_group = (
+            self.tabWidget,
+            self.pb_select_py_env,
+            self.pb_reinstall_pyi,
+            self.le_exefile_specfile_name,
+            self.pb_gen_executable,
+        )
+
+    def closeEvent(self, event):
+        self._get_last_status()
+        save_conf(self._def_conf, 'pyic')
+        event.accept()
+
+    def show(self):
+        super().show()
+        self._apply_def_conf()
+
+    def _setup_others(self):
+        # 替换“项目根目录”LineEdit控件
+        self.le_project_root = QLineEditMod('dir')
+        self.horizontalLayout_4.replaceWidget(
+            self.le_project_root_old, self.le_project_root
+        )
+        self.le_project_root_old.deleteLater()
+        # 替换“程序主模块”LineEdit控件
+        self.le_program_entry = QLineEditMod('file')
+        self.horizontalLayout_3.replaceWidget(
+            self.le_program_entry_old, self.le_program_entry
+        )
+        self.le_program_entry_old.deleteLater()
+        # 替换“其他模块搜索路径”TextEdit控件
+        self.te_module_search_path = QTextEditMod('dir')
+        self.verticalLayout_3.replaceWidget(
+            self.te_module_search_path_old, self.te_module_search_path
+        )
+        self.te_module_search_path_old.deleteLater()
+        # 替换“非源代码资源文件”LineEdit控件
+        self.te_other_data = QTextEditMod('file')
+        self.verticalLayout_4.replaceWidget(
+            self.te_other_data_old, self.te_other_data
+        )
+        self.te_other_data_old.deleteLater()
+        # 替换“文件图标路径”LineEdit控件
+        self.le_file_icon_path = QLineEditMod('file')
+        self.horizontalLayout_11.replaceWidget(
+            self.le_file_icon_path_old, self.le_file_icon_path
+        )
+        self.le_file_icon_path_old.deleteLater()
 
     def _connect_signal_slot(self):
         self.pb_select_py_env.clicked.connect(
@@ -745,11 +798,106 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def _show_pyit_choose_env_window():
         pyitool_choose_pyenv_window.show()
 
-    def set_cur_pyenv_update_info(self):
-        self._pyit_cur_pyenv = pyitool_choose_pyenv_window.pyic_pyenvs[
+    def _set_pyenv_and_update_info(self):
+        self._pyitool_cur_pyenv = pyitool_choose_pyenv_window.pyi_pyenvs[
             pyitool_choose_pyenv_window.lw_py_envs.currentRow()
         ]
-        self.le_py_info.setText(self._pyit_cur_pyenv.py_info())
+        self.le_py_info.setText(self._pyitool_cur_pyenv.py_info())
+
+    def _apply_def_conf(self):
+        if not self._def_conf:
+            self._def_conf.update(load_conf('pyic'))
+        self.le_program_entry.setText(
+            self._def_conf.setdefault('program_entry', '')
+        )
+        self.le_project_root.setText(
+            self._def_conf.setdefault('project_root', '')
+        )
+        self.te_module_search_path.setText(
+            '\n'.join(self._def_conf.setdefault('module_search_path', []))
+        )
+        self.te_other_data.setText(
+            '\n'.join(self._def_conf.setdefault('other_data', []))
+        )
+        self.le_file_icon_path.setText(
+            self._def_conf.setdefault('file_icon_path', '')
+        )
+        pack_to_one = self._def_conf.setdefault('pack_to_one', 'dir')
+        if pack_to_one == 'file':
+            self.rb_pack_to_one_file.setChecked(True)
+        else:
+            self.rb_pack_to_one_dir.setChecked(True)
+        self.cb_execute_with_console.setChecked(
+            self._def_conf.setdefault('execute_with_console', True)
+        )
+        self.cb_without_confirm.setChecked(
+            self._def_conf.setdefault('without_confirm', False)
+        )
+        self.cb_use_upx.setChecked(self._def_conf.setdefault('use_upx', False))
+        self.cb_clean_before_build.setChecked(
+            self._def_conf.setdefault('clean_before_build', True)
+        )
+        self.le_temp_working_dir.setText(
+            self._def_conf.setdefault('temp_working_dir', '')
+        )
+        self.le_output_dir.setText(self._def_conf.setdefault('output_dir', ''))
+        self.le_spec_dir.setText(self._def_conf.setdefault('spec_dir', ''))
+        self.le_upx_search_path.setText(
+            self._def_conf.setdefault('upx_search_path', '')
+        )
+        self.le_version_file_old.setText(
+            self._def_conf.setdefault('version_file', '')
+        )
+        self.te_upx_exclude_files.setText(
+            '\n'.join(self._def_conf.setdefault('upx_exclude_files', []))
+        )
+        self.le_py_info.setText(
+            PyEnv(self._def_conf.setdefault('py_info', '')).py_info()
+        )
+        self.le_exefile_specfile_name.setText(
+            self._def_conf.setdefault('exefile_specfile_name', '')
+        )
+        self.cb_log_level.setCurrentText(
+            self._def_conf.setdefault('log_level', 'INFO')
+        )
+
+    def _get_last_status(self):
+        self._def_conf['project_root'] = self.le_project_root.local_path
+        self._def_conf['program_entry'] = self.le_program_entry.local_path
+        self._def_conf[
+            'module_search_path'
+        ] = self.te_module_search_path.local_paths
+        self._def_conf['other_data'] = self.te_other_data.local_paths
+        self._def_conf['file_icon_path'] = self.le_file_icon_path.local_path
+        if self.rb_pack_to_one_file.isChecked():
+            self._def_conf['pack_to_one'] = 'file'
+        else:
+            self._def_conf['pack_to_one'] = 'dir'
+        self._def_conf[
+            'execute_with_console'
+        ] = self.cb_execute_with_console.isChecked()
+        self._def_conf['without_confirm'] = self.cb_without_confirm.isChecked()
+        self._def_conf['use_upx'] = self.cb_use_upx.isChecked()
+        self._def_conf[
+            'clean_before_build'
+        ] = self.cb_clean_before_build.isChecked()
+        self._def_conf['temp_working_dir'] = self.le_temp_working_dir.text()
+        self._def_conf['output_dir'] = self.le_output_dir.text()
+        self._def_conf['spec_dir'] = self.le_spec_dir.text()
+        self._def_conf['upx_search_path'] = self.le_upx_search_path.text()
+        self._def_conf['version_file'] = self.le_version_file_old.text()
+        self._def_conf['upx_exclude_files'] = [
+            string.strip()
+            for string in self.te_upx_exclude_files.toPlainText().split()
+        ]
+        if not self._pyitool_cur_pyenv:
+            self._def_conf['py_info'] = self._pyitool_cur_pyenv
+        else:
+            self._def_conf['py_info'] = self._pyitool_cur_pyenv.env_path
+        self._def_conf[
+            'exefile_specfile_name'
+        ] = self.le_exefile_specfile_name.text()
+        self._def_conf['log_level'] = self.cb_log_level.currentText()
 
 
 class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
@@ -764,17 +912,17 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
     def pyenv_list_update(self):
         row_size = QSize(0, 28)
         self.lw_py_envs.clear()
-        for py_env in self.pyic_pyenvs:
+        for py_env in self.pyi_pyenvs:
             item = QListWidgetItem(str(py_env))
             item.setSizeHint(row_size)
             self.lw_py_envs.addItem(item)
 
     def close(self):
         super().close()
-        pyinstaller_tool_window.set_cur_pyenv_update_info()
+        pyinstaller_tool_window._set_pyenv_and_update_info()
 
     def show(self):
-        self.pyic_pyenvs = get_pyenv_list(load_conf('pths'))
+        self.pyi_pyenvs = get_pyenv_list(load_conf('pths'))
         super().show()
         self.pyenv_list_update()
 

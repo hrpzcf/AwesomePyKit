@@ -3,6 +3,7 @@
 from .libm import (
     InfoOutStream,
     NewTask,
+    ThreadRepo,
     all_py_paths,
     check_index_url,
     check_py_path,
@@ -11,6 +12,7 @@ from .libm import (
     conf_path,
     conf_path_index_urls,
     conf_path_py_paths,
+    conf_path_pyi_defs,
     cur_py_path,
     get_cur_pyenv,
     get_index_url,
@@ -23,12 +25,12 @@ from .libm import (
     save_conf,
     set_index_url,
     sources_path,
-    ThreadRepo,
 )
 
 __all__ = [
     'InfoOutStream',
     'NewTask',
+    'ThreadRepo',
     'all_py_paths',
     'check_index_url',
     'check_py_path',
@@ -37,6 +39,7 @@ __all__ = [
     'conf_path',
     'conf_path_index_urls',
     'conf_path_py_paths',
+    'conf_path_pyi_defs',
     'cur_py_path',
     'get_cur_pyenv',
     'get_index_url',
@@ -49,5 +52,4 @@ __all__ = [
     'save_conf',
     'set_index_url',
     'sources_path',
-    'ThreadRepo',
 ]

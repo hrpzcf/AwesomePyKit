@@ -184,7 +184,7 @@
             </attribute>
             <column>
              <property name="text">
-              <string>模块/包/库名称</string>
+              <string>名称</string>
              </property>
             </column>
             <column>
@@ -212,7 +212,7 @@
                <string>检查上方表格中的所有包是否有新版本。</string>
               </property>
               <property name="text">
-               <string>检查更新</string>
+               <string>检查新版本</string>
               </property>
              </widget>
             </item>
@@ -232,7 +232,7 @@
                <string>将上方表格中选中的包卸载。注意，卸载包时上方表格中的条目支持多选。</string>
               </property>
               <property name="text">
-               <string>卸载</string>
+               <string>卸载选中项</string>
               </property>
              </widget>
             </item>
@@ -242,7 +242,7 @@
                <string>升级上方表格中被选中的包。注意，被选中的包如果没有新版本则什么都不做。此功能同样支持多选。</string>
               </property>
               <property name="text">
-               <string>升级</string>
+               <string>升级选中项</string>
               </property>
              </widget>
             </item>
@@ -252,7 +252,7 @@
                <string>升级上方表格中列出的所有有新版本的包，使用此功能前请先点击上方&quot;检查更新&quot;按钮以检查是否有新版本，再点击此按钮升级。</string>
               </property>
               <property name="text">
-               <string>全部升级</string>
+               <string>升级全部</string>
               </property>
              </widget>
             </item>

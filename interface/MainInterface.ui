@@ -51,22 +51,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="btn_setIndex">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>设置 pip 全局镜像源地址。</string>
-        </property>
-        <property name="text">
-         <string>镜像源设置</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="pb_pyi_tool">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -79,6 +63,22 @@
         </property>
         <property name="text">
          <string>程序打包</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_setIndex">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>设置 pip 全局镜像源地址。</string>
+        </property>
+        <property name="text">
+         <string>镜像源设置</string>
         </property>
        </widget>
       </item>

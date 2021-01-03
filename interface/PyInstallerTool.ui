@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>951</width>
-    <height>759</height>
+    <width>880</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="font">
@@ -22,9 +22,9 @@
    <string>程序打包工具</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_10">
+   <layout class="QVBoxLayout" name="verticalLayout_21">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="3,2">
+     <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="5,4">
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
@@ -36,9 +36,38 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_17">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,0,5,0,3,0">
+           <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout">
+                <item>
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>程序主模块：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                  <item>
+                   <widget class="QLineEdit" name="le_program_entry_old">
+                    <property name="contextMenuPolicy">
+                     <enum>Qt::NoContextMenu</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pb_select_program_entry">
+                    <property name="text">
+                     <string>选择</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
               <item>
                <widget class="QLabel" name="label_2">
                 <property name="text">
@@ -49,37 +78,16 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <item>
-                 <widget class="QLineEdit" name="le_project_root"/>
+                 <widget class="QLineEdit" name="le_project_root_old">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pb_select_project_root">
                   <property name="text">
-                   <string>选择目录</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>程序主模块：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QLineEdit" name="le_program_entry"/>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_program_entry">
-                  <property name="text">
-                   <string>选择文件</string>
+                   <string>选择</string>
                   </property>
                  </widget>
                 </item>
@@ -115,14 +123,14 @@
                 <item>
                  <widget class="QPushButton" name="pb_select_module_search_path">
                   <property name="text">
-                   <string>选择文件</string>
+                   <string>选择</string>
                   </property>
                  </widget>
                 </item>
                </layout>
               </item>
               <item>
-               <widget class="QTextEdit" name="te_module_search_path">
+               <widget class="QTextEdit" name="te_module_search_path_old">
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
                 </property>
@@ -158,14 +166,14 @@
                 <item>
                  <widget class="QPushButton" name="pb_select_other_data">
                   <property name="text">
-                   <string>选择文件</string>
+                   <string>选择</string>
                   </property>
                  </widget>
                 </item>
                </layout>
               </item>
               <item>
-               <widget class="QTextEdit" name="te_other_data">
+               <widget class="QTextEdit" name="te_other_data_old">
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
                 </property>
@@ -185,12 +193,16 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="9,0">
                 <item>
-                 <widget class="QLineEdit" name="le_file_icon_path"/>
+                 <widget class="QLineEdit" name="le_file_icon_path_old">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pb_select_file_icon">
                   <property name="text">
-                   <string>选择文件</string>
+                   <string>选择</string>
                   </property>
                  </widget>
                 </item>
@@ -206,20 +218,20 @@
          <attribute name="title">
           <string>生成控制</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_16">
+         <layout class="QVBoxLayout" name="verticalLayout_14">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_15">
+           <layout class="QVBoxLayout" name="verticalLayout_12">
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
-               <widget class="QRadioButton" name="rb_pack_single_folder">
+               <widget class="QRadioButton" name="rb_pack_to_one_dir">
                 <property name="text">
-                 <string>打包成单目录（建议）</string>
+                 <string>打包成单目录(建议)</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QRadioButton" name="rb_pack_single_file">
+               <widget class="QRadioButton" name="rb_pack_to_one_file">
                 <property name="text">
                  <string>打包成单文件</string>
                 </property>
@@ -228,14 +240,14 @@
              </layout>
             </item>
             <item>
-             <widget class="QCheckBox" name="cb_executeable_with_console">
+             <widget class="QCheckBox" name="cb_execute_with_console">
               <property name="text">
                <string>打包的程序运行时显示控制台</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cb_clear_dir_without_confirm">
+             <widget class="QCheckBox" name="cb_without_confirm">
               <property name="text">
                <string>输出目录不为空时清空而无需确认</string>
               </property>
@@ -249,7 +261,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cb_clean_cache_before_build">
+             <widget class="QCheckBox" name="cb_clean_before_build">
               <property name="text">
                <string>构建前清理缓存并删除临时文件</string>
               </property>
@@ -265,67 +277,105 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="le_bytecode_encryption_key"/>
+               <widget class="QLineEdit" name="le_bytecode_encryption_key">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
+             <layout class="QVBoxLayout" name="verticalLayout_11">
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_11">
+               <widget class="QLabel" name="label_10">
+                <property name="text">
+                 <string>临时工作目录：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_14">
                 <item>
-                 <widget class="QLabel" name="label_10">
-                  <property name="text">
-                   <string>临时工作目录：</string>
+                 <widget class="QLineEdit" name="le_temp_working_dir">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="placeholderText">
+                   <string>./build</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_14">
-                  <item>
-                   <widget class="QLineEdit" name="le_temp_working_dir">
-                    <property name="placeholderText">
-                     <string>./build</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pb_select_temp_working_dir">
-                    <property name="text">
-                     <string>选择</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QPushButton" name="pb_select_temp_working_dir">
+                  <property name="text">
+                   <string>选择</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>储存生成文件位置：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_12">
                 <item>
-                 <widget class="QLabel" name="label_8">
-                  <property name="text">
-                   <string>目标输出目录：</string>
+                 <widget class="QLineEdit" name="le_output_dir">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="placeholderText">
+                   <string>./dist</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_12">
-                  <item>
-                   <widget class="QLineEdit" name="le_output_dir">
-                    <property name="placeholderText">
-                     <string>./dist</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pb_select_output_dir">
-                    <property name="text">
-                     <string>选择</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                 <widget class="QPushButton" name="pb_select_output_dir">
+                  <property name="text">
+                   <string>选择</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_15">
+              <item>
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>储存SPEC文件位置：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_16">
+                <item>
+                 <widget class="QLineEdit" name="le_spec_dir">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="placeholderText">
+                   <string>./</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pb_select_spec_dir">
+                  <property name="text">
+                   <string>选择</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -336,14 +386,18 @@
               <item>
                <widget class="QLabel" name="label_9">
                 <property name="text">
-                 <string>UPX可执行文件搜索路径：</string>
+                 <string>UPX可执行文件查找位置：</string>
                 </property>
                </widget>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_13">
                 <item>
-                 <widget class="QLineEdit" name="le_upx_search_path"/>
+                 <widget class="QLineEdit" name="le_upx_search_path">
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pb_select_upx_search_path">
@@ -357,34 +411,49 @@
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_14" stretch="1,3">
+             <layout class="QVBoxLayout" name="verticalLayout_13">
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_13">
+               <layout class="QVBoxLayout" name="verticalLayout_7">
                 <item>
-                 <widget class="QLabel" name="label_14">
+                 <widget class="QLabel" name="label_12">
                   <property name="text">
-                   <string>UPX压缩时排除的文件名：</string>
+                   <string>可执行文件版本信息文件：</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTextEdit" name="te_upx_exclude_files"/>
+                 <layout class="QHBoxLayout" name="horizontalLayout_10">
+                  <item>
+                   <widget class="QLineEdit" name="le_version_file_old">
+                    <property name="contextMenuPolicy">
+                     <enum>Qt::NoContextMenu</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pb_version_file">
+                    <property name="text">
+                     <string>选择</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_12">
-                <item>
-                 <widget class="QLabel" name="label_12">
-                  <property name="text">
-                   <string>文件版本信息：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QTextEdit" name="te_version_file"/>
-                </item>
-               </layout>
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>UPX压缩时排除的文件名：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTextEdit" name="te_upx_exclude_files">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -403,7 +472,7 @@
             <item>
              <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>Pyi版本：</string>
+               <string>Py信息：</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -413,7 +482,7 @@
             <item>
              <widget class="QLabel" name="label_16">
               <property name="text">
-               <string>Python版本：</string>
+               <string>Pyi版本：</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -437,33 +506,12 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout" stretch="9,0">
               <item>
-               <widget class="QLineEdit" name="le_pyi_info">
-                <property name="text">
-                 <string>Pyinstaller 4.1</string>
-                </property>
-                <property name="frame">
-                 <bool>false</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pushButton">
-                <property name="text">
-                 <string>重新安装</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="9,0">
-              <item>
                <widget class="QLineEdit" name="le_py_info">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
                 <property name="text">
-                 <string>Python 3.8.7 32bit</string>
+                 <string/>
                 </property>
                 <property name="frame">
                  <bool>false</bool>
@@ -483,9 +531,39 @@
              </layout>
             </item>
             <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="9,0">
+              <item>
+               <widget class="QLineEdit" name="le_pyi_info">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="frame">
+                 <bool>false</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pb_reinstall_pyi">
+                <property name="text">
+                 <string>重新安装</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
              <widget class="QLineEdit" name="le_platform_info">
+              <property name="contextMenuPolicy">
+               <enum>Qt::NoContextMenu</enum>
+              </property>
               <property name="text">
-               <string>Windows-10-10.0.19041-SP0</string>
+               <string/>
               </property>
               <property name="frame">
                <bool>false</bool>
@@ -516,21 +594,74 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="le_outfile_spec_name"/>
+           <widget class="QLineEdit" name="le_exefile_specfile_name">
+            <property name="contextMenuPolicy">
+             <enum>Qt::NoContextMenu</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_21">
+         <layout class="QVBoxLayout" name="verticalLayout_16">
           <item>
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>输出息流：</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="9,0">
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>日志信息流：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="label_18">
+                <property name="text">
+                 <string>日志级别：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="cb_log_level">
+                <item>
+                 <property name="text">
+                  <string>TRACE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>DEBUG</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>INFO</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>WARN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>ERROR</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CRITICAL</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
           <item>
-           <widget class="QTextEdit" name="te_pyi_outstream">
+           <widget class="QTextEdit" name="te_pyi_outstream_old">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -538,7 +669,7 @@
              </size>
             </property>
             <property name="contextMenuPolicy">
-             <enum>Qt::PreventContextMenu</enum>
+             <enum>Qt::NoContextMenu</enum>
             </property>
             <property name="readOnly">
              <bool>true</bool>

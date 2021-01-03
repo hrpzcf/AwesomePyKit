@@ -1,5 +1,7 @@
 # coding: utf-8
 
+__doc__ = '''包含pyinstaller相关的类或函数。'''
+
 import os
 from subprocess import (
     PIPE,
@@ -10,12 +12,12 @@ from subprocess import (
     Popen,
 )
 
-_stui = STARTUPINFO()
-_stui.dwFlags = STARTF_USESHOWWINDOW
-_stui.wShowWindow = SW_HIDE
-
 
 class PyiTool:
+    _stui = STARTUPINFO()
+    _stui.dwFlags = STARTF_USESHOWWINDOW
+    _stui.wShowWindow = SW_HIDE
+
     def __init__(self, py_path, cwd):
         if self._check_path(py_path):
             self.py_path = py_path
@@ -57,7 +59,7 @@ class PyiTool:
 
     @property
     def pyi_ready(self):
-        ''' 如果给出的Python目录中安装了pyinstaller，返回True,否则返回False。'''
+        ''' 给出的Python目录中安装了pyinstaller返回True,否则返回False。'''
         return bool(self.pyi_path)
 
     def get_handle(self):
@@ -69,7 +71,7 @@ class PyiTool:
                 stderr=STDOUT,
                 text=True,
                 cwd=self._cwd,
-                startupinfo=_stui,
+                startupinfo=self._stui,
             )
         return self._execf
 
@@ -91,6 +93,8 @@ class PyiTool:
                 # 如果还未生成Popen对象则返回以下信息。
                 yield 'err', '请先调用get_handle方法获取操作句柄。'
 
-    def add_command(self, *command):
-        ''' 添加PyInstaller命令选项。'''
-        self._commands.extend(command)
+    def add_command(self, cmd_dict={}):
+        ''' 从cmd_dict添加PyInstaller命令选项。'''
+        self._commands.append(cmd_dict.get('program_entry', ''))
+        for module_search_path in cmd_dict.get('module_search_path', []):
+            self._commands.extend(('-p', module_search_path))

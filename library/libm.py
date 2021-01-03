@@ -1,5 +1,7 @@
 # coding: utf-8
 
+__doc__ = '''包含AwesomePyKit的主要类、函数、配置文件路径等。'''
+
 import json
 import os
 import re
@@ -8,11 +10,12 @@ from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
 from PyQt5.QtCore import QThread, QTimer, QMutex
 
-root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-conf_path = os.path.join(root_path, 'config')
-sources_path = os.path.join(root_path, 'sources')
+_root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+conf_path = os.path.join(_root_path, 'config')
+sources_path = os.path.join(_root_path, 'sources')
 conf_path_py_paths = os.path.join(conf_path, 'PythonPaths.json')
 conf_path_index_urls = os.path.join(conf_path, 'IndexURLs.json')
+conf_path_pyi_defs = os.path.join(conf_path, 'PyiDefault.json')
 
 
 def _load_json(path, get_data):
@@ -53,9 +56,12 @@ def load_conf(conf='all'):
         return _load_json(conf_path_py_paths, list)
     if conf == 'urls':
         return _load_json(conf_path_index_urls, index_urls.copy)
+    if conf == 'pyic':
+        return _load_json(conf_path_pyi_defs, dict)
     return (
         _load_json(conf_path_py_paths, list),
         _load_json(conf_path_index_urls, index_urls.copy),
+        _load_json(conf_path_pyi_defs, dict),
     )
 
 
@@ -64,6 +70,8 @@ def save_conf(sequence, conf):
         pth = conf_path_py_paths
     elif conf == 'urls':
         pth = conf_path_index_urls
+    elif conf == 'pyic':
+        pth = conf_path_pyi_defs
     else:
         return
     with open(pth, 'wt', encoding='utf-8') as fo:
@@ -184,7 +192,7 @@ class InfoOutStream:
     def update(self, text):
         self._ui.te_infostream.setText(text)
         self._ui.te_infostream.verticalScrollBar().setValue(
-            self._ui.te_infostream.verticalScrollBar().maximum()
+            self._ui.te_infostream.verticalScrollBar().maximumHeight()
         )
 
 
