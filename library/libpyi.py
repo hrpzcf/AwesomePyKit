@@ -12,34 +12,21 @@ from subprocess import (
     Popen,
 )
 
+from PyQt5.QtCore import QObject, pyqtSignal
+
 from library.libm import get_cmd_o
 
 
-class PyiTool:
+class PyiTool(QObject):
     _stui = STARTUPINFO()
     _stui.dwFlags = STARTF_USESHOWWINDOW
     _stui.wShowWindow = SW_HIDE
+    executed = pyqtSignal(int)
+    readline = pyqtSignal(str)
 
-    def __init__(self, py_path, cwd=os.getcwd()):
-        if self._check_path(py_path):
-            self.py_path = py_path
-        else:
-            self.py_path = ''
-        self._execf = None
-        self._cwd = cwd
-        self._commands = [self.pyi_path]
-
-    def __setattr__(self, name, value):
-        if name == 'py_path':
-            if not getattr(self, 'py_path', False):
-                if PyiTool._check_path(value):
-                    super().__setattr__(name, value)
-                else:
-                    print('无效的Python环境路径。')
-            else:
-                print('py_path属性不可更改。')
-        else:
-            super().__setattr__(name, value)
+    def __init__(self, py_path='', cwd=os.getcwd()):
+        super().__init__()
+        self.initialize(py_path, cwd)
 
     @property
     def cwd(self):
@@ -51,18 +38,15 @@ class PyiTool:
             self._cwd = path
 
     @staticmethod
-    def _check_path(py_path):
+    def _check(py_path):
         ''' 检查给出的Python路径是否有效。'''
-        f_py_path = os.path.join(py_path, 'python.exe')
-        if os.path.isfile(f_py_path):
-            return True
-        return False
+        return os.path.isfile(os.path.join(py_path, 'python.exe'))
 
     @property
     def pyi_path(self):
         ''' 返回给出的Python路径中的pyinstaller可执行文件路径。'''
         pyi_exec_path = os.path.join(
-            self.py_path, 'Scripts', 'pyinstaller.exe'
+            self._py_path, 'Scripts', 'pyinstaller.exe'
         )
         if not os.path.isfile(pyi_exec_path):
             return ''
@@ -73,7 +57,16 @@ class PyiTool:
         ''' 给出的Python目录中安装了pyinstaller返回True,否则返回False。'''
         return bool(self.pyi_path)
 
-    def get_handle(self):
+    def initialize(self, py_path, cwd):
+        if self._check(py_path):
+            self._py_path = py_path
+        else:
+            self._py_path = ''
+        self._cwd = cwd
+        self._execf = None
+        self._commands = [self.pyi_path]
+
+    def handle(self):
         if self._execf is None:
             self._execf = Popen(
                 self._commands,
@@ -86,25 +79,23 @@ class PyiTool:
             )
         return self._execf
 
-    def stream(self):
-        '''
-        如果程序执行中，返回("out", 命令执行的输出信息)元组。
-        如果程序已结束，则返回("rtc", 程序的退出状态码)元组。
-        '''
-        if self.pyi_ready and self._execf is not None:
+    def execute_cmd(self):
+        if self.pyi_ready and self._execf:
             while self._execf.poll() is None:
-                yield 'out', self._execf.stdout.readline()
+                line = self._execf.stdout.readline()
+                if not line or line == '\n':
+                    continue
+                self.readline.emit(line.strip())
             else:
-                yield 'rtc', self._execf.returncode
+                self.executed.emit(self._execf.returncode)
         else:
             if not self.pyi_ready:
-                # 如果该Python环境未安装pyinstaller则返回以下信息。
-                yield 'err', '当前Python环境中找不到PyInstaller。'
-            elif self._execf is None:
-                # 如果还未生成Popen对象则返回以下信息。
-                yield 'err', '请先调用get_handle方法获取操作句柄。'
+                raise Exception('当前Python环境中找不到PyInstaller。')
+            if self._execf is None:
+                raise Exception('请先调用get_handle方法获取文件操作句柄。')
+            raise Exception('未知错误。')
 
-    def add_command(self, cmd_dict={}):
+    def prepare_cmd(self, cmd_dict={}):
         ''' 从cmd_dict添加PyInstaller命令选项。'''
         if cmd_dict.get('pack_to_one', 'dir') == 'dir':
             self._commands.append('-D')
@@ -145,10 +136,12 @@ class PyiTool:
             self._commands.extend(('--upx-dir', upx_dir))
         if cmd_dict.get('clean_before_build', False):
             self._commands.append('--clean')
-        self._commands.extend('--log-level', cmd_dict.get('log_level', 'INFO'))
+        self._commands.extend(
+            ('--log-level', cmd_dict.get('log_level', 'INFO'))
+        )
         self._commands.append(cmd_dict.get('program_entry', ''))
 
     def pyi_info(self):
         if self.pyi_ready:
             return get_cmd_o(self.pyi_path, '-v')
-        return 'Pyinstaller尚未准备就绪'
+        return 'pyinstaller未安装'
