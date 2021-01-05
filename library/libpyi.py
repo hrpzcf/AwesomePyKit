@@ -18,9 +18,9 @@ from library.libm import get_cmd_o
 
 
 class PyiTool(QObject):
-    _stui = STARTUPINFO()
-    _stui.dwFlags = STARTF_USESHOWWINDOW
-    _stui.wShowWindow = SW_HIDE
+    _STARTUP = STARTUPINFO()
+    _STARTUP.dwFlags = STARTF_USESHOWWINDOW
+    _STARTUP.wShowWindow = SW_HIDE
     executed = pyqtSignal(int)
     readline = pyqtSignal(str)
 
@@ -75,7 +75,7 @@ class PyiTool(QObject):
                 stderr=STDOUT,
                 text=True,
                 cwd=self._cwd,
-                startupinfo=self._stui,
+                startupinfo=self._STARTUP,
             )
         return self._execf
 
@@ -144,4 +144,4 @@ class PyiTool(QObject):
     def pyi_info(self):
         if self.pyi_ready:
             return get_cmd_o(self.pyi_path, '-v')
-        return 'pyinstaller未安装'
+        return '0.0.0'
