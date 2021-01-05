@@ -6,6 +6,7 @@ import sys
 from platform import machine, platform
 
 from PyQt5.QtCore import (
+    QRegExp,
     QSize,
     Qt,
 )
@@ -14,6 +15,7 @@ from PyQt5.QtGui import (
     QFont,
     QIcon,
     QMovie,
+    QRegExpValidator,
 )
 from PyQt5.QtWidgets import (
     QApplication,
@@ -33,9 +35,9 @@ from interface import *
 from library import *
 from library.libm import PyEnv
 from library.libpyi import PyiTool
-from library.libqt import QLineEditMod, QTextEditMod, TextStream
+from library.libqt import QLineEditMod, QTextEditMod
 
-__VERSION__ = '0.1.7'
+__VERSION__ = '0.2.0'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
@@ -739,81 +741,231 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self._setup_others()
-        self._connect_signal_slot()
+        self._threads = ThreadRepo(300)
+        self._task_retcode = None
         self._def_conf = {}
         self._pyitool_pyenv = None
+        self._pyi_tool = PyiTool()
         self.widget_group = (
             self.tabWidget,
             self.pb_select_py_env,
             self.pb_reinstall_pyi,
+            self.cb_log_level,
             self.le_exefile_specfile_name,
             self.pb_gen_executable,
         )
         self.set_platform_info()
+        self.pyi_running_mov = QMovie(
+            os.path.join(sources_path, 'pyi_running.gif')
+        )
+        self.pyi_running_mov.setScaledSize(QSize(16, 16))
+        self._connect_signal_slot()
 
     def closeEvent(self, event):
-        self._pyi_tool = None
-        self._get_last_status()
+        self.get_last_status()
         save_conf(self._def_conf, 'pyic')
         event.accept()
 
     def show(self):
-        self._apply_def_conf()
         super().show()
-        if self._pyitool_pyenv is None:
-            self._pyi_tool = None
-        else:
-            self._pyi_tool = PyiTool(self._pyitool_pyenv.env_path)
-        if self._pyi_tool:
-            self.set_pyi_info()
+        self._apply_def_conf()
+        self._pyi_tool.initialize(
+            self._def_conf.get('py_info', ''),
+            self._def_conf.get('project_root', os.getcwd()),
+        )
+        self.set_pyi_info()
 
     def _setup_others(self):
-        # 替换“项目根目录”LineEdit控件
-        self.le_project_root = QLineEditMod('dir')
-        self.horizontalLayout_4.replaceWidget(
-            self.le_project_root_old, self.le_project_root
-        )
-        self.le_project_root_old.deleteLater()
         # 替换“程序主模块”LineEdit控件
-        self.le_program_entry = QLineEditMod('file')
+        self.le_program_entry = QLineEditMod('file', {'.py', '.pyc', '.pyw'})
+        self.le_program_entry.setPlaceholderText('程序的启动入口，支持将格式正确的文件拖拽到此')
         self.horizontalLayout_3.replaceWidget(
             self.le_program_entry_old, self.le_program_entry
         )
         self.le_program_entry_old.deleteLater()
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod('dir')
+        self.te_module_search_path.setPlaceholderText(
+            '其他模块搜索目录，可留空，仅在PyInstaller无法自动搜索到模块时使用。支持将格式正确的文件夹直接拖拽到此处。'
+        )
         self.verticalLayout_3.replaceWidget(
             self.te_module_search_path_old, self.te_module_search_path
         )
         self.te_module_search_path_old.deleteLater()
         # 替换“非源代码资源文件”LineEdit控件
         self.te_other_data = QTextEditMod('file')
+        self.te_other_data.setPlaceholderText(
+            '其他需要一起打包的非源代码资源文件，可留空。注意资源文件要在项目根目录'
+            '范围内，否则打包后程序可能无法运行。支持将格式正确的文件直接拖拽到此处。'
+        )
         self.verticalLayout_4.replaceWidget(
             self.te_other_data_old, self.te_other_data
         )
         self.te_other_data_old.deleteLater()
         # 替换“文件图标路径”LineEdit控件
-        self.le_file_icon_path = QLineEditMod('file')
+        self.le_file_icon_path = QLineEditMod('file', {'.ico', '.icns'})
+        self.le_file_icon_path.setPlaceholderText('可执行文件图标，支持将格式正确的文件拖拽到此')
         self.horizontalLayout_11.replaceWidget(
             self.le_file_icon_path_old, self.le_file_icon_path
         )
         self.le_file_icon_path_old.deleteLater()
-
-    def _connect_signal_slot(self):
-        self.pb_select_py_env.clicked.connect(
-            self._show_pyit_choose_env_window
+        self.le_exefile_specfile_name.setValidator(
+            QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
         )
 
-    @staticmethod
-    def _show_pyit_choose_env_window():
-        pyitool_choose_pyenv_window.show()
+    def _connect_signal_slot(self):
+        self._pyi_tool.executed.connect(self.set_return_code)
+        self._pyi_tool.readline.connect(self.update_stream)
+        self.pb_select_py_env.clicked.connect(choose_pyenv_window.show)
+        self.le_program_entry.textChanged.connect(self.set_le_project_root)
+        self.pb_select_module_search_path.clicked.connect(
+            self.set_te_module_search_path
+        )
+        self.pb_select_program_entry.clicked.connect(self.set_le_program_entry)
+        self.pb_clear_module_search_path.clicked.connect(
+            self.te_module_search_path.clear
+        )
+        self.pb_select_other_data.clicked.connect(self.set_te_other_data)
+        self.pb_clear_other_data.clicked.connect(self.te_other_data.clear)
+        self.pb_select_file_icon.clicked.connect(self.set_le_file_icon_path)
+        self.pb_select_spec_dir.clicked.connect(self.set_le_spec_dir)
+        self.pb_select_temp_working_dir.clicked.connect(
+            self.set_le_temp_working_dir
+        )
+        self.pb_select_output_dir.clicked.connect(self.set_le_output_dir)
+        self.pb_select_upx_search_path.clicked.connect(
+            self.set_le_upx_search_path
+        )
+        self.pb_select_version_file.clicked.connect(self.set_le_version_file)
+        self.pb_gen_executable.clicked.connect(self.build_executable)
+
+    def set_return_code(self, retcode):
+        self._task_retcode = retcode
+
+    def update_stream(self, string):
+        self.te_pyi_out_stream.append(string)
+
+    def set_le_program_entry(self):
+        selected_file = self._select_file_dir(
+            '选择主程序',
+            self._def_conf.get('project_root', ''),
+            file_filter='脚本文件 (*.py *.pyc *.pyw)',
+        )[0]
+        if not selected_file:
+            return
+        self.le_program_entry.setText(selected_file)
+
+    def set_le_project_root(self):
+        self.le_project_root.setText(
+            os.path.dirname(self.le_program_entry.text())
+        )
+        self._def_conf['project_root'] = self.le_project_root.text()
+
+    def set_te_module_search_path(self):
+        selected_dir = self._select_file_dir(
+            '其他模块搜索目录', self._def_conf.get('project_root', ''), cht='dir'
+        )[0]
+        if not selected_dir:
+            return
+        self.te_module_search_path.append(selected_dir)
+
+    def set_te_other_data(self):
+        selected_files = self._select_file_dir(
+            '选择非源码资源文件', self._def_conf.get('project_root', ''), mult=True
+        )
+        if not selected_files:
+            return
+        self.te_other_data.append('\n'.join(selected_files))
+
+    def set_le_file_icon_path(self):
+        selected_file = self._select_file_dir(
+            '选择可执行文件图标',
+            self._def_conf.get('project_root', ''),
+            file_filter='图标文件 (*.ico *.icns)',
+        )[0]
+        if not selected_file:
+            return
+        self.le_file_icon_path.setText(selected_file)
+
+    def set_le_spec_dir(self):
+        selected_dir = self._select_file_dir(
+            '选择SPEC文件储存目录', self._def_conf.get('project_root', ''), cht='dir'
+        )[0]
+        if not selected_dir:
+            return
+        self.le_spec_dir.setText(selected_dir)
+
+    def set_le_temp_working_dir(self):
+        selected_dir = self._select_file_dir(
+            '选择临时文件目录', self._def_conf.get('project_root', ''), cht='dir'
+        )[0]
+        if not selected_dir:
+            return
+        self.le_temp_working_dir.setText(selected_dir)
+
+    def set_le_output_dir(self):
+        selected_dir = self._select_file_dir(
+            '选择打包文件储存目录', self._def_conf.get('project_root', ''), cht='dir'
+        )[0]
+        if not selected_dir:
+            return
+        self.le_output_dir.setText(selected_dir)
+
+    def set_le_upx_search_path(self):
+        selected_dir = self._select_file_dir(
+            '选择UPX程序搜索目录', self._def_conf.get('project_root', ''), cht='dir'
+        )[0]
+        if not selected_dir:
+            return
+        self.le_upx_search_path.setText(selected_dir)
+
+    def set_le_version_file(self):
+        pass
+
+    def _select_file_dir(
+        self,
+        title='',
+        start='',
+        cht='file',
+        mult=False,
+        file_filter='所有文件 (*)',
+    ):
+        file_dir_paths = []
+        if cht == 'file' and mult:
+            if not title:
+                title = '选择多文件'
+            path_getter = QFileDialog.getOpenFileNames
+        elif cht == 'file' and not mult:
+            if not title:
+                title = '选择文件'
+            path_getter = QFileDialog.getOpenFileName
+        elif cht == 'dir':
+            if not title:
+                title = '选择文件夹'
+            path_getter = QFileDialog.getExistingDirectory
+        else:
+            return file_dir_paths
+        if cht == 'file' and not mult:
+            file_dir_paths.append(
+                path_getter(self, title, start, file_filter)[0]
+            )
+        elif cht == 'file' and mult:
+            file_dir_paths.extend(
+                path_getter(self, title, start, file_filter)[0]
+            )
+        elif cht == 'dir':
+            file_dir_paths.append(path_getter(self, title, start))
+        return file_dir_paths
 
     def _set_pyenv_and_update_info(self):
-        self._pyitool_pyenv = pyitool_choose_pyenv_window.pyi_pyenvs[
-            pyitool_choose_pyenv_window.lw_py_envs.currentRow()
+        self._pyitool_pyenv = choose_pyenv_window.pyenvs[
+            choose_pyenv_window.lw_py_envs.currentRow()
         ]
-        self.le_py_info.setText(self._pyitool_pyenv.py_info())
-        self._pyi_tool = PyiTool(self._pyitool_pyenv.env_path)
+        self.lb_py_info.setText(self._pyitool_pyenv.py_info())
+        self._pyi_tool.initialize(
+            self._pyitool_pyenv.env_path,
+            self._def_conf.get('program_entry', os.getcwd()),
+        )
         self.set_pyi_info()
 
     def _apply_def_conf(self):
@@ -853,9 +1005,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_upx_search_path.setText(
             self._def_conf.get('upx_search_path', '')
         )
-        self.le_version_file_old.setText(
-            self._def_conf.get('version_file', '')
-        )
+        self.le_version_file.setText(self._def_conf.get('version_file', ''))
         self.te_upx_exclude_files.setText(
             '\n'.join(self._def_conf.get('upx_exclude_files', []))
         )
@@ -863,7 +1013,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         if py_path:
             try:
                 self._pyitool_pyenv = PyEnv(py_path)
-                self.le_py_info.setText(self._pyitool_pyenv.py_info())
+                self.lb_py_info.setText(self._pyitool_pyenv.py_info())
             except Exception:
                 pass
         self.le_exefile_specfile_name.setText(
@@ -873,8 +1023,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self._def_conf.get('log_level', 'INFO')
         )
 
-    def _get_last_status(self):
-        self._def_conf['project_root'] = self.le_project_root.local_path
+    def get_last_status(self):
+        self._def_conf['project_root'] = self.le_project_root.text()
         self._def_conf['program_entry'] = self.le_program_entry.local_path
         self._def_conf[
             'module_search_path'
@@ -897,13 +1047,14 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._def_conf['output_dir'] = self.le_output_dir.text()
         self._def_conf['spec_dir'] = self.le_spec_dir.text()
         self._def_conf['upx_search_path'] = self.le_upx_search_path.text()
-        self._def_conf['version_file'] = self.le_version_file_old.text()
+        self._def_conf['version_file'] = self.le_version_file.text()
         self._def_conf['upx_exclude_files'] = [
-            string.strip()
-            for string in self.te_upx_exclude_files.toPlainText().split()
+            string
+            for string in self.te_upx_exclude_files.toPlainText().split(' ')
+            if string
         ]
         if self._pyitool_pyenv is None:
-            self._def_conf['py_info'] = None
+            self._def_conf['py_info'] = ''
         else:
             self._def_conf['py_info'] = self._pyitool_pyenv.env_path
         self._def_conf[
@@ -912,15 +1063,78 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._def_conf['log_level'] = self.cb_log_level.currentText()
 
     def set_pyi_info(self):
-        if self._pyitool_pyenv is None:
-            self.le_pyi_info.setText('请先选择Python环境。')
-        else:
-            self.le_pyi_info.setText(
+        if self._pyitool_pyenv:
+            self.lb_pyi_info.setText(
                 f'PyInstaller - {self._pyi_tool.pyi_info()}'
             )
+        else:
+            self.lb_pyi_info.setText('未选择Python环境')
 
     def set_platform_info(self):
-        self.le_platform_info.setText(f'{platform()}-{machine()}')
+        self.lb_platform_info.setText(f'{platform()}-{machine()}')
+
+    def _check_requireds(self):
+        self.get_last_status()
+        program_entry = self._def_conf.get('program_entry', '')
+        if not program_entry:
+            NewMessageBox('错误', '程序主模块尚未填写！', QMessageBox.Critical).exec()
+            return False
+        if not os.path.isfile(program_entry):
+            NewMessageBox('错误', '程序主模块文件不存在！', QMessageBox.Critical).exec()
+            return False
+        return True
+
+    def show_running(self, msg):
+        self.lb_running_tip.setText(msg)
+        self.lb_running_gif.setMovie(self.pyi_running_mov)
+        self.pyi_running_mov.start()
+
+    def hide_running(self):
+        self.pyi_running_mov.stop()
+        self.lb_running_gif.clear()
+        self.lb_running_tip.clear()
+
+    def lock_widgets(self):
+        for widget in self.widget_group:
+            widget.setEnabled(False)
+
+    def release_widgets(self):
+        for widget in self.widget_group:
+            widget.setEnabled(True)
+        self.hide_running()
+
+    def task_completion_tip(self):
+        if self._task_retcode is None:
+            return None
+        if self._task_retcode == 0:
+            return NewMessageBox('任务结束', '可执行文件已打包完成！').exec()
+        return NewMessageBox(
+            '任务结束', '可执行文件生成失败，请检查错误信息！', QMessageBox.Critical
+        ).exec()
+
+    def build_executable(self):
+        if not self._check_requireds():
+            return
+        self.te_pyi_out_stream.clear()
+        self.get_last_status()
+        self._pyi_tool.initialize(
+            self._def_conf.get('py_info', ''),
+            self._def_conf.get('project_root', os.getcwd()),
+        )
+        if not self._pyi_tool.pyi_ready:
+            return NewMessageBox(
+                '提示', 'PyInstaller现在不可用，请检查！', QMessageBox.Warning
+            ).exec()
+        self._pyi_tool.prepare_cmd(self._def_conf)
+        self.handle = self._pyi_tool.handle()
+        thread_build = NewTask(self._pyi_tool.execute_cmd)
+        thread_build.started.connect(self.lock_widgets)
+        thread_build.started.connect(lambda: self.show_running('正在生成可执行文件...'))
+        thread_build.finished.connect(self.hide_running)
+        thread_build.finished.connect(self.release_widgets)
+        thread_build.finished.connect(self.task_completion_tip)
+        thread_build.start()
+        self._threads.put(thread_build, 0)
 
 
 class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
@@ -935,7 +1149,7 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
     def pyenv_list_update(self):
         row_size = QSize(0, 28)
         self.lw_py_envs.clear()
-        for py_env in self.pyi_pyenvs:
+        for py_env in self.pyenvs:
             item = QListWidgetItem(str(py_env))
             item.setSizeHint(row_size)
             self.lw_py_envs.addItem(item)
@@ -945,7 +1159,7 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
         pyinstaller_tool_window._set_pyenv_and_update_info()
 
     def show(self):
-        self.pyi_pyenvs = get_pyenv_list(load_conf('pths'))
+        self.pyenvs = get_pyenv_list(load_conf('pths'))
         super().show()
         self.pyenv_list_update()
 
@@ -994,8 +1208,8 @@ if __name__ == '__main__':
     information_panel_window = InformationPanelWindow()
     main_interface_window = MainInterfaceWindow()
     package_manager_window = PackageManagerWindow()
-    mirror_source_manager_window = MirrorSourceManagerWindow()
+    choose_pyenv_window = PyiToolChoosePyEnvWindow()
     pyinstaller_tool_window = PyInstallerToolWindow()
-    pyitool_choose_pyenv_window = PyiToolChoosePyEnvWindow()
+    mirror_source_manager_window = MirrorSourceManagerWindow()
     main_interface_window.show()
     sys.exit(app.exec())
