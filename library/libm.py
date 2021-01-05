@@ -5,11 +5,22 @@ __doc__ = '''包含AwesomePyKit的主要类、函数、配置文件路径等。'
 import json
 import os
 import re
-from subprocess import PIPE, Popen, TimeoutExpired
+from subprocess import (
+    PIPE,
+    STARTF_USESHOWWINDOW,
+    STARTUPINFO,
+    SW_HIDE,
+    Popen,
+    TimeoutExpired,
+)
 
 from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
 from PyQt5.QtCore import QMutex, QThread, QTimer
+
+_STARTUP = STARTUPINFO()
+_STARTUP.dwFlags = STARTF_USESHOWWINDOW
+_STARTUP.wShowWindow = SW_HIDE
 
 _root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 conf_path = os.path.join(_root_path, 'config')
@@ -265,7 +276,7 @@ class ThreadRepo:
 
 def get_cmd_o(*commands, regexp='', timeout=None):
     ''' 用于从cmd命令执行输出的字符匹配想要的信息。'''
-    exec_f = Popen(commands, stdout=PIPE, text=True)
+    exec_f = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP)
     try:
         strings, _ = exec_f.communicate(timeout=timeout)
     except TimeoutExpired:
