@@ -282,5 +282,5 @@ def get_cmd_o(*commands, regexp='', timeout=None):
     except TimeoutExpired:
         return ''
     if not regexp:
-        return strings
+        return strings.strip()
     return re.search(regexp, strings)
