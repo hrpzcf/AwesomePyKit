@@ -493,9 +493,9 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
-             <widget class="QLabel" name="label_6">
+             <widget class="QLabel" name="label_16">
               <property name="text">
-               <string>Py信息：</string>
+               <string>Pyi版本：</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -503,9 +503,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_16">
+             <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>Pyi版本：</string>
+               <string>Py信息：</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -527,47 +527,14 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_18">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout" stretch="9,0">
-              <item>
-               <widget class="QLineEdit" name="le_py_info">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="frame">
-                 <bool>false</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pb_select_py_env">
-                <property name="text">
-                 <string>选择环境</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="9,0">
               <item>
-               <widget class="QLineEdit" name="le_pyi_info">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+               <widget class="QLabel" name="lb_pyi_info">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
                 </property>
                 <property name="text">
                  <string/>
-                </property>
-                <property name="frame">
-                 <bool>false</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -587,18 +554,39 @@
              </layout>
             </item>
             <item>
-             <widget class="QLineEdit" name="le_platform_info">
-              <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
+             <layout class="QHBoxLayout" name="horizontalLayout" stretch="9,0">
+              <item>
+               <widget class="QLabel" name="lb_py_info">
+                <property name="frameShape">
+                 <enum>QFrame::Box</enum>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pb_select_py_env">
+                <property name="text">
+                 <string>选择环境</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="lb_platform_info">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>29</height>
+               </size>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
               </property>
               <property name="text">
                <string/>
-              </property>
-              <property name="frame">
-               <bool>false</bool>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -721,6 +709,15 @@
                  </color>
                 </brush>
                </colorrole>
+               <colorrole role="PlaceholderText">
+                <brush brushstyle="NoBrush">
+                 <color alpha="128">
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
               </active>
               <inactive>
                <colorrole role="Text">
@@ -738,6 +735,15 @@
                   <red>0</red>
                   <green>0</green>
                   <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="PlaceholderText">
+                <brush brushstyle="NoBrush">
+                 <color alpha="128">
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -761,12 +767,21 @@
                  </color>
                 </brush>
                </colorrole>
+               <colorrole role="PlaceholderText">
+                <brush brushstyle="NoBrush">
+                 <color alpha="128">
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
               </disabled>
              </palette>
             </property>
             <property name="font">
              <font>
-              <family>Lucida Console</family>
+              <family>Consolas</family>
              </font>
             </property>
             <property name="contextMenuPolicy">
