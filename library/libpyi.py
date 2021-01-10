@@ -105,17 +105,19 @@ class PyiTool(QObject):
             self._commands.extend(('--specpath', spec_path))
         if name := cmd_dict.get('exefile_specfile_name', ''):
             self._commands.extend(('-n', name))
-        if datas_to_add := cmd_dict.get('other_data', []):
+        if datas_to_add := cmd_dict.get('other_data', None):
             for data in datas_to_add:
-                self._commands.extend(('--add-data', f'{data};.'))
-        if module_search_paths := cmd_dict.get('module_search_path', []):
+                self._commands.extend(
+                    ('--add-data', fr'{data[0]};{data[1]}')
+                )
+        if module_search_paths := cmd_dict.get('module_search_path', None):
             for module_path in module_search_paths:
                 self._commands.extend(('-p', module_path))
         if key := cmd_dict.get('key', ''):
             self._commands.extend(('--key', key))
         if not cmd_dict.get('use_upx', False):
             self._commands.append('--noupx')
-        if upx_excludes := cmd_dict.get('upx_exclude_files', []):
+        if upx_excludes := cmd_dict.get('upx_exclude_files', None):
             for exfile in upx_excludes:
                 self._commands.extend(('--upx-exclude', exfile))
         if cmd_dict.get('execute_with_console', True):
