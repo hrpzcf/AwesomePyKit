@@ -862,6 +862,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
         self.pb_select_version_file.clicked.connect(self.set_le_version_file)
         self.pb_gen_executable.clicked.connect(self.build_executable)
+        self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyi)
 
     def set_le_program_entry(self):
         selected_file = self._select_file_dir(
@@ -1103,12 +1104,37 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._def_conf['log_level'] = self.cb_log_level.currentText()
 
     def set_pyi_info(self):
+        # 此处不能用 self._pyi_tool，因为 self._pyi_tool 总有一个空实例
         if self._pyitool_pyenv:
-            self.lb_pyi_info.setText(
-                f'PyInstaller - {self._pyi_tool.pyi_info()}'
-            )
+            self.pb_reinstall_pyi.setEnabled(True)
+            pyi_info = self._pyi_tool.pyi_info()
+            if pyi_info == '0.0.0':
+                self.pb_reinstall_pyi.setText('安装')
+            else:
+                self.pb_reinstall_pyi.setText('重新安装')
+            self.lb_pyi_info.setText(f'PyInstaller - {pyi_info}')
         else:
             self.lb_pyi_info.clear()
+            self.pb_reinstall_pyi.setEnabled(False)
+
+    def reinstall_pyi(self):
+        if not self._pyitool_pyenv:
+            return
+
+        def do_reinstall_pyi():
+            self._pyitool_pyenv.uninstall('pyinstaller')
+            self._pyitool_pyenv.install('pyinstaller', upgrade=1)
+            self.set_pyi_info()
+
+        reinstall = NewTask(target=do_reinstall_pyi)
+        reinstall.started.connect(self.lock_widgets)
+        reinstall.started.connect(
+            lambda: self.show_running('正在重装PYINSTALLER...')
+        )
+        reinstall.finished.connect(self.hide_running)
+        reinstall.finished.connect(self.release_widgets)
+        reinstall.start()
+        self._threads.put(reinstall, 0)
 
     def set_platform_info(self):
         self.lb_platform_info.setText(f'{platform()}-{machine()}')
