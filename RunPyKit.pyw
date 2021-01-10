@@ -795,16 +795,22 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def _setup_others(self):
         # 替换“主程序”LineEdit控件
-        self.le_program_entry = QLineEditMod('file', {'.py', '.pyc', '.pyw'})
-        self.le_program_entry.setPlaceholderText('程序启动入口，可将格式正确的文件拖到此处')
+        self.le_program_entry = QLineEditMod(
+            'file', {'.py', '.pyc', '.pyw', '.spec'}
+        )
+        self.le_program_entry.setToolTip(
+            '要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。\n'
+            '如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。\n'
+            '可将格式正确的文件拖放到此处。'
+        )
         self.horizontalLayout_3.replaceWidget(
             self.le_program_entry_old, self.le_program_entry
         )
         self.le_program_entry_old.deleteLater()
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod('dir')
-        self.te_module_search_path.setPlaceholderText(
-            '程序其他模块搜索目录，可留空，仅在PyInstaller无法自动搜索到模块时使用。可将模块所在文件夹直接拖到此处。'
+        self.te_module_search_path.setToolTip(
+            '程序的其他模块的搜索路径，此项可留空。\n仅当PYINSTALLER无法自动找到时使用，支持将文件夹直接拖放到此处。'
         )
         self.verticalLayout_3.replaceWidget(
             self.te_module_search_path_old, self.te_module_search_path
@@ -812,9 +818,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.te_module_search_path_old.deleteLater()
         # 替换“非源代码资源文件”LineEdit控件
         self.te_other_data = QTextEditMod('file')
-        self.te_other_data.setPlaceholderText(
-            '其他需要一起打包的非源代码资源文件，可留空。注意资源文件要在项目'
-            '根目录范围内，否则打包后程序可能无法运行。可将文件或者文件夹直接拖到此处。'
+        self.te_other_data.setToolTip(
+            '非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n'
+            '注意资源文件要在项目根目录范围内，否则打包后程序可能无法运行。可将文件或者文件夹直接拖到此处。'
         )
         self.verticalLayout_4.replaceWidget(
             self.te_other_data_old, self.te_other_data
@@ -822,7 +828,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.te_other_data_old.deleteLater()
         # 替换“文件图标路径”LineEdit控件
         self.le_file_icon_path = QLineEditMod('file', {'.ico', '.icns'})
-        self.le_file_icon_path.setPlaceholderText('可执行文件图标，可将格式正确的文件拖到此处')
+        self.le_file_icon_path.setToolTip(
+            '生成的exe可执行文件的图标。\n支持.ico、.icns图标文件，可将格式正确的文件拖放到此处。'
+        )
         self.horizontalLayout_11.replaceWidget(
             self.le_file_icon_path_old, self.le_file_icon_path
         )
@@ -868,7 +876,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         selected_file = self._select_file_dir(
             '选择主程序',
             self._def_conf.get('project_root', ''),
-            file_filter='脚本文件 (*.py *.pyc *.pyw)',
+            file_filter='脚本文件 (*.py *.pyc *.pyw *.spec)',
         )[0]
         if not selected_file:
             return

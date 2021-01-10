@@ -41,6 +41,10 @@
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
                <widget class="QLabel" name="label">
+                <property name="toolTip">
+                 <string>要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。
+如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
+                </property>
                 <property name="text">
                  <string>主程序：</string>
                 </property>
@@ -52,6 +56,10 @@
                  <widget class="QLineEdit" name="le_program_entry_old">
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="toolTip">
+                   <string>要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。
+如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
                   </property>
                  </widget>
                 </item>
@@ -70,6 +78,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_19">
               <item>
                <widget class="QLabel" name="label_13">
+                <property name="toolTip">
+                 <string>打包完成后的exe可执行文件文件的名称，此项留空则使用主程序文件名。</string>
+                </property>
                 <property name="text">
                  <string>生成文件名称：</string>
                 </property>
@@ -80,8 +91,8 @@
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
                 </property>
-                <property name="placeholderText">
-                 <string>留空则使用主模块名称</string>
+                <property name="toolTip">
+                 <string>打包完成后的exe可执行文件文件的名称，此项留空则使用主程序文件名。</string>
                 </property>
                </widget>
               </item>
@@ -93,6 +104,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="9,0">
                 <item>
                  <widget class="QLabel" name="label_2">
+                  <property name="toolTip">
+                   <string>当前的项目根目录，选择主程序文件后自动确定。</string>
+                  </property>
                   <property name="text">
                    <string>项目根目录：</string>
                   </property>
@@ -102,6 +116,9 @@
                  <layout class="QHBoxLayout" name="horizontalLayout_20">
                   <item>
                    <widget class="QPushButton" name="pb_reset_root_level">
+                    <property name="toolTip">
+                     <string>将项目根目录重置为主程序所在目录。</string>
+                    </property>
                     <property name="text">
                      <string>重置</string>
                     </property>
@@ -109,6 +126,9 @@
                   </item>
                   <item>
                    <widget class="QPushButton" name="pb_up_level_root">
+                    <property name="toolTip">
+                     <string>将项目根目录向上移一级。</string>
+                    </property>
                     <property name="text">
                      <string>上一级</string>
                     </property>
@@ -123,11 +143,11 @@
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
                 </property>
+                <property name="toolTip">
+                 <string>当前的项目根目录，选择主程序文件后自动确定。</string>
+                </property>
                 <property name="readOnly">
                  <bool>true</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>选择主程序后自动确定</string>
                 </property>
                </widget>
               </item>
@@ -146,13 +166,19 @@
                <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,0,0">
                 <item>
                  <widget class="QLabel" name="label_3">
+                  <property name="toolTip">
+                   <string>程序的其他模块的搜索目录(仅当PYINSTALLER无法自动找到时使用)。</string>
+                  </property>
                   <property name="text">
-                   <string>其他模块搜索目录：</string>
+                   <string>其他模块搜索路径：</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="pb_clear_module_search_path">
+                  <property name="toolTip">
+                   <string>清空其他模块搜索目录文本框。</string>
+                  </property>
                   <property name="text">
                    <string>清空</string>
                   </property>
@@ -189,6 +215,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="9,0,0">
                 <item>
                  <widget class="QLabel" name="label_4">
+                  <property name="toolTip">
+                   <string>非源代码性质的其他资源文件，例如一些图片、配置文件等。</string>
+                  </property>
                   <property name="text">
                    <string>非源代码资源文件：</string>
                   </property>
@@ -223,6 +252,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
                <widget class="QLabel" name="label_7">
+                <property name="toolTip">
+                 <string>生成的exe可执行文件的图标，支持.ico、.icns图标文件。</string>
+                </property>
                 <property name="text">
                  <string>文件图标路径：</string>
                 </property>
@@ -234,6 +266,9 @@
                  <widget class="QLineEdit" name="le_file_icon_path_old">
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="toolTip">
+                   <string>生成的exe可执行文件的图标，支持.ico、.icns图标文件。</string>
                   </property>
                  </widget>
                 </item>
@@ -263,6 +298,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_9">
               <item>
                <widget class="QRadioButton" name="rb_pack_to_one_dir">
+                <property name="toolTip">
+                 <string>将程序打包成单文件夹形式，exe可执行程序在文件夹的首层目录内。</string>
+                </property>
                 <property name="text">
                  <string>打包成单目录(建议)</string>
                 </property>
@@ -270,6 +308,9 @@
               </item>
               <item>
                <widget class="QRadioButton" name="rb_pack_to_one_file">
+                <property name="toolTip">
+                 <string>将程序以及添加的其他资源文件打包成单一文件的形式，启动速度较慢。</string>
+                </property>
                 <property name="text">
                  <string>打包成单文件</string>
                 </property>
@@ -279,6 +320,9 @@
             </item>
             <item>
              <widget class="QCheckBox" name="cb_execute_with_console">
+              <property name="toolTip">
+               <string>打包完成后启动程序是否显示命令行窗口，注意，后缀为pyw的主程序打包后不显示控制台，此项设置失效。</string>
+              </property>
               <property name="text">
                <string>打包的程序运行时显示控制台</string>
               </property>
@@ -286,6 +330,9 @@
             </item>
             <item>
              <widget class="QCheckBox" name="cb_without_confirm">
+              <property name="toolTip">
+               <string>当要储存生成的exe可执行文件的文件夹不为空时，是否清空该文件夹。</string>
+              </property>
               <property name="text">
                <string>输出目录不为空时清空而不是中断</string>
               </property>
@@ -293,6 +340,11 @@
             </item>
             <item>
              <widget class="QCheckBox" name="cb_use_upx">
+              <property name="toolTip">
+               <string>打包过程中是否使用upx对文件进行压缩。
+注意，某些二进制文件在经过upx压缩后可能无法正常运行。
+仅当系统环境变量PATH中有upx路径信息或在以下“upx可执行文件查找路径”指定了upx查找路径时，此项设置才生效。</string>
+              </property>
               <property name="text">
                <string>使用UPX对文件进行压缩</string>
               </property>
@@ -300,6 +352,9 @@
             </item>
             <item>
              <widget class="QCheckBox" name="cb_clean_before_build">
+              <property name="toolTip">
+               <string>生成exe可执行文件前是否清空PYINSTALLER生成的临时文件夹(即build文件夹，此文件夹可用于下次加速生成)。</string>
+              </property>
               <property name="text">
                <string>构建前清理缓存并删除临时文件</string>
               </property>
@@ -309,6 +364,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_15">
               <item>
                <widget class="QLabel" name="label_11">
+                <property name="toolTip">
+                 <string>用于加密打包过程中生成PYC文件时的加密。</string>
+                </property>
                 <property name="text">
                  <string>字节码加密秘钥：</string>
                 </property>
@@ -318,6 +376,9 @@
                <widget class="QLineEdit" name="le_bytecode_encryption_key">
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
+                </property>
+                <property name="toolTip">
+                 <string>用于加密打包过程中生成PYC文件时的加密。</string>
                 </property>
                 <property name="placeholderText">
                  <string>可留空，Python字节码的加密秘钥</string>
@@ -434,7 +495,7 @@
               <item>
                <widget class="QLabel" name="label_9">
                 <property name="text">
-                 <string>UPX可执行文件查找位置：</string>
+                 <string>UPX可执行文件查找路径：</string>
                 </property>
                </widget>
               </item>
@@ -540,6 +601,9 @@
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
              <widget class="QLabel" name="label_16">
+              <property name="toolTip">
+               <string>所选PYTHON环境下的PYINSTALLER的版本信息。</string>
+              </property>
               <property name="text">
                <string>Pyi版本：</string>
               </property>
@@ -550,6 +614,9 @@
             </item>
             <item>
              <widget class="QLabel" name="label_6">
+              <property name="toolTip">
+               <string>当前选择的PYTHON环境的版本信息。</string>
+              </property>
               <property name="text">
                <string>Py信息：</string>
               </property>
@@ -560,6 +627,9 @@
             </item>
             <item>
              <widget class="QLabel" name="label_15">
+              <property name="toolTip">
+               <string>操作系统的版本信息。</string>
+              </property>
               <property name="text">
                <string>系统信息：</string>
               </property>
@@ -576,6 +646,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="9,0">
               <item>
                <widget class="QLabel" name="lb_pyi_info">
+                <property name="toolTip">
+                 <string>所选PYTHON环境下的PYINSTALLER的版本信息。</string>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::Box</enum>
                 </property>
@@ -587,7 +660,7 @@
               <item>
                <widget class="QPushButton" name="pb_reinstall_pyi">
                 <property name="toolTip">
-                 <string>在当前选择的Python环境中安装或重新安装PYINSTALLER库。</string>
+                 <string>在当前选择的PYTHON环境中安装或重新安装PYINSTALLER库。</string>
                 </property>
                 <property name="text">
                  <string>安装</string>
@@ -600,6 +673,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout" stretch="9,0">
               <item>
                <widget class="QLabel" name="lb_py_info">
+                <property name="toolTip">
+                 <string>当前选择的PYTHON环境的版本信息。</string>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::Box</enum>
                 </property>
@@ -628,6 +704,9 @@
                 <height>29</height>
                </size>
               </property>
+              <property name="toolTip">
+               <string>操作系统的版本信息。</string>
+              </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
               </property>
@@ -653,6 +732,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="9,0">
             <item>
              <widget class="QLabel" name="label_5">
+              <property name="toolTip">
+               <string>打包时输出的流程信息，包含一些用于分析打包问题的信息。</string>
+              </property>
               <property name="text">
                <string>日志信息：</string>
               </property>
@@ -662,6 +744,9 @@
              <layout class="QHBoxLayout" name="horizontalLayout_8">
               <item>
                <widget class="QLabel" name="label_18">
+                <property name="toolTip">
+                 <string>打包程序时输出的流程信息的详细程度，越靠前越详细，默认INFO。</string>
+                </property>
                 <property name="text">
                  <string>追踪级别：</string>
                 </property>
@@ -670,7 +755,7 @@
               <item>
                <widget class="QComboBox" name="cb_log_level">
                 <property name="toolTip">
-                 <string>打包程序时的输出信息的详细程度，越靠前越详细，默认INFO。</string>
+                 <string>打包程序时输出的流程信息的详细程度，越靠前越详细，默认INFO。</string>
                 </property>
                 <item>
                  <property name="text">
@@ -814,6 +899,9 @@
             </property>
             <property name="contextMenuPolicy">
              <enum>Qt::NoContextMenu</enum>
+            </property>
+            <property name="toolTip">
+             <string>打包时输出的流程信息，包含一些用于分析打包问题的信息。</string>
             </property>
             <property name="lineWrapMode">
              <enum>QTextEdit::NoWrap</enum>
