@@ -56,23 +56,35 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
 
     @staticmethod
     def _show_pkgmgr():
-        package_manager_window.show()
+        win_package_mgr.show()
 
     @staticmethod
     def _show_indexmgr():
-        mirror_source_manager_window.show()
+        win_mirror_mgr.show()
 
     @staticmethod
     def _show_pyinstaller_tool():
-        pyinstaller_tool_window.show()
+        win_pyi_tool.show()
 
     def closeEvent(self, event):
-        if package_manager_window._threads.is_empty():
+        if (
+            win_package_mgr._threads.is_empty()
+            and win_pyi_tool._threads.is_empty()
+        ):
             event.accept()
         else:
-            msg_box = NewMessageBox('警告', '任务尚未完全安全退出，请稍等...')
-            msg_box.exec()
-            event.ignore()
+            role = NewMessageBox(
+                '警告',
+                '有任务尚未完成，请耐心等待...',
+                QMessageBox.Warning,
+                (('accept', '强制退出'), ('reject', '取消')),
+            ).exec()
+            if role == 0:
+                win_package_mgr._threads.kill_all()
+                win_pyi_tool._threads.kill_all()
+                event.accept()
+            else:
+                event.ignore()
 
     @staticmethod
     def _show_about():
@@ -90,16 +102,16 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
 
     @staticmethod
     def _show_usinghelp():
-        information_panel_window.setWindowTitle('使用帮助')
+        win_info_panel.setWindowTitle('使用帮助')
         try:
             with open('help/UsingHelp.html', encoding='utf-8') as using_html:
-                information_panel_window.help_panel.setText(using_html.read())
+                win_info_panel.help_panel.setText(using_html.read())
         except Exception:
-            information_panel_window.help_panel.setText(
+            win_info_panel.help_panel.setText(
                 '"使用帮助"文件(help/UsingHelp.html)已丢失。'
             )
-        information_panel_window.setGeometry(430, 100, 0, 0)
-        information_panel_window.show()
+        win_info_panel.setGeometry(430, 100, 0, 0)
+        win_info_panel.show()
 
 
 class PackageManagerWindow(Ui_PackageManager, QMainWindow):
@@ -756,12 +768,18 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
         self.set_platform_info()
         self.pyi_running_mov = QMovie(
-            os.path.join(sources_path, 'pyi_running.gif')
+            os.path.join(sources_path, 'loading.gif')
         )
         self.pyi_running_mov.setScaledSize(QSize(16, 16))
         self._connect_signal_slot()
 
     def closeEvent(self, event):
+        if not self._threads.is_empty():
+            NewMessageBox(
+                '提醒',
+                '生成任务正在运行中，关闭界面后任务将在后台运行，请勿对相关储存目录进行任何操作，否则可能会破坏生成的文件！',
+                QMessageBox.Warning,
+            ).exec()
         self.get_last_status()
         save_conf(self._def_conf, 'pyic')
         event.accept()
@@ -776,9 +794,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.set_pyi_info()
 
     def _setup_others(self):
-        # 替换“程序主模块”LineEdit控件
+        # 替换“主程序”LineEdit控件
         self.le_program_entry = QLineEditMod('file', {'.py', '.pyc', '.pyw'})
-        self.le_program_entry.setPlaceholderText('程序的启动入口，支持将格式正确的文件拖拽到此')
+        self.le_program_entry.setPlaceholderText('程序启动入口，可将格式正确的文件拖到此处')
         self.horizontalLayout_3.replaceWidget(
             self.le_program_entry_old, self.le_program_entry
         )
@@ -786,7 +804,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod('dir')
         self.te_module_search_path.setPlaceholderText(
-            '其他模块搜索目录，可留空，仅在PyInstaller无法自动搜索到模块时使用。支持将格式正确的文件夹直接拖拽到此处。'
+            '其他模块搜索目录，可留空，仅在PyInstaller无法自动搜索到模块时使用。可将格式正确的文件夹直接拖到此处。'
         )
         self.verticalLayout_3.replaceWidget(
             self.te_module_search_path_old, self.te_module_search_path
@@ -795,8 +813,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         # 替换“非源代码资源文件”LineEdit控件
         self.te_other_data = QTextEditMod('file')
         self.te_other_data.setPlaceholderText(
-            '其他需要一起打包的非源代码资源文件，可留空。注意资源文件要在项目根目录'
-            '范围内，否则打包后程序可能无法运行。支持将格式正确的文件直接拖拽到此处。'
+            '其他需要一起打包的非源代码资源文件，可留空。注意资源文件要在项目'
+            '根目录范围内，否则打包后程序可能无法运行。可将格式正确的文件直接拖到此处。'
         )
         self.verticalLayout_4.replaceWidget(
             self.te_other_data_old, self.te_other_data
@@ -804,7 +822,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.te_other_data_old.deleteLater()
         # 替换“文件图标路径”LineEdit控件
         self.le_file_icon_path = QLineEditMod('file', {'.ico', '.icns'})
-        self.le_file_icon_path.setPlaceholderText('可执行文件图标，支持将格式正确的文件拖拽到此')
+        self.le_file_icon_path.setPlaceholderText('可执行文件图标，可将格式正确的文件拖到此处')
         self.horizontalLayout_11.replaceWidget(
             self.le_file_icon_path_old, self.le_file_icon_path
         )
@@ -814,14 +832,20 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
 
     def _connect_signal_slot(self):
-        self._pyi_tool.executed.connect(self.set_return_code)
-        self._pyi_tool.readline.connect(self.update_stream)
-        self.pb_select_py_env.clicked.connect(choose_pyenv_window.show)
+        self._pyi_tool.executed.connect(self.task_completion_tip)
+        self._pyi_tool.readline.connect(self.te_pyi_out_stream.append)
+        self.pb_select_py_env.clicked.connect(win_ch_pyenv.show)
         self.le_program_entry.textChanged.connect(self.set_le_project_root)
         self.pb_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
         )
         self.pb_select_program_entry.clicked.connect(self.set_le_program_entry)
+        self.pb_up_level_root.clicked.connect(
+            lambda: self.project_root_level('up')
+        )
+        self.pb_reset_root_level.clicked.connect(
+            lambda: self.project_root_level('reset')
+        )
         self.pb_clear_module_search_path.clicked.connect(
             self.te_module_search_path.clear
         )
@@ -839,12 +863,6 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.pb_select_version_file.clicked.connect(self.set_le_version_file)
         self.pb_gen_executable.clicked.connect(self.build_executable)
 
-    def set_return_code(self, retcode):
-        self._task_retcode = retcode
-
-    def update_stream(self, string):
-        self.te_pyi_out_stream.append(string)
-
     def set_le_program_entry(self):
         selected_file = self._select_file_dir(
             '选择主程序',
@@ -859,7 +877,6 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_project_root.setText(
             os.path.dirname(self.le_program_entry.text())
         )
-        self._def_conf['project_root'] = self.le_project_root.text()
 
     def set_te_module_search_path(self):
         selected_dir = self._select_file_dir(
@@ -946,20 +963,29 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         else:
             return file_dir_paths
         if cht == 'file' and not mult:
-            file_dir_paths.append(
-                path_getter(self, title, start, file_filter)[0]
-            )
+            path = path_getter(self, title, start, file_filter)[0]
+            if not path:
+                file_dir_paths.append('')
+            else:
+                file_dir_paths.append(os.path.realpath(path))
         elif cht == 'file' and mult:
+            paths = path_getter(self, title, start, file_filter)[0]
             file_dir_paths.extend(
-                path_getter(self, title, start, file_filter)[0]
+                os.path.realpath(path) for path in paths if path
             )
+            if not file_dir_paths:
+                file_dir_paths.append('')
         elif cht == 'dir':
-            file_dir_paths.append(path_getter(self, title, start))
+            path = path_getter(self, title, start)
+            if not path:
+                file_dir_paths.append('')
+            else:
+                file_dir_paths.append(os.path.realpath(path))
         return file_dir_paths
 
     def _set_pyenv_and_update_info(self):
-        self._pyitool_pyenv = choose_pyenv_window.pyenvs[
-            choose_pyenv_window.lw_py_envs.currentRow()
+        self._pyitool_pyenv = win_ch_pyenv.pyenvs[
+            win_ch_pyenv.lw_py_envs.currentRow()
         ]
         self.lb_py_info.setText(self._pyitool_pyenv.py_info())
         self._pyi_tool.initialize(
@@ -1068,19 +1094,33 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 f'PyInstaller - {self._pyi_tool.pyi_info()}'
             )
         else:
-            self.lb_pyi_info.setText('未选择Python环境')
+            self.lb_pyi_info.clear()
 
     def set_platform_info(self):
         self.lb_platform_info.setText(f'{platform()}-{machine()}')
+
+    def project_root_level(self, opt):
+        if opt not in ('up', 'reset'):
+            return
+        root = self.le_project_root.text()
+        if not root:
+            return
+        if opt == 'up':
+            self.le_project_root.setText(os.path.dirname(root))
+        elif opt == 'reset':
+            deep = self.le_program_entry.text()
+            if not deep:
+                return
+            self.le_project_root.setText(os.path.dirname(deep))
 
     def _check_requireds(self):
         self.get_last_status()
         program_entry = self._def_conf.get('program_entry', '')
         if not program_entry:
-            NewMessageBox('错误', '程序主模块尚未填写！', QMessageBox.Critical).exec()
+            NewMessageBox('错误', '主程序未填写！', QMessageBox.Critical).exec()
             return False
         if not os.path.isfile(program_entry):
-            NewMessageBox('错误', '程序主模块文件不存在！', QMessageBox.Critical).exec()
+            NewMessageBox('错误', '主程序文件不存在！', QMessageBox.Critical).exec()
             return False
         return True
 
@@ -1103,38 +1143,37 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             widget.setEnabled(True)
         self.hide_running()
 
-    def task_completion_tip(self):
-        if self._task_retcode is None:
-            return None
-        if self._task_retcode == 0:
-            return NewMessageBox('任务结束', '可执行文件已打包完成！').exec()
-        return NewMessageBox(
-            '任务结束', '可执行文件生成失败，请检查错误信息！', QMessageBox.Critical
-        ).exec()
+    @staticmethod
+    def task_completion_tip(retcode):
+        if retcode == 0:
+            NewMessageBox('任务结束', '可执行文件已打包完成！').exec()
+        else:
+            NewMessageBox(
+                '任务结束', '可执行文件生成失败，请检查错误信息！', QMessageBox.Critical
+            ).exec()
 
     def build_executable(self):
         if not self._check_requireds():
             return
         self.te_pyi_out_stream.clear()
-        self.get_last_status()
         self._pyi_tool.initialize(
             self._def_conf.get('py_info', ''),
             self._def_conf.get('project_root', os.getcwd()),
         )
         if not self._pyi_tool.pyi_ready:
-            return NewMessageBox(
-                '提示', 'PyInstaller现在不可用，请检查！', QMessageBox.Warning
+            NewMessageBox(
+                '提示', '打包库不可用，请将PYINSTALLER安装到所选环境。', QMessageBox.Warning
             ).exec()
+            return
         self._pyi_tool.prepare_cmd(self._def_conf)
         self.handle = self._pyi_tool.handle()
-        thread_build = NewTask(self._pyi_tool.execute_cmd)
-        thread_build.started.connect(self.lock_widgets)
-        thread_build.started.connect(lambda: self.show_running('正在生成可执行文件...'))
-        thread_build.finished.connect(self.hide_running)
-        thread_build.finished.connect(self.release_widgets)
-        thread_build.finished.connect(self.task_completion_tip)
-        thread_build.start()
-        self._threads.put(thread_build, 0)
+        build = NewTask(self._pyi_tool.execute_cmd)
+        build.started.connect(self.lock_widgets)
+        build.started.connect(lambda: self.show_running('正在生成可执行文件...'))
+        build.finished.connect(self.hide_running)
+        build.finished.connect(self.release_widgets)
+        build.start()
+        self._threads.put(build, 0)
 
 
 class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
@@ -1156,7 +1195,7 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
 
     def close(self):
         super().close()
-        pyinstaller_tool_window._set_pyenv_and_update_info()
+        win_pyi_tool._set_pyenv_and_update_info()
 
     def show(self):
         self.pyenvs = get_pyenv_list(load_conf('pths'))
@@ -1203,13 +1242,15 @@ class NewMessageBox(QMessageBox):
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon(os.path.join(sources_path, 'icon.ico')))
-    information_panel_window = InformationPanelWindow()
-    main_interface_window = MainInterfaceWindow()
-    package_manager_window = PackageManagerWindow()
-    choose_pyenv_window = PyiToolChoosePyEnvWindow()
-    pyinstaller_tool_window = PyInstallerToolWindow()
-    mirror_source_manager_window = MirrorSourceManagerWindow()
-    main_interface_window.show()
-    sys.exit(app.exec())
+    app_awesomepykit = QApplication(sys.argv)
+    app_awesomepykit.setWindowIcon(
+        QIcon(os.path.join(sources_path, 'icon.ico'))
+    )
+    win_info_panel = InformationPanelWindow()
+    win_main_interface = MainInterfaceWindow()
+    win_package_mgr = PackageManagerWindow()
+    win_ch_pyenv = PyiToolChoosePyEnvWindow()
+    win_pyi_tool = PyInstallerToolWindow()
+    win_mirror_mgr = MirrorSourceManagerWindow()
+    win_main_interface.show()
+    sys.exit(app_awesomepykit.exec())
