@@ -145,4 +145,5 @@ config/
 .idea/
 .vscode/
 test.py
-Build.py
+build.py
+upx/
