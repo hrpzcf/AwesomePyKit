@@ -804,7 +804,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod('dir')
         self.te_module_search_path.setPlaceholderText(
-            '其他模块搜索目录，可留空，仅在PyInstaller无法自动搜索到模块时使用。可将格式正确的文件夹直接拖到此处。'
+            '程序其他模块搜索目录，可留空，仅在PyInstaller无法自动搜索到模块时使用。可将模块所在文件夹直接拖到此处。'
         )
         self.verticalLayout_3.replaceWidget(
             self.te_module_search_path_old, self.te_module_search_path
@@ -814,7 +814,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.te_other_data = QTextEditMod('file')
         self.te_other_data.setPlaceholderText(
             '其他需要一起打包的非源代码资源文件，可留空。注意资源文件要在项目'
-            '根目录范围内，否则打包后程序可能无法运行。可将格式正确的文件直接拖到此处。'
+            '根目录范围内，否则打包后程序可能无法运行。可将文件或者文件夹直接拖到此处。'
         )
         self.verticalLayout_4.replaceWidget(
             self.te_other_data_old, self.te_other_data

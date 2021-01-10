@@ -586,14 +586,11 @@
               </item>
               <item>
                <widget class="QPushButton" name="pb_reinstall_pyi">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
                 <property name="toolTip">
-                 <string>功能未完成。</string>
+                 <string>在当前选择的Python环境中安装或重新安装PYINSTALLER库。</string>
                 </property>
                 <property name="text">
-                 <string>重新安装</string>
+                 <string>安装</string>
                 </property>
                </widget>
               </item>
@@ -613,6 +610,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="pb_select_py_env">
+                <property name="toolTip">
+                 <string>如果可选项目为空，需要先在“包管理器”中添加本机Python环境。</string>
+                </property>
                 <property name="text">
                  <string>选择环境</string>
                 </property>
@@ -669,6 +669,9 @@
               </item>
               <item>
                <widget class="QComboBox" name="cb_log_level">
+                <property name="toolTip">
+                 <string>打包程序时的输出信息的详细程度，越靠前越详细，默认INFO。</string>
+                </property>
                 <item>
                  <property name="text">
                   <string>TRACE</string>
