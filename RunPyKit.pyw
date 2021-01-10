@@ -1003,7 +1003,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             '\n'.join(self._def_conf.get('module_search_path', []))
         )
         self.te_other_data.setText(
-            '\n'.join(self._def_conf.get('other_data', []))
+            '\n'.join(otp[0] for otp in self._def_conf.get('other_data', []))
         )
         self.le_file_icon_path.setText(
             self._def_conf.get('file_icon_path', '')
@@ -1050,12 +1050,26 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
 
     def get_last_status(self):
-        self._def_conf['project_root'] = self.le_project_root.text()
+        project_root = self.le_project_root.text()
+        self._def_conf['project_root'] = project_root
         self._def_conf['program_entry'] = self.le_program_entry.local_path
         self._def_conf[
             'module_search_path'
         ] = self.te_module_search_path.local_paths
-        self._def_conf['other_data'] = self.te_other_data.local_paths
+        # 其他要打包的文件的本地路径和与项目根目录的相对位置：
+        other_data_local_paths = self.te_other_data.local_paths
+        other_data_relative_paths = []
+        for other_data_path in other_data_local_paths:
+            other_data_path = os.path.dirname(other_data_path)
+            try:
+                other_data_relative_paths.append(
+                    os.path.relpath(other_data_path, project_root)
+                )
+            except Exception:
+                continue
+        self._def_conf['other_data'] = list(
+            zip(other_data_local_paths, other_data_relative_paths)
+        )
         self._def_conf['file_icon_path'] = self.le_file_icon_path.local_path
         if self.rb_pack_to_one_file.isChecked():
             self._def_conf['pack_to_one'] = 'file'
