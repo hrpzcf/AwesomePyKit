@@ -267,7 +267,12 @@ class ThreadRepo:
             elif level == 1:
                 thread.terminate()
             else:
-                thread.exit()
+                thread.quit()
+
+    def kill_all(self):
+        ''' 立即终止所有线程。'''
+        for thread, _ in self._thread_repo:
+            thread.terminate()
 
     def is_empty(self):
         '''返回线程仓库是否为空。'''
