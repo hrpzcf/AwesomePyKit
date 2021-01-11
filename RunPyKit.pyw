@@ -1120,7 +1120,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 self.pb_reinstall_pyi.setText('安装')
             else:
                 self.pb_reinstall_pyi.setText('重新安装')
-            self.lb_pyi_info.setText(f'PyInstaller - {pyi_info}')
+            self.lb_pyi_info.setText(f'PYINSTALLER - {pyi_info}')
         else:
             self.lb_pyi_info.clear()
             self.pb_reinstall_pyi.setEnabled(False)
