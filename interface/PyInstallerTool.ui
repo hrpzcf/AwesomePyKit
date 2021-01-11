@@ -302,7 +302,7 @@
                  <string>将程序打包成单文件夹形式，exe可执行程序在文件夹的首层目录内。</string>
                 </property>
                 <property name="text">
-                 <string>打包成单目录(建议)</string>
+                 <string>打包成单目录(推荐)</string>
                 </property>
                </widget>
               </item>
@@ -365,7 +365,7 @@
               <item>
                <widget class="QLabel" name="label_11">
                 <property name="toolTip">
-                 <string>用于加密打包过程中生成PYC文件时的加密。</string>
+                 <string>用于加密打包过程中生成PYC文件时的加密，此项可留空。</string>
                 </property>
                 <property name="text">
                  <string>字节码加密秘钥：</string>
@@ -378,10 +378,7 @@
                  <enum>Qt::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
-                 <string>用于加密打包过程中生成PYC文件时的加密。</string>
-                </property>
-                <property name="placeholderText">
-                 <string>可留空，Python字节码的加密秘钥</string>
+                 <string>用于加密打包过程中生成PYC文件时的加密，此项可留空。</string>
                 </property>
                </widget>
               </item>
@@ -398,6 +395,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_9">
               <item>
                <widget class="QLabel" name="label_8">
+                <property name="toolTip">
+                 <string>此项可留空，默认储存位置：&quot;项目根目录/DIST&quot;。</string>
+                </property>
                 <property name="text">
                  <string>生成文件储存位置：</string>
                 </property>
@@ -410,8 +410,8 @@
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
                   </property>
-                  <property name="placeholderText">
-                   <string>可留空，默认储存位置：项目根目录/dist</string>
+                  <property name="toolTip">
+                   <string>此项可留空，默认储存位置：&quot;项目根目录/DIST&quot;。</string>
                   </property>
                  </widget>
                 </item>
@@ -430,6 +430,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_15">
               <item>
                <widget class="QLabel" name="label_17">
+                <property name="toolTip">
+                 <string>此项可留空，默认储存位置：&quot;项目根目录&quot;。</string>
+                </property>
                 <property name="text">
                  <string>SPEC文件储存位置：</string>
                 </property>
@@ -442,8 +445,8 @@
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
                   </property>
-                  <property name="placeholderText">
-                   <string>可留空，默认储存位置：项目根目录</string>
+                  <property name="toolTip">
+                   <string>此项可留空，默认储存位置：&quot;项目根目录&quot;。</string>
                   </property>
                  </widget>
                 </item>
@@ -462,6 +465,9 @@
              <layout class="QVBoxLayout" name="verticalLayout_11">
               <item>
                <widget class="QLabel" name="label_10">
+                <property name="toolTip">
+                 <string>此项可留空，默认目录：&quot;项目根目录/BUILD&quot;。</string>
+                </property>
                 <property name="text">
                  <string>临时文件目录：</string>
                 </property>
@@ -474,8 +480,8 @@
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
                   </property>
-                  <property name="placeholderText">
-                   <string>可留空，默认目录：项目根目录/build</string>
+                  <property name="toolTip">
+                   <string>此项可留空，默认目录：&quot;项目根目录/BUILD&quot;。</string>
                   </property>
                  </widget>
                 </item>
@@ -494,6 +500,11 @@
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
                <widget class="QLabel" name="label_9">
+                <property name="toolTip">
+                 <string>UPX.EXE文件所在目录。
+此项可留空，找不到UPX时将不进行压缩。
+当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。</string>
+                </property>
                 <property name="text">
                  <string>UPX可执行文件查找路径：</string>
                 </property>
@@ -506,8 +517,10 @@
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
                   </property>
-                  <property name="placeholderText">
-                   <string>可留空，找不到UPX时将不进行压缩</string>
+                  <property name="toolTip">
+                   <string>UPX.EXE文件所在目录。
+此项可留空，找不到UPX时将不进行压缩。
+当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。</string>
                   </property>
                  </widget>
                 </item>
@@ -567,6 +580,10 @@
              <layout class="QVBoxLayout" name="verticalLayout_13">
               <item>
                <widget class="QLabel" name="label_14">
+                <property name="toolTip">
+                 <string>使用UPX进行压缩时需要忽略的文件，文件名之间请使用空格分隔。
+某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。</string>
+                </property>
                 <property name="text">
                  <string>UPX压缩时排除的文件名：</string>
                 </property>
@@ -580,8 +597,9 @@
                 <property name="acceptDrops">
                  <bool>false</bool>
                 </property>
-                <property name="placeholderText">
-                 <string>某些动态链接库或可执行文件使用UPX压缩后可能无法正常运行，可将这些文件名添加到此处以使UPX在压缩时略过，文件名之间请使用空格分隔。</string>
+                <property name="toolTip">
+                 <string>使用UPX进行压缩时需要忽略的文件，文件名之间请使用空格分隔。
+某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。</string>
                 </property>
                </widget>
               </item>
