@@ -449,8 +449,6 @@ class Ui_PyInstallerTool(object):
         self.pb_gen_executable.setObjectName("pb_gen_executable")
         self.verticalLayout_20.addWidget(self.pb_gen_executable)
         self.horizontalLayout_18.addLayout(self.verticalLayout_20)
-        self.horizontalLayout_18.setStretch(0, 5)
-        self.horizontalLayout_18.setStretch(1, 4)
         self.horizontalLayout_19.addLayout(self.horizontalLayout_18)
         PyInstallerTool.setCentralWidget(self.centralwidget)
 
@@ -532,10 +530,10 @@ class Ui_PyInstallerTool(object):
         self.le_version_file.setToolTip(_translate("PyInstallerTool", "功能暂未完成。"))
         self.pb_select_version_file.setToolTip(_translate("PyInstallerTool", "功能暂未完成。"))
         self.pb_select_version_file.setText(_translate("PyInstallerTool", "选择"))
-        self.label_14.setToolTip(_translate("PyInstallerTool", "使用UPX进行压缩时需要忽略的文件，文件名之间请使用空格分隔。\n"
+        self.label_14.setToolTip(_translate("PyInstallerTool", "使用UPX进行压缩时需要忽略的文件，每行一个文件名。\n"
 "某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。"))
         self.label_14.setText(_translate("PyInstallerTool", "UPX压缩时排除的文件名："))
-        self.te_upx_exclude_files.setToolTip(_translate("PyInstallerTool", "使用UPX进行压缩时需要忽略的文件，文件名之间请使用空格分隔。\n"
+        self.te_upx_exclude_files.setToolTip(_translate("PyInstallerTool", "使用UPX进行压缩时需要忽略的文件，每行一个文件名。\n"
 "某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_build_control), _translate("PyInstallerTool", "生成控制"))
         self.label_16.setToolTip(_translate("PyInstallerTool", "所选PYTHON环境下的PYINSTALLER的版本信息。"))
@@ -562,5 +560,4 @@ class Ui_PyInstallerTool(object):
         self.cb_log_level.setItemText(3, _translate("PyInstallerTool", "WARN"))
         self.cb_log_level.setItemText(4, _translate("PyInstallerTool", "ERROR"))
         self.cb_log_level.setItemText(5, _translate("PyInstallerTool", "CRITICAL"))
-        self.te_pyi_out_stream.setToolTip(_translate("PyInstallerTool", "打包时输出的流程信息，包含一些用于分析打包问题的信息。"))
         self.pb_gen_executable.setText(_translate("PyInstallerTool", "生成可执行文件"))
