@@ -37,7 +37,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-__VERSION__ = '0.2.0'
+__VERSION__ = '0.2.1'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
@@ -144,7 +144,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             2, QHeaderView.ResizeToContents
         )
         self.loading_mov = QMovie(os.path.join(sources_path, 'loading.gif'))
-        self.loading_mov.setScaledSize(QSize(15, 15))
+        self.loading_mov.setScaledSize(QSize(16, 16))
 
     def show(self):
         super().show()
@@ -184,7 +184,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.lb_loading_tip.clear()
 
     def show_message(self, text):
-        self.lb_loading_gif.setText(text)
+        self.lb_loading_tip.setText(text)
 
     def _connect_signal_and_slot(self):
         self.btn_autosearch.clicked.connect(self.auto_search_py_envs)
@@ -1099,7 +1099,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._def_conf['version_file'] = self.le_version_file.text()
         self._def_conf['upx_exclude_files'] = [
             string
-            for string in self.te_upx_exclude_files.toPlainText().split(' ')
+            for string in self.te_upx_exclude_files.toPlainText().split('\n')
             if string
         ]
         if self._pyitool_pyenv is None:
