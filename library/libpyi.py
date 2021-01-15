@@ -119,7 +119,7 @@ class PyiTool(QObject):
             self._commands.append('--noupx')
         if upx_excludes := cmd_dict.get('upx_exclude_files', None):
             for exfile in upx_excludes:
-                self._commands.extend(('--upx-exclude', exfile))
+                self._commands.extend(('--upx-exclude', exfile.lower()))
         if cmd_dict.get('execute_with_console', True):
             self._commands.append('-c')
         else:
