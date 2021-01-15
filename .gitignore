@@ -147,3 +147,4 @@ config/
 test.py
 build.py
 upx/
+interface/*.ui
