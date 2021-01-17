@@ -749,20 +749,32 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self._setup_others()
-        self._threads = ThreadRepo(300)
-        self._task_retcode = None
-        self._def_conf = {}
-        self._pyitool_pyenv = None
-        self._pyi_tool = PyiTool()
         self.widget_group = (
-            self.tabWidget,
+            self.tab_project_files,
+            self.tab_build_control,
+            self.tab_file_ver_info,
             self.pb_select_py_env,
             self.pb_reinstall_pyi,
             self.cb_log_level,
             self.le_exefile_specfile_name,
             self.pb_gen_executable,
         )
+        self.ver_le_group = (
+            self.le_file_version_0,
+            self.le_file_version_1,
+            self.le_file_version_2,
+            self.le_file_version_3,
+            self.le_product_version_0,
+            self.le_product_version_1,
+            self.le_product_version_2,
+            self.le_product_version_3,
+        )
+        self._setup_others()
+        self._threads = ThreadRepo(300)
+        self._task_retcode = None
+        self._def_conf = {}
+        self._pyitool_pyenv = None
+        self._pyi_tool = PyiTool()
         self.set_platform_info()
         self.pyi_running_mov = QMovie(
             os.path.join(sources_path, 'loading.gif')
@@ -777,13 +789,13 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 '生成任务正在运行中，关闭界面后任务将在后台运行，请勿对相关储存目录进行任何操作，否则可能会破坏生成的文件！',
                 QMessageBox.Warning,
             ).exec()
-        self.get_last_status()
+        self.store_status_of_all_widget()
         save_conf(self._def_conf, 'pyic')
         event.accept()
 
     def show(self):
         super().show()
-        self._apply_def_conf()
+        self.apply_stored_configuration()
         self._pyi_tool.initialize(
             self._def_conf.get('py_info', ''),
             self._def_conf.get('project_root', os.getcwd()),
@@ -835,6 +847,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_exefile_specfile_name.setValidator(
             QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
         )
+        reg_exp_val = QRegExpValidator(QRegExp(r'[0-9]*'))
+        for line_edit in self.ver_le_group:
+            line_edit.setValidator(reg_exp_val)
 
     def _connect_signal_slot(self):
         self._pyi_tool.executed.connect(self.task_completion_tip)
@@ -865,7 +880,6 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.pb_select_upx_search_path.clicked.connect(
             self.set_le_upx_search_path
         )
-        self.pb_select_version_file.clicked.connect(self.set_le_version_file)
         self.pb_gen_executable.clicked.connect(self.build_executable)
         self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyi)
 
@@ -942,9 +956,6 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             return
         self.le_upx_search_path.setText(selected_dir)
 
-    def set_le_version_file(self):
-        pass
-
     def _select_file_dir(
         self,
         title='',
@@ -1000,7 +1011,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
         self.set_pyi_info()
 
-    def _apply_def_conf(self):
+    def apply_stored_configuration(self):
         if not self._def_conf:
             self._def_conf.update(load_conf('pyic'))
         self.le_program_entry.setText(self._def_conf.get('program_entry', ''))
@@ -1037,7 +1048,6 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_upx_search_path.setText(
             self._def_conf.get('upx_search_path', '')
         )
-        self.le_version_file.setText(self._def_conf.get('version_file', ''))
         self.te_upx_exclude_files.setText(
             '\n'.join(self._def_conf.get('upx_exclude_files', []))
         )
@@ -1055,7 +1065,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self._def_conf.get('log_level', 'INFO')
         )
 
-    def get_last_status(self):
+    def store_status_of_all_widget(self):
         project_root = self.le_project_root.text()
         self._def_conf['project_root'] = project_root
         self._def_conf['program_entry'] = self.le_program_entry.local_path
@@ -1093,7 +1103,6 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._def_conf['output_dir'] = self.le_output_dir.text()
         self._def_conf['spec_dir'] = self.le_spec_dir.text()
         self._def_conf['upx_search_path'] = self.le_upx_search_path.text()
-        self._def_conf['version_file'] = self.le_version_file.text()
         self._def_conf['upx_exclude_files'] = [
             string
             for string in self.te_upx_exclude_files.toPlainText().split('\n')
@@ -1134,7 +1143,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         reinstall = NewTask(target=do_reinstall_pyi)
         reinstall.started.connect(self.lock_widgets)
         reinstall.started.connect(
-            lambda: self.show_running('正在重装PYINSTALLER...')
+            lambda: self.show_running('正在安装PYINSTALLER...')
         )
         reinstall.finished.connect(self.hide_running)
         reinstall.finished.connect(self.release_widgets)
@@ -1159,7 +1168,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.le_project_root.setText(os.path.dirname(deep))
 
     def _check_requireds(self):
-        self.get_last_status()
+        self.store_status_of_all_widget()
         program_entry = self._def_conf.get('program_entry', '')
         if not program_entry:
             NewMessageBox('错误', '主程序未填写！', QMessageBox.Critical).exec()
@@ -1207,7 +1216,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
         if not self._pyi_tool.pyi_ready:
             NewMessageBox(
-                '提示', '打包库不可用，请将PYINSTALLER安装到所选环境。', QMessageBox.Warning
+                '提示',
+                'PYINSTALLER不可用，请将PYINSTALLER安装到所选环境。',
+                QMessageBox.Warning,
             ).exec()
             return
         self._pyi_tool.prepare_cmd(self._def_conf)
