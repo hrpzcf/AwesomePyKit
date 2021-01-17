@@ -14,7 +14,7 @@ from subprocess import (
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from library.libm import get_cmd_o
+from library.libm import get_cmd_o, sources_path
 
 
 class PyiTool(QObject):
@@ -124,7 +124,9 @@ class PyiTool(QObject):
             self._commands.append('-w')
         if ico_path := cmd_dict.get('file_icon_path', ''):
             self._commands.extend(('-i', ico_path))
-        if ver_file := cmd_dict.get('version_file', ''):
+        if cmd_dict.get('write_file_info', False) and (
+            ver_file := self._build_info_file(cmd_dict)
+        ):
             self._commands.extend(('--version-file', ver_file))
         if dist_path := cmd_dict.get('output_dir', ''):
             self._commands.extend(('--distpath', dist_path))
@@ -146,8 +148,9 @@ class PyiTool(QObject):
             return get_cmd_o(self.pyi_path, '-v')
         return '0.0.0'
 
-
-FILE_VERSION_INFO = '''# coding: utf-8
+    @staticmethod
+    def _build_info_file(cmd_dict):
+        FILE_VERSION_INFO = '''# coding: utf-8
 
 VSVersionInfo(
     ffi=FixedFileInfo(
@@ -184,3 +187,12 @@ VSVersionInfo(
     ],
 )
 '''
+        for key, val in cmd_dict.get('file_ver_info', {}).items():
+            FILE_VERSION_INFO = FILE_VERSION_INFO.replace(key, val)
+        file_info_path = os.path.join(sources_path, 'FILE_INFO')
+        try:
+            with open(file_info_path, 'w', encoding='utf-8') as file_info:
+                file_info.write(FILE_VERSION_INFO)
+            return file_info_path
+        except Exception:
+            return ''
