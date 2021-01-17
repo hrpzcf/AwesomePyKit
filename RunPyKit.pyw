@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import os
-import re
 import sys
 from platform import machine, platform
 
@@ -37,14 +36,14 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-__VERSION__ = '0.2.1'
+PYKIT_VERSION = '0.2.1'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle(f'AwesomePyKit - {__VERSION__}')
+        self.setWindowTitle(f'AwesomePyKit - {PYKIT_VERSION}')
         self._connect_signal_and_slot()
 
     def _connect_signal_and_slot(self):
@@ -90,15 +89,13 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
     def _show_about():
         try:
             with open('help/About.html', encoding='utf-8') as help_html:
-                info = re.sub(
-                    r'(?<=\>)0.0.0(?=\<)', __VERSION__, help_html.read()
-                )
+                info = help_html.read().replace('0.0.0', PYKIT_VERSION)
                 icon = QMessageBox.Information
         except Exception:
             info = '"关于"信息文件(help/About.html)已丢失。'
             icon = QMessageBox.Critical
         about_panel = NewMessageBox('关于', info, icon)
-        about_panel.get_role()
+        about_panel.exec()
 
     @staticmethod
     def _show_usinghelp():
