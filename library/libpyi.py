@@ -107,9 +107,7 @@ class PyiTool(QObject):
             self._commands.extend(('-n', name))
         if datas_to_add := cmd_dict.get('other_data', None):
             for data in datas_to_add:
-                self._commands.extend(
-                    ('--add-data', fr'{data[0]};{data[1]}')
-                )
+                self._commands.extend(('--add-data', fr'{data[0]};{data[1]}'))
         if module_search_paths := cmd_dict.get('module_search_path', None):
             for module_path in module_search_paths:
                 self._commands.extend(('-p', module_path))
@@ -147,3 +145,42 @@ class PyiTool(QObject):
         if self.pyi_ready:
             return get_cmd_o(self.pyi_path, '-v')
         return '0.0.0'
+
+
+FILE_VERSION_INFO = '''# coding: utf-8
+
+VSVersionInfo(
+    ffi=FixedFileInfo(
+        filevers=$filevers$,
+        prodvers=$prodvers$,
+        mask=0x3F,
+        flags=0x0,
+        OS=0x40004,
+        fileType=0x1,
+        subtype=0x0,
+        date=(0, 0),
+    ),
+    kids=[
+    StringFileInfo(
+    [
+    StringTable(
+        u'080404b0',
+        [
+            StringStruct(u'CompanyName', u'$CompanyName$'),
+            StringStruct(u'FileDescription', u'$FileDescription$'),
+            StringStruct(u'FileVersion', u'$FileVersion$'),
+            StringStruct(u'LegalCopyright', u'$LegalCopyright$'),
+            StringStruct(
+                u'OriginalFilename', u'$OriginalFilename$'
+            ),
+            StringStruct(u'ProductName', u'$ProductName$'),
+            StringStruct(u'ProductVersion', u'$ProductVersion$'),
+            StringStruct(u'LegalTrademarks', u'$LegalTrademarks$'),
+        ],
+    )
+    ]
+    ),
+    VarFileInfo([VarStruct(u'Translation', [2052, 1200])]),
+    ],
+)
+'''
