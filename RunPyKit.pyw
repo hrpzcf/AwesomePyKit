@@ -1020,7 +1020,10 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             '\n'.join(self._def_conf.get('module_search_path', []))
         )
         self.te_other_data.setText(
-            '\n'.join(otp[0] for otp in self._def_conf.get('other_data', []))
+            '\n'.join(
+                path_group[0]
+                for path_group in self._def_conf.get('other_data', [])
+            )
         )
         self.le_file_icon_path.setText(
             self._def_conf.get('file_icon_path', '')
@@ -1074,18 +1077,20 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         ] = self.te_module_search_path.local_paths
         # 其他要打包的文件的本地路径和与项目根目录的相对位置：
         other_data_local_paths = self.te_other_data.local_paths
-        other_data_relative_paths = []
-        for other_data_path in other_data_local_paths:
-            other_data_path = os.path.dirname(other_data_path)
+        abspath_relpath_groups = []
+        for other_data_abs_path in other_data_local_paths:
             try:
-                other_data_relative_paths.append(
-                    os.path.relpath(other_data_path, project_root)
+                abspath_relpath_groups.append(
+                    (
+                        other_data_abs_path,
+                        os.path.relpath(
+                            os.path.dirname(other_data_abs_path), project_root
+                        ),
+                    )
                 )
             except Exception:
                 continue
-        self._def_conf['other_data'] = list(
-            zip(other_data_local_paths, other_data_relative_paths)
-        )
+        self._def_conf['other_data'] = abspath_relpath_groups
         self._def_conf['file_icon_path'] = self.le_file_icon_path.local_path
         if self.rb_pack_to_one_file.isChecked():
             self._def_conf['pack_to_one'] = 'file'
