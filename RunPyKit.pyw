@@ -36,7 +36,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = '0.2.1'
+PYKIT_VERSION = '0.2.2'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
@@ -772,7 +772,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._setup_others()
         self._threads = ThreadRepo(300)
         self._task_retcode = None
-        self._def_conf = {}
+        self._stored_conf = {}
         self._pyitool_pyenv = None
         self._pyi_tool = PyiTool()
         self.set_platform_info()
@@ -790,15 +790,15 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 QMessageBox.Warning,
             ).exec()
         self.store_status_of_all_widget()
-        save_conf(self._def_conf, 'pyic')
+        save_conf(self._stored_conf, 'pyic')
         event.accept()
 
     def show(self):
         super().show()
         self.apply_stored_configuration()
         self._pyi_tool.initialize(
-            self._def_conf.get('py_info', ''),
-            self._def_conf.get('project_root', os.getcwd()),
+            self._stored_conf.get('py_info', ''),
+            self._stored_conf.get('project_root', os.getcwd()),
         )
         self.set_pyi_info()
 
@@ -886,7 +886,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def set_le_program_entry(self):
         selected_file = self._select_file_dir(
             '选择主程序',
-            self._def_conf.get('project_root', ''),
+            self._stored_conf.get('project_root', ''),
             file_filter='脚本文件 (*.py *.pyc *.pyw *.spec)',
         )[0]
         if not selected_file:
@@ -900,7 +900,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def set_te_module_search_path(self):
         selected_dir = self._select_file_dir(
-            '其他模块搜索目录', self._def_conf.get('project_root', ''), cht='dir'
+            '其他模块搜索目录', self._stored_conf.get('project_root', ''), cht='dir'
         )[0]
         if not selected_dir:
             return
@@ -908,7 +908,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def set_te_other_data(self):
         selected_files = self._select_file_dir(
-            '选择非源码资源文件', self._def_conf.get('project_root', ''), mult=True
+            '选择非源码资源文件', self._stored_conf.get('project_root', ''), mult=True
         )
         if not selected_files:
             return
@@ -917,7 +917,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def set_le_file_icon_path(self):
         selected_file = self._select_file_dir(
             '选择可执行文件图标',
-            self._def_conf.get('project_root', ''),
+            self._stored_conf.get('project_root', ''),
             file_filter='图标文件 (*.ico *.icns)',
         )[0]
         if not selected_file:
@@ -926,7 +926,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def set_le_spec_dir(self):
         selected_dir = self._select_file_dir(
-            '选择SPEC文件储存目录', self._def_conf.get('project_root', ''), cht='dir'
+            '选择SPEC文件储存目录',
+            self._stored_conf.get('project_root', ''),
+            cht='dir',
         )[0]
         if not selected_dir:
             return
@@ -934,7 +936,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def set_le_temp_working_dir(self):
         selected_dir = self._select_file_dir(
-            '选择临时文件目录', self._def_conf.get('project_root', ''), cht='dir'
+            '选择临时文件目录', self._stored_conf.get('project_root', ''), cht='dir'
         )[0]
         if not selected_dir:
             return
@@ -942,7 +944,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def set_le_output_dir(self):
         selected_dir = self._select_file_dir(
-            '选择打包文件储存目录', self._def_conf.get('project_root', ''), cht='dir'
+            '选择打包文件储存目录', self._stored_conf.get('project_root', ''), cht='dir'
         )[0]
         if not selected_dir:
             return
@@ -950,7 +952,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def set_le_upx_search_path(self):
         selected_dir = self._select_file_dir(
-            '选择UPX程序搜索目录', self._def_conf.get('project_root', ''), cht='dir'
+            '选择UPX程序搜索目录', self._stored_conf.get('project_root', ''), cht='dir'
         )[0]
         if not selected_dir:
             return
@@ -1007,54 +1009,59 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.lb_py_info.setText(self._pyitool_pyenv.py_info())
         self._pyi_tool.initialize(
             self._pyitool_pyenv.env_path,
-            self._def_conf.get('program_entry', os.getcwd()),
+            self._stored_conf.get('program_entry', os.getcwd()),
         )
         self.set_pyi_info()
 
     def apply_stored_configuration(self):
-        if not self._def_conf:
-            self._def_conf.update(load_conf('pyic'))
-        self.le_program_entry.setText(self._def_conf.get('program_entry', ''))
-        self.le_project_root.setText(self._def_conf.get('project_root', ''))
+        if not self._stored_conf:
+            self._stored_conf.update(load_conf('pyic'))
+        self.le_program_entry.setText(
+            self._stored_conf.get('program_entry', '')
+        )
+        self.le_project_root.setText(self._stored_conf.get('project_root', ''))
         self.te_module_search_path.setText(
-            '\n'.join(self._def_conf.get('module_search_path', []))
+            '\n'.join(self._stored_conf.get('module_search_path', []))
         )
         self.te_other_data.setText(
             '\n'.join(
                 path_group[0]
-                for path_group in self._def_conf.get('other_data', [])
+                for path_group in self._stored_conf.get('other_data', [])
             )
         )
         self.le_file_icon_path.setText(
-            self._def_conf.get('file_icon_path', '')
+            self._stored_conf.get('file_icon_path', '')
         )
-        pack_to_one = self._def_conf.get('pack_to_one', 'dir')
+        pack_to_one = self._stored_conf.get('pack_to_one', 'dir')
         if pack_to_one == 'file':
             self.rb_pack_to_one_file.setChecked(True)
         else:
             self.rb_pack_to_one_dir.setChecked(True)
         self.cb_execute_with_console.setChecked(
-            self._def_conf.get('execute_with_console', True)
+            self._stored_conf.get('execute_with_console', True)
         )
         self.cb_without_confirm.setChecked(
-            self._def_conf.get('without_confirm', False)
+            self._stored_conf.get('without_confirm', False)
         )
-        self.cb_use_upx.setChecked(self._def_conf.get('use_upx', False))
+        self.cb_use_upx.setChecked(self._stored_conf.get('use_upx', False))
         self.cb_clean_before_build.setChecked(
-            self._def_conf.get('clean_before_build', True)
+            self._stored_conf.get('clean_before_build', True)
+        )
+        self.cb_write_info_to_exec.setChecked(
+            self._stored_conf.get('write_file_info', False)
         )
         self.le_temp_working_dir.setText(
-            self._def_conf.get('temp_working_dir', '')
+            self._stored_conf.get('temp_working_dir', '')
         )
-        self.le_output_dir.setText(self._def_conf.get('output_dir', ''))
-        self.le_spec_dir.setText(self._def_conf.get('spec_dir', ''))
+        self.le_output_dir.setText(self._stored_conf.get('output_dir', ''))
+        self.le_spec_dir.setText(self._stored_conf.get('spec_dir', ''))
         self.le_upx_search_path.setText(
-            self._def_conf.get('upx_search_path', '')
+            self._stored_conf.get('upx_search_path', '')
         )
         self.te_upx_exclude_files.setText(
-            '\n'.join(self._def_conf.get('upx_exclude_files', []))
+            '\n'.join(self._stored_conf.get('upx_exclude_files', []))
         )
-        py_path = self._def_conf.get('py_info', '')
+        py_path = self._stored_conf.get('py_info', '')
         if py_path:
             try:
                 self._pyitool_pyenv = PyEnv(py_path)
@@ -1062,17 +1069,18 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             except Exception:
                 pass
         self.le_exefile_specfile_name.setText(
-            self._def_conf.get('exefile_specfile_name', '')
+            self._stored_conf.get('exefile_specfile_name', '')
         )
         self.cb_log_level.setCurrentText(
-            self._def_conf.get('log_level', 'INFO')
+            self._stored_conf.get('log_level', 'INFO')
         )
+        self.set_file_ver_info_text()
 
     def store_status_of_all_widget(self):
         project_root = self.le_project_root.text()
-        self._def_conf['project_root'] = project_root
-        self._def_conf['program_entry'] = self.le_program_entry.local_path
-        self._def_conf[
+        self._stored_conf['project_root'] = project_root
+        self._stored_conf['program_entry'] = self.le_program_entry.local_path
+        self._stored_conf[
             'module_search_path'
         ] = self.te_module_search_path.local_paths
         # 其他要打包的文件的本地路径和与项目根目录的相对位置：
@@ -1090,37 +1098,86 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 )
             except Exception:
                 continue
-        self._def_conf['other_data'] = abspath_relpath_groups
-        self._def_conf['file_icon_path'] = self.le_file_icon_path.local_path
+        self._stored_conf['other_data'] = abspath_relpath_groups
+        self._stored_conf['file_icon_path'] = self.le_file_icon_path.local_path
         if self.rb_pack_to_one_file.isChecked():
-            self._def_conf['pack_to_one'] = 'file'
+            self._stored_conf['pack_to_one'] = 'file'
         else:
-            self._def_conf['pack_to_one'] = 'dir'
-        self._def_conf[
+            self._stored_conf['pack_to_one'] = 'dir'
+        self._stored_conf[
             'execute_with_console'
         ] = self.cb_execute_with_console.isChecked()
-        self._def_conf['without_confirm'] = self.cb_without_confirm.isChecked()
-        self._def_conf['use_upx'] = self.cb_use_upx.isChecked()
-        self._def_conf[
+        self._stored_conf[
+            'without_confirm'
+        ] = self.cb_without_confirm.isChecked()
+        self._stored_conf['use_upx'] = self.cb_use_upx.isChecked()
+        self._stored_conf[
             'clean_before_build'
         ] = self.cb_clean_before_build.isChecked()
-        self._def_conf['temp_working_dir'] = self.le_temp_working_dir.text()
-        self._def_conf['output_dir'] = self.le_output_dir.text()
-        self._def_conf['spec_dir'] = self.le_spec_dir.text()
-        self._def_conf['upx_search_path'] = self.le_upx_search_path.text()
-        self._def_conf['upx_exclude_files'] = [
+        self._stored_conf[
+            'write_file_info'
+        ] = self.cb_write_info_to_exec.isChecked()
+        self._stored_conf['temp_working_dir'] = self.le_temp_working_dir.text()
+        self._stored_conf['output_dir'] = self.le_output_dir.text()
+        self._stored_conf['spec_dir'] = self.le_spec_dir.text()
+        self._stored_conf['upx_search_path'] = self.le_upx_search_path.text()
+        self._stored_conf['upx_exclude_files'] = [
             string
             for string in self.te_upx_exclude_files.toPlainText().split('\n')
             if string
         ]
         if self._pyitool_pyenv is None:
-            self._def_conf['py_info'] = ''
+            self._stored_conf['py_info'] = ''
         else:
-            self._def_conf['py_info'] = self._pyitool_pyenv.env_path
-        self._def_conf[
+            self._stored_conf['py_info'] = self._pyitool_pyenv.env_path
+        self._stored_conf[
             'exefile_specfile_name'
         ] = self.le_exefile_specfile_name.text()
-        self._def_conf['log_level'] = self.cb_log_level.currentText()
+        self._stored_conf['log_level'] = self.cb_log_level.currentText()
+        self._stored_conf['file_ver_info'] = self.get_file_ver_info_text()
+
+    def get_file_ver_info_text(self):
+        file_vers = '({}, {}, {}, {})'.format(
+            self.le_file_version_0.text(),
+            self.le_file_version_1.text(),
+            self.le_file_version_2.text(),
+            self.le_file_version_3.text(),
+        )
+        product_vers = '({}, {}, {}, {})'.format(
+            self.le_product_version_0.text(),
+            self.le_product_version_1.text(),
+            self.le_product_version_2.text(),
+            self.le_product_version_3.text(),
+        )
+        return {
+            '$filevers$': file_vers,
+            '$prodvers$': product_vers,
+            '$CompanyName$': self.le_company_name.text(),
+            '$FileDescription$': self.le_file_description.text(),
+            '$FileVersion$': '.'.join(map(str, eval(file_vers))),
+            '$LegalCopyright$': self.le_legal_copyright.text(),
+            '$OriginalFilename$': self.le_original_filename.text(),
+            '$ProductName$': self.le_product_name.text(),
+            '$ProductVersion$': '.'.join(map(str, eval(product_vers))),
+            '$LegalTrademarks$': self.le_legal_trademarks.text(),
+        }
+
+    def set_file_ver_info_text(self):
+        info = self._stored_conf.get('file_ver_info', {})
+        self.le_file_description.setText(info.get('$FileDescription$', ''))
+        self.le_company_name.setText(info.get('$CompanyName$', ''))
+        for ind, val in enumerate(
+            info.get('$FileVersion$', '0.0.0.0').split('.')
+        ):
+            self.ver_le_group[ind].setText(val)
+        self.le_product_name.setText(info.get('$ProductName$', ''))
+        for ind, val in enumerate(
+            info.get('$ProductVersion$', '0.0.0.0').split('.')
+        ):
+            self.ver_le_group[ind + 4].setText(val)
+        self.le_legal_copyright.setText(info.get('$LegalCopyright$', ''))
+        self.le_legal_trademarks.setText(info.get('$LegalTrademarks$', ''))
+        self.le_original_filename.setText(info.get('$OriginalFilename$', ''))
 
     def set_pyi_info(self):
         # 此处不能用 self._pyi_tool，因为 self._pyi_tool 总有一个空实例
@@ -1174,7 +1231,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def _check_requireds(self):
         self.store_status_of_all_widget()
-        program_entry = self._def_conf.get('program_entry', '')
+        program_entry = self._stored_conf.get('program_entry', '')
         if not program_entry:
             NewMessageBox('错误', '主程序未填写！', QMessageBox.Critical).exec()
             return False
@@ -1216,8 +1273,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             return
         self.te_pyi_out_stream.clear()
         self._pyi_tool.initialize(
-            self._def_conf.get('py_info', ''),
-            self._def_conf.get('project_root', os.getcwd()),
+            self._stored_conf.get('py_info', ''),
+            self._stored_conf.get('project_root', os.getcwd()),
         )
         if not self._pyi_tool.pyi_ready:
             NewMessageBox(
@@ -1226,7 +1283,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 QMessageBox.Warning,
             ).exec()
             return
-        self._pyi_tool.prepare_cmd(self._def_conf)
+        self._pyi_tool.prepare_cmd(self._stored_conf)
         self.handle = self._pyi_tool.handle()
         build = NewTask(self._pyi_tool.execute_cmd)
         build.started.connect(self.lock_widgets)
