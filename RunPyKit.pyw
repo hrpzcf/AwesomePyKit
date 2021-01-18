@@ -36,7 +36,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = '0.2.2'
+PYKIT_VERSION = '0.2.3'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
@@ -1137,28 +1137,18 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._stored_conf['file_ver_info'] = self.get_file_ver_info_text()
 
     def get_file_ver_info_text(self):
-        file_vers = '({}, {}, {}, {})'.format(
-            self.le_file_version_0.text(),
-            self.le_file_version_1.text(),
-            self.le_file_version_2.text(),
-            self.le_file_version_3.text(),
-        )
-        product_vers = '({}, {}, {}, {})'.format(
-            self.le_product_version_0.text(),
-            self.le_product_version_1.text(),
-            self.le_product_version_2.text(),
-            self.le_product_version_3.text(),
-        )
+        file_vers = tuple(int(x.text() or 0) for x in self.ver_le_group[:4])
+        prod_vers = tuple(int(x.text() or 0) for x in self.ver_le_group[4:])
         return {
-            '$filevers$': file_vers,
-            '$prodvers$': product_vers,
+            '$filevers$': str(file_vers),
+            '$prodvers$': str(prod_vers),
             '$CompanyName$': self.le_company_name.text(),
             '$FileDescription$': self.le_file_description.text(),
-            '$FileVersion$': '.'.join(map(str, eval(file_vers))),
+            '$FileVersion$': '.'.join(map(str, file_vers)),
             '$LegalCopyright$': self.le_legal_copyright.text(),
             '$OriginalFilename$': self.le_original_filename.text(),
             '$ProductName$': self.le_product_name.text(),
-            '$ProductVersion$': '.'.join(map(str, eval(product_vers))),
+            '$ProductVersion$': '.'.join(map(str, prod_vers)),
             '$LegalTrademarks$': self.le_legal_trademarks.text(),
         }
 
