@@ -1168,7 +1168,7 @@
             </property>
             <property name="font">
              <font>
-              <family>Consolas</family>
+              <family>Courier New</family>
              </font>
             </property>
             <property name="contextMenuPolicy">
@@ -1185,21 +1185,18 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,2">
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
           <item>
            <widget class="QLabel" name="lb_running_gif">
-            <property name="text">
-             <string/>
-            </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="lb_running_tip">
-            <property name="text">
-             <string/>
+            <property name="alignment">
+             <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
             </property>
            </widget>
           </item>

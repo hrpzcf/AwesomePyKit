@@ -295,14 +295,14 @@
         <item>
          <widget class="QLabel" name="lb_loading_gif">
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="lb_loading_tip">
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
           </property>
          </widget>
         </item>
