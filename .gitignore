@@ -147,5 +147,4 @@ config/
 test.py
 build.py
 upx/
-interface/*.ui
 sources/FILE_INFO
