@@ -113,6 +113,10 @@ class PyiTool(QObject):
                 self._commands.extend(('-p', module_path))
         if key := cmd_dict.get('key', ''):
             self._commands.extend(('--key', key))
+        if debug := cmd_dict.get('debug_options', None):
+            for ikey, val in debug.items():
+                if val:
+                    self._commands.extend(('-d', ikey))
         if not cmd_dict.get('use_upx', False):
             self._commands.append('--noupx')
         if upx_excludes := cmd_dict.get('upx_exclude_files', None):

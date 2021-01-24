@@ -753,13 +753,14 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.tab_project_files,
             self.tab_build_control,
             self.tab_file_ver_info,
+            self.tab_advanced_setup,
             self.pb_select_py_env,
             self.pb_reinstall_pyi,
             self.cb_log_level,
             self.le_exefile_specfile_name,
             self.pb_gen_executable,
         )
-        self.ver_le_group = (
+        self.le_group_vers = (
             self.le_file_version_0,
             self.le_file_version_1,
             self.le_file_version_2,
@@ -789,7 +790,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 '''请勿对相关目录进行任何操作，否则可能会造成打包失败！''',
                 QMessageBox.Warning,
             ).exec()
-        self.store_status_of_all_widget()
+        self.store_state_of_widgets()
         save_conf(self._stored_conf, 'pyic')
         event.accept()
 
@@ -820,7 +821,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod('dir')
         self.te_module_search_path.setToolTip(
-            '程序的其他模块的搜索路径，此项可留空。\n仅当PYINSTALLER无法自动找到时使用，支持将文件夹直接拖放到此处。'
+            '''程序的其他模块的搜索路径，此项可留空。\n'''
+            '''仅当PYINSTALLER无法自动找到时使用，支持将文件夹直接拖放到此处。'''
         )
         self.verticalLayout_3.replaceWidget(
             self.te_module_search_path_old, self.te_module_search_path
@@ -829,8 +831,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         # 替换“非源代码资源文件”LineEdit控件
         self.te_other_data = QTextEditMod('file')
         self.te_other_data.setToolTip(
-            '非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n'
-            '注意资源文件要在项目根目录范围内，否则打包后程序可能无法运行。可将文件或者文件夹直接拖到此处。'
+            '''非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n'''
+            '''注意资源文件要在项目根目录范围内，否则打包后程序可能无法运行。可将文件或者文件夹直接拖到此处。'''
         )
         self.verticalLayout_4.replaceWidget(
             self.te_other_data_old, self.te_other_data
@@ -849,7 +851,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
         )
         reg_exp_val = QRegExpValidator(QRegExp(r'[0-9]*'))
-        for line_edit in self.ver_le_group:
+        for line_edit in self.le_group_vers:
             line_edit.setValidator(reg_exp_val)
 
     def _connect_signal_slot(self):
@@ -895,9 +897,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_program_entry.setText(selected_file)
 
     def set_le_project_root(self):
-        self.le_project_root.setText(
-            os.path.dirname(self.le_program_entry.text())
-        )
+        root = os.path.dirname(self.le_program_entry.text())
+        self.le_project_root.setText(root)
+        self._stored_conf['project_root'] = root
 
     def set_te_module_search_path(self):
         selected_dir = self._select_file_dir(
@@ -1003,7 +1005,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 file_dir_paths.append(os.path.realpath(path))
         return file_dir_paths
 
-    def _set_pyenv_and_update_info(self):
+    def set_pyenv_update_info(self):
         self._pyitool_pyenv = win_ch_pyenv.pyenvs[
             win_ch_pyenv.lw_py_envs.currentRow()
         ]
@@ -1076,30 +1078,22 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self._stored_conf.get('log_level', 'INFO')
         )
         self.set_file_ver_info_text()
+        self._change_debug_options('set')
+        self.le_runtime_tmpdir.setText(
+            self._stored_conf.get('runtime_tmpdir', '')
+        )
 
-    def store_status_of_all_widget(self):
+    def store_state_of_widgets(self):
+        self._stored_conf['program_entry'] = self.le_program_entry.local_path
+        self._stored_conf[
+            'exefile_specfile_name'
+        ] = self.le_exefile_specfile_name.text()
         project_root = self.le_project_root.text()
         self._stored_conf['project_root'] = project_root
-        self._stored_conf['program_entry'] = self.le_program_entry.local_path
         self._stored_conf[
             'module_search_path'
         ] = self.te_module_search_path.local_paths
-        # 其他要打包的文件的本地路径和与项目根目录的相对位置：
-        other_data_local_paths = self.te_other_data.local_paths
-        abspath_relpath_groups = []
-        for other_data_abs_path in other_data_local_paths:
-            try:
-                abspath_relpath_groups.append(
-                    (
-                        other_data_abs_path,
-                        os.path.relpath(
-                            os.path.dirname(other_data_abs_path), project_root
-                        ),
-                    )
-                )
-            except Exception:
-                continue
-        self._stored_conf['other_data'] = abspath_relpath_groups
+        self._stored_conf['other_data'] = self._abs_rel_groups(project_root)
         self._stored_conf['file_icon_path'] = self.le_file_icon_path.local_path
         if self.rb_pack_to_one_file.isChecked():
             self._stored_conf['pack_to_one'] = 'file'
@@ -1131,15 +1125,41 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self._stored_conf['py_info'] = ''
         else:
             self._stored_conf['py_info'] = self._pyitool_pyenv.env_path
-        self._stored_conf[
-            'exefile_specfile_name'
-        ] = self.le_exefile_specfile_name.text()
         self._stored_conf['log_level'] = self.cb_log_level.currentText()
-        self._stored_conf['file_ver_info'] = self.get_file_ver_info_text()
+        self._stored_conf['file_ver_info'] = self._file_ver_info_text()
+        self._stored_conf['debug_options'] = self._change_debug_options('get')
+        self._stored_conf['runtime_tmpdir'] = self.le_runtime_tmpdir.text()
 
-    def get_file_ver_info_text(self):
-        file_vers = tuple(int(x.text() or 0) for x in self.ver_le_group[:4])
-        prod_vers = tuple(int(x.text() or 0) for x in self.ver_le_group[4:])
+    def _abs_rel_groups(self, project_root):
+        ''' 获取其他要打包的文件的本地路径和与项目根目录的相对位置。'''
+        other_data_local_paths = self.te_other_data.local_paths
+        abs_rel_path_groups = []
+        for abs_path in other_data_local_paths:
+            try:
+                rel_path = os.path.relpath(
+                    os.path.dirname(abs_path), project_root
+                )
+            except Exception:
+                continue
+            abs_rel_path_groups.append((abs_path, rel_path))
+        return abs_rel_path_groups
+
+    def _change_debug_options(self, opt):
+        if opt == 'get':
+            options = {}
+            options['imports'] = self.cb_db_imports.isChecked()
+            options['bootloader'] = self.cb_db_bootloader.isChecked()
+            options['noarchive'] = self.cb_db_noarchive.isChecked()
+            return options
+        elif opt == 'set':
+            db = self._stored_conf.get('debug_options', {})
+            self.cb_db_imports.setChecked(db.get('imports', False))
+            self.cb_db_bootloader.setChecked(db.get('bootloader', False))
+            self.cb_db_noarchive.setChecked(db.get('noarchive', False))
+
+    def _file_ver_info_text(self):
+        file_vers = tuple(int(x.text() or 0) for x in self.le_group_vers[:4])
+        prod_vers = tuple(int(x.text() or 0) for x in self.le_group_vers[4:])
         return {
             '$filevers$': str(file_vers),
             '$prodvers$': str(prod_vers),
@@ -1160,12 +1180,12 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         for ind, val in enumerate(
             info.get('$FileVersion$', '0.0.0.0').split('.')
         ):
-            self.ver_le_group[ind].setText(val)
+            self.le_group_vers[ind].setText(val)
         self.le_product_name.setText(info.get('$ProductName$', ''))
         for ind, val in enumerate(
             info.get('$ProductVersion$', '0.0.0.0').split('.')
         ):
-            self.ver_le_group[ind + 4].setText(val)
+            self.le_group_vers[ind + 4].setText(val)
         self.le_legal_copyright.setText(info.get('$LegalCopyright$', ''))
         self.le_legal_trademarks.setText(info.get('$LegalTrademarks$', ''))
         self.le_original_filename.setText(info.get('$OriginalFilename$', ''))
@@ -1221,7 +1241,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.le_project_root.setText(os.path.dirname(deep))
 
     def _check_requireds(self):
-        self.store_status_of_all_widget()
+        self.store_state_of_widgets()
         program_entry = self._stored_conf.get('program_entry', '')
         if not program_entry:
             NewMessageBox('错误', '主程序未填写！', QMessageBox.Critical).exec()
@@ -1304,7 +1324,7 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
 
     def close(self):
         super().close()
-        win_pyi_tool._set_pyenv_and_update_info()
+        win_pyi_tool.set_pyenv_update_info()
 
     def show(self):
         self.pyenvs = get_pyenv_list(load_conf('pths'))

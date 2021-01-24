@@ -868,7 +868,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_advanced">
+        <widget class="QWidget" name="tab_advanced_setup">
          <attribute name="title">
           <string>高级设置</string>
          </attribute>
@@ -878,7 +878,8 @@
             <item>
              <widget class="QGroupBox" name="groupBox">
               <property name="toolTip">
-               <string>以调试模式打包后，运行生成的可执行文件时总是会显示控制台窗口，并打印一些调试信息用于帮助排错。</string>
+               <string>以调试模式打包后，运行生成的可执行文件时会在控制台窗口输出调试信息用于帮助排错。
+这要求主程序后缀名不能是 *.pyw，&quot;生成控制&quot;标签中的&quot;打包的程序运行时显示控制台&quot;选项必须勾选，否则打包后的可执行程序无法运行。</string>
               </property>
               <property name="title">
                <string>以调试模式打包</string>
@@ -924,7 +925,7 @@
             <item>
              <widget class="QGroupBox" name="groupBox_2">
               <property name="toolTip">
-               <string>以&quot;单文件&quot;模式打包的程序运行时提取库和支持文件的临时储存位置。
+               <string>以&quot;单文件&quot;模式打包的程序运行时提取的库和支持文件的临时储存位置。
 如果指定了此选项，则引导加载程序将忽略运行时操作系统定义的任何临时文件夹位置。
 &quot;_MEIxxxxxx&quot;文件夹将在此处创建。仅当您知道自己在做什么时，才使用此选项。</string>
               </property>
@@ -1265,7 +1266,7 @@
             </property>
             <property name="font">
              <font>
-              <family>Courier New</family>
+              <family>Lucida Console</family>
              </font>
             </property>
             <property name="contextMenuPolicy">
