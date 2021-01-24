@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from .libm import (
-    InfoOutStream,
     NewTask,
     ThreadRepo,
     all_py_paths,
@@ -29,7 +28,6 @@ from .libm import (
 )
 
 __all__ = [
-    'InfoOutStream',
     'NewTask',
     'ThreadRepo',
     'all_py_paths',

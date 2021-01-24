@@ -11,7 +11,6 @@ from subprocess import (
     STARTUPINFO,
     SW_HIDE,
     Popen,
-    TimeoutExpired,
 )
 
 from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
@@ -162,52 +161,6 @@ def clean_index_urls(urls):
     return [url for url in urls if check_index_url(url)]
 
 
-class InfoOutStream:
-    INFO_TYPE = ('常规', '成功', '失败')
-
-    def __init__(self, interface, limit=50):
-        self._ui = interface
-        self._limit = limit
-        self._filter = list(self.INFO_TYPE)
-        self._num = 0
-        self._count = 0
-        self._info = {'常规': [], '成功': [], '失败': []}
-
-    def _del_info(self):
-        if self._count > self._limit:
-            name_max = max(self._info, key=lambda x: len(self._info[x]))
-            del self._info[name_max][0]
-            self._count -= 1
-
-    def set_filter(self, *modes):
-        if not all(it in self.INFO_TYPE for it in modes):
-            raise ValueError(f'信息筛选模式"{modes}"无效。')
-        self._filter.clear()
-        self._filter.extend(modes)
-
-    def write(self, info, inf_tp):
-        if inf_tp not in self.INFO_TYPE:
-            raise ValueError(f'信息分类方式"{inf_tp}"无效。')
-        self._info[inf_tp].append((self._num, inf_tp, info))
-        self._num += 1
-        self._count += 1
-        self._del_info()
-        self.update(self._mk_text())
-
-    def _mk_text(self):
-        info = [self._info[x] for x in self._filter]
-        info.sort(key=lambda item: item[0])
-        for ind, val in enumerate(info):
-            info[ind] = f'{val[1]}：{val[2]}...'
-        return '\n'.join(info)
-
-    def update(self, text):
-        self._ui.te_infostream.setText(text)
-        self._ui.te_infostream.verticalScrollBar().setValue(
-            self._ui.te_infostream.verticalScrollBar().maximumHeight()
-        )
-
-
 class NewTask(QThread):
     def __init__(self, target, args=tuple()):
         super().__init__()
@@ -284,7 +237,7 @@ def get_cmd_o(*commands, regexp='', timeout=None):
     exec_f = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP)
     try:
         strings, _ = exec_f.communicate(timeout=timeout)
-    except TimeoutExpired:
+    except Exception:
         return ''
     if not regexp:
         return strings.strip()
