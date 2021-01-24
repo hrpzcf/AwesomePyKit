@@ -353,7 +353,7 @@
             <item>
              <widget class="QCheckBox" name="cb_clean_before_build">
               <property name="toolTip">
-               <string>生成exe可执行文件前是否清空PYINSTALLER生成的临时文件夹(即build文件夹，此文件夹可用于下次加速生成)。</string>
+               <string>生成exe可执行文件前是否清空PYINSTALLER生成的临时文件夹(临时文件可用于下次加速生成)。</string>
               </property>
               <property name="text">
                <string>构建前清理缓存并删除临时文件</string>
@@ -362,6 +362,9 @@
             </item>
             <item>
              <widget class="QCheckBox" name="cb_write_info_to_exec">
+              <property name="toolTip">
+               <string>勾选此选项则将&quot;附加信息&quot;标签页中的条目写入生成的exe文件。</string>
+              </property>
               <property name="text">
                <string>将附加信息写入生成的可执行文件</string>
               </property>
@@ -865,6 +868,97 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="tab_advanced">
+         <attribute name="title">
+          <string>高级设置</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_25">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_24">
+            <item>
+             <widget class="QGroupBox" name="groupBox">
+              <property name="toolTip">
+               <string>以调试模式打包后，运行生成的可执行文件时总是会显示控制台窗口，并打印一些调试信息用于帮助排错。</string>
+              </property>
+              <property name="title">
+               <string>以调试模式打包</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_22">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_21">
+                 <item>
+                  <widget class="QCheckBox" name="cb_db_imports">
+                   <property name="toolTip">
+                    <string>每次初始化模块时，打印一条消息，显示加载该模块的位置(文件名或内置模块)。</string>
+                   </property>
+                   <property name="text">
+                    <string>模块导入信息</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="cb_db_bootloader">
+                   <property name="toolTip">
+                    <string>使引导程序在初始化和启动捆绑的应用程序时发出进度消息，用于诊断导入丢失的问题。</string>
+                   </property>
+                   <property name="text">
+                    <string>引导进度信息</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QCheckBox" name="cb_db_noarchive">
+                   <property name="toolTip">
+                    <string>不将所有冻结的Python源文件作为档案存储在生成的可执行文件中，而是将它们作为文件存储在生成的输出目录中。</string>
+                   </property>
+                   <property name="text">
+                    <string>不捆绑源文件</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_2">
+              <property name="toolTip">
+               <string>以&quot;单文件&quot;模式打包的程序运行时提取库和支持文件的临时储存位置。
+如果指定了此选项，则引导加载程序将忽略运行时操作系统定义的任何临时文件夹位置。
+&quot;_MEIxxxxxx&quot;文件夹将在此处创建。仅当您知道自己在做什么时，才使用此选项。</string>
+              </property>
+              <property name="title">
+               <string>运行时临时文件夹</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_23">
+               <item>
+                <widget class="QLineEdit" name="le_runtime_tmpdir">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
       <item>
@@ -1010,19 +1104,22 @@
                <string>打包时输出的流程信息，包含一些用于分析打包问题的信息。</string>
               </property>
               <property name="text">
-               <string>日志信息：</string>
+               <string>日志信息</string>
               </property>
              </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <property name="spacing">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QLabel" name="label_18">
                 <property name="toolTip">
                  <string>打包程序时输出的流程信息的详细程度，越靠前越详细，默认INFO。</string>
                 </property>
                 <property name="text">
-                 <string>追踪级别：</string>
+                 <string>级别：</string>
                 </property>
                </widget>
               </item>
