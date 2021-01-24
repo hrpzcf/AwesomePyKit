@@ -48,7 +48,6 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
 
     def _connect_signal_and_slot(self):
         self.about.triggered.connect(self._show_about)
-        self.description.triggered.connect(self._show_usinghelp)
         self.btn_manPacks.clicked.connect(self._show_pkgmgr)
         self.btn_setIndex.clicked.connect(self._show_indexmgr)
         self.pb_pyi_tool.clicked.connect(self._show_pyinstaller_tool)
@@ -96,19 +95,6 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
             icon = QMessageBox.Critical
         about_panel = NewMessageBox('关于', info, icon)
         about_panel.exec()
-
-    @staticmethod
-    def _show_usinghelp():
-        win_info_panel.setWindowTitle('使用帮助')
-        try:
-            with open('help/UsingHelp.html', encoding='utf-8') as using_html:
-                win_info_panel.help_panel.setText(using_html.read())
-        except Exception:
-            win_info_panel.help_panel.setText(
-                '"使用帮助"文件(help/UsingHelp.html)已丢失。'
-            )
-        win_info_panel.setGeometry(430, 100, 0, 0)
-        win_info_panel.show()
 
 
 class PackageManagerWindow(Ui_PackageManager, QMainWindow):

@@ -43,7 +43,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>管理不同 Python 环境中的第三方模块、包、库。</string>
+         <string>管理不同Python环境中的第三方模块。</string>
         </property>
         <property name="text">
          <string>包管理器</string>
@@ -59,7 +59,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>使用PyInstaller将py程序打包成exe可执行文件。</string>
+         <string>使用PYINSTALLER将py程序打包成exe可执行文件。</string>
         </property>
         <property name="text">
          <string>程序打包工具</string>
@@ -75,29 +75,10 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>设置 pip 全局镜像源地址。</string>
+         <string>设置pip全局镜像源地址。</string>
         </property>
         <property name="text">
          <string>镜像源设置</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btn_setPATH">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="toolTip">
-         <string>（功能尚未完成）将 Python 安装目录路径添加进环境变量 PATH。</string>
-        </property>
-        <property name="text">
-         <string>环境变量设置</string>
         </property>
        </widget>
       </item>
@@ -119,9 +100,8 @@
    </property>
    <widget class="QMenu" name="menu_help">
     <property name="title">
-     <string>其他信息</string>
+     <string>帮助</string>
     </property>
-    <addaction name="description"/>
     <addaction name="about"/>
    </widget>
    <addaction name="menu_help"/>
