@@ -36,7 +36,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = '0.2.3'
+PYKIT_VERSION = '0.2.4'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
@@ -124,7 +124,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.cur_pkgs_info = {}
         self._reverseds = [True, True, True, True]
         self.cur_selected_env = 0
-        self._threads = ThreadRepo(300)
+        self._threads = ThreadRepo(500)
 
     def _setup_others(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -141,7 +141,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             2, QHeaderView.ResizeToContents
         )
         self.loading_mov = QMovie(os.path.join(sources_path, 'loading.gif'))
-        self.loading_mov.setScaledSize(QSize(16, 16))
+        self.loading_mov.setScaledSize(QSize(18, 18))
 
     def show(self):
         super().show()
@@ -221,9 +221,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             self.lw_py_envs.setCurrentRow(cur_py_env_index)
 
     def table_widget_pkgs_info_update(self):
+        self.lb_num_selected_items.clear()
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(len(self.cur_pkgs_info))
-        self.lb_num_selected_items.clear()
         color_green = QColor(0, 170, 0)
         color_red = QColor(255, 0, 0)
         color_gray = QColor(243, 243, 243)
@@ -770,8 +770,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.le_product_version_3,
         )
         self._setup_others()
-        self._threads = ThreadRepo(300)
-        self._task_retcode = None
+        self._threads = ThreadRepo(500)
         self._stored_conf = {}
         self._pyitool_pyenv = None
         self._pyi_tool = PyiTool()
@@ -779,14 +778,15 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.pyi_running_mov = QMovie(
             os.path.join(sources_path, 'loading.gif')
         )
-        self.pyi_running_mov.setScaledSize(QSize(16, 16))
+        self.pyi_running_mov.setScaledSize(QSize(18, 18))
         self._connect_signal_slot()
 
     def closeEvent(self, event):
         if not self._threads.is_empty():
             NewMessageBox(
                 '提醒',
-                '生成任务正在运行中，关闭界面后任务将在后台运行，请勿对相关储存目录进行任何操作，否则可能会破坏生成的文件！',
+                '''任务正在运行中，关闭此窗口后任务将在后台运行。\n'''
+                '''请勿对相关目录进行任何操作，否则可能会造成打包失败！''',
                 QMessageBox.Warning,
             ).exec()
         self.store_status_of_all_widget()
@@ -795,12 +795,13 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def show(self):
         super().show()
-        self.apply_stored_configuration()
-        self._pyi_tool.initialize(
-            self._stored_conf.get('py_info', ''),
-            self._stored_conf.get('project_root', os.getcwd()),
-        )
-        self.set_pyi_info()
+        if self._threads.is_empty():
+            self.apply_stored_config()
+            self._pyi_tool.initialize(
+                self._stored_conf.get('py_info', ''),
+                self._stored_conf.get('project_root', os.getcwd()),
+            )
+            self.set_pyi_info()
 
     def _setup_others(self):
         # 替换“主程序”LineEdit控件
@@ -1013,7 +1014,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
         self.set_pyi_info()
 
-    def apply_stored_configuration(self):
+    def apply_stored_config(self):
         if not self._stored_conf:
             self._stored_conf.update(load_conf('pyic'))
         self.le_program_entry.setText(
@@ -1343,10 +1344,9 @@ class NewMessageBox(QMessageBox):
             elif role == 'destructive':
                 self.addButton(text, QMessageBox.DestructiveRole)
             elif role == 'reject':
-                self.addButton(text, QMessageBox.RejectRole)
-
-    def get_role(self):
-        return self.exec()
+                self.setDefaultButton(
+                    self.addButton(text, QMessageBox.RejectRole)
+                )
 
 
 if __name__ == '__main__':
