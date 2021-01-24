@@ -878,11 +878,11 @@
             <item>
              <widget class="QGroupBox" name="groupBox">
               <property name="toolTip">
-               <string>以调试模式打包后，运行生成的可执行文件时会在控制台窗口输出调试信息用于帮助排错。
-这要求主程序后缀名不能是 *.pyw，&quot;生成控制&quot;标签中的&quot;打包的程序运行时显示控制台&quot;选项必须勾选，否则打包后的可执行程序无法运行。</string>
+               <string>勾选前两个选项之一后，运行生成的可执行文件时会在控制台窗口输出相应调试信息。
+要求主程序后缀名不能是 *.pyw，&quot;生成控制&quot;标签中的&quot;打包的程序运行时显示控制台&quot;选项必须勾选，否则打包后的可执行程序无法运行。</string>
               </property>
               <property name="title">
-               <string>以调试模式打包</string>
+               <string>打包的程序运行时输出调试信息</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_22">
                <item>
@@ -930,7 +930,7 @@
 &quot;_MEIxxxxxx&quot;文件夹将在此处创建。仅当您知道自己在做什么时，才使用此选项。</string>
               </property>
               <property name="title">
-               <string>运行时临时文件夹</string>
+               <string>打包成单文件运行时临时文件夹</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_23">
                <item>
@@ -1056,7 +1056,8 @@
               <item>
                <widget class="QPushButton" name="pb_select_py_env">
                 <property name="toolTip">
-                 <string>如果可选项目为空，需要先在“包管理器”中添加本机Python环境。</string>
+                 <string>选择在不同Python环境中将程序打包成可执行文件。
+如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机Python环境。</string>
                 </property>
                 <property name="text">
                  <string>选择环境</string>

@@ -700,9 +700,9 @@ class Ui_PyInstallerTool(object):
         self.label_23.setText(_translate("PyInstallerTool", "合法商标："))
         self.label_24.setText(_translate("PyInstallerTool", "原始文件名："))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_file_ver_info), _translate("PyInstallerTool", "附加信息"))
-        self.groupBox.setToolTip(_translate("PyInstallerTool", "以调试模式打包后，运行生成的可执行文件时会在控制台窗口输出调试信息用于帮助排错。\n"
-"这要求主程序后缀名不能是 *.pyw，\"生成控制\"标签中的\"打包的程序运行时显示控制台\"选项必须勾选，否则打包后的可执行程序无法运行。"))
-        self.groupBox.setTitle(_translate("PyInstallerTool", "以调试模式打包"))
+        self.groupBox.setToolTip(_translate("PyInstallerTool", "勾选前两个选项之一后，运行生成的可执行文件时会在控制台窗口输出相应调试信息。\n"
+"要求主程序后缀名不能是 *.pyw，\"生成控制\"标签中的\"打包的程序运行时显示控制台\"选项必须勾选，否则打包后的可执行程序无法运行。"))
+        self.groupBox.setTitle(_translate("PyInstallerTool", "打包的程序运行时输出调试信息"))
         self.cb_db_imports.setToolTip(_translate("PyInstallerTool", "每次初始化模块时，打印一条消息，显示加载该模块的位置(文件名或内置模块)。"))
         self.cb_db_imports.setText(_translate("PyInstallerTool", "模块导入信息"))
         self.cb_db_bootloader.setToolTip(_translate("PyInstallerTool", "使引导程序在初始化和启动捆绑的应用程序时发出进度消息，用于诊断导入丢失的问题。"))
@@ -712,7 +712,7 @@ class Ui_PyInstallerTool(object):
         self.groupBox_2.setToolTip(_translate("PyInstallerTool", "以\"单文件\"模式打包的程序运行时提取的库和支持文件的临时储存位置。\n"
 "如果指定了此选项，则引导加载程序将忽略运行时操作系统定义的任何临时文件夹位置。\n"
 "\"_MEIxxxxxx\"文件夹将在此处创建。仅当您知道自己在做什么时，才使用此选项。"))
-        self.groupBox_2.setTitle(_translate("PyInstallerTool", "运行时临时文件夹"))
+        self.groupBox_2.setTitle(_translate("PyInstallerTool", "打包成单文件运行时临时文件夹"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_advanced_setup), _translate("PyInstallerTool", "高级设置"))
         self.label_16.setToolTip(_translate("PyInstallerTool", "所选PYTHON环境下的PYINSTALLER的版本信息。"))
         self.label_16.setText(_translate("PyInstallerTool", "Pyi版本："))
@@ -724,7 +724,8 @@ class Ui_PyInstallerTool(object):
         self.pb_reinstall_pyi.setToolTip(_translate("PyInstallerTool", "在当前选择的PYTHON环境中安装或重新安装PYINSTALLER。"))
         self.pb_reinstall_pyi.setText(_translate("PyInstallerTool", "安装"))
         self.lb_py_info.setToolTip(_translate("PyInstallerTool", "当前选择的PYTHON环境的版本信息。"))
-        self.pb_select_py_env.setToolTip(_translate("PyInstallerTool", "如果可选项目为空，需要先在“包管理器”中添加本机Python环境。"))
+        self.pb_select_py_env.setToolTip(_translate("PyInstallerTool", "选择在不同Python环境中将程序打包成可执行文件。\n"
+"如果可选条目为空，需要先在\"包管理器\"中添加本机Python环境。"))
         self.pb_select_py_env.setText(_translate("PyInstallerTool", "选择环境"))
         self.lb_platform_info.setToolTip(_translate("PyInstallerTool", "操作系统的版本信息。"))
         self.label_5.setToolTip(_translate("PyInstallerTool", "打包时输出的流程信息，包含一些用于分析打包问题的信息。"))
