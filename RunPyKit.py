@@ -36,7 +36,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = '0.2.4'
+PYKIT_VERSION = '0.3.0'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
@@ -847,12 +847,12 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.le_file_icon_path_old, self.le_file_icon_path
         )
         self.le_file_icon_path_old.deleteLater()
-        self.le_exefile_specfile_name.setValidator(
-            QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
-        )
-        reg_exp_val = QRegExpValidator(QRegExp(r'[0-9]*'))
+        reg_exp_val1 = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
+        self.le_exefile_specfile_name.setValidator(reg_exp_val1)
+        reg_exp_val2 = QRegExpValidator(QRegExp(r'[0-9]*'))
         for line_edit in self.le_group_vers:
-            line_edit.setValidator(reg_exp_val)
+            line_edit.setValidator(reg_exp_val2)
+        self.le_runtime_tmpdir.setValidator(reg_exp_val1)
 
     def _connect_signal_slot(self):
         self._pyi_tool.executed.connect(self.task_completion_tip)
@@ -1145,6 +1145,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         return abs_rel_path_groups
 
     def _change_debug_options(self, opt):
+        ''' 从关于"以调试模式打包"的控件获取状态或设置这些控件的状态。'''
         if opt == 'get':
             options = {}
             options['imports'] = self.cb_db_imports.isChecked()

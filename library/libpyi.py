@@ -132,6 +132,8 @@ class PyiTool(QObject):
             ver_file := self._build_info_file(cmd_dict)
         ):
             self._commands.extend(('--version-file', ver_file))
+        if rt_path := cmd_dict.get('runtime_tmpdir', None):
+            self._commands.extend(('--runtime-tmpdir', rt_path))
         if dist_path := cmd_dict.get('output_dir', ''):
             self._commands.extend(('--distpath', dist_path))
         if work_path := cmd_dict.get('temp_working_dir', ''):
