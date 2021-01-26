@@ -90,10 +90,10 @@ class PyiTool(QObject):
                 self.executed.emit(self._execf.returncode)
         else:
             if not self.pyi_ready:
-                raise Exception('当前Python环境中找不到PyInstaller。')
+                self.readline.emit('当前Python环境中找不到PYINSTALLER。')
             if self._execf is None:
-                raise Exception('请先调用get_handle方法获取文件操作句柄。')
-            raise Exception('未知错误。')
+                self.readline.emit('请先调用handle方法获取文件操作句柄。')
+            self.executed.emit(-1)
 
     def prepare_cmd(self, cmd_dict={}):
         ''' 从cmd_dict添加PyInstaller命令选项。'''
