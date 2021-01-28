@@ -128,39 +128,3 @@ class QTextEditMod(QTextEdit):
         self.verticalScrollBar().setValue(
             self.verticalScrollBar().maximumHeight()
         )
-
-
-class TextStream(QTextEdit):
-    _DEF_MAX_LINES = 300
-
-    def __init__(self):
-        super().__init__()
-        self.setReadOnly(True)
-        self.setContextMenuPolicy(Qt.NoContextMenu)
-        self._string_list = []
-        self._max_lines = self._DEF_MAX_LINES
-
-    def clear(self):
-        self.clear()
-        self._string_list.clear()
-
-    def write(self, string):
-        while len(self._string_list) > self._max_lines:
-            del self._string_list[0]
-        self._string_list.append(string)
-        self.setText('\n'.join(self._string_list))
-
-    @property
-    def max_lines(self):
-        return self._max_lines
-
-    @max_lines.setter
-    def max_lines(self, value):
-        if not isinstance(value, int) or value > self._DEF_MAX_LINES:
-            value = self._DEF_MAX_LINES
-        self._max_lines = value
-
-    @max_lines.deleter
-    def max_lines(self):
-        self._max_lines = self._DEF_MAX_LINES
-
