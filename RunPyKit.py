@@ -1155,10 +1155,11 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_legal_trademarks.setText(info.get('$LegalTrademarks$', ''))
         self.le_original_filename.setText(info.get('$OriginalFilename$', ''))
 
-    def _set_pyi_info(self):
+    def _set_pyi_info(self, dont_set_enable=False):
         # 此处不能用 self.pyi_tool，因为 self.pyi_tool 总有一个空实例
         if self.tool_pyenv:
-            self.pb_reinstall_pyi.setEnabled(True)
+            if not dont_set_enable:
+                self.pb_reinstall_pyi.setEnabled(True)
             pyi_info = self.pyi_tool.pyi_info()
             if pyi_info == '0.0.0':
                 self.pb_reinstall_pyi.setText('安装')
@@ -1176,7 +1177,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         def do_reinstall_pyi():
             self.tool_pyenv.uninstall('pyinstaller')
             self.tool_pyenv.install('pyinstaller', upgrade=1)
-            self._set_pyi_info()
+            self._set_pyi_info(dont_set_enable=True)
 
         reinstall = NewTask(target=do_reinstall_pyi)
         reinstall.started.connect(self.lock_widgets)
