@@ -984,7 +984,8 @@
             <item>
              <widget class="QLabel" name="label_6">
               <property name="toolTip">
-               <string>当前选择的PYTHON环境的版本信息。</string>
+               <string>当前选择的PYTHON环境的版本信息。
+选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。</string>
               </property>
               <property name="text">
                <string>Py信息：</string>
@@ -1043,7 +1044,8 @@
               <item>
                <widget class="QLabel" name="lb_py_info">
                 <property name="toolTip">
-                 <string>当前选择的PYTHON环境的版本信息。</string>
+                 <string>当前选择的PYTHON环境的版本信息。
+选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。</string>
                 </property>
                 <property name="frameShape">
                  <enum>QFrame::Box</enum>
@@ -1057,7 +1059,8 @@
                <widget class="QPushButton" name="pb_select_py_env">
                 <property name="toolTip">
                  <string>选择在不同Python环境中将程序打包成可执行文件。
-如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机Python环境。</string>
+如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机Python环境。
+选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。</string>
                 </property>
                 <property name="text">
                  <string>选择环境</string>

@@ -716,16 +716,19 @@ class Ui_PyInstallerTool(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_advanced_setup), _translate("PyInstallerTool", "高级设置"))
         self.label_16.setToolTip(_translate("PyInstallerTool", "所选PYTHON环境下的PYINSTALLER的版本信息。"))
         self.label_16.setText(_translate("PyInstallerTool", "Pyi版本："))
-        self.label_6.setToolTip(_translate("PyInstallerTool", "当前选择的PYTHON环境的版本信息。"))
+        self.label_6.setToolTip(_translate("PyInstallerTool", "当前选择的PYTHON环境的版本信息。\n"
+"选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。"))
         self.label_6.setText(_translate("PyInstallerTool", "Py信息："))
         self.label_15.setToolTip(_translate("PyInstallerTool", "操作系统的版本信息。"))
         self.label_15.setText(_translate("PyInstallerTool", "系统信息："))
         self.lb_pyi_info.setToolTip(_translate("PyInstallerTool", "所选PYTHON环境下的PYINSTALLER的版本信息。"))
         self.pb_reinstall_pyi.setToolTip(_translate("PyInstallerTool", "在当前选择的PYTHON环境中安装或重新安装PYINSTALLER。"))
         self.pb_reinstall_pyi.setText(_translate("PyInstallerTool", "安装"))
-        self.lb_py_info.setToolTip(_translate("PyInstallerTool", "当前选择的PYTHON环境的版本信息。"))
+        self.lb_py_info.setToolTip(_translate("PyInstallerTool", "当前选择的PYTHON环境的版本信息。\n"
+"选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。"))
         self.pb_select_py_env.setToolTip(_translate("PyInstallerTool", "选择在不同Python环境中将程序打包成可执行文件。\n"
-"如果可选条目为空，需要先在\"包管理器\"中添加本机Python环境。"))
+"如果可选条目为空，需要先在\"包管理器\"中添加本机Python环境。\n"
+"选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。"))
         self.pb_select_py_env.setText(_translate("PyInstallerTool", "选择环境"))
         self.lb_platform_info.setToolTip(_translate("PyInstallerTool", "操作系统的版本信息。"))
         self.label_5.setToolTip(_translate("PyInstallerTool", "打包时输出的流程信息，包含一些用于分析打包问题的信息。"))
