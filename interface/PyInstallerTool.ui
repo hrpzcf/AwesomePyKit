@@ -1198,15 +1198,6 @@
                  </color>
                 </brush>
                </colorrole>
-               <colorrole role="PlaceholderText">
-                <brush brushstyle="NoBrush">
-                 <color alpha="128">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
               </active>
               <inactive>
                <colorrole role="Text">
@@ -1224,15 +1215,6 @@
                   <red>0</red>
                   <green>0</green>
                   <blue>0</blue>
-                 </color>
-                </brush>
-               </colorrole>
-               <colorrole role="PlaceholderText">
-                <brush brushstyle="NoBrush">
-                 <color alpha="128">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -1256,21 +1238,13 @@
                  </color>
                 </brush>
                </colorrole>
-               <colorrole role="PlaceholderText">
-                <brush brushstyle="NoBrush">
-                 <color alpha="128">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
               </disabled>
              </palette>
             </property>
             <property name="font">
              <font>
-              <family>Lucida Console</family>
+              <family>Consolas</family>
+              <pointsize>9</pointsize>
              </font>
             </property>
             <property name="contextMenuPolicy">
@@ -1291,16 +1265,12 @@
           <item>
            <widget class="QLabel" name="lb_running_gif">
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="lb_running_tip">
-            <property name="alignment">
-             <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-            </property>
-           </widget>
+           <widget class="QLabel" name="lb_running_tip"/>
           </item>
          </layout>
         </item>
