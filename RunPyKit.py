@@ -421,7 +421,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
     def install_pkgs(self):
         cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
         pkgs_to_install = NewInputDialog(
-            self, title='安装', label=f'注意，多个名称请用空格隔开。\n安装目标：{cur_py_env}',
+            self,
+            title='安装',
+            label=f'注意，多个名称请用空格隔开。\n安装目标：{cur_py_env}',
         )
         names, ok = pkgs_to_install.getText()
         names = [name for name in names.split() if name]
@@ -759,8 +761,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._setup_others()
         self._threads = ThreadRepo(500)
         self._stored_conf = {}
-        self._pyitool_pyenv = None
-        self._pyi_tool = PyiTool()
+        self.tool_pyenv = None
+        self.pyi_tool = PyiTool()
         self.set_platform_info()
         self.pyi_running_mov = QMovie(
             os.path.join(sources_path, 'loading.gif')
@@ -784,7 +786,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         super().show()
         if self._threads.is_empty():
             self.apply_stored_config()
-            self._pyi_tool.initialize(
+            self.pyi_tool.initialize(
                 self._stored_conf.get('py_info', ''),
                 self._stored_conf.get('project_root', os.getcwd()),
             )
@@ -841,8 +843,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_runtime_tmpdir.setValidator(reg_exp_val1)
 
     def _connect_signal_slot(self):
-        self._pyi_tool.executed.connect(self.task_completion_tip)
-        self._pyi_tool.readline.connect(self.te_pyi_out_stream.append)
+        self.pyi_tool.completed.connect(self.task_completion_tip)
+        self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
         self.pb_select_py_env.clicked.connect(win_ch_pyenv.show)
         self.le_program_entry.textChanged.connect(self.set_le_project_root)
         self.pb_select_module_search_path.clicked.connect(
@@ -992,12 +994,12 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         return file_dir_paths
 
     def set_pyenv_update_info(self):
-        self._pyitool_pyenv = win_ch_pyenv.pyenvs[
+        self.tool_pyenv = win_ch_pyenv.pyenvs[
             win_ch_pyenv.lw_py_envs.currentRow()
         ]
-        self.lb_py_info.setText(self._pyitool_pyenv.py_info())
-        self._pyi_tool.initialize(
-            self._pyitool_pyenv.env_path,
+        self.lb_py_info.setText(self.tool_pyenv.py_info())
+        self.pyi_tool.initialize(
+            self.tool_pyenv.env_path,
             self._stored_conf.get('program_entry', os.getcwd()),
         )
         self.set_pyi_info()
@@ -1053,8 +1055,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         py_path = self._stored_conf.get('py_info', '')
         if py_path:
             try:
-                self._pyitool_pyenv = PyEnv(py_path)
-                self.lb_py_info.setText(self._pyitool_pyenv.py_info())
+                self.tool_pyenv = PyEnv(py_path)
+                self.lb_py_info.setText(self.tool_pyenv.py_info())
             except Exception:
                 pass
         self.le_exefile_specfile_name.setText(
@@ -1107,10 +1109,10 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             for string in self.te_upx_exclude_files.toPlainText().split('\n')
             if string
         ]
-        if self._pyitool_pyenv is None:
+        if self.tool_pyenv is None:
             self._stored_conf['py_info'] = ''
         else:
-            self._stored_conf['py_info'] = self._pyitool_pyenv.env_path
+            self._stored_conf['py_info'] = self.tool_pyenv.env_path
         self._stored_conf['log_level'] = self.cb_log_level.currentText()
         self._stored_conf['file_ver_info'] = self._file_ver_info_text()
         self._stored_conf['debug_options'] = self._change_debug_options('get')
@@ -1178,10 +1180,10 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_original_filename.setText(info.get('$OriginalFilename$', ''))
 
     def set_pyi_info(self):
-        # 此处不能用 self._pyi_tool，因为 self._pyi_tool 总有一个空实例
-        if self._pyitool_pyenv:
+        # 此处不能用 self.pyi_tool，因为 self.pyi_tool 总有一个空实例
+        if self.tool_pyenv:
             self.pb_reinstall_pyi.setEnabled(True)
-            pyi_info = self._pyi_tool.pyi_info()
+            pyi_info = self.pyi_tool.pyi_info()
             if pyi_info == '0.0.0':
                 self.pb_reinstall_pyi.setText('安装')
             else:
@@ -1192,12 +1194,12 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.pb_reinstall_pyi.setEnabled(False)
 
     def reinstall_pyi(self):
-        if not self._pyitool_pyenv:
+        if not self.tool_pyenv:
             return
 
         def do_reinstall_pyi():
-            self._pyitool_pyenv.uninstall('pyinstaller')
-            self._pyitool_pyenv.install('pyinstaller', upgrade=1)
+            self.tool_pyenv.uninstall('pyinstaller')
+            self.tool_pyenv.install('pyinstaller', upgrade=1)
             self.set_pyi_info()
 
         reinstall = NewTask(target=do_reinstall_pyi)
@@ -1270,20 +1272,20 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         if not self._check_requireds():
             return
         self.te_pyi_out_stream.clear()
-        self._pyi_tool.initialize(
+        self.pyi_tool.initialize(
             self._stored_conf.get('py_info', ''),
             self._stored_conf.get('project_root', os.getcwd()),
         )
-        if not self._pyi_tool.pyi_ready:
+        if not self.pyi_tool.pyi_ready:
             NewMessageBox(
                 '提示',
                 'PYINSTALLER不可用，请将PYINSTALLER安装到所选环境。',
                 QMessageBox.Warning,
             ).exec()
             return
-        self._pyi_tool.prepare_cmd(self._stored_conf)
-        self.handle = self._pyi_tool.handle()
-        build = NewTask(self._pyi_tool.execute_cmd)
+        self.pyi_tool.prepare_cmd(self._stored_conf)
+        self.handle = self.pyi_tool.handle()
+        build = NewTask(self.pyi_tool.execute_cmd)
         build.started.connect(self.lock_widgets)
         build.started.connect(lambda: self.show_running('正在生成可执行文件...'))
         build.finished.connect(self.hide_running)

@@ -18,11 +18,11 @@ from library.libm import get_cmd_o, sources_path
 
 
 class PyiTool(QObject):
-    _STARTUP = STARTUPINFO()
-    _STARTUP.dwFlags = STARTF_USESHOWWINDOW
-    _STARTUP.wShowWindow = SW_HIDE
-    executed = pyqtSignal(int)
-    readline = pyqtSignal(str)
+    STARTUP = STARTUPINFO()
+    STARTUP.dwFlags = STARTF_USESHOWWINDOW
+    STARTUP.wShowWindow = SW_HIDE
+    stdout = pyqtSignal(str)
+    completed = pyqtSignal(int)
 
     def __init__(self, py_path='', cwd=os.getcwd()):
         super().__init__()
@@ -75,7 +75,7 @@ class PyiTool(QObject):
                 stderr=STDOUT,
                 text=True,
                 cwd=self._cwd,
-                startupinfo=self._STARTUP,
+                startupinfo=self.STARTUP,
             )
         return self._execf
 
@@ -85,15 +85,15 @@ class PyiTool(QObject):
                 line = self._execf.stdout.readline()
                 if not line or line == '\n':
                     continue
-                self.readline.emit(line.strip())
+                self.stdout.emit(line.strip())
             else:
-                self.executed.emit(self._execf.returncode)
+                self.completed.emit(self._execf.returncode)
         else:
             if not self.pyi_ready:
-                self.readline.emit('当前Python环境中找不到PYINSTALLER。')
+                self.stdout.emit('当前Python环境中找不到PYINSTALLER。')
             if self._execf is None:
-                self.readline.emit('请先调用handle方法获取文件操作句柄。')
-            self.executed.emit(-1)
+                self.stdout.emit('请先调用handle方法获取文件操作句柄。')
+            self.completed.emit(-1)
 
     def prepare_cmd(self, cmd_dict={}):
         ''' 从cmd_dict添加PyInstaller命令选项。'''
