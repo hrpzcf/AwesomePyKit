@@ -12,7 +12,7 @@ from subprocess import (
     Popen,
 )
 
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, QTimer
 
 from library.libm import get_cmd_o, sources_path
 
@@ -22,11 +22,17 @@ class PyiTool(QObject):
     STARTUP.dwFlags = STARTF_USESHOWWINDOW
     STARTUP.wShowWindow = SW_HIDE
     stdout = pyqtSignal(str)
+    run_time = pyqtSignal(int)
     completed = pyqtSignal(int)
 
     def __init__(self, py_path='', cwd=os.getcwd()):
         super().__init__()
         self.initialize(py_path, cwd)
+        self.cumulative = -200
+        self.emt = QTimer()
+        self.emt.timeout.connect(self._time)
+        self.run_time.connect(self.timer_ctrl)
+        self._log_level = None
 
     @property
     def cwd(self):
@@ -63,12 +69,12 @@ class PyiTool(QObject):
         else:
             self._py_path = ''
         self._cwd = cwd
-        self._execf = None
+        self._process = None
         self._commands = [self.pyi_path]
 
     def handle(self):
-        if self._execf is None:
-            self._execf = Popen(
+        if self._process is None:
+            self._process = Popen(
                 self._commands,
                 stdin=PIPE,
                 stdout=PIPE,
@@ -77,26 +83,56 @@ class PyiTool(QObject):
                 cwd=self._cwd,
                 startupinfo=self.STARTUP,
             )
-        return self._execf
+        return self._process
+
+    def _time(self):
+        if self.cumulative > 10000:
+            self.cumulative = 0
+        self.cumulative += 10
+
+    def timer_ctrl(self, code):
+        if code:
+            self.emt.start(10)
+        else:
+            self.emt.stop()
+            self.cumulative = -200
+
+    def _emit_split_line(self):
+        for line in self._process.stdout:
+            self.stdout.emit(line.strip())
+        self.completed.emit(self._process.wait())
+
+    def _emit_split_time(self):
+        self.run_time.emit(1)
+        lines = []
+        for line in self._process.stdout:
+            lines.append(line.strip())
+            if self.cumulative > 80:
+                self.stdout.emit('\n'.join(lines))
+                lines.clear()
+                self.cumulative = 0
+        self.completed.emit(self._process.wait())
+        self.run_time.emit(0)
 
     def execute_cmd(self):
-        if self.pyi_ready and self._execf:
-            while self._execf.poll() is None:
-                line = self._execf.stdout.readline()
-                if not line or line == '\n':
-                    continue
-                self.stdout.emit(line.strip())
+        ''' 执行命令并读取输出流，通过信号发射字符串、返回码更新主界面面板。'''
+        if self.pyi_ready and self._process:
+            if self._log_level == 'TRACE':
+                self._emit_split_time()
             else:
-                self.completed.emit(self._execf.returncode)
+                self._emit_split_line()
         else:
             if not self.pyi_ready:
                 self.stdout.emit('当前Python环境中找不到PYINSTALLER。')
-            if self._execf is None:
-                self.stdout.emit('请先调用handle方法获取文件操作句柄。')
+            if self._process is None:
+                self.stdout.emit('请先调用handle方法获取进程操作句柄。')
             self.completed.emit(-1)
 
-    def prepare_cmd(self, cmd_dict={}):
+    def prepare_cmd(self, cmd_dict=None):
         ''' 从cmd_dict添加PyInstaller命令选项。'''
+        if cmd_dict is None:
+            cmd_dict = {}
+        self._log_level = cmd_dict.get('log_level', None)
         if cmd_dict.get('pack_to_one', 'dir') == 'dir':
             self._commands.append('-D')
         else:
