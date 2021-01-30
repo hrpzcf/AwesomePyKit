@@ -35,7 +35,7 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QPushButton" name="btn_manPacks">
+       <widget class="QPushButton" name="pb_pkg_mgr">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -67,7 +67,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="btn_setIndex">
+       <widget class="QPushButton" name="pb_index_mgr">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -102,7 +102,7 @@
     <property name="title">
      <string>帮助</string>
     </property>
-    <addaction name="about"/>
+    <addaction name="action_about"/>
    </widget>
    <addaction name="menu_help"/>
   </widget>
@@ -116,7 +116,7 @@
     </font>
    </property>
   </action>
-  <action name="about">
+  <action name="action_about">
    <property name="text">
     <string>关于软件</string>
    </property>

@@ -44,29 +44,14 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle(f'AwesomePyKit - {PYKIT_VERSION}')
-        self._connect_signal_and_slot()
-
-    def _connect_signal_and_slot(self):
-        self.about.triggered.connect(self._show_about)
-        self.btn_manPacks.clicked.connect(self._show_pkgmgr)
-        self.btn_setIndex.clicked.connect(self._show_indexmgr)
-        self.pb_pyi_tool.clicked.connect(self._show_pyinstaller_tool)
-
-    @staticmethod
-    def _show_pkgmgr():
-        win_package_mgr.show()
-
-    @staticmethod
-    def _show_indexmgr():
-        win_mirror_mgr.show()
-
-    @staticmethod
-    def _show_pyinstaller_tool():
-        win_pyi_tool.show()
+        self.action_about.triggered.connect(self._show_about)
+        self.pb_pkg_mgr.clicked.connect(win_pkg_mgr.show)
+        self.pb_pyi_tool.clicked.connect(win_pyi_tool.show)
+        self.pb_index_mgr.clicked.connect(win_index_mgr.show)
 
     def closeEvent(self, event):
         if (
-            win_package_mgr._threads.is_empty()
+            win_pkg_mgr._threads.is_empty()
             and win_pyi_tool._threads.is_empty()
         ):
             event.accept()
@@ -76,9 +61,9 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
                 '有任务尚未完成，请耐心等待...',
                 QMessageBox.Warning,
                 (('accept', '强制退出'), ('reject', '取消')),
-            ).exec()
+            ).exec_()
             if role == 0:
-                win_package_mgr._threads.kill_all()
+                win_pkg_mgr._threads.kill_all()
                 win_pyi_tool._threads.kill_all()
                 event.accept()
             else:
@@ -94,7 +79,7 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
             info = '"关于"信息文件(help/About.html)已丢失。'
             icon = QMessageBox.Critical
         about_panel = NewMessageBox('关于', info, icon)
-        about_panel.exec()
+        about_panel.exec_()
 
 
 class PackageManagerWindow(Ui_PackageManager, QMainWindow):
@@ -142,7 +127,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             QMessageBox.Question,
             (('accept', '安全停止并关闭'), ('reject', '取消')),
         )
-        return not msg_if_stop_threads.exec()
+        return not msg_if_stop_threads.exec_()
 
     def closeEvent(self, event):
         if not self._threads.is_empty():
@@ -472,7 +457,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         uninstall_msg_box.addButton('确定', QMessageBox.AcceptRole)
         reject = uninstall_msg_box.addButton('取消', QMessageBox.RejectRole)
         uninstall_msg_box.setDefaultButton(reject)
-        if uninstall_msg_box.exec() != 0:
+        if uninstall_msg_box.exec_() != 0:
             return
 
         def do_uninstall():
@@ -516,7 +501,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         uninstall_msg_box.addButton('确定', QMessageBox.AcceptRole)
         reject = uninstall_msg_box.addButton('取消', QMessageBox.RejectRole)
         uninstall_msg_box.setDefaultButton(reject)
-        if uninstall_msg_box.exec() != 0:
+        if uninstall_msg_box.exec_() != 0:
             return
 
         def do_upgrade():
@@ -552,7 +537,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
                 QMessageBox.Information, '提示', '请先检查更新确认是否有可更新的包。'
             )
             msg_box.addButton('确定', QMessageBox.AcceptRole)
-            msg_box.exec()
+            msg_box.exec_()
             return
         cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
         len_pkgs = len(upgradeable)
@@ -567,7 +552,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         upgrade_all_msg_box.addButton('确定', QMessageBox.AcceptRole)
         reject = upgrade_all_msg_box.addButton('取消', QMessageBox.RejectRole)
         upgrade_all_msg_box.setDefaultButton(reject)
-        if upgrade_all_msg_box.exec() != 0:
+        if upgrade_all_msg_box.exec_() != 0:
             return
 
         def do_upgrade():
@@ -724,15 +709,6 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
             self.le_effectiveurl.setText('无法获取当前全局镜像源地址。')
 
 
-class InformationPanelWindow(Ui_InformationPanel, QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
-
-    def closeEvent(self, event):
-        self.resize(1, 1)
-
-
 class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def __init__(self):
         super().__init__()
@@ -777,7 +753,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 '''任务正在运行中，关闭此窗口后任务将在后台运行。\n'''
                 '''请勿对相关目录进行任何操作，否则可能会造成打包失败！''',
                 QMessageBox.Warning,
-            ).exec()
+            ).exec_()
         self.store_state_of_widgets()
         save_conf(self._stored_conf, 'pyic')
         event.accept()
@@ -790,7 +766,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 self._stored_conf.get('py_info', ''),
                 self._stored_conf.get('project_root', os.getcwd()),
             )
-            self.set_pyi_info()
+            self._set_pyi_info()
 
     def _setup_others(self):
         # 替换“主程序”LineEdit控件
@@ -1002,7 +978,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.tool_pyenv.env_path,
             self._stored_conf.get('program_entry', os.getcwd()),
         )
-        self.set_pyi_info()
+        self._set_pyi_info()
 
     def apply_stored_config(self):
         if not self._stored_conf:
@@ -1179,7 +1155,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.le_legal_trademarks.setText(info.get('$LegalTrademarks$', ''))
         self.le_original_filename.setText(info.get('$OriginalFilename$', ''))
 
-    def set_pyi_info(self):
+    def _set_pyi_info(self):
         # 此处不能用 self.pyi_tool，因为 self.pyi_tool 总有一个空实例
         if self.tool_pyenv:
             self.pb_reinstall_pyi.setEnabled(True)
@@ -1200,7 +1176,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         def do_reinstall_pyi():
             self.tool_pyenv.uninstall('pyinstaller')
             self.tool_pyenv.install('pyinstaller', upgrade=1)
-            self.set_pyi_info()
+            self._set_pyi_info()
 
         reinstall = NewTask(target=do_reinstall_pyi)
         reinstall.started.connect(self.lock_widgets)
@@ -1233,10 +1209,10 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.store_state_of_widgets()
         program_entry = self._stored_conf.get('program_entry', '')
         if not program_entry:
-            NewMessageBox('错误', '主程序未填写！', QMessageBox.Critical).exec()
+            NewMessageBox('错误', '主程序未填写！', QMessageBox.Critical).exec_()
             return False
         if not os.path.isfile(program_entry):
-            NewMessageBox('错误', '主程序文件不存在！', QMessageBox.Critical).exec()
+            NewMessageBox('错误', '主程序文件不存在！', QMessageBox.Critical).exec_()
             return False
         return True
 
@@ -1262,11 +1238,11 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     @staticmethod
     def task_completion_tip(retcode):
         if retcode == 0:
-            NewMessageBox('任务结束', '可执行文件已打包完成！').exec()
+            NewMessageBox('任务结束', '可执行文件已打包完成！').exec_()
         else:
             NewMessageBox(
                 '任务结束', '可执行文件生成失败，请检查错误信息！', QMessageBox.Critical
-            ).exec()
+            ).exec_()
 
     def build_executable(self):
         if not self._check_requireds():
@@ -1281,7 +1257,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 '提示',
                 'PYINSTALLER不可用，请将PYINSTALLER安装到所选环境。',
                 QMessageBox.Warning,
-            ).exec()
+            ).exec_()
             return
         self.pyi_tool.prepare_cmd(self._stored_conf)
         self.handle = self.pyi_tool.handle()
@@ -1321,22 +1297,6 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
         self.pyenv_list_update()
 
 
-class NewInputDialog(QInputDialog):
-    def __init__(self, parent, sw=560, sh=0, title='', label=''):
-        super().__init__(parent)
-        self.resize(sw, sh)
-        self.setFont(QFont('Microsoft YaHei UI'))
-        self.setWindowTitle(title)
-        self.setLabelText(label)
-        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
-        self.setOkButtonText('确定')
-        self.setCancelButtonText('取消')
-        self._confirm = self.exec()
-
-    def getText(self):
-        return self.textValue(), self._confirm
-
-
 class NewMessageBox(QMessageBox):
     def __init__(
         self,
@@ -1346,7 +1306,11 @@ class NewMessageBox(QMessageBox):
         buttons=(('accept', '确定'),),
     ):
         super().__init__(icon, title, message)
-        for btn in buttons:
+        self._buttons = buttons
+        self._set_push_buttons()
+
+    def _set_push_buttons(self):
+        for btn in self._buttons:
             role, text = btn
             if role == 'accept':
                 self.addButton(text, QMessageBox.AcceptRole)
@@ -1357,17 +1321,44 @@ class NewMessageBox(QMessageBox):
                     self.addButton(text, QMessageBox.RejectRole)
                 )
 
+    def get_role(self):
+        return self.exec_()
 
-if __name__ == '__main__':
+
+class NewInputDialog(QInputDialog):
+    def __init__(self, parent, sw=560, sh=0, title='', label=''):
+        super().__init__(parent)
+        self.resize(sw, sh)
+        self.setFont(QFont('Microsoft YaHei UI'))
+        self.setWindowTitle(title)
+        self.setLabelText(label)
+        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
+        self.setOkButtonText('确定')
+        self.setCancelButtonText('取消')
+        self._confirm = self.exec_()
+
+    def getText(self):
+        return self.textValue(), self._confirm
+
+
+def main():
+    # 把 global声明写一行里不美观，犯强迫症
+    global win_pkg_mgr
+    global win_ch_pyenv
+    global win_pyi_tool
+    global win_index_mgr
     app_awesomepykit = QApplication(sys.argv)
     app_awesomepykit.setWindowIcon(
         QIcon(os.path.join(sources_path, 'icon.ico'))
     )
-    win_info_panel = InformationPanelWindow()
-    win_main_interface = MainInterfaceWindow()
-    win_package_mgr = PackageManagerWindow()
+    win_pkg_mgr = PackageManagerWindow()
     win_ch_pyenv = PyiToolChoosePyEnvWindow()
     win_pyi_tool = PyInstallerToolWindow()
-    win_mirror_mgr = MirrorSourceManagerWindow()
+    win_index_mgr = MirrorSourceManagerWindow()
+    win_main_interface = MainInterfaceWindow()
     win_main_interface.show()
-    sys.exit(app_awesomepykit.exec())
+    sys.exit(app_awesomepykit.exec_())
+
+
+if __name__ == '__main__':
+    main()
