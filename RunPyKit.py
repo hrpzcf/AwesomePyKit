@@ -41,7 +41,6 @@ from PyQt5.QtGui import (
     QIcon,
     QMovie,
     QRegExpValidator,
-    QResizeEvent,
 )
 from PyQt5.QtWidgets import (
     QApplication,
@@ -63,7 +62,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = '0.3.1'
+PYKIT_VERSION = '0.3.2'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
