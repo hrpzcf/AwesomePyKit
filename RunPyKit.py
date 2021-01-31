@@ -41,6 +41,7 @@ from PyQt5.QtGui import (
     QIcon,
     QMovie,
     QRegExpValidator,
+    QResizeEvent,
 )
 from PyQt5.QtWidgets import (
     QApplication,
@@ -166,6 +167,15 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
                 event.accept()
             else:
                 event.ignore()
+
+    def resizeEvent(self, event):
+        old_size = event.oldSize()
+        if (
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
+        ):
+            self._normal_size = old_size
 
     def show_loading(self, text):
         self.lb_loading_tip.clear()
@@ -620,6 +630,15 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
         super().show()
         self._list_widget_urls_update()
 
+    def resizeEvent(self, event):
+        old_size = event.oldSize()
+        if (
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
+        ):
+            self._normal_size = old_size
+
     @staticmethod
     def _widget_for_list_item(url):
         item_layout = QHBoxLayout()
@@ -800,6 +819,15 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 self._stored_conf.get('project_root', os.getcwd()),
             )
             self._set_pyi_info()
+
+    def resizeEvent(self, event):
+        old_size = event.oldSize()
+        if (
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
+        ):
+            self._normal_size = old_size
 
     def _setup_others(self):
         # 替换“主程序”LineEdit控件
@@ -1309,6 +1337,7 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
         super().__init__()
         self.setupUi(self)
         self._connect_signal_slot()
+        self._normal_size = self.size()
 
     def _connect_signal_slot(self):
         self.lw_py_envs.pressed.connect(self.close)
@@ -1321,11 +1350,21 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
             item.setSizeHint(row_size)
             self.lw_py_envs.addItem(item)
 
+    def resizeEvent(self, event):
+        old_size = event.oldSize()
+        if (
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
+        ):
+            self._normal_size = old_size
+
     def close(self):
         super().close()
         win_pyi_tool.set_pyenv_update_info()
 
     def show(self):
+        self.resize(self._normal_size)
         self.pyenvs = get_pyenv_list(load_conf('pths'))
         super().show()
         self.pyenv_list_update()
