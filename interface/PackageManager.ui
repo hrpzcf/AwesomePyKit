@@ -60,7 +60,7 @@
                <string>自动搜索常用安装位置中的Python目录并将路径添加到Python环境列表保存。</string>
               </property>
               <property name="text">
-               <string>搜索常用位置</string>
+               <string>自动搜索</string>
               </property>
              </widget>
             </item>
@@ -176,9 +176,6 @@
             <property name="contextMenuPolicy">
              <enum>Qt::NoContextMenu</enum>
             </property>
-            <property name="toolTip">
-             <string>选中的Python环境中已安装的包名、当前版本、最新版本、安装状态信息。</string>
-            </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>
@@ -230,7 +227,7 @@
                <string>检查选中的Python环境中的所有模块的最新版本，有新版本则在&quot;最新版本&quot;列中显示版本号。</string>
               </property>
               <property name="text">
-               <string>检查新版本</string>
+               <string>检查更新</string>
               </property>
              </widget>
             </item>
@@ -252,7 +249,7 @@
 注意，卸载时表格中的条目支持多选。</string>
               </property>
               <property name="text">
-               <string>卸载选中项</string>
+               <string>卸载</string>
               </property>
              </widget>
             </item>
@@ -263,7 +260,7 @@
 注意，被选中的包如果没有新版本则不升级，支持多选。</string>
               </property>
               <property name="text">
-               <string>升级选中项</string>
+               <string>升级</string>
               </property>
              </widget>
             </item>
@@ -317,14 +314,14 @@
         <item>
          <widget class="QLabel" name="lb_loading_gif">
           <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QLabel" name="lb_loading_tip">
           <property name="alignment">
-           <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>

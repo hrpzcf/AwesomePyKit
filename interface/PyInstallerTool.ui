@@ -24,945 +24,944 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_19">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,1">
-      <item>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="tab_project_files">
-         <attribute name="title">
-          <string>项目文件</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_17">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="toolTip">
-                 <string>要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab_project_files">
+        <attribute name="title">
+         <string>项目文件</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_17">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="toolTip">
+                <string>要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。
 如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
-                </property>
-                <property name="text">
-                 <string>主程序：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QLineEdit" name="le_program_entry_old">
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="toolTip">
-                   <string>要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。
-如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_program_entry">
-                  <property name="text">
-                   <string>选择</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_19">
-              <item>
-               <widget class="QLabel" name="label_13">
-                <property name="toolTip">
-                 <string>打包完成后的exe可执行文件文件的名称，此项留空则使用主程序文件名。</string>
-                </property>
-                <property name="text">
-                 <string>生成文件名称：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_exefile_specfile_name">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>打包完成后的exe可执行文件文件的名称，此项留空则使用主程序文件名。</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="9,0">
-                <item>
-                 <widget class="QLabel" name="label_2">
-                  <property name="toolTip">
-                   <string>当前的项目根目录，选择主程序文件后自动确定。</string>
-                  </property>
-                  <property name="text">
-                   <string>项目根目录：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_20">
-                  <item>
-                   <widget class="QPushButton" name="pb_reset_root_level">
-                    <property name="toolTip">
-                     <string>将项目根目录重置为主程序所在目录。</string>
-                    </property>
-                    <property name="text">
-                     <string>重置</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pb_up_level_root">
-                    <property name="toolTip">
-                     <string>将项目根目录向上移一级。</string>
-                    </property>
-                    <property name="text">
-                     <string>上一级</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_project_root">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>当前的项目根目录，选择主程序文件后自动确定。</string>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <item>
-               <widget class="Line" name="line">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,0,0">
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="toolTip">
-                   <string>程序的其他模块的搜索目录(仅当PYINSTALLER无法自动找到时使用)。</string>
-                  </property>
-                  <property name="text">
-                   <string>其他模块搜索路径：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_clear_module_search_path">
-                  <property name="toolTip">
-                   <string>清空其他模块搜索目录文本框。</string>
-                  </property>
-                  <property name="text">
-                   <string>清空</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_module_search_path">
-                  <property name="text">
-                   <string>选择</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QTextEdit" name="te_module_search_path_old">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="Line" name="line_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="9,0,0">
-                <item>
-                 <widget class="QLabel" name="label_4">
-                  <property name="toolTip">
-                   <string>非源代码性质的其他资源文件，例如一些图片、配置文件等。</string>
-                  </property>
-                  <property name="text">
-                   <string>非源代码资源文件：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_clear_other_data">
-                  <property name="text">
-                   <string>清空</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_other_data">
-                  <property name="text">
-                   <string>选择</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QTextEdit" name="te_other_data_old">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_8">
-              <item>
-               <widget class="QLabel" name="label_7">
-                <property name="toolTip">
-                 <string>生成的exe可执行文件的图标，支持.ico、.icns图标文件。</string>
-                </property>
-                <property name="text">
-                 <string>文件图标路径：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="9,0">
-                <item>
-                 <widget class="QLineEdit" name="le_file_icon_path_old">
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="toolTip">
-                   <string>生成的exe可执行文件的图标，支持.ico、.icns图标文件。</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_file_icon">
-                  <property name="text">
-                   <string>选择</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_build_control">
-         <attribute name="title">
-          <string>生成控制</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_14">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_12">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
-              <item>
-               <widget class="QRadioButton" name="rb_pack_to_one_dir">
-                <property name="toolTip">
-                 <string>将程序打包成单文件夹形式，exe可执行程序在文件夹的首层目录内。</string>
-                </property>
-                <property name="text">
-                 <string>打包成单目录(推荐)</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="rb_pack_to_one_file">
-                <property name="toolTip">
-                 <string>将程序以及添加的其他资源文件打包成单一文件的形式，启动速度较慢。</string>
-                </property>
-                <property name="text">
-                 <string>打包成单文件</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cb_execute_with_console">
-              <property name="toolTip">
-               <string>打包完成后启动程序是否显示命令行窗口，注意，后缀为pyw的主程序打包后不显示控制台，此项设置失效。</string>
-              </property>
-              <property name="text">
-               <string>打包的程序运行时显示控制台</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cb_without_confirm">
-              <property name="toolTip">
-               <string>当要储存生成的exe可执行文件的文件夹不为空时，是否清空该文件夹。</string>
-              </property>
-              <property name="text">
-               <string>输出目录不为空时清空而不是中断</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cb_use_upx">
-              <property name="toolTip">
-               <string>打包过程中是否使用upx对文件进行压缩。
-注意，某些二进制文件在经过upx压缩后可能无法正常运行。
-仅当系统环境变量PATH中有upx路径信息或在以下“upx可执行文件查找路径”指定了upx查找路径时，此项设置才生效。</string>
-              </property>
-              <property name="text">
-               <string>使用UPX对文件进行压缩</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cb_clean_before_build">
-              <property name="toolTip">
-               <string>生成exe可执行文件前是否清空PYINSTALLER生成的临时文件夹(临时文件可用于下次加速生成)。</string>
-              </property>
-              <property name="text">
-               <string>构建前清理缓存并删除临时文件</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cb_write_info_to_exec">
-              <property name="toolTip">
-               <string>勾选此选项则将&quot;附加信息&quot;标签页中的条目写入生成的exe文件。</string>
-              </property>
-              <property name="text">
-               <string>将附加信息写入生成的可执行文件</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_15">
-              <item>
-               <widget class="QLabel" name="label_11">
-                <property name="toolTip">
-                 <string>用于加密打包过程中生成PYC文件时的加密，此项可留空。</string>
-                </property>
-                <property name="text">
-                 <string>字节码加密秘钥：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_bytecode_encryption_key">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>用于加密打包过程中生成PYC文件时的加密，此项可留空。</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="Line" name="line_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_9">
-              <item>
-               <widget class="QLabel" name="label_8">
-                <property name="toolTip">
-                 <string>此项可留空，默认储存位置：&quot;项目根目录/DIST&quot;。</string>
-                </property>
-                <property name="text">
-                 <string>生成文件储存位置：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_12">
-                <item>
-                 <widget class="QLineEdit" name="le_output_dir">
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="toolTip">
-                   <string>此项可留空，默认储存位置：&quot;项目根目录/DIST&quot;。</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_output_dir">
-                  <property name="text">
-                   <string>选择</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_15">
-              <item>
-               <widget class="QLabel" name="label_17">
-                <property name="toolTip">
-                 <string>此项可留空，默认储存位置：&quot;项目根目录&quot;。</string>
-                </property>
-                <property name="text">
-                 <string>SPEC文件储存位置：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_16">
-                <item>
-                 <widget class="QLineEdit" name="le_spec_dir">
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="toolTip">
-                   <string>此项可留空，默认储存位置：&quot;项目根目录&quot;。</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_spec_dir">
-                  <property name="text">
-                   <string>选择</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_11">
-              <item>
-               <widget class="QLabel" name="label_10">
-                <property name="toolTip">
-                 <string>此项可留空，默认目录：&quot;项目根目录/BUILD&quot;。</string>
-                </property>
-                <property name="text">
-                 <string>临时文件目录：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_14">
-                <item>
-                 <widget class="QLineEdit" name="le_temp_working_dir">
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="toolTip">
-                   <string>此项可留空，默认目录：&quot;项目根目录/BUILD&quot;。</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_temp_working_dir">
-                  <property name="text">
-                   <string>选择</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_10">
-              <item>
-               <widget class="QLabel" name="label_9">
-                <property name="toolTip">
-                 <string>UPX.EXE文件所在目录。
-此项可留空，找不到UPX时将不进行压缩。
-当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。</string>
-                </property>
-                <property name="text">
-                 <string>UPX可执行文件查找路径：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_13">
-                <item>
-                 <widget class="QLineEdit" name="le_upx_search_path">
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="toolTip">
-                   <string>UPX.EXE文件所在目录。
-此项可留空，找不到UPX时将不进行压缩。
-当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_select_upx_search_path">
-                  <property name="text">
-                   <string>选择</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_13">
-              <item>
-               <widget class="QLabel" name="label_14">
-                <property name="toolTip">
-                 <string>使用UPX进行压缩时需要忽略的文件，每行一个文件名。
-某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。</string>
-                </property>
-                <property name="text">
-                 <string>UPX压缩时排除的文件名：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QTextEdit" name="te_upx_exclude_files">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="acceptDrops">
-                 <bool>false</bool>
-                </property>
-                <property name="toolTip">
-                 <string>使用UPX进行压缩时需要忽略的文件，每行一个文件名。
-某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_file_ver_info">
-         <property name="toolTip">
-          <string>需要在&quot;生成控制&quot;中勾选&quot;将文件信息写入生成的可执行文件&quot;，此设置才生效。
-生成的可执行文件的附加信息，即鼠标悬停于exe文件上显示的信息，以及exe文件属性中的详细信息。</string>
-         </property>
-         <attribute name="title">
-          <string>附加信息</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_23">
-            <item>
-             <widget class="QLabel" name="label_12">
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>文件说明：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_file_description">
-              <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_24">
-            <item>
-             <widget class="QLabel" name="label_25">
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>公司：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_company_name">
-              <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_25">
-            <item>
-             <widget class="QLabel" name="label_19">
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>文件版本：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_10">
-              <item>
-               <widget class="QLineEdit" name="le_file_version_0">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_file_version_1">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_file_version_2">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_file_version_3">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_26">
-            <item>
-             <widget class="QLabel" name="label_20">
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>产品名称：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_product_name">
-              <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_27">
-            <item>
-             <widget class="QLabel" name="label_21">
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>产品版本：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_22">
-              <item>
-               <widget class="QLineEdit" name="le_product_version_0">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_product_version_1">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_product_version_2">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_product_version_3">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_28">
-            <item>
-             <widget class="QLabel" name="label_22">
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>版权：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_legal_copyright">
-              <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_29">
-            <item>
-             <widget class="QLabel" name="label_23">
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>合法商标：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_legal_trademarks">
-              <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_30">
-            <item>
-             <widget class="QLabel" name="label_24">
-              <property name="minimumSize">
-               <size>
-                <width>90</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>原始文件名：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_original_filename">
-              <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>373</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="tab_advanced_setup">
-         <attribute name="title">
-          <string>高级设置</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_25">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_24">
-            <item>
-             <widget class="QGroupBox" name="groupBox">
-              <property name="toolTip">
-               <string>勾选前两个选项之一后，运行生成的可执行文件时会在控制台窗口输出相应调试信息。
-要求主程序后缀名不能是 *.pyw，&quot;生成控制&quot;标签中的&quot;打包的程序运行时显示控制台&quot;选项必须勾选，否则打包后的可执行程序无法运行。</string>
-              </property>
-              <property name="title">
-               <string>打包的程序运行时输出调试信息</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_22">
+               </property>
+               <property name="text">
+                <string>主程序：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_21">
+                <widget class="QLineEdit" name="le_program_entry_old">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。
+如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_select_program_entry">
+                 <property name="text">
+                  <string>选择</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_19">
+             <item>
+              <widget class="QLabel" name="label_13">
+               <property name="toolTip">
+                <string>打包完成后的exe可执行文件文件的名称，此项留空则使用主程序文件名。</string>
+               </property>
+               <property name="text">
+                <string>生成文件名称：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_exefile_specfile_name">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+               <property name="toolTip">
+                <string>打包完成后的exe可执行文件文件的名称，此项留空则使用主程序文件名。</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="9,0">
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="toolTip">
+                  <string>当前的项目根目录，选择主程序文件后自动确定。</string>
+                 </property>
+                 <property name="text">
+                  <string>项目根目录：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_20">
                  <item>
-                  <widget class="QCheckBox" name="cb_db_imports">
+                  <widget class="QPushButton" name="pb_reset_root_level">
                    <property name="toolTip">
-                    <string>每次初始化模块时，打印一条消息，显示加载该模块的位置(文件名或内置模块)。</string>
+                    <string>将项目根目录重置为主程序所在目录。</string>
                    </property>
                    <property name="text">
-                    <string>模块导入信息</string>
+                    <string>重置</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QCheckBox" name="cb_db_bootloader">
+                  <widget class="QPushButton" name="pb_up_level_root">
                    <property name="toolTip">
-                    <string>使引导程序在初始化和启动捆绑的应用程序时发出进度消息，用于诊断导入丢失的问题。</string>
+                    <string>将项目根目录向上移一级。</string>
                    </property>
                    <property name="text">
-                    <string>引导进度信息</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="cb_db_noarchive">
-                   <property name="toolTip">
-                    <string>不将所有冻结的Python源文件作为档案存储在生成的可执行文件中，而是将它们作为文件存储在生成的输出目录中。</string>
-                   </property>
-                   <property name="text">
-                    <string>不捆绑源文件</string>
+                    <string>上一级</string>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_2">
-              <property name="toolTip">
-               <string>以&quot;单文件&quot;模式打包的程序运行时提取的库和支持文件的临时储存位置。
-如果指定了此选项，则引导加载程序将忽略运行时操作系统定义的任何临时文件夹位置。
-&quot;_MEIxxxxxx&quot;文件夹将在此处创建。仅当您知道自己在做什么时，才使用此选项。</string>
-              </property>
-              <property name="title">
-               <string>打包成单文件运行时临时文件夹</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_23">
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_project_root">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+               <property name="toolTip">
+                <string>当前的项目根目录，选择主程序文件后自动确定。</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <item>
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,0,0">
                <item>
-                <widget class="QLineEdit" name="le_runtime_tmpdir">
-                 <property name="contextMenuPolicy">
-                  <enum>Qt::NoContextMenu</enum>
+                <widget class="QLabel" name="label_3">
+                 <property name="toolTip">
+                  <string>程序的其他模块的搜索目录(仅当PYINSTALLER无法自动找到时使用)。</string>
+                 </property>
+                 <property name="text">
+                  <string>其他模块搜索路径：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_clear_module_search_path">
+                 <property name="toolTip">
+                  <string>清空其他模块搜索目录文本框。</string>
+                 </property>
+                 <property name="text">
+                  <string>清空</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_select_module_search_path">
+                 <property name="text">
+                  <string>选择</string>
                  </property>
                 </widget>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="te_module_search_path_old">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="9,0,0">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="toolTip">
+                  <string>非源代码性质的其他资源文件，例如一些图片、配置文件等。</string>
+                 </property>
+                 <property name="text">
+                  <string>非源代码资源文件：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_clear_other_data">
+                 <property name="text">
+                  <string>清空</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_select_other_data">
+                 <property name="text">
+                  <string>选择</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="te_other_data_old">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="toolTip">
+                <string>生成的exe可执行文件的图标，支持.ico、.icns图标文件。</string>
+               </property>
+               <property name="text">
+                <string>文件图标路径：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="9,0">
+               <item>
+                <widget class="QLineEdit" name="le_file_icon_path_old">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>生成的exe可执行文件的图标，支持.ico、.icns图标文件。</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_select_file_icon">
+                 <property name="text">
+                  <string>选择</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
-      </item>
-      <item>
+       <widget class="QWidget" name="tab_build_control">
+        <attribute name="title">
+         <string>生成控制</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_14">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_12">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <item>
+              <widget class="QRadioButton" name="rb_pack_to_one_dir">
+               <property name="toolTip">
+                <string>将程序打包成单文件夹形式，exe可执行程序在文件夹的首层目录内。</string>
+               </property>
+               <property name="text">
+                <string>打包成单目录(推荐)</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rb_pack_to_one_file">
+               <property name="toolTip">
+                <string>将程序以及添加的其他资源文件打包成单一文件的形式，启动速度较慢。</string>
+               </property>
+               <property name="text">
+                <string>打包成单文件</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_execute_with_console">
+             <property name="toolTip">
+              <string>打包完成后启动程序是否显示命令行窗口，注意，后缀为pyw的主程序打包后不显示控制台，此项设置失效。</string>
+             </property>
+             <property name="text">
+              <string>打包的程序运行时显示控制台</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_without_confirm">
+             <property name="toolTip">
+              <string>当要储存生成的exe可执行文件的文件夹不为空时，是否清空该文件夹。</string>
+             </property>
+             <property name="text">
+              <string>输出目录不为空时清空而不是中断</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_use_upx">
+             <property name="toolTip">
+              <string>打包过程中是否使用upx对文件进行压缩。
+注意，某些二进制文件在经过upx压缩后可能无法正常运行。
+仅当系统环境变量PATH中有upx路径信息或在以下“upx可执行文件查找路径”指定了upx查找路径时，此项设置才生效。</string>
+             </property>
+             <property name="text">
+              <string>使用UPX对文件进行压缩</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_clean_before_build">
+             <property name="toolTip">
+              <string>生成exe可执行文件前是否清空PYINSTALLER生成的临时文件夹(临时文件可用于下次加速生成)。</string>
+             </property>
+             <property name="text">
+              <string>构建前清理缓存并删除临时文件</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_write_info_to_exec">
+             <property name="toolTip">
+              <string>勾选此选项则将&quot;附加信息&quot;标签页中的条目写入生成的exe文件。</string>
+             </property>
+             <property name="text">
+              <string>将附加信息写入生成的可执行文件</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_15">
+             <item>
+              <widget class="QLabel" name="label_11">
+               <property name="toolTip">
+                <string>用于加密打包过程中生成PYC文件时的加密，此项可留空。</string>
+               </property>
+               <property name="text">
+                <string>字节码加密秘钥：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_bytecode_encryption_key">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+               <property name="toolTip">
+                <string>用于加密打包过程中生成PYC文件时的加密，此项可留空。</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="line_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_9">
+             <item>
+              <widget class="QLabel" name="label_8">
+               <property name="toolTip">
+                <string>此项可留空，默认储存位置：&quot;项目根目录/DIST&quot;。</string>
+               </property>
+               <property name="text">
+                <string>生成文件储存位置：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_12">
+               <item>
+                <widget class="QLineEdit" name="le_output_dir">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>此项可留空，默认储存位置：&quot;项目根目录/DIST&quot;。</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_select_output_dir">
+                 <property name="text">
+                  <string>选择</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_15">
+             <item>
+              <widget class="QLabel" name="label_17">
+               <property name="toolTip">
+                <string>此项可留空，默认储存位置：&quot;项目根目录&quot;。</string>
+               </property>
+               <property name="text">
+                <string>SPEC文件储存位置：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_16">
+               <item>
+                <widget class="QLineEdit" name="le_spec_dir">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>此项可留空，默认储存位置：&quot;项目根目录&quot;。</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_select_spec_dir">
+                 <property name="text">
+                  <string>选择</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <widget class="QLabel" name="label_10">
+               <property name="toolTip">
+                <string>此项可留空，默认目录：&quot;项目根目录/BUILD&quot;。</string>
+               </property>
+               <property name="text">
+                <string>临时文件目录：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_14">
+               <item>
+                <widget class="QLineEdit" name="le_temp_working_dir">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>此项可留空，默认目录：&quot;项目根目录/BUILD&quot;。</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_select_temp_working_dir">
+                 <property name="text">
+                  <string>选择</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="QLabel" name="label_9">
+               <property name="toolTip">
+                <string>UPX.EXE文件所在目录。
+此项可留空，找不到UPX时将不进行压缩。
+当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。</string>
+               </property>
+               <property name="text">
+                <string>UPX可执行文件查找路径：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <item>
+                <widget class="QLineEdit" name="le_upx_search_path">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>UPX.EXE文件所在目录。
+此项可留空，找不到UPX时将不进行压缩。
+当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_select_upx_search_path">
+                 <property name="text">
+                  <string>选择</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_13">
+             <item>
+              <widget class="QLabel" name="label_14">
+               <property name="toolTip">
+                <string>使用UPX进行压缩时需要忽略的文件，每行一个文件名。
+某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。</string>
+               </property>
+               <property name="text">
+                <string>UPX压缩时排除的文件名：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTextEdit" name="te_upx_exclude_files">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+               <property name="acceptDrops">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>使用UPX进行压缩时需要忽略的文件，每行一个文件名。
+某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_file_ver_info">
+        <property name="toolTip">
+         <string>需要在&quot;生成控制&quot;中勾选&quot;将文件信息写入生成的可执行文件&quot;，此设置才生效。
+生成的可执行文件的附加信息，即鼠标悬停于exe文件上显示的信息，以及exe文件属性中的详细信息。</string>
+        </property>
+        <attribute name="title">
+         <string>附加信息</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_23">
+           <item>
+            <widget class="QLabel" name="label_12">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>文件说明：</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_file_description">
+             <property name="contextMenuPolicy">
+              <enum>Qt::NoContextMenu</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_24">
+           <item>
+            <widget class="QLabel" name="label_25">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>公司：</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_company_name">
+             <property name="contextMenuPolicy">
+              <enum>Qt::NoContextMenu</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_25">
+           <item>
+            <widget class="QLabel" name="label_19">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>文件版本：</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <item>
+              <widget class="QLineEdit" name="le_file_version_0">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_file_version_1">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_file_version_2">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_file_version_3">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_26">
+           <item>
+            <widget class="QLabel" name="label_20">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>产品名称：</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_product_name">
+             <property name="contextMenuPolicy">
+              <enum>Qt::NoContextMenu</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_27">
+           <item>
+            <widget class="QLabel" name="label_21">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>产品版本：</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_22">
+             <item>
+              <widget class="QLineEdit" name="le_product_version_0">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_product_version_1">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_product_version_2">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_product_version_3">
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_28">
+           <item>
+            <widget class="QLabel" name="label_22">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>版权：</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_legal_copyright">
+             <property name="contextMenuPolicy">
+              <enum>Qt::NoContextMenu</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_29">
+           <item>
+            <widget class="QLabel" name="label_23">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>合法商标：</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_legal_trademarks">
+             <property name="contextMenuPolicy">
+              <enum>Qt::NoContextMenu</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_30">
+           <item>
+            <widget class="QLabel" name="label_24">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>原始文件名：</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_original_filename">
+             <property name="contextMenuPolicy">
+              <enum>Qt::NoContextMenu</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>373</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_advanced_setup">
+        <attribute name="title">
+         <string>高级设置</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_25">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_24">
+           <item>
+            <widget class="QGroupBox" name="groupBox">
+             <property name="title">
+              <string>以调试模式打包程序</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_22">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_21">
+                <item>
+                 <widget class="QCheckBox" name="cb_db_imports">
+                  <property name="toolTip">
+                   <string>每次初始化模块时，打印一条消息，显示加载该模块的位置(文件名或内置模块)。
+要求源代码文件后缀名不能是 *.pyw，&quot;生成控制&quot;标签中的&quot;打包的程序运行时显示控制台&quot;选项必须勾选。</string>
+                  </property>
+                  <property name="text">
+                   <string>运行时输出模块导入信息</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="cb_db_bootloader">
+                  <property name="toolTip">
+                   <string>使引导程序在初始化和启动捆绑的应用程序时发出进度消息，用于诊断导入丢失的问题。
+要求源代码文件后缀名不能是 *.pyw，&quot;生成控制&quot;标签中的&quot;打包的程序运行时显示控制台&quot;选项必须勾选。</string>
+                  </property>
+                  <property name="text">
+                   <string>运行时输出引导进度信息</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="cb_db_noarchive">
+                  <property name="toolTip">
+                   <string>不将所有冻结的源代码文件存档在生成的可执行文件中，而是将它们作为单独的文件存储在生成的输出目录中。</string>
+                  </property>
+                  <property name="text">
+                   <string>不将源文件存档至可执行文件中</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="toolTip">
+              <string>以&quot;单文件&quot;模式打包的程序运行时提取的库和支持文件的临时储存位置。
+如果指定了此选项，则引导加载程序将忽略运行时操作系统定义的任何临时文件夹位置。
+&quot;_MEIxxxxxx&quot;文件夹将在您指定的位置创建，仅当您知道自己在做什么时，才使用此选项。</string>
+             </property>
+             <property name="title">
+              <string>打包单文件运行时临时目录</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_23">
+              <item>
+               <widget class="QLineEdit" name="le_runtime_tmpdir">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_20">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,9">
@@ -984,8 +983,9 @@
             <item>
              <widget class="QLabel" name="label_6">
               <property name="toolTip">
-               <string>当前选择的PYTHON环境的版本信息。
-选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。</string>
+               <string>选择在不同PYTHON环境中将程序打包成可执行文件。
+如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机PYTHON环境。
+选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
               </property>
               <property name="text">
                <string>Py信息：</string>
@@ -1058,9 +1058,9 @@
               <item>
                <widget class="QPushButton" name="pb_select_py_env">
                 <property name="toolTip">
-                 <string>选择在不同Python环境中将程序打包成可执行文件。
-如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机Python环境。
-选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。</string>
+                 <string>选择在不同PYTHON环境中将程序打包成可执行文件。
+如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机PYTHON环境。
+选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
                 </property>
                 <property name="text">
                  <string>选择环境</string>
@@ -1198,6 +1198,15 @@
                  </color>
                 </brush>
                </colorrole>
+               <colorrole role="PlaceholderText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="128">
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
               </active>
               <inactive>
                <colorrole role="Text">
@@ -1218,6 +1227,15 @@
                  </color>
                 </brush>
                </colorrole>
+               <colorrole role="PlaceholderText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="128">
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
               </inactive>
               <disabled>
                <colorrole role="Text">
@@ -1235,6 +1253,15 @@
                   <red>240</red>
                   <green>240</green>
                   <blue>240</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="PlaceholderText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="128">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -1275,66 +1302,127 @@
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="pb_gen_executable">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>56</height>
-           </size>
+         <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,2">
+          <property name="spacing">
+           <number>0</number>
           </property>
-          <property name="palette">
-           <palette>
-            <active>
-             <colorrole role="ButtonText">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>0</red>
-                <green>0</green>
-                <blue>255</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </active>
-            <inactive>
-             <colorrole role="ButtonText">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>0</red>
-                <green>0</green>
-                <blue>255</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </inactive>
-            <disabled>
-             <colorrole role="ButtonText">
-              <brush brushstyle="SolidPattern">
-               <color alpha="255">
-                <red>120</red>
-                <green>120</green>
-                <blue>120</blue>
-               </color>
-              </brush>
-             </colorrole>
-            </disabled>
-           </palette>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>12</pointsize>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>生成可执行文件</string>
-          </property>
-         </widget>
+          <item>
+           <widget class="QPushButton" name="pb_check_imports">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>255</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>120</red>
+                  <green>120</green>
+                  <blue>120</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="toolTip">
+             <string>检测程序运行所需的所有模块是否在已选的PYTHON环境中安装。</string>
+            </property>
+            <property name="text">
+             <string>模块检测</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_gen_executable">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>120</red>
+                  <green>120</green>
+                  <blue>120</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>将PY脚本及所选资源文件打包成可执行文件。</string>
+            </property>
+            <property name="text">
+             <string>生成可执行文件</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
-      </item>
-     </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>

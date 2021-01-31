@@ -25,6 +25,7 @@
   <property name="font">
    <font>
     <family>Microsoft YaHei UI</family>
+    <pointsize>10</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -92,7 +93,7 @@
      <x>0</x>
      <y>0</y>
      <width>420</width>
-     <height>26</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="layoutDirection">

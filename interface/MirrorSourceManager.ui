@@ -43,7 +43,7 @@
            <string>删除列表中选中的镜像源地址。</string>
           </property>
           <property name="text">
-           <string>删除选中项</string>
+           <string>删除</string>
           </property>
          </widget>
         </item>
@@ -211,13 +211,6 @@
           </property>
           <property name="readOnly">
            <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
