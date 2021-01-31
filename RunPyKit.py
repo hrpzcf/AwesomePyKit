@@ -62,7 +62,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = '0.3.0'
+PYKIT_VERSION = '0.3.1'
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
@@ -122,6 +122,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self._reverseds = [True, True, True, True]
         self.cur_selected_env = 0
         self._threads = ThreadRepo(500)
+        self._normal_size = self.size()
 
     def _setup_others(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -141,6 +142,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.loading_mov.setScaledSize(QSize(18, 18))
 
     def show(self):
+        self.resize(self._normal_size)
         super().show()
         self.list_widget_pyenvs_update()
         self.lw_py_envs.setCurrentRow(self.cur_selected_env)
@@ -611,8 +613,10 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
         self.setupUi(self)
         self._urls_dict = load_conf('urls')
         self._connect_signal_and_slot()
+        self._normal_size = self.size()
 
     def show(self):
+        self.resize(self._normal_size)
         super().show()
         self._list_widget_urls_update()
 
@@ -748,6 +752,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.pb_reinstall_pyi,
             self.cb_log_level,
             self.le_exefile_specfile_name,
+            self.pb_check_imports,
             self.pb_gen_executable,
         )
         self.le_group_vers = (
@@ -771,6 +776,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
         self.pyi_running_mov.setScaledSize(QSize(18, 18))
         self._connect_signal_slot()
+        self._normal_size = self.size()
 
     def closeEvent(self, event):
         if not self._threads.is_empty():
@@ -785,6 +791,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         event.accept()
 
     def show(self):
+        self.resize(self._normal_size)
         super().show()
         if self._threads.is_empty():
             self.apply_stored_config()
