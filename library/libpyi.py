@@ -137,47 +137,58 @@ class PyiTool(QObject):
             self._commands.append('-D')
         else:
             self._commands.append('-F')
-        if spec_path := cmd_dict.get('spec_dir', ''):
-            self._commands.extend(('--specpath', spec_path))
-        if name := cmd_dict.get('exefile_specfile_name', ''):
-            self._commands.extend(('-n', name))
-        if datas_to_add := cmd_dict.get('other_data', None):
-            for data in datas_to_add:
+        temp_var = cmd_dict.get('spec_dir', '')
+        if temp_var:
+            self._commands.extend(('--specpath', temp_var))
+        temp_var = cmd_dict.get('exefile_specfile_name', '')
+        if temp_var:
+            self._commands.extend(('-n', temp_var))
+        temp_var = cmd_dict.get('other_data', None)
+        if temp_var:
+            for data in temp_var:
                 self._commands.extend(('--add-data', fr'{data[0]};{data[1]}'))
-        if module_search_paths := cmd_dict.get('module_search_path', None):
-            for module_path in module_search_paths:
+        temp_var = cmd_dict.get('module_search_path', None)
+        if temp_var:
+            for module_path in temp_var:
                 self._commands.extend(('-p', module_path))
-        if key := cmd_dict.get('key', ''):
-            self._commands.extend(('--key', key))
-        if debug := cmd_dict.get('debug_options', None):
-            for ikey, val in debug.items():
+        temp_var = cmd_dict.get('key', '')
+        if temp_var:
+            self._commands.extend(('--key', temp_var))
+        temp_var = cmd_dict.get('debug_options', None)
+        if temp_var:
+            for ikey, val in temp_var.items():
                 if val:
                     self._commands.extend(('-d', ikey))
         if not cmd_dict.get('use_upx', False):
             self._commands.append('--noupx')
-        if upx_excludes := cmd_dict.get('upx_exclude_files', None):
-            for exfile in upx_excludes:
+        temp_var = cmd_dict.get('upx_exclude_files', None)
+        if temp_var:
+            for exfile in temp_var:
                 self._commands.extend(('--upx-exclude', exfile.lower()))
         if cmd_dict.get('execute_with_console', True):
             self._commands.append('-c')
         else:
             self._commands.append('-w')
-        if ico_path := cmd_dict.get('file_icon_path', ''):
-            self._commands.extend(('-i', ico_path))
-        if cmd_dict.get('write_file_info', False) and (
-            ver_file := self._build_info_file(cmd_dict)
-        ):
-            self._commands.extend(('--version-file', ver_file))
-        if rt_path := cmd_dict.get('runtime_tmpdir', None):
-            self._commands.extend(('--runtime-tmpdir', rt_path))
-        if dist_path := cmd_dict.get('output_dir', ''):
-            self._commands.extend(('--distpath', dist_path))
-        if work_path := cmd_dict.get('temp_working_dir', ''):
-            self._commands.extend(('--workpath', work_path))
+        temp_var = cmd_dict.get('file_icon_path', '')
+        if temp_var:
+            self._commands.extend(('-i', temp_var))
+        temp_var = self._build_info_file(cmd_dict)
+        if cmd_dict.get('write_file_info', False) and temp_var:
+            self._commands.extend(('--version-file', temp_var))
+        temp_var = cmd_dict.get('runtime_tmpdir', None)
+        if temp_var:
+            self._commands.extend(('--runtime-tmpdir', temp_var))
+        temp_var = cmd_dict.get('output_dir', '')
+        if temp_var:
+            self._commands.extend(('--distpath', temp_var))
+        temp_var = cmd_dict.get('temp_working_dir', '')
+        if temp_var:
+            self._commands.extend(('--workpath', temp_var))
         if cmd_dict.get('without_confirm', False):
             self._commands.append('-y')
-        if upx_dir := cmd_dict.get('upx_search_path', ''):
-            self._commands.extend(('--upx-dir', upx_dir))
+        temp_var = cmd_dict.get('upx_search_path', '')
+        if temp_var:
+            self._commands.extend(('--upx-dir', temp_var))
         if cmd_dict.get('clean_before_build', False):
             self._commands.append('--clean')
         self._commands.extend(
