@@ -77,8 +77,8 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
 
     def closeEvent(self, event):
         if (
-            win_pkg_mgr._threads.is_empty()
-            and win_pyi_tool._threads.is_empty()
+            win_pkg_mgr.thread_repo.is_empty()
+            and win_pyi_tool.thread_repo.is_empty()
         ):
             event.accept()
         else:
@@ -89,8 +89,8 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
                 (('accept', '强制退出'), ('reject', '取消')),
             ).exec_()
             if role == 0:
-                win_pkg_mgr._threads.kill_all()
-                win_pyi_tool._threads.kill_all()
+                win_pkg_mgr.thread_repo.kill_all()
+                win_pyi_tool.thread_repo.kill_all()
                 event.accept()
             else:
                 event.ignore()
@@ -121,7 +121,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.cur_pkgs_info = {}
         self._reverseds = [True, True, True, True]
         self.cur_selected_env = 0
-        self._threads = ThreadRepo(500)
+        self.thread_repo = ThreadRepo(500)
         self._normal_size = self.size()
 
     def _setup_others(self):
@@ -158,9 +158,9 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         return not msg_if_stop_threads.exec_()
 
     def closeEvent(self, event):
-        if not self._threads.is_empty():
+        if not self.thread_repo.is_empty():
             if self._stop_threads_before_close():
-                self._threads.stop_all()
+                self.thread_repo.stop_all()
                 self._clear_table_widget()
                 save_conf(self._py_paths_list, 'pths')
                 event.accept()
@@ -303,7 +303,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             thread_get_pkgs_info.finished.connect(self.hide_loading)
             thread_get_pkgs_info.finished.connect(self.release_widgets)
         thread_get_pkgs_info.start()
-        self._threads.put(thread_get_pkgs_info, 1)
+        self.thread_repo.put(thread_get_pkgs_info, 1)
         return thread_get_pkgs_info
 
     def indexs_of_selected_rows(self):
@@ -345,7 +345,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             lambda: save_conf(self._py_paths_list, 'pths')
         )
         thread_search_envs.start()
-        self._threads.put(thread_search_envs, 0)
+        self.thread_repo.put(thread_search_envs, 0)
 
     def del_selected_py_env(self):
         cur_index = self.lw_py_envs.currentRow()
@@ -361,7 +361,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         input_dialog = NewInputDialog(
             self, 560, 0, '添加Python目录', '请输入Python目录路径：'
         )
-        py_path, ok = input_dialog.getText()
+        py_path, ok = input_dialog.get_text()
         if not (ok and py_path):
             return
         if not check_py_path(py_path):
@@ -404,7 +404,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_get_outdated.finished.connect(self.hide_loading)
         thread_get_outdated.finished.connect(self.release_widgets)
         thread_get_outdated.start()
-        self._threads.put(thread_get_outdated, 1)
+        self.thread_repo.put(thread_get_outdated, 1)
 
     def lock_widgets(self):
         for widget in (
@@ -447,7 +447,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             title='安装',
             label=f'注意，多个名称请用空格隔开。\n安装目标：{cur_py_env}',
         )
-        names, ok = pkgs_to_install.getText()
+        names, ok = pkgs_to_install.get_text()
         names = [name for name in names.split() if name]
         if not (names and ok):
             return
@@ -473,7 +473,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_install_pkgs.finished.connect(self.hide_loading)
         thread_install_pkgs.finished.connect(self.release_widgets)
         thread_install_pkgs.start()
-        self._threads.put(thread_install_pkgs, 0)
+        self.thread_repo.put(thread_install_pkgs, 0)
 
     def uninstall_pkgs(self):
         cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
@@ -517,7 +517,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_uninstall_pkgs.finished.connect(self.hide_loading)
         thread_uninstall_pkgs.finished.connect(self.release_widgets)
         thread_uninstall_pkgs.start()
-        self._threads.put(thread_uninstall_pkgs, 0)
+        self.thread_repo.put(thread_uninstall_pkgs, 0)
 
     def upgrade_pkgs(self):
         cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
@@ -563,7 +563,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_upgrade_pkgs.finished.connect(self.hide_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
         thread_upgrade_pkgs.start()
-        self._threads.put(thread_upgrade_pkgs, 0)
+        self.thread_repo.put(thread_upgrade_pkgs, 0)
 
     def upgrade_all_pkgs(self):
         upgradeable = [
@@ -613,7 +613,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_upgrade_pkgs.finished.connect(self.hide_loading)
         thread_upgrade_pkgs.finished.connect(self.release_widgets)
         thread_upgrade_pkgs.start()
-        self._threads.put(thread_upgrade_pkgs, 0)
+        self.thread_repo.put(thread_upgrade_pkgs, 0)
 
 
 class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
@@ -784,7 +784,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.le_product_version_3,
         )
         self._setup_others()
-        self._threads = ThreadRepo(500)
+        self.thread_repo = ThreadRepo(500)
         self._stored_conf = {}
         self.tool_pyenv = None
         self.pyi_tool = PyiTool()
@@ -797,7 +797,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._normal_size = self.size()
 
     def closeEvent(self, event):
-        if not self._threads.is_empty():
+        if not self.thread_repo.is_empty():
             NewMessageBox(
                 '提醒',
                 '''任务正在运行中，关闭此窗口后任务将在后台运行。\n'''
@@ -811,7 +811,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def show(self):
         self.resize(self._normal_size)
         super().show()
-        if self._threads.is_empty():
+        if self.thread_repo.is_empty():
             self.apply_stored_config()
             self.pyi_tool.initialize(
                 self._stored_conf.get('py_info', ''),
@@ -1171,11 +1171,11 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def _change_debug_options(self, opt):
         ''' 从关于"以调试模式打包"的控件获取状态或设置这些控件的状态。'''
         if opt == 'get':
-            options = {}
-            options['imports'] = self.cb_db_imports.isChecked()
-            options['bootloader'] = self.cb_db_bootloader.isChecked()
-            options['noarchive'] = self.cb_db_noarchive.isChecked()
-            return options
+            return {
+                'imports': self.cb_db_imports.isChecked(),
+                'bootloader': self.cb_db_bootloader.isChecked(),
+                'noarchive': self.cb_db_noarchive.isChecked(),
+            }
         elif opt == 'set':
             db = self._stored_conf.get('debug_options', {})
             self.cb_db_imports.setChecked(db.get('imports', False))
@@ -1247,7 +1247,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         reinstall.finished.connect(self.hide_running)
         reinstall.finished.connect(self.release_widgets)
         reinstall.start()
-        self._threads.put(reinstall, 0)
+        self.thread_repo.put(reinstall, 0)
 
     def set_platform_info(self):
         self.lb_platform_info.setText(f'{platform()}-{machine()}')
@@ -1328,7 +1328,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         build.finished.connect(self.hide_running)
         build.finished.connect(self.release_widgets)
         build.start()
-        self._threads.put(build, 0)
+        self.thread_repo.put(build, 0)
 
 
 class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
@@ -1409,7 +1409,7 @@ class NewInputDialog(QInputDialog):
         self.setCancelButtonText('取消')
         self._confirm = self.exec_()
 
-    def getText(self):
+    def get_text(self):
         return self.textValue(), self._confirm
 
 
