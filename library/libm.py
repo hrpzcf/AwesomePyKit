@@ -30,14 +30,14 @@ conf_path_pyi_defs = os.path.join(conf_path, 'PyiDefault.json')
 
 
 def _load_json(path, get_data):
-    '''
+    """
     读取 json 配置文件的函数。
     如果 path 路径的配置文件不存在，则调用 get_data 函数取默认值并创建配置。
     如果无法读取 path 配置文件，则调用 get_data 函数取值并返回该值。
     :param path: str, json 文件完整路径。
     :param get_data: callable, 返回值是列表或字典的可调用对象。
     :return: list or dict, 从 json 文件读取的列表或字典或 get_data 函数的返回值。
-    '''
+    """
     if not os.path.exists(path):
         data = get_data()
         try:
@@ -54,10 +54,10 @@ def _load_json(path, get_data):
 
 
 def load_conf(conf='all'):
-    '''
+    """
     调用 _load_json 函数从 json 文件读取 Python 目录路径列表、镜像源地址字典。
     :return: tuple[list, dict], (Python路径列表, 镜像源地址字典)元组。
-    '''
+    """
     if not os.path.exists(conf_path):
         os.mkdir(conf_path)
     if os.path.isfile(conf_path):
@@ -94,46 +94,47 @@ def get_cur_pyenv():
 
 
 def get_pyenv_list(py_dir_paths=None):
-    '''返回 PyEnv 实例列表。'''
+    """返回 PyEnv 实例列表。"""
     if not py_dir_paths:
         py_dir_paths = load_conf('pths')
     py_env_list = []
     for py_dir_path in py_dir_paths:
-        try:
-            py_env_list.append(PyEnv(py_dir_path))
-        except Exception:
-            continue
+        env = PyEnv(py_dir_path)
+        if env.env_path:
+            py_env_list.append(env)
     return py_env_list
 
 
 def loop_install(pyenv, sequence, *, index_url='', upgrade=False):
-    '''循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.install 安装。'''
+    """循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.install 安装。"""
     for name in sequence:
-        exit_status = pyenv.install(name, index_url=index_url, upgrade=upgrade)
-        yield exit_status[0][0], exit_status[1]
+        cmd_exec_result = pyenv.install(
+            name, index_url=index_url, upgrade=upgrade
+        )
+        yield cmd_exec_result[0][0], cmd_exec_result[1]
 
 
 def loop_uninstall(pyenv, sequence):
-    '''循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.uninstall 卸载。'''
+    """循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.uninstall 卸载。"""
     for name in sequence:
-        exit_status = pyenv.uninstall(name)
-        yield exit_status[0][0], exit_status[1]
+        cmd_exec_result = pyenv.uninstall(name)
+        yield cmd_exec_result[0][0], cmd_exec_result[1]
 
 
 def multi_install(pyenv, sequence, *, index_url='', upgrade=False):
-    '''
+    """
     一次安装包名列表 sequence 中所有的包。
     注意：如果 sequence 中有一个包不可安装（没有匹配的包等原因），那sequence中所有的
     包都不会被安装，所以不是必须的情况下尽量不用这个函数来安装。
-    '''
+    """
     return pyenv.install(*sequence, index_url=index_url, upgrade=upgrade)
 
 
 def multi_uninstall(pyenv, sequence):
-    '''
+    """
     一次卸载包名列表 sequence 中所有的包。
     注意：未安装的包则跳过卸载。
-    '''
+    """
     return pyenv.uninstall(*sequence)
 
 
@@ -178,7 +179,7 @@ class NewTask(QThread):
 
 class ThreadRepo:
     def __init__(self, interval):
-        '''interval: 清理已结束线程的时间间隔，单位毫秒。'''
+        """interval: 清理已结束线程的时间间隔，单位毫秒。"""
         self._thread_repo = []
         self._timer_clths = QTimer()
         self._mutex = QMutex()
@@ -187,7 +188,7 @@ class ThreadRepo:
         self._flag_cleaning = False
 
     def put(self, threadhandle, level=0):
-        '''将(线程句柄、重要等级)元组加入线程仓库。'''
+        """将(线程句柄、重要等级)元组加入线程仓库。"""
         self._mutex.lock()
         self._thread_repo.append((threadhandle, level))
         self._mutex.unlock()
@@ -208,12 +209,12 @@ class ThreadRepo:
         self._mutex.unlock()
 
     def stop_all(self):
-        '''
+        """
         按线程重要等级退出线程。
         0级：重要，安全退出；
         1级：不重要，立即退出；
         其他：未知等级，安全退出。
-        '''
+        """
         for thread, level in self._thread_repo:
             if level == 0:
                 thread.quit()
@@ -223,17 +224,17 @@ class ThreadRepo:
                 thread.quit()
 
     def kill_all(self):
-        ''' 立即终止所有线程。'''
+        """立即终止所有线程。"""
         for thread, _ in self._thread_repo:
             thread.terminate()
 
     def is_empty(self):
-        '''返回线程仓库是否为空。'''
+        """返回线程仓库是否为空。"""
         return not self._thread_repo
 
 
 def get_cmd_o(*commands, regexp='', timeout=None):
-    ''' 用于从cmd命令执行输出的字符匹配想要的信息。'''
+    """用于从cmd命令执行输出的字符匹配想要的信息。"""
     exec_f = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP)
     try:
         strings, _ = exec_f.communicate(timeout=timeout)
