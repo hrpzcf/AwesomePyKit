@@ -12,9 +12,9 @@ from subprocess import (
     Popen,
 )
 
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer
+from PyQt5.QtCore import QObject, QTimer, pyqtSignal
 
-from library.libm import get_cmd_o, sources_path
+from library.libm import conf_path, get_cmd_o
 
 
 class PyiTool(QObject):
@@ -214,35 +214,26 @@ VSVersionInfo(
         OS=0x40004,
         fileType=0x1,
         subtype=0x0,
-        date=(0, 0),
-    ),
-    kids=[
-    StringFileInfo(
-    [
-    StringTable(
+        date=(0, 0),),
+    kids=[StringFileInfo(
+    [StringTable(
         u'080404b0',
         [
             StringStruct(u'CompanyName', u'$CompanyName$'),
             StringStruct(u'FileDescription', u'$FileDescription$'),
             StringStruct(u'FileVersion', u'$FileVersion$'),
             StringStruct(u'LegalCopyright', u'$LegalCopyright$'),
-            StringStruct(
-                u'OriginalFilename', u'$OriginalFilename$'
-            ),
+            StringStruct(u'OriginalFilename', u'$OriginalFilename$'),
             StringStruct(u'ProductName', u'$ProductName$'),
             StringStruct(u'ProductVersion', u'$ProductVersion$'),
             StringStruct(u'LegalTrademarks', u'$LegalTrademarks$'),
-        ],
-    )
-    ]
-    ),
+        ],)]),
     VarFileInfo([VarStruct(u'Translation', [2052, 1200])]),
-    ],
-)
+    ],)
 '''
         for key, val in cmd_dict.get('file_ver_info', {}).items():
             FILE_VERSION_INFO = FILE_VERSION_INFO.replace(key, val)
-        file_info_path = os.path.join(sources_path, 'FILE_INFO')
+        file_info_path = os.path.join(conf_path, 'FILE_INFO')
         try:
             with open(file_info_path, 'w', encoding='utf-8') as file_info:
                 file_info.write(FILE_VERSION_INFO)

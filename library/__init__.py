@@ -22,9 +22,9 @@ from .libm import (
     loop_uninstall,
     multi_install,
     multi_uninstall,
+    resources_path,
     save_conf,
     set_index_url,
-    sources_path,
 )
 
 __all__ = [
@@ -49,7 +49,7 @@ __all__ = [
     'loop_uninstall',
     'multi_install',
     'multi_uninstall',
+    'resources_path',
     'save_conf',
     'set_index_url',
-    'sources_path',
 ]

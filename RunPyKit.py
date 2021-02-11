@@ -138,7 +138,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             2, QHeaderView.ResizeToContents
         )
-        self.loading_mov = QMovie(os.path.join(sources_path, 'loading.gif'))
+        self.loading_mov = QMovie(os.path.join(resources_path, 'loading.gif'))
         self.loading_mov.setScaledSize(QSize(18, 18))
 
     def show(self):
@@ -790,7 +790,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.pyi_tool = PyiTool()
         self.set_platform_info()
         self.pyi_running_mov = QMovie(
-            os.path.join(sources_path, 'loading.gif')
+            os.path.join(resources_path, 'loading.gif')
         )
         self.pyi_running_mov.setScaledSize(QSize(18, 18))
         self._connect_signal_slot()
@@ -1421,7 +1421,7 @@ def main():
     global win_index_mgr
     app_awesomepykit = QApplication(sys.argv)
     app_awesomepykit.setWindowIcon(
-        QIcon(os.path.join(sources_path, 'icon.ico'))
+        QIcon(os.path.join(resources_path, 'icon.ico'))
     )
     win_pkg_mgr = PackageManagerWindow()
     win_ch_pyenv = PyiToolChoosePyEnvWindow()

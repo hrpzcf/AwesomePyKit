@@ -23,7 +23,7 @@ _STARTUP.wShowWindow = SW_HIDE
 
 _root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 conf_path = os.path.join(_root_path, 'config')
-sources_path = os.path.join(_root_path, 'sources')
+resources_path = os.path.join(_root_path, 'resources')
 conf_path_py_paths = os.path.join(conf_path, 'PythonPaths.json')
 conf_path_index_urls = os.path.join(conf_path, 'IndexURLs.json')
 conf_path_pyi_defs = os.path.join(conf_path, 'PyiDefault.json')
