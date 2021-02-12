@@ -335,7 +335,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_search_envs = NewTask(search_envs)
         thread_search_envs.started.connect(self.lock_widgets)
         thread_search_envs.started.connect(
-            lambda: self.show_loading('正在搜索Python目录...')
+            lambda: self.show_loading('正在搜索PYTHON安装目录...')
         )
         thread_search_envs.finished.connect(self._clear_table_widget)
         thread_search_envs.finished.connect(self.list_widget_pyenvs_update)
@@ -371,9 +371,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         if py_path in self._py_paths_list:
             self.show_message('要添加的Python目录已存在。')
             return
-        py_env = PyEnv(py_path)
-        self._py_envs_list.append(py_env)
-        self._py_paths_list.append(py_env.env_path)
+        try:
+            py_env = PyEnv(py_path)
+            self._py_envs_list.append(py_env)
+            self._py_paths_list.append(py_env.env_path)
+        except Exception:
+            return
         self.list_widget_pyenvs_update()
         save_conf(self._py_paths_list, 'pths')
 
@@ -1154,14 +1157,14 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._stored_conf['debug_options'] = self._change_debug_options('get')
         self._stored_conf['runtime_tmpdir'] = self.le_runtime_tmpdir.text()
 
-    def _abs_rel_groups(self, project_root):
+    def _abs_rel_groups(self, starting_point):
         ''' 获取其他要打包的文件的本地路径和与项目根目录的相对位置。'''
         other_data_local_paths = self.te_other_data.local_paths
         abs_rel_path_groups = []
         for abs_path in other_data_local_paths:
             try:
                 rel_path = os.path.relpath(
-                    os.path.dirname(abs_path), project_root
+                    os.path.dirname(abs_path), starting_point
                 )
             except Exception:
                 continue
@@ -1270,10 +1273,26 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.store_state_of_widgets()
         program_entry = self._stored_conf.get('program_entry', '')
         if not program_entry:
-            NewMessageBox('错误', '主程序未填写！', QMessageBox.Critical).exec_()
+            NewMessageBox(
+                '错误',
+                '主程序未填写！',
+                QMessageBox.Critical,
+            ).exec_()
             return False
         if not os.path.isfile(program_entry):
-            NewMessageBox('错误', '主程序文件不存在！', QMessageBox.Critical).exec_()
+            NewMessageBox(
+                '错误',
+                '主程序文件不存在！',
+                QMessageBox.Critical,
+            ).exec_()
+            return False
+        icon_path = self._stored_conf.get('file_icon_path', '')
+        if icon_path != '' and not os.path.isfile(icon_path):
+            NewMessageBox(
+                '错误',
+                '程序图标文件不存在！',
+                QMessageBox.Critical,
+            ).exec_()
             return False
         return True
 
@@ -1302,7 +1321,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             NewMessageBox('任务结束', '可执行文件已打包完成！').exec_()
         else:
             NewMessageBox(
-                '任务结束', '可执行文件生成失败，请检查错误信息！', QMessageBox.Critical
+                '任务结束',
+                '可执行文件生成失败，请检查错误信息！',
+                QMessageBox.Critical,
             ).exec_()
 
     def build_executable(self):
