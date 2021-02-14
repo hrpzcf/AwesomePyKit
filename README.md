@@ -16,7 +16,7 @@
 |--------:|:-------|:-----|
 | PyQt5   | 5.15.1 | >=   |
 | chardet | 4.0.0  | >=   |
-| fastpip | 0.5.0  | >=   |
+| fastpip | 0.6.0  | >=   |
 
 > 下载源代码包Source code.zip，解压，找到RunPyKit.py运行。
 
