@@ -58,6 +58,7 @@ from PyQt5.QtWidgets import (
 
 from interface import *
 from library import *
+from library.libcip import ImportInspector
 from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
@@ -114,10 +115,8 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.setupUi(self)
         self._setup_others()
         self._connect_signal_and_slot()
-        self._py_envs_list = get_pyenv_list(load_conf('pths'))
-        self._py_paths_list = [
-            py_env.env_path for py_env in self._py_envs_list
-        ]
+        self.env_list = get_pyenv_list(load_conf('pths'))
+        self.path_list = [env.path for env in self.env_list]
         self.cur_pkgs_info = {}
         self._reverseds = [True, True, True, True]
         self.cur_selected_env = 0
@@ -145,24 +144,23 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.resize(self._normal_size)
         super().show()
         self.list_widget_pyenvs_update()
-        self.lw_py_envs.setCurrentRow(self.cur_selected_env)
+        self.lw_env_list.setCurrentRow(self.cur_selected_env)
 
     @staticmethod
-    def _stop_threads_before_close():
-        msg_if_stop_threads = NewMessageBox(
+    def _stop_before_close():
+        return not NewMessageBox(
             '警告',
             '当前有任务正在运行！\n是否安全停止所有正在运行的任务并关闭窗口？',
             QMessageBox.Question,
             (('accept', '安全停止并关闭'), ('reject', '取消')),
-        )
-        return not msg_if_stop_threads.exec_()
+        ).exec_()
 
     def closeEvent(self, event):
         if not self.thread_repo.is_empty():
-            if self._stop_threads_before_close():
+            if self._stop_before_close():
                 self.thread_repo.stop_all()
                 self._clear_table_widget()
-                save_conf(self._py_paths_list, 'pths')
+                save_conf(self.path_list, 'pths')
                 event.accept()
             else:
                 event.ignore()
@@ -192,13 +190,13 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.lb_loading_tip.setText(text)
 
     def _connect_signal_and_slot(self):
-        self.btn_autosearch.clicked.connect(self.auto_search_py_envs)
+        self.btn_autosearch.clicked.connect(self.auto_search_env)
         self.btn_delselected.clicked.connect(self.del_selected_py_env)
         self.btn_addmanully.clicked.connect(self.add_py_path_manully)
         self.cb_check_uncheck_all.clicked.connect(
             self.select_all_or_cancel_all
         )
-        self.lw_py_envs.itemPressed.connect(lambda: self.get_pkgs_info(0))
+        self.lw_env_list.itemPressed.connect(lambda: self.get_pkgs_info(0))
         self.btn_check_for_updates.clicked.connect(
             self.check_cur_pkgs_for_updates
         )
@@ -219,14 +217,14 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
 
     def list_widget_pyenvs_update(self):
         row_size = QSize(0, 28)
-        cur_py_env_index = self.lw_py_envs.currentRow()
-        self.lw_py_envs.clear()
-        for py_env in self._py_envs_list:
-            item = QListWidgetItem(str(py_env))
+        cur_py_env_index = self.lw_env_list.currentRow()
+        self.lw_env_list.clear()
+        for env in self.env_list:
+            item = QListWidgetItem(str(env))
             item.setSizeHint(row_size)
-            self.lw_py_envs.addItem(item)
+            self.lw_env_list.addItem(item)
         if cur_py_env_index != -1:
-            self.lw_py_envs.setCurrentRow(cur_py_env_index)
+            self.lw_env_list.setCurrentRow(cur_py_env_index)
 
     def table_widget_pkgs_info_update(self):
         self.lb_num_selected_items.clear()
@@ -281,12 +279,12 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.tw_installed_info.setRowCount(0)
 
     def get_pkgs_info(self, no_connect):
-        self.cur_selected_env = self.lw_py_envs.currentRow()
+        self.cur_selected_env = self.lw_env_list.currentRow()
         if self.cur_selected_env == -1:
             return None
 
         def do_get_pkgs_info():
-            pkgs_info = self._py_envs_list[self.cur_selected_env].pkgs_info()
+            pkgs_info = self.env_list[self.cur_selected_env].pkgs_info()
             self.cur_pkgs_info.clear()
             for pkg_info in pkgs_info:
                 self.cur_pkgs_info[pkg_info[0]] = [pkg_info[1], '', '']
@@ -320,19 +318,21 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         else:
             self.tw_installed_info.clearSelection()
 
-    def auto_search_py_envs(self):
-        def search_envs():
+    def auto_search_env(self):
+        path_list_lower = [p.lower() for p in self.path_list]
+
+        def search_env():
             for py_path in all_py_paths():
-                if py_path in self._py_paths_list:
+                if py_path.lower() in path_list_lower:
                     continue
                 try:
-                    py_env = PyEnv(py_path)
+                    env = PyEnv(py_path)
                 except Exception:
                     continue
-                self._py_envs_list.append(py_env)
-                self._py_paths_list.append(py_env.env_path)
+                self.env_list.append(env)
+                self.path_list.append(env.path)
 
-        thread_search_envs = NewTask(search_envs)
+        thread_search_envs = NewTask(search_env)
         thread_search_envs.started.connect(self.lock_widgets)
         thread_search_envs.started.connect(
             lambda: self.show_loading('正在搜索PYTHON安装目录...')
@@ -342,20 +342,20 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_search_envs.finished.connect(self.hide_loading)
         thread_search_envs.finished.connect(self.release_widgets)
         thread_search_envs.finished.connect(
-            lambda: save_conf(self._py_paths_list, 'pths')
+            lambda: save_conf(self.path_list, 'pths')
         )
         thread_search_envs.start()
         self.thread_repo.put(thread_search_envs, 0)
 
     def del_selected_py_env(self):
-        cur_index = self.lw_py_envs.currentRow()
+        cur_index = self.lw_env_list.currentRow()
         if cur_index == -1:
             return
-        del self._py_envs_list[cur_index]
-        del self._py_paths_list[cur_index]
-        self.lw_py_envs.removeItemWidget(self.lw_py_envs.takeItem(cur_index))
+        del self.env_list[cur_index]
+        del self.path_list[cur_index]
+        self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
         self._clear_table_widget()
-        save_conf(self._py_paths_list, 'pths')
+        save_conf(self.path_list, 'pths')
 
     def add_py_path_manully(self):
         input_dialog = NewInputDialog(
@@ -367,30 +367,30 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         if not check_py_path(py_path):
             self.show_message('无效的Python目录路径！')
             return
-        py_path = os.path.join(py_path, '')
-        if py_path in self._py_paths_list:
+        py_path = os.path.normpath(py_path)
+        if py_path.lower() in [p.lower() for p in self.path_list]:
             self.show_message('要添加的Python目录已存在。')
             return
         try:
-            py_env = PyEnv(py_path)
-            self._py_envs_list.append(py_env)
-            self._py_paths_list.append(py_env.env_path)
+            env = PyEnv(py_path)
+            self.env_list.append(env)
+            self.path_list.append(env.path)
         except Exception:
             return
         self.list_widget_pyenvs_update()
-        save_conf(self._py_paths_list, 'pths')
+        save_conf(self.path_list, 'pths')
 
     def check_cur_pkgs_for_updates(self):
         if self.tw_installed_info.rowCount() == 0:
             return
-        cur_row = self.lw_py_envs.currentRow()
+        cur_row = self.lw_env_list.currentRow()
         if cur_row == -1:
             return
         thread_get_info = self.get_pkgs_info(no_connect=1)
 
         def do_get_outdated():
             thread_get_info.wait()
-            outdateds = self._py_envs_list[cur_row].outdated()
+            outdateds = self.env_list[cur_row].outdated()
             for outdated_info in outdateds:
                 self.cur_pkgs_info.setdefault(outdated_info[0], ['', '', ''])[
                     1
@@ -414,7 +414,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             self.btn_autosearch,
             self.btn_addmanully,
             self.btn_delselected,
-            self.lw_py_envs,
+            self.lw_env_list,
             self.tw_installed_info,
             self.cb_check_uncheck_all,
             self.btn_check_for_updates,
@@ -431,7 +431,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             self.btn_autosearch,
             self.btn_addmanully,
             self.btn_delselected,
-            self.lw_py_envs,
+            self.lw_env_list,
             self.tw_installed_info,
             self.cb_check_uncheck_all,
             self.btn_check_for_updates,
@@ -444,11 +444,11 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             widget.setEnabled(True)
 
     def install_pkgs(self):
-        cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
+        cur_env = self.env_list[self.lw_env_list.currentRow()]
         pkgs_to_install = NewInputDialog(
             self,
             title='安装',
-            label=f'注意，多个名称请用空格隔开。\n安装目标：{cur_py_env}',
+            label=f'注意，多个名称请用空格隔开。\n安装目标：{cur_env}',
         )
         names, ok = pkgs_to_install.get_text()
         names = [name for name in names.split() if name]
@@ -456,14 +456,11 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             return
 
         def do_install():
-            for name, code in loop_install(cur_py_env, names):
+            for name, code in loop_install(cur_env, names):
                 item = self.cur_pkgs_info.setdefault(name, ['', '', ''])
                 if not item[0]:
-                    item[0] = '————'
-                if code:
-                    item[2] = '安装成功'
-                else:
-                    item[2] = '安装失败'
+                    item[0] = '- N/A -'
+                item[2] = '安装成功' if code else '安装失败'
 
         thread_install_pkgs = NewTask(do_install)
         thread_install_pkgs.started.connect(self.lock_widgets)
@@ -479,16 +476,15 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.thread_repo.put(thread_install_pkgs, 0)
 
     def uninstall_pkgs(self):
-        cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
+        pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
         pkg_indexs = self.indexs_of_selected_rows()
-        pkg_names = [cur_pkgs_info_keys[index] for index in pkg_indexs]
+        pkg_names = [pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
             return
-        cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
-        len_pkgs = len(pkg_names)
+        cur_env = self.env_list[self.lw_env_list.currentRow()]
         names_text = (
             '\n'.join(pkg_names)
-            if len_pkgs <= 10
+            if len(pkg_names) <= 10
             else '\n'.join(('\n'.join(pkg_names[:10]), '......'))
         )
         uninstall_msg_box = QMessageBox(
@@ -501,13 +497,11 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             return
 
         def do_uninstall():
-            for pkg_name, code in loop_uninstall(cur_py_env, pkg_names):
+            for pkg_name, code in loop_uninstall(cur_env, pkg_names):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
-                item[0] = '————'
                 if code:
-                    item[2] = '卸载成功'
-                else:
-                    item[2] = '卸载失败'
+                    item[0] = '- N/A -'
+                item[2] = '卸载成功' if code else '卸载失败'
 
         thread_uninstall_pkgs = NewTask(do_uninstall)
         thread_uninstall_pkgs.started.connect(self.lock_widgets)
@@ -523,37 +517,32 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.thread_repo.put(thread_uninstall_pkgs, 0)
 
     def upgrade_pkgs(self):
-        cur_pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
+        pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
         pkg_indexs = self.indexs_of_selected_rows()
-        pkg_names = [cur_pkgs_info_keys[index] for index in pkg_indexs]
+        pkg_names = [pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
             return
-        cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
-        len_pkgs = len(pkg_names)
+        cur_env = self.env_list[self.lw_env_list.currentRow()]
         names_text = (
             '\n'.join(pkg_names)
-            if len_pkgs <= 10
+            if len(pkg_names) <= 10
             else '\n'.join(('\n'.join(pkg_names[:10]), '......'))
         )
-        uninstall_msg_box = QMessageBox(
-            QMessageBox.Question, '升级', f'确认升级？\n{names_text}'
-        )
-        uninstall_msg_box.addButton('确定', QMessageBox.AcceptRole)
-        reject = uninstall_msg_box.addButton('取消', QMessageBox.RejectRole)
-        uninstall_msg_box.setDefaultButton(reject)
-        if uninstall_msg_box.exec_() != 0:
+        if (
+            NewMessageBox(
+                '升级',
+                f'确认升级？\n{names_text}',
+                QMessageBox.Question,
+                (('accept', '确定'), ('reject', '取消')),
+            ).exec_()
+            != 0
+        ):
             return
 
         def do_upgrade():
-            for pkg_name, code in loop_install(
-                cur_py_env, pkg_names, upgrade=1
-            ):
+            for pkg_name, code in loop_install(cur_env, pkg_names, upgrade=1):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
-                if code:
-                    item[0] = item[1]
-                    item[2] = '升级成功'
-                else:
-                    item[2] = '升级失败'
+                item[2] = '升级成功' if code else '升级失败'
 
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.started.connect(self.lock_widgets)
@@ -573,37 +562,37 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
             item[0] for item in self.cur_pkgs_info.items() if item[1][1]
         ]
         if not upgradeable:
-            msg_box = QMessageBox(
-                QMessageBox.Information, '提示', '请先检查更新确认是否有可更新的包。'
-            )
-            msg_box.addButton('确定', QMessageBox.AcceptRole)
-            msg_box.exec_()
+            NewMessageBox(
+                '提示',
+                '请检查更新确认是否有可更新的包。',
+                QMessageBox.Information,
+            ).exec_()
             return
-        cur_py_env = self._py_envs_list[self.lw_py_envs.currentRow()]
-        len_pkgs = len(upgradeable)
+        cur_env = self.env_list[self.lw_env_list.currentRow()]
         names_text = (
             '\n'.join(upgradeable)
-            if len_pkgs <= 10
+            if len(upgradeable) <= 10
             else '\n'.join(('\n'.join(upgradeable[:10]), '......'))
         )
-        upgrade_all_msg_box = QMessageBox(
-            QMessageBox.Question, '全部升级', f'确认升级？\n{names_text}'
-        )
-        upgrade_all_msg_box.addButton('确定', QMessageBox.AcceptRole)
-        reject = upgrade_all_msg_box.addButton('取消', QMessageBox.RejectRole)
-        upgrade_all_msg_box.setDefaultButton(reject)
-        if upgrade_all_msg_box.exec_() != 0:
+        if (
+            NewMessageBox(
+                '全部升级',
+                f'确认升级？\n{names_text}',
+                QMessageBox.Question,
+                (('accept', '确定'), ('reject', '取消')),
+            ).exec_()
+            != 0
+        ):
             return
 
         def do_upgrade():
             for pkg_name, code in loop_install(
-                cur_py_env, upgradeable, upgrade=1
+                cur_env, upgradeable, upgrade=1
             ):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
                 if code:
-                    item[2] = '升级成功'
-                else:
-                    item[2] = '升级失败'
+                    item[0] = item[1]
+                item[2] = '升级成功' if code else '升级失败'
 
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.started.connect(self.lock_widgets)
@@ -714,7 +703,7 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
         self._list_widget_urls_update()
         save_conf(self._urls_dict, 'urls')
 
-    def _get_cur_pyenv(self):
+    def _get_cur_env(self):
         '''使用系统环境变量PATH中第一个Python路径生成一个PyEnv实例。'''
         py_paths = load_conf('pths')
         if not py_paths:
@@ -743,15 +732,17 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
         if not check_index_url(url):
             self.statusbar.showMessage('镜像源地址不符合pip镜像源地址格式。')
             return
-        pyenv = self._get_cur_pyenv()
+        pyenv = self._get_cur_env()
         if not pyenv:
             self.statusbar.showMessage('镜像源启用失败，未找到pip可执行文件。')
             return
-        pyenv.set_global_index(url)
-        self.statusbar.showMessage(f'已将"{url}"设置为全局镜像源地址。')
+        if pyenv.set_global_index(url):
+            self.statusbar.showMessage(f'已将"{url}"设置为全局镜像源地址。')
+            return
+        self.statusbar.showMessage('镜像源设置失败！')
 
     def _display_effective_url(self):
-        pyenv = self._get_cur_pyenv()
+        pyenv = self._get_cur_env()
         if pyenv:
             self.le_effectiveurl.setText(
                 pyenv.get_global_index() or '当前全局镜像源地址为空。'
@@ -789,7 +780,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self._setup_others()
         self.thread_repo = ThreadRepo(500)
         self._stored_conf = {}
-        self.tool_pyenv = None
+        self.toolwin_cur_env = None
         self.pyi_tool = PyiTool()
         self.set_platform_info()
         self.pyi_running_mov = QMovie(
@@ -884,7 +875,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
     def _connect_signal_slot(self):
         self.pyi_tool.completed.connect(self.task_completion_tip)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
-        self.pb_select_py_env.clicked.connect(win_ch_pyenv.show)
+        self.pb_select_py_env.clicked.connect(win_ch_env.show)
         self.le_program_entry.textChanged.connect(self.set_le_project_root)
         self.pb_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
@@ -912,6 +903,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
         self.pb_gen_executable.clicked.connect(self.build_executable)
         self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyi)
+
+    def _check_imports(self):
+        ...
 
     def set_le_program_entry(self):
         selected_file = self._select_file_dir(
@@ -1032,13 +1026,13 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
                 file_dir_paths.append(os.path.realpath(path))
         return file_dir_paths
 
-    def set_pyenv_update_info(self):
-        self.tool_pyenv = win_ch_pyenv.pyenvs[
-            win_ch_pyenv.lw_py_envs.currentRow()
+    def set_env_update_info(self):
+        self.toolwin_cur_env = win_ch_env.chwin_env_list[
+            win_ch_env.lw_env_list.currentRow()
         ]
-        self.lb_py_info.setText(self.tool_pyenv.py_info())
+        self.lb_py_info.setText(self.toolwin_cur_env.py_info())
         self.pyi_tool.initialize(
-            self.tool_pyenv.env_path,
+            self.toolwin_cur_env.env_path,
             self._stored_conf.get('program_entry', os.getcwd()),
         )
         self._set_pyi_info()
@@ -1094,8 +1088,8 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         py_path = self._stored_conf.get('py_info', '')
         if py_path:
             try:
-                self.tool_pyenv = PyEnv(py_path)
-                self.lb_py_info.setText(self.tool_pyenv.py_info())
+                self.toolwin_cur_env = PyEnv(py_path)
+                self.lb_py_info.setText(self.toolwin_cur_env.py_info())
             except Exception:
                 pass
         self.le_exefile_specfile_name.setText(
@@ -1148,10 +1142,10 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             for string in self.te_upx_exclude_files.toPlainText().split('\n')
             if string
         ]
-        if self.tool_pyenv is None:
+        if self.toolwin_cur_env is None:
             self._stored_conf['py_info'] = ''
         else:
-            self._stored_conf['py_info'] = self.tool_pyenv.env_path
+            self._stored_conf['py_info'] = self.toolwin_cur_env.path
         self._stored_conf['log_level'] = self.cb_log_level.currentText()
         self._stored_conf['file_ver_info'] = self._file_ver_info_text()
         self._stored_conf['debug_options'] = self._change_debug_options('get')
@@ -1220,7 +1214,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def _set_pyi_info(self, dont_set_enable=False):
         # 此处不能用 self.pyi_tool，因为 self.pyi_tool 总有一个空实例
-        if self.tool_pyenv:
+        if self.toolwin_cur_env:
             if not dont_set_enable:
                 self.pb_reinstall_pyi.setEnabled(True)
             pyi_info = self.pyi_tool.pyi_info()
@@ -1234,12 +1228,12 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.pb_reinstall_pyi.setEnabled(False)
 
     def reinstall_pyi(self):
-        if not self.tool_pyenv:
+        if not self.toolwin_cur_env:
             return
 
         def do_reinstall_pyi():
-            self.tool_pyenv.uninstall('pyinstaller')
-            self.tool_pyenv.install('pyinstaller', upgrade=1)
+            self.toolwin_cur_env.uninstall('pyinstaller')
+            self.toolwin_cur_env.install('pyinstaller', upgrade=1)
             self._set_pyi_info(dont_set_enable=True)
 
         reinstall = NewTask(target=do_reinstall_pyi)
@@ -1360,15 +1354,15 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
         self._normal_size = self.size()
 
     def _connect_signal_slot(self):
-        self.lw_py_envs.pressed.connect(self.close)
+        self.lw_env_list.pressed.connect(self.close)
 
     def pyenv_list_update(self):
         row_size = QSize(0, 28)
-        self.lw_py_envs.clear()
-        for py_env in self.pyenvs:
-            item = QListWidgetItem(str(py_env))
+        self.lw_env_list.clear()
+        for env in self.chwin_env_list:
+            item = QListWidgetItem(str(env))
             item.setSizeHint(row_size)
-            self.lw_py_envs.addItem(item)
+            self.lw_env_list.addItem(item)
 
     def resizeEvent(self, event):
         old_size = event.oldSize()
@@ -1381,11 +1375,11 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
 
     def close(self):
         super().close()
-        win_pyi_tool.set_pyenv_update_info()
+        win_pyi_tool.set_env_update_info()
 
     def show(self):
         self.resize(self._normal_size)
-        self.pyenvs = get_pyenv_list(load_conf('pths'))
+        self.chwin_env_list = get_pyenv_list(load_conf('pths'))
         super().show()
         self.pyenv_list_update()
 
@@ -1437,7 +1431,7 @@ class NewInputDialog(QInputDialog):
 def main():
     # 把 global声明写一行里不美观，犯强迫症
     global win_pkg_mgr
-    global win_ch_pyenv
+    global win_ch_env
     global win_pyi_tool
     global win_index_mgr
     app_awesomepykit = QApplication(sys.argv)
@@ -1445,7 +1439,7 @@ def main():
         QIcon(os.path.join(resources_path, 'icon.ico'))
     )
     win_pkg_mgr = PackageManagerWindow()
-    win_ch_pyenv = PyiToolChoosePyEnvWindow()
+    win_ch_env = PyiToolChoosePyEnvWindow()
     win_pyi_tool = PyInstallerToolWindow()
     win_index_mgr = MirrorSourceManagerWindow()
     win_main_interface = MainInterfaceWindow()
