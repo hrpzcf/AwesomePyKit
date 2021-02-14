@@ -23,7 +23,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QListWidget" name="lw_py_envs"/>
+    <widget class="QListWidget" name="lw_env_list"/>
    </item>
   </layout>
  </widget>

@@ -21,9 +21,9 @@ class Ui_PyiToolChoosePyEnv(object):
         PyiToolChoosePyEnv.setFont(font)
         self.verticalLayout = QtWidgets.QVBoxLayout(PyiToolChoosePyEnv)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.lw_py_envs = QtWidgets.QListWidget(PyiToolChoosePyEnv)
-        self.lw_py_envs.setObjectName("lw_py_envs")
-        self.verticalLayout.addWidget(self.lw_py_envs)
+        self.lw_env_list = QtWidgets.QListWidget(PyiToolChoosePyEnv)
+        self.lw_env_list.setObjectName("lw_env_list")
+        self.verticalLayout.addWidget(self.lw_env_list)
 
         self.retranslateUi(PyiToolChoosePyEnv)
         QtCore.QMetaObject.connectSlotsByName(PyiToolChoosePyEnv)

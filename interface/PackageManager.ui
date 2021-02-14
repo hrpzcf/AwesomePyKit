@@ -40,7 +40,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QListWidget" name="lw_py_envs">
+           <widget class="QListWidget" name="lw_env_list">
             <property name="contextMenuPolicy">
              <enum>Qt::NoContextMenu</enum>
             </property>
