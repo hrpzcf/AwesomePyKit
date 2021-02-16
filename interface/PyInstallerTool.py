@@ -759,7 +759,7 @@ class Ui_PyInstallerTool(object):
         self.cb_log_level.setItemText(3, _translate("PyInstallerTool", "WARN"))
         self.cb_log_level.setItemText(4, _translate("PyInstallerTool", "ERROR"))
         self.cb_log_level.setItemText(5, _translate("PyInstallerTool", "CRITICAL"))
-        self.pb_check_imports.setToolTip(_translate("PyInstallerTool", "检测程序运行所需的所有模块是否在已选的PYTHON环境中安装。"))
+        self.pb_check_imports.setToolTip(_translate("PyInstallerTool", "检测程序运行所需的所有模块是否在已选的PYTHON环境中安装(测试)。"))
         self.pb_check_imports.setText(_translate("PyInstallerTool", "模块检测"))
         self.pb_gen_executable.setToolTip(_translate("PyInstallerTool", "将PY脚本及所选资源文件打包成可执行文件。"))
         self.pb_gen_executable.setText(_translate("PyInstallerTool", "生成可执行文件"))

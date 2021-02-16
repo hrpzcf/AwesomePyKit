@@ -1343,7 +1343,7 @@
              </palette>
             </property>
             <property name="toolTip">
-             <string>检测程序运行所需的所有模块是否在已选的PYTHON环境中安装。</string>
+             <string>检测程序运行所需的所有模块是否在已选的PYTHON环境中安装(测试)。</string>
             </property>
             <property name="text">
              <string>模块检测</string>
