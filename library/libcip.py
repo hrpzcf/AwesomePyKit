@@ -60,7 +60,10 @@ class ImportInspector:
                 yield filepath, None
 
     def _missing_imports(self, string):
-        """查找环境中缺失的模块。"""
+        """
+        查找环境中缺失的模块。
+        pre3为最终处理后得到的string中所有导入的模块列表。
+        """
         pre1, pre2, pre3 = self.pt.findall(string), [], []
         for item in pre1:
             if ';' in item:
