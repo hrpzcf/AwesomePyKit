@@ -43,26 +43,31 @@ class ImportInspector:
     def __init__(self, python_dir, project_root):
         self._root = project_root
         self._imports = PyEnv(python_dir).imports()
-        self._imports.extend(self._project_imports())
+        self._imports.extend(self.project_imports())
 
     def missing_items(self):
         """
         返回给定Python环境中，给定目录内脚本导入但环境未安装的模块集合。
         返回值类型：(文件路径, {文件中导入的模块}, {环境中未安装的模块})。
         """
-        for filepath, encoding in file_encodings(self._root):
-            if encoding is None:
-                continue
-            try:
-                with open(filepath, encoding=encoding) as sf:
-                    imps, missing = self._missing_imports(sf.read())
-                    yield filepath, imps, missing
-            except Exception:
-                yield filepath, None, None
+        groups = file_encodings(self._root)
+        if groups:
+            for _path, encoding in groups:
+                if encoding is None:
+                    continue
+                try:
+                    with open(_path, encoding=encoding) as sf:
+                        string = sf.read()
+                    imps, missing = self.missing_imports(string)
+                    yield _path, imps, missing
+                except Exception:
+                    yield _path, None, None
+        else:
+            yield None, None, None
 
-    def _missing_imports(self, string):
+    def missing_imports(self, string):
         """
-        查找环境中缺失的模块。
+        查找环境中未安装但string中需要导入的模块。
         pre3为最终处理后得到的string中所有导入的模块列表。
         """
         pre1, pre2, pre3 = self.pt.findall(string), [], set()
@@ -98,7 +103,7 @@ class ImportInspector:
                     pre3.add(tmp_string)
         return pre3, set(p for p in pre3 if p not in self._imports)
 
-    def _project_imports(self):
+    def project_imports(self):
         """项目目录下可导入的包、模块。"""
         project_imports = set()
         pt = re.compile(r'^([0-9a-zA-Z_]+).*(?<!_d)\.py[cdw]?$')
