@@ -322,11 +322,11 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         path_list_lower = [p.lower() for p in self.path_list]
 
         def search_env():
-            for py_path in all_py_paths():
-                if py_path.lower() in path_list_lower:
+            for _path in all_py_paths():
+                if _path.lower() in path_list_lower:
                     continue
                 try:
-                    env = PyEnv(py_path)
+                    env = PyEnv(_path)
                 except Exception:
                     continue
                 self.env_list.append(env)
@@ -361,18 +361,18 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         input_dialog = NewInputDialog(
             self, 560, 0, '添加Python目录', '请输入Python目录路径：'
         )
-        py_path, ok = input_dialog.get_text()
-        if not (ok and py_path):
+        _path, ok = input_dialog.get_text()
+        if not (ok and _path):
             return
-        if not check_py_path(py_path):
+        if not check_py_path(_path):
             self.show_message('无效的Python目录路径！')
             return
-        py_path = os.path.normpath(py_path)
-        if py_path.lower() in [p.lower() for p in self.path_list]:
+        _path = os.path.normpath(_path)
+        if _path.lower() in [p.lower() for p in self.path_list]:
             self.show_message('要添加的Python目录已存在。')
             return
         try:
-            env = PyEnv(py_path)
+            env = PyEnv(_path)
             self.env_list.append(env)
             self.path_list.append(env.path)
         except Exception:
@@ -542,6 +542,8 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         def do_upgrade():
             for pkg_name, code in loop_install(cur_env, pkg_names, upgrade=1):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
+                if code and item[1]:
+                    item[0] = item[1]
                 item[2] = '升级成功' if code else '升级失败'
 
         thread_upgrade_pkgs = NewTask(do_upgrade)
@@ -590,7 +592,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
                 cur_env, upgradeable, upgrade=1
             ):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ['', '', ''])
-                if code:
+                if code and item[1]:
                     item[0] = item[1]
                 item[2] = '升级成功' if code else '升级失败'
 
@@ -704,25 +706,28 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
         save_conf(self._urls_dict, 'urls')
 
     def _get_cur_env(self):
-        '''使用系统环境变量PATH中第一个Python路径生成一个PyEnv实例。'''
-        py_paths = load_conf('pths')
-        if not py_paths:
+        """
+        首先使用配置文件中保存的Python路径实例化一个PyEnv，
+        如果路径为空，则使用系统环境变量PATH中第一个Python路径，
+        环境变量中还未找到则返回None。
+        """
+        _paths = load_conf('pths')
+        if not _paths:
             try:
                 return PyEnv(cur_py_path())
             except Exception:
                 self.statusbar.showMessage(
                     '没有找到pip可执行文件，请在"包管理器"界面添加任意Python目录到列表。'
                 )
+            return
+        for _path in _paths:
+            try:
+                return PyEnv(_path)
+            except Exception:
+                continue
         else:
-            for py_path in py_paths:
-                try:
-                    return PyEnv(py_path)
-                except Exception:
-                    continue
-            else:
-                self.statusbar.showMessage(
-                    '没有找到pip可执行程序，请在"包管理器"界面添加Python目录到列表。'
-                )
+            self.statusbar.showMessage('没有找到pip可执行程序，请在"包管理器"界面添加Python目录到列表。')
+        return
 
     def _set_global_index_url(self):
         url = self.le_indexurl.text()
@@ -732,23 +737,21 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
         if not check_index_url(url):
             self.statusbar.showMessage('镜像源地址不符合pip镜像源地址格式。')
             return
-        pyenv = self._get_cur_env()
-        if not pyenv:
+        env = self._get_cur_env()
+        if not env:
             self.statusbar.showMessage('镜像源启用失败，未找到pip可执行文件。')
             return
-        if pyenv.set_global_index(url):
+        if env.set_global_index(url):
             self.statusbar.showMessage(f'已将"{url}"设置为全局镜像源地址。')
             return
         self.statusbar.showMessage('镜像源设置失败！')
 
     def _display_effective_url(self):
-        pyenv = self._get_cur_env()
-        if pyenv:
-            self.le_effectiveurl.setText(
-                pyenv.get_global_index() or '当前全局镜像源地址为空。'
-            )
-        else:
+        env = self._get_cur_env()
+        if not env:
             self.le_effectiveurl.setText('无法获取当前全局镜像源地址。')
+            return
+        self.le_effectiveurl.setText(env.get_global_index() or '当前全局镜像源地址为空。')
 
 
 class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
@@ -808,7 +811,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         if self.thread_repo.is_empty():
             self.apply_stored_config()
             self.pyi_tool.initialize(
-                self._stored_conf.get('py_info', ''),
+                self._stored_conf.get('env_path', ''),
                 self._stored_conf.get('project_root', os.getcwd()),
             )
             self._set_pyi_info()
@@ -1085,10 +1088,10 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         self.te_upx_exclude_files.setText(
             '\n'.join(self._stored_conf.get('upx_exclude_files', []))
         )
-        py_path = self._stored_conf.get('py_info', '')
-        if py_path:
+        _path = self._stored_conf.get('env_path', '')
+        if _path:
             try:
-                self.toolwin_cur_env = PyEnv(py_path)
+                self.toolwin_cur_env = PyEnv(_path)
                 self.lb_py_info.setText(self.toolwin_cur_env.py_info())
             except Exception:
                 pass
@@ -1143,9 +1146,9 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             if string
         ]
         if self.toolwin_cur_env is None:
-            self._stored_conf['py_info'] = ''
+            self._stored_conf['env_path'] = ''
         else:
-            self._stored_conf['py_info'] = self.toolwin_cur_env.path
+            self._stored_conf['env_path'] = self.toolwin_cur_env.path
         self._stored_conf['log_level'] = self.cb_log_level.currentText()
         self._stored_conf['file_ver_info'] = self._file_ver_info_text()
         self._stored_conf['debug_options'] = self._change_debug_options('get')
@@ -1325,7 +1328,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             return
         self.te_pyi_out_stream.clear()
         self.pyi_tool.initialize(
-            self._stored_conf.get('py_info', ''),
+            self._stored_conf.get('env_path', ''),
             self._stored_conf.get('project_root', os.getcwd()),
         )
         if not self.pyi_tool.pyi_ready:
@@ -1384,6 +1387,32 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
         self.pyenv_list_update()
 
 
+class CheckImportsWindow(Ui_CheckImports, QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self._normal_size = self.size()
+        self._connect_signal_slot()
+
+    def _connect_signal_slot(self):
+        pass
+
+    def resizeEvent(self, event):
+        old_size = event.oldSize()
+        if (
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
+        ):
+            self._normal_size = old_size
+
+    def close(self):
+        super().close()
+
+    def show(self):
+        self.resize(self._normal_size)
+
+
 class NewMessageBox(QMessageBox):
     def __init__(
         self,
@@ -1434,12 +1463,14 @@ def main():
     global win_ch_env
     global win_pyi_tool
     global win_index_mgr
+    global win_check_imp
     app_awesomepykit = QApplication(sys.argv)
     app_awesomepykit.setWindowIcon(
         QIcon(os.path.join(resources_path, 'icon.ico'))
     )
     win_pkg_mgr = PackageManagerWindow()
     win_ch_env = PyiToolChoosePyEnvWindow()
+    win_check_imp = CheckImportsWindow()
     win_pyi_tool = PyInstallerToolWindow()
     win_index_mgr = MirrorSourceManagerWindow()
     win_main_interface = MainInterfaceWindow()
