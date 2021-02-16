@@ -159,7 +159,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         if not self.thread_repo.is_empty():
             if self._stop_before_close():
                 self.thread_repo.stop_all()
-                self._clear_table_widget()
+                self._clear_pkgs_table_widget()
                 save_conf(self.path_list, 'pths')
                 event.accept()
             else:
@@ -273,7 +273,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.table_widget_pkgs_info_update()
         self._reverseds[colind] = not self._reverseds[colind]
 
-    def _clear_table_widget(self):
+    def _clear_pkgs_table_widget(self):
         self.lb_num_selected_items.clear()
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
@@ -337,7 +337,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         thread_search_envs.started.connect(
             lambda: self.show_loading('正在搜索PYTHON安装目录...')
         )
-        thread_search_envs.finished.connect(self._clear_table_widget)
+        thread_search_envs.finished.connect(self._clear_pkgs_table_widget)
         thread_search_envs.finished.connect(self.list_widget_pyenvs_update)
         thread_search_envs.finished.connect(self.hide_loading)
         thread_search_envs.finished.connect(self.release_widgets)
@@ -354,7 +354,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         del self.env_list[cur_index]
         del self.path_list[cur_index]
         self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
-        self._clear_table_widget()
+        self._clear_pkgs_table_widget()
         save_conf(self.path_list, 'pths')
 
     def add_py_path_manully(self):
@@ -906,9 +906,62 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         )
         self.pb_gen_executable.clicked.connect(self.build_executable)
         self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyi)
+        self.pb_check_imports.clicked.connect(self._check_project_imports)
+        win_check_imp.pb_install_all_missing.clicked.connect(
+            lambda: self.install_missings(win_check_imp.all_missings)
+        )
 
-    def _check_imports(self):
-        ...
+    def _check_project_imports(self):
+        self.store_state_of_widgets()
+        if not self.toolwin_cur_env:
+            NewMessageBox(
+                '提示',
+                '还没有选择PYTHON环境！',
+                QMessageBox.Warning,
+            ).exec_()
+            return
+        project_root = self._stored_conf.get('project_root', None)
+        if not project_root:
+            NewMessageBox(
+                '提示',
+                '项目根目录未填写！',
+                QMessageBox.Warning,
+            ).exec_()
+            return
+        if not os.path.isdir(project_root):
+            NewMessageBox(
+                '提示',
+                '项目根目录不存在！',
+                QMessageBox.Warning,
+            ).exec_()
+            return
+        missings = []
+
+        def get_missing_imps():
+            missings.append(
+                tuple(
+                    ImportInspector(
+                        self.toolwin_cur_env.path, project_root
+                    ).missing_items()
+                )
+            )
+
+        check_imp = NewTask(get_missing_imps)
+        check_imp.started.connect(self.lock_widgets)
+        check_imp.started.connect(
+            lambda: self.show_running('正在分析环境中导入项安装情况...')
+        )
+        check_imp.finished.connect(self.hide_running)
+        check_imp.finished.connect(self.release_widgets)
+        check_imp.finished.connect(
+            lambda: win_check_imp.set_cur_env_info(self.toolwin_cur_env)
+        )
+        check_imp.finished.connect(
+            lambda: win_check_imp.table_update(missings)
+        )
+        check_imp.finished.connect(win_check_imp.show)
+        check_imp.start()
+        self.thread_repo.put(check_imp, 1)
 
     def set_le_program_entry(self):
         selected_file = self._select_file_dir(
@@ -1361,6 +1414,38 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         build.start()
         self.thread_repo.put(build, 0)
 
+    def install_missings(self, missings):
+        if not missings:
+            NewMessageBox('提示', '没有缺失的模块，无需安装。').exec_()
+            win_check_imp.close()
+            return
+        if NewMessageBox(
+            '安装',
+            '确定将所有缺失模块安装至所选PYTHON环境中吗？',
+            QMessageBox.Question,
+            (('accept', '确定'), ('reject', '取消')),
+        ).exec_():
+            return
+
+        def install_mis():
+            for name in missings:
+                self.toolwin_cur_env.install(name)
+
+        ins_mis = NewTask(install_mis)
+        ins_mis.started.connect(self.lock_widgets)
+        ins_mis.started.connect(lambda: self.show_running('正在安装缺失模块...'))
+        ins_mis.started.connect(win_check_imp.close)
+        ins_mis.finished.connect(self.hide_running)
+        ins_mis.finished.connect(self.release_widgets)
+        ins_mis.finished.connect(self.ins_mis_completion_tip)
+        ins_mis.start()
+        self.thread_repo.put(ins_mis, 0)
+
+    def ins_mis_completion_tip(self):
+        NewMessageBox(
+            '完成', '缺失的模块已安装完成，请重新检查是否安装成功。', QMessageBox.Information
+        ).exec_()
+
 
 class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
     def __init__(self):
@@ -1404,11 +1489,23 @@ class CheckImportsWindow(Ui_CheckImports, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self._setup_others()
         self._normal_size = self.size()
         self._connect_signal_slot()
+        self.all_missings = None
+
+    def _setup_others(self):
+        self.tw_missing_imports.setColumnWidth(0, 260)
+        self.tw_missing_imports.setColumnWidth(1, 350)
+        self.tw_missing_imports.horizontalHeader().setSectionResizeMode(
+            QHeaderView.Interactive
+        )
+        self.tw_missing_imports.horizontalHeader().setSectionResizeMode(
+            2, QHeaderView.Stretch
+        )
 
     def _connect_signal_slot(self):
-        pass
+        self.pb_confirm.clicked.connect(self.close)
 
     def resizeEvent(self, event):
         old_size = event.oldSize()
@@ -1424,6 +1521,38 @@ class CheckImportsWindow(Ui_CheckImports, QWidget):
 
     def show(self):
         self.resize(self._normal_size)
+        super().show()
+
+    def table_update(self, missing_data):
+        # missing_data: ((filepath, {imps...}, {missings...})...)
+        if not missing_data:
+            return
+        missing_data, *_ = missing_data
+        self.all_missings = []
+        for _, _, m in missing_data:
+            self.all_missings.extend(m)
+        self.tw_missing_imports.clearContents()
+        self.tw_missing_imports.setRowCount(len(missing_data))
+        for rowind, value in enumerate(missing_data):
+            # value[0]即filepath为None，按照ImportInspector类
+            # missing_items特点，可知项目内一个可以打开的文件都没有，直接中断
+            if value[0] is None:
+                break
+            item0 = QTableWidgetItem(os.path.basename(value[0]))
+            item1 = QTableWidgetItem('，'.join(value[1]))
+            item2 = QTableWidgetItem('，'.join(value[2]))
+            item0.setToolTip(value[0])
+            item1.setToolTip('\n'.join(value[1]))
+            item2.setToolTip('\n'.join(value[2]))
+            self.tw_missing_imports.setItem(rowind, 0, item0)
+            self.tw_missing_imports.setItem(rowind, 1, item1)
+            self.tw_missing_imports.setItem(rowind, 2, item2)
+        self.show()
+
+    def set_cur_env_info(self, env):
+        if not env:
+            return
+        self.le_cip_cur_env.setText(str(env))
 
 
 class NewMessageBox(QMessageBox):
