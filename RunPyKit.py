@@ -1231,7 +1231,20 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
             self.pb_reinstall_pyi.setEnabled(False)
 
     def reinstall_pyi(self):
+        # NewMessageBox的exec_方法返回0才是选择"确定"按钮
+        if NewMessageBox(
+            '安装',
+            '确定安装PYINSTALLER吗？',
+            QMessageBox.Question,
+            (('accept', '确定'), ('reject', '取消')),
+        ).exec_():
+            return
         if not self.toolwin_cur_env:
+            NewMessageBox(
+                '提示',
+                '当前未选择任何PYTHON环境。',
+                QMessageBox.Warning,
+            ).exec_()
             return
 
         def do_reinstall_pyi():
