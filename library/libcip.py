@@ -46,6 +46,10 @@ class ImportInspector:
         self._imports.extend(self._project_imports())
 
     def missing_items(self):
+        """
+        返回给定Python环境中，给定目录内脚本导入但环境未安装的模块集合。
+        返回值类型：(文件路径, {环境中未安装的模块集合})。
+        """
         for filepath, encoding in file_encodings(self._root):
             if encoding is None:
                 continue
