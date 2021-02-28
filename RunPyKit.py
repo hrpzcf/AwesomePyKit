@@ -1443,7 +1443,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
 
     def ins_mis_completion_tip(self):
         NewMessageBox(
-            '完成', '缺失的模块已安装完成，请重新检查是否安装成功。', QMessageBox.Information
+            '完成', '已执行安装程序，请重新检查是否安装成功。', QMessageBox.Information
         ).exec_()
 
 
