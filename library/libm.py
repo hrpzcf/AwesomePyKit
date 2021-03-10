@@ -1,6 +1,6 @@
 # coding: utf-8
 
-__doc__ = '''包含AwesomePyKit的主要类、函数、配置文件路径等。'''
+__doc__ = """包含AwesomePyKit的主要类、函数、配置文件路径等。"""
 
 import json
 import os
@@ -22,11 +22,11 @@ _STARTUP.dwFlags = STARTF_USESHOWWINDOW
 _STARTUP.wShowWindow = SW_HIDE
 
 _root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-conf_path = os.path.join(_root_path, 'config')
-resources_path = os.path.join(_root_path, 'resources')
-conf_path_py_paths = os.path.join(conf_path, 'PythonPaths.json')
-conf_path_index_urls = os.path.join(conf_path, 'IndexURLs.json')
-conf_path_pyi_defs = os.path.join(conf_path, 'PyiDefault.json')
+conf_path = os.path.join(_root_path, "config")
+resources_path = os.path.join(_root_path, "resources")
+conf_path_py_paths = os.path.join(conf_path, "PythonPaths.json")
+conf_path_index_urls = os.path.join(conf_path, "IndexURLs.json")
+conf_path_pyi_defs = os.path.join(conf_path, "PyiDefault.json")
 
 
 def _load_json(path, get_data):
@@ -41,19 +41,19 @@ def _load_json(path, get_data):
     if not os.path.exists(path):
         data = get_data()
         try:
-            with open(path, 'wt', encoding='utf-8') as fo:
+            with open(path, "wt", encoding="utf-8") as fo:
                 json.dump(data, fo, indent=4, ensure_ascii=False)
         except Exception:
             pass
         return data
     try:
-        with open(path, 'rt', encoding='utf-8') as fo:
+        with open(path, "rt", encoding="utf-8") as fo:
             return json.load(fo)
     except Exception:
         return get_data()
 
 
-def load_conf(conf='all'):
+def load_conf(conf="all"):
     """
     调用 _load_json 函数从 json 文件读取 Python 目录路径列表、镜像源地址字典。
     :return: tuple[list, dict], (Python路径列表, 镜像源地址字典)元组。
@@ -63,11 +63,11 @@ def load_conf(conf='all'):
     if os.path.isfile(conf_path):
         os.remove(conf_path)
         os.mkdir(conf_path)
-    if conf == 'pths':
+    if conf == "pths":
         return _load_json(conf_path_py_paths, list)
-    if conf == 'urls':
+    if conf == "urls":
         return _load_json(conf_path_index_urls, index_urls.copy)
-    if conf == 'pyic':
+    if conf == "pyic":
         return _load_json(conf_path_pyi_defs, dict)
     return (
         _load_json(conf_path_py_paths, list),
@@ -77,15 +77,15 @@ def load_conf(conf='all'):
 
 
 def save_conf(sequence, conf):
-    if conf == 'pths':
+    if conf == "pths":
         pth = conf_path_py_paths
-    elif conf == 'urls':
+    elif conf == "urls":
         pth = conf_path_index_urls
-    elif conf == 'pyic':
+    elif conf == "pyic":
         pth = conf_path_pyi_defs
     else:
         return
-    with open(pth, 'wt', encoding='utf-8') as fo:
+    with open(pth, "wt", encoding="utf-8") as fo:
         json.dump(sequence, fo, indent=4, ensure_ascii=False)
 
 
@@ -96,7 +96,7 @@ def get_cur_pyenv():
 def get_pyenv_list(py_dir_paths=None):
     """返回 PyEnv 实例列表。"""
     if not py_dir_paths:
-        py_dir_paths = load_conf('pths')
+        py_dir_paths = load_conf("pths")
     py_env_list = []
     for py_dir_path in py_dir_paths:
         env = PyEnv(py_dir_path)
@@ -105,7 +105,7 @@ def get_pyenv_list(py_dir_paths=None):
     return py_env_list
 
 
-def loop_install(pyenv, sequence, *, index_url='', upgrade=False):
+def loop_install(pyenv, sequence, *, index_url="", upgrade=False):
     """循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.install 安装。"""
     for name in sequence:
         cmd_exec_result = pyenv.install(
@@ -121,7 +121,7 @@ def loop_uninstall(pyenv, sequence):
         yield cmd_exec_result[0][0], cmd_exec_result[1]
 
 
-def multi_install(pyenv, sequence, *, index_url='', upgrade=False):
+def multi_install(pyenv, sequence, *, index_url="", upgrade=False):
     """
     一次安装包名列表 sequence 中所有的包。
     注意：如果 sequence 中有一个包不可安装（没有匹配的包等原因），那sequence中所有的
@@ -147,7 +147,7 @@ def get_index_url(pyenv):
 
 
 def check_py_path(py_dir_path):
-    return os.path.isfile(os.path.join(py_dir_path, 'python.exe'))
+    return os.path.isfile(os.path.join(py_dir_path, "python.exe"))
 
 
 def clean_py_paths(paths):
@@ -155,7 +155,7 @@ def clean_py_paths(paths):
 
 
 def check_index_url(url):
-    return bool(re.match(r'^https://.+/simple[/]?$', url.lower()))
+    return bool(re.match(r"^https://.+/simple[/]?$", url.lower()))
 
 
 def clean_index_urls(urls):
@@ -172,7 +172,7 @@ class NewTask(QThread):
         self._target(*self._args)
 
     def __repr__(self):
-        return f'{self._target} with args:{self._args}'
+        return f"{self._target} with args:{self._args}"
 
     __str__ = __repr__
 
@@ -194,7 +194,7 @@ class ThreadRepo:
         self._mutex.unlock()
 
     def clean(self):
-        '''清除已结束的线程。'''
+        """清除已结束的线程。"""
         if self._flag_cleaning:
             return
         self._mutex.lock()
@@ -233,13 +233,13 @@ class ThreadRepo:
         return not self._thread_repo
 
 
-def get_cmd_o(*commands, regexp='', timeout=None):
+def get_cmd_o(*commands, regexp="", timeout=None):
     """用于从cmd命令执行输出的字符匹配想要的信息。"""
     exec_f = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP)
     try:
         strings, _ = exec_f.communicate(timeout=timeout)
     except Exception:
-        return ''
+        return ""
     if not regexp:
         return strings.strip()
     return re.search(regexp, strings)

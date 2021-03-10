@@ -1,6 +1,6 @@
 # coding: utf-8
 
-__doc__ = '''包含一些继承自默认Qt控件的自定义行为控件。'''
+__doc__ = """包含一些继承自默认Qt控件的自定义行为控件。"""
 
 import os
 
@@ -9,12 +9,12 @@ from PyQt5.QtWidgets import QLineEdit, QTextEdit
 
 
 class QLineEditMod(QLineEdit):
-    def __init__(self, accept='dir', file_filter=set()):
+    def __init__(self, accept="dir", file_filter=set()):
         super().__init__()
         self.setContextMenuPolicy(Qt.NoContextMenu)
         self._accept = accept
         self._filter = file_filter
-        self._drag_temp = ''
+        self._drag_temp = ""
 
     @property
     def local_path(self):
@@ -22,7 +22,7 @@ class QLineEditMod(QLineEdit):
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
-            if self._accept == 'file':
+            if self._accept == "file":
                 self._drag_temp = os.path.realpath(
                     event.mimeData().urls()[0].toLocalFile()
                 )
@@ -33,7 +33,7 @@ class QLineEditMod(QLineEdit):
                     event.accept()
                 else:
                     event.ignore()
-            elif self._accept == 'dir':
+            elif self._accept == "dir":
                 event.accept()
             else:
                 event.ignore()
@@ -45,14 +45,14 @@ class QLineEditMod(QLineEdit):
             self._drag_temp = os.path.realpath(
                 event.mimeData().urls()[0].toLocalFile()
             )
-        if self._accept == 'file' and os.path.isfile(self._drag_temp):
+        if self._accept == "file" and os.path.isfile(self._drag_temp):
             self.setText(self._drag_temp)
-        elif self._accept == 'dir' and os.path.isdir(self._drag_temp):
+        elif self._accept == "dir" and os.path.isdir(self._drag_temp):
             self.setText(self._drag_temp)
 
 
 class QTextEditMod(QTextEdit):
-    def __init__(self, accept='file', file_filter=set()):
+    def __init__(self, accept="file", file_filter=set()):
         super().__init__()
         self.setLineWrapMode(QTextEdit.NoWrap)
         self.setContextMenuPolicy(Qt.NoContextMenu)
@@ -62,10 +62,10 @@ class QTextEditMod(QTextEdit):
 
     @property
     def local_paths(self):
-        file_dir_paths = self.toPlainText().split('\n')
-        if self._accept == 'dir':
+        file_dir_paths = self.toPlainText().split("\n")
+        if self._accept == "dir":
             return [path for path in file_dir_paths if os.path.isdir(path)]
-        if self._accept == 'file':
+        if self._accept == "file":
             return [path for path in file_dir_paths if os.path.isfile(path)]
         return []
 
@@ -85,7 +85,7 @@ class QTextEditMod(QTextEdit):
     def dragEnterEvent(self, event):
         self._drag_temp.clear()
         if event.mimeData().hasUrls():
-            if self._accept == 'file':
+            if self._accept == "file":
                 self._stash_from_urls(event.mimeData().urls())
                 if not self._filter or set(
                     os.path.splitext(fp)[1]
@@ -95,12 +95,12 @@ class QTextEditMod(QTextEdit):
                     event.accept()
                 else:
                     event.ignore()
-            elif self._accept == 'dir':
+            elif self._accept == "dir":
                 event.accept()
             else:
                 event.ignore()
-            if not self.toPlainText().endswith('\n'):
-                self.append('')
+            if not self.toPlainText().endswith("\n"):
+                self.append("")
         else:
             event.ignore()
 
@@ -109,22 +109,22 @@ class QTextEditMod(QTextEdit):
         super().dropEvent(event)
         if not self._drag_temp:
             self._stash_from_urls(event.mimeData().urls())
-        if self._accept == 'file':
+        if self._accept == "file":
             self.setText(
                 cur_text
-                + '\n'.join(
+                + "\n".join(
                     path for path in self._drag_temp if os.path.isfile(path)
                 )
             )
-        elif self._accept == 'dir':
+        elif self._accept == "dir":
             self.setText(
                 cur_text
-                + '\n'.join(
+                + "\n".join(
                     path for path in self._drag_temp if os.path.isdir(path)
                 )
             )
         else:
-            self.setText('')
+            self.setText("")
         self.verticalScrollBar().setValue(
             self.verticalScrollBar().maximumHeight()
         )

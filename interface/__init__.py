@@ -8,10 +8,10 @@ from .PyiToolChoosePyEnv import Ui_PyiToolChoosePyEnv
 from .CheckImportWin import Ui_CheckImports
 
 __all__ = [
-    'Ui_MainInterface',
-    'Ui_PackageManager',
-    'Ui_MirrorSourceManager',
-    'Ui_PyInstallerTool',
-    'Ui_PyiToolChoosePyEnv',
-    'Ui_CheckImports',
+    "Ui_MainInterface",
+    "Ui_PackageManager",
+    "Ui_MirrorSourceManager",
+    "Ui_PyInstallerTool",
+    "Ui_PyiToolChoosePyEnv",
+    "Ui_CheckImports",
 ]
