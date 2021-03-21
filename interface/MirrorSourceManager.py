@@ -15,7 +15,7 @@ class Ui_MirrorSourceManager(object):
     def setupUi(self, MirrorSourceManager):
         MirrorSourceManager.setObjectName("MirrorSourceManager")
         MirrorSourceManager.setWindowModality(QtCore.Qt.ApplicationModal)
-        MirrorSourceManager.resize(600, 600)
+        MirrorSourceManager.resize(660, 600)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         MirrorSourceManager.setFont(font)
@@ -134,13 +134,6 @@ class Ui_MirrorSourceManager(object):
         self.verticalLayout_4.setStretch(6, 1)
         self.verticalLayout_5.addLayout(self.verticalLayout_4)
         MirrorSourceManager.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MirrorSourceManager)
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI")
-        font.setPointSize(8)
-        self.statusbar.setFont(font)
-        self.statusbar.setObjectName("statusbar")
-        MirrorSourceManager.setStatusBar(self.statusbar)
 
         self.retranslateUi(MirrorSourceManager)
         QtCore.QMetaObject.connectSlotsByName(MirrorSourceManager)

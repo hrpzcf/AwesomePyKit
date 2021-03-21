@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>660</width>
     <height>600</height>
    </rect>
   </property>
@@ -219,14 +219,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
-  <widget class="QStatusBar" name="statusbar">
-   <property name="font">
-    <font>
-     <family>Microsoft YaHei UI</family>
-     <pointsize>8</pointsize>
-    </font>
-   </property>
   </widget>
  </widget>
  <resources/>
