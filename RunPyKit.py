@@ -652,6 +652,8 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
             li_item.setText(name)
             self.li_indexurls.addItem(li_item)
             self.li_indexurls.setItemWidget(li_item, item_widget)
+        if self.li_indexurls.count():
+            self.li_indexurls.setCurrentRow(0)
 
     def _connect_signal_and_slot(self):
         self.btn_clearle.clicked.connect(self._clear_line_edit)
@@ -697,12 +699,26 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
         save_conf(self._urls_dict, "urls")
 
     def _del_index_url(self):
+        last_selected = self.li_indexurls.currentRow()
         item = self.li_indexurls.currentItem()
         if (self.li_indexurls.currentRow() == -1) or (not item):
             self.statusbar.showMessage("没有选中列表内的任何条目。")
             return
         del self._urls_dict[item.text()]
         self._list_widget_urls_update()
+        items_num = self.li_indexurls.count()
+        if items_num:  # 判断item数量是否为0
+            if last_selected == -1:
+                self.li_indexurls.setCurrentRow(0)
+            else:
+                should_be_selected = (
+                    0
+                    if last_selected - 1 < 0
+                    else last_selected
+                    if last_selected < items_num
+                    else last_selected - 1
+                )
+                self.li_indexurls.setCurrentRow(should_be_selected)
         save_conf(self._urls_dict, "urls")
 
     def _get_cur_env(self):
