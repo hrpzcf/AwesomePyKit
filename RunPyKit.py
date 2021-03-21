@@ -63,7 +63,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = "0.4.0"
+PYKIT_VERSION = "0.4.1"
 
 
 class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
