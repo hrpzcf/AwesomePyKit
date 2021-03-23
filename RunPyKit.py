@@ -66,7 +66,7 @@ from library.libqt import QLineEditMod, QTextEditMod
 PYKIT_VERSION = "0.4.1"
 
 
-class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
+class MainInterface(Ui_main_interface, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -106,7 +106,7 @@ class MainInterfaceWindow(Ui_MainInterface, QMainWindow):
         about_panel.exec_()
 
 
-class PackageManagerWindow(Ui_PackageManager, QMainWindow):
+class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -574,7 +574,7 @@ class PackageManagerWindow(Ui_PackageManager, QMainWindow):
         self.thread_repo.put(thread_upgrade_pkgs, 0)
 
 
-class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
+class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -747,7 +747,7 @@ class MirrorSourceManagerWindow(Ui_MirrorSourceManager, QMainWindow):
         )
 
 
-class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
+class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1389,7 +1389,7 @@ class PyInstallerToolWindow(Ui_PyInstallerTool, QMainWindow):
         NewMessageBox("完成", "已执行安装程序，请重新检查是否安装成功。", QMessageBox.Information).exec_()
 
 
-class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
+class ChooseEnvWindow(Ui_choose_env, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1427,7 +1427,7 @@ class PyiToolChoosePyEnvWindow(Ui_PyiToolChoosePyEnv, QWidget):
         self.pyenv_list_update()
 
 
-class CheckImportsWindow(Ui_CheckImports, QWidget):
+class CheckImportsWindow(Ui_check_imports, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1558,11 +1558,11 @@ def main():
     app_awesomepykit = QApplication(sys.argv)
     app_awesomepykit.setWindowIcon(QIcon(os.path.join(resources_path, "icon.ico")))
     win_pkg_mgr = PackageManagerWindow()
-    win_ch_env = PyiToolChoosePyEnvWindow()
+    win_ch_env = ChooseEnvWindow()
     win_check_imp = CheckImportsWindow()
-    win_pyi_tool = PyInstallerToolWindow()
-    win_index_mgr = MirrorSourceManagerWindow()
-    win_main_interface = MainInterfaceWindow()
+    win_pyi_tool = PyinstallerToolWindow()
+    win_index_mgr = IndexUrlManagerWindow()
+    win_main_interface = MainInterface()
     win_main_interface.show()
     sys.exit(app_awesomepykit.exec_())
 

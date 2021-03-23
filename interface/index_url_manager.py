@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MirrorSourceManager.ui'
+# Form implementation generated from reading ui file 'index_url_manager.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -11,15 +11,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MirrorSourceManager(object):
-    def setupUi(self, MirrorSourceManager):
-        MirrorSourceManager.setObjectName("MirrorSourceManager")
-        MirrorSourceManager.setWindowModality(QtCore.Qt.ApplicationModal)
-        MirrorSourceManager.resize(660, 600)
+class Ui_index_url_manager(object):
+    def setupUi(self, index_url_manager):
+        index_url_manager.setObjectName("index_url_manager")
+        index_url_manager.setWindowModality(QtCore.Qt.ApplicationModal)
+        index_url_manager.resize(660, 600)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
-        MirrorSourceManager.setFont(font)
-        self.centralwidget = QtWidgets.QWidget(MirrorSourceManager)
+        index_url_manager.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(index_url_manager)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
@@ -133,24 +133,24 @@ class Ui_MirrorSourceManager(object):
         self.verticalLayout_4.setStretch(5, 1)
         self.verticalLayout_4.setStretch(6, 1)
         self.verticalLayout_5.addLayout(self.verticalLayout_4)
-        MirrorSourceManager.setCentralWidget(self.centralwidget)
+        index_url_manager.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MirrorSourceManager)
-        QtCore.QMetaObject.connectSlotsByName(MirrorSourceManager)
+        self.retranslateUi(index_url_manager)
+        QtCore.QMetaObject.connectSlotsByName(index_url_manager)
 
-    def retranslateUi(self, MirrorSourceManager):
+    def retranslateUi(self, index_url_manager):
         _translate = QtCore.QCoreApplication.translate
-        MirrorSourceManager.setWindowTitle(_translate("MirrorSourceManager", "镜像源设置"))
-        self.btn_delurl.setToolTip(_translate("MirrorSourceManager", "删除列表中选中的镜像源地址。"))
-        self.btn_delurl.setText(_translate("MirrorSourceManager", "删除"))
-        self.label.setText(_translate("MirrorSourceManager", "编辑名称："))
-        self.label_2.setText(_translate("MirrorSourceManager", "编辑地址："))
-        self.btn_clearle.setToolTip(_translate("MirrorSourceManager", "清空正在编辑的名称和地址输入框。"))
-        self.btn_clearle.setText(_translate("MirrorSourceManager", "清空编辑"))
-        self.btn_saveurl.setToolTip(_translate("MirrorSourceManager", "将输入框内的名称和地址保存到列表。"))
-        self.btn_saveurl.setText(_translate("MirrorSourceManager", "保存至列表"))
-        self.btn_setindex.setToolTip(_translate("MirrorSourceManager", "将输入框内的镜像源地址设置为全局镜像源。"))
-        self.btn_setindex.setText(_translate("MirrorSourceManager", "启用镜像源"))
-        self.label_3.setText(_translate("MirrorSourceManager", "当前生效的全局镜像源地址："))
-        self.btn_refresh_effective.setToolTip(_translate("MirrorSourceManager", "获取当前生效的全局镜像源地址并显示。"))
-        self.btn_refresh_effective.setText(_translate("MirrorSourceManager", "刷新"))
+        index_url_manager.setWindowTitle(_translate("index_url_manager", "镜像源设置"))
+        self.btn_delurl.setToolTip(_translate("index_url_manager", "删除列表中选中的镜像源地址。"))
+        self.btn_delurl.setText(_translate("index_url_manager", "删除"))
+        self.label.setText(_translate("index_url_manager", "编辑名称："))
+        self.label_2.setText(_translate("index_url_manager", "编辑地址："))
+        self.btn_clearle.setToolTip(_translate("index_url_manager", "清空正在编辑的名称和地址输入框。"))
+        self.btn_clearle.setText(_translate("index_url_manager", "清空编辑"))
+        self.btn_saveurl.setToolTip(_translate("index_url_manager", "将输入框内的名称和地址保存到列表。"))
+        self.btn_saveurl.setText(_translate("index_url_manager", "保存至列表"))
+        self.btn_setindex.setToolTip(_translate("index_url_manager", "将输入框内的镜像源地址设置为全局镜像源。"))
+        self.btn_setindex.setText(_translate("index_url_manager", "启用镜像源"))
+        self.label_3.setText(_translate("index_url_manager", "当前生效的全局镜像源地址："))
+        self.btn_refresh_effective.setToolTip(_translate("index_url_manager", "获取当前生效的全局镜像源地址并显示。"))
+        self.btn_refresh_effective.setText(_translate("index_url_manager", "刷新"))

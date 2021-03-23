@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MainInterface.ui'
+# Form implementation generated from reading ui file 'main_interface.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -11,17 +11,17 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainInterface(object):
-    def setupUi(self, MainInterface):
-        MainInterface.setObjectName("MainInterface")
-        MainInterface.resize(420, 255)
-        MainInterface.setMinimumSize(QtCore.QSize(420, 255))
-        MainInterface.setMaximumSize(QtCore.QSize(420, 255))
+class Ui_main_interface(object):
+    def setupUi(self, main_interface):
+        main_interface.setObjectName("main_interface")
+        main_interface.resize(420, 255)
+        main_interface.setMinimumSize(QtCore.QSize(420, 255))
+        main_interface.setMaximumSize(QtCore.QSize(420, 255))
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(10)
-        MainInterface.setFont(font)
-        self.centralwidget = QtWidgets.QWidget(MainInterface)
+        main_interface.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(main_interface)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -52,42 +52,42 @@ class Ui_MainInterface(object):
         self.pb_index_mgr.setObjectName("pb_index_mgr")
         self.verticalLayout.addWidget(self.pb_index_mgr)
         self.verticalLayout_2.addLayout(self.verticalLayout)
-        MainInterface.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainInterface)
+        main_interface.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(main_interface)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 420, 29))
         self.menubar.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.menubar.setObjectName("menubar")
         self.menu_help = QtWidgets.QMenu(self.menubar)
         self.menu_help.setObjectName("menu_help")
-        MainInterface.setMenuBar(self.menubar)
-        self.description = QtWidgets.QAction(MainInterface)
+        main_interface.setMenuBar(self.menubar)
+        self.description = QtWidgets.QAction(main_interface)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         self.description.setFont(font)
         self.description.setObjectName("description")
-        self.action_about = QtWidgets.QAction(MainInterface)
+        self.action_about = QtWidgets.QAction(main_interface)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         self.action_about.setFont(font)
         self.action_about.setObjectName("action_about")
-        self.contribution = QtWidgets.QAction(MainInterface)
+        self.contribution = QtWidgets.QAction(main_interface)
         self.contribution.setObjectName("contribution")
         self.menu_help.addAction(self.action_about)
         self.menubar.addAction(self.menu_help.menuAction())
 
-        self.retranslateUi(MainInterface)
-        QtCore.QMetaObject.connectSlotsByName(MainInterface)
+        self.retranslateUi(main_interface)
+        QtCore.QMetaObject.connectSlotsByName(main_interface)
 
-    def retranslateUi(self, MainInterface):
+    def retranslateUi(self, main_interface):
         _translate = QtCore.QCoreApplication.translate
-        MainInterface.setWindowTitle(_translate("MainInterface", "AwesomePyKit"))
-        self.pb_pkg_mgr.setToolTip(_translate("MainInterface", "管理不同Python环境中的第三方模块。"))
-        self.pb_pkg_mgr.setText(_translate("MainInterface", "包管理器"))
-        self.pb_pyi_tool.setToolTip(_translate("MainInterface", "使用PYINSTALLER将py程序打包成exe可执行文件。"))
-        self.pb_pyi_tool.setText(_translate("MainInterface", "程序打包工具"))
-        self.pb_index_mgr.setToolTip(_translate("MainInterface", "设置pip全局镜像源地址。"))
-        self.pb_index_mgr.setText(_translate("MainInterface", "镜像源设置"))
-        self.menu_help.setTitle(_translate("MainInterface", "帮助"))
-        self.description.setText(_translate("MainInterface", "功能说明"))
-        self.action_about.setText(_translate("MainInterface", "关于软件"))
-        self.contribution.setText(_translate("MainInterface", "参与贡献"))
+        main_interface.setWindowTitle(_translate("main_interface", "AwesomePyKit"))
+        self.pb_pkg_mgr.setToolTip(_translate("main_interface", "管理不同Python环境中的第三方模块。"))
+        self.pb_pkg_mgr.setText(_translate("main_interface", "包管理器"))
+        self.pb_pyi_tool.setToolTip(_translate("main_interface", "使用PYINSTALLER将py程序打包成exe可执行文件。"))
+        self.pb_pyi_tool.setText(_translate("main_interface", "程序打包工具"))
+        self.pb_index_mgr.setToolTip(_translate("main_interface", "设置pip全局镜像源地址。"))
+        self.pb_index_mgr.setText(_translate("main_interface", "镜像源设置"))
+        self.menu_help.setTitle(_translate("main_interface", "帮助"))
+        self.description.setText(_translate("main_interface", "功能说明"))
+        self.action_about.setText(_translate("main_interface", "关于软件"))
+        self.contribution.setText(_translate("main_interface", "参与贡献"))

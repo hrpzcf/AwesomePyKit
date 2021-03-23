@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'PackageManager.ui'
+# Form implementation generated from reading ui file 'package_manager.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -11,15 +11,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_PackageManager(object):
-    def setupUi(self, PackageManager):
-        PackageManager.setObjectName("PackageManager")
-        PackageManager.setWindowModality(QtCore.Qt.ApplicationModal)
-        PackageManager.resize(1016, 697)
+class Ui_package_manager(object):
+    def setupUi(self, package_manager):
+        package_manager.setObjectName("package_manager")
+        package_manager.setWindowModality(QtCore.Qt.ApplicationModal)
+        package_manager.resize(1016, 697)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
-        PackageManager.setFont(font)
-        self.centralwidget = QtWidgets.QWidget(PackageManager)
+        package_manager.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(package_manager)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -152,45 +152,45 @@ class Ui_PackageManager(object):
         self.horizontalLayout_3.setStretch(0, 9)
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
         self.verticalLayout_4.addLayout(self.verticalLayout_3)
-        PackageManager.setCentralWidget(self.centralwidget)
+        package_manager.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(PackageManager)
-        QtCore.QMetaObject.connectSlotsByName(PackageManager)
+        self.retranslateUi(package_manager)
+        QtCore.QMetaObject.connectSlotsByName(package_manager)
 
-    def retranslateUi(self, PackageManager):
+    def retranslateUi(self, package_manager):
         _translate = QtCore.QCoreApplication.translate
-        PackageManager.setWindowTitle(_translate("PackageManager", "包管理器"))
-        self.lb_python_dir.setToolTip(_translate("PackageManager", "显示当前搜索到的/用户添加的Python目录路径。"))
-        self.lb_python_dir.setText(_translate("PackageManager", "Python 环境："))
-        self.lw_env_list.setToolTip(_translate("PackageManager", "显示当前搜索到的/用户添加的Python目录路径。"))
-        self.btn_autosearch.setToolTip(_translate("PackageManager", "自动搜索常用安装位置中的Python目录并将路径添加到Python环境列表保存。"))
-        self.btn_autosearch.setText(_translate("PackageManager", "自动搜索"))
-        self.btn_addmanully.setToolTip(_translate("PackageManager", "手动将Python目录路径添加到本Python环境列表以便下次使用。"))
-        self.btn_addmanully.setText(_translate("PackageManager", "手动添加"))
-        self.btn_delselected.setToolTip(_translate("PackageManager", "将本Python环境列表中的选中项移除(仅从本Python环境列表中移除，不会删除本机Python目录)。"))
-        self.btn_delselected.setText(_translate("PackageManager", "删除选中项"))
-        self.lb_installed_pkgs_info.setToolTip(_translate("PackageManager", "选中的Python环境中已安装的包名、当前版本、最新版本、安装状态信息。"))
-        self.lb_installed_pkgs_info.setText(_translate("PackageManager", "已安装的包信息："))
+        package_manager.setWindowTitle(_translate("package_manager", "包管理器"))
+        self.lb_python_dir.setToolTip(_translate("package_manager", "显示当前搜索到的/用户添加的Python目录路径。"))
+        self.lb_python_dir.setText(_translate("package_manager", "Python 环境："))
+        self.lw_env_list.setToolTip(_translate("package_manager", "显示当前搜索到的/用户添加的Python目录路径。"))
+        self.btn_autosearch.setToolTip(_translate("package_manager", "自动搜索常用安装位置中的Python目录并将路径添加到Python环境列表保存。"))
+        self.btn_autosearch.setText(_translate("package_manager", "自动搜索"))
+        self.btn_addmanully.setToolTip(_translate("package_manager", "手动将Python目录路径添加到本Python环境列表以便下次使用。"))
+        self.btn_addmanully.setText(_translate("package_manager", "手动添加"))
+        self.btn_delselected.setToolTip(_translate("package_manager", "将本Python环境列表中的选中项移除(仅从本Python环境列表中移除，不会删除本机Python目录)。"))
+        self.btn_delselected.setText(_translate("package_manager", "删除选中项"))
+        self.lb_installed_pkgs_info.setToolTip(_translate("package_manager", "选中的Python环境中已安装的包名、当前版本、最新版本、安装状态信息。"))
+        self.lb_installed_pkgs_info.setText(_translate("package_manager", "已安装的包信息："))
         item = self.tw_installed_info.horizontalHeaderItem(0)
-        item.setText(_translate("PackageManager", "名称"))
+        item.setText(_translate("package_manager", "名称"))
         item = self.tw_installed_info.horizontalHeaderItem(1)
-        item.setText(_translate("PackageManager", "当前版本"))
+        item.setText(_translate("package_manager", "当前版本"))
         item = self.tw_installed_info.horizontalHeaderItem(2)
-        item.setText(_translate("PackageManager", "最新版本"))
+        item.setText(_translate("package_manager", "最新版本"))
         item = self.tw_installed_info.horizontalHeaderItem(3)
-        item.setText(_translate("PackageManager", "状态"))
-        self.btn_check_for_updates.setToolTip(_translate("PackageManager", "检查选中的Python环境中的所有模块的最新版本，有新版本则在\"最新版本\"列中显示版本号。"))
-        self.btn_check_for_updates.setText(_translate("PackageManager", "检查更新"))
-        self.btn_install_package.setToolTip(_translate("PackageManager", "将输入的包名安装到选中的Python环境中。\n"
+        item.setText(_translate("package_manager", "状态"))
+        self.btn_check_for_updates.setToolTip(_translate("package_manager", "检查选中的Python环境中的所有模块的最新版本，有新版本则在\"最新版本\"列中显示版本号。"))
+        self.btn_check_for_updates.setText(_translate("package_manager", "检查更新"))
+        self.btn_install_package.setToolTip(_translate("package_manager", "将输入的包名安装到选中的Python环境中。\n"
 "多个包名请用空格隔开，支持输入与pip命令install选项相同的参数。"))
-        self.btn_install_package.setText(_translate("PackageManager", "安装"))
-        self.btn_uninstall_package.setToolTip(_translate("PackageManager", "将表格中选中的包卸载(仅从选中的Python环境中卸载)。\n"
+        self.btn_install_package.setText(_translate("package_manager", "安装"))
+        self.btn_uninstall_package.setToolTip(_translate("package_manager", "将表格中选中的包卸载(仅从选中的Python环境中卸载)。\n"
 "注意，卸载时表格中的条目支持多选。"))
-        self.btn_uninstall_package.setText(_translate("PackageManager", "卸载"))
-        self.btn_upgrade_package.setToolTip(_translate("PackageManager", "升级表格中被选中的包。\n"
+        self.btn_uninstall_package.setText(_translate("package_manager", "卸载"))
+        self.btn_upgrade_package.setToolTip(_translate("package_manager", "升级表格中被选中的包。\n"
 "注意，被选中的包如果没有新版本则不升级，支持多选。"))
-        self.btn_upgrade_package.setText(_translate("PackageManager", "升级"))
-        self.btn_upgrade_all.setToolTip(_translate("PackageManager", "升级表格中列出的所有显示有新版本的包。\n"
+        self.btn_upgrade_package.setText(_translate("package_manager", "升级"))
+        self.btn_upgrade_all.setToolTip(_translate("package_manager", "升级表格中列出的所有显示有新版本的包。\n"
 "使用此功能前请先点击\"检查更新\"按钮以检查是否有新版本，再点击此按钮升级。"))
-        self.btn_upgrade_all.setText(_translate("PackageManager", "升级全部"))
-        self.cb_check_uncheck_all.setText(_translate("PackageManager", "全选 / 取消"))
+        self.btn_upgrade_all.setText(_translate("package_manager", "升级全部"))
+        self.cb_check_uncheck_all.setText(_translate("package_manager", "全选 / 取消"))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'CheckImportWin.ui'
+# Form implementation generated from reading ui file 'check_imports.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.2
 #
@@ -11,24 +11,24 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_CheckImports(object):
-    def setupUi(self, CheckImports):
-        CheckImports.setObjectName("CheckImports")
-        CheckImports.setWindowModality(QtCore.Qt.ApplicationModal)
-        CheckImports.resize(900, 566)
+class Ui_check_imports(object):
+    def setupUi(self, check_imports):
+        check_imports.setObjectName("check_imports")
+        check_imports.setWindowModality(QtCore.Qt.ApplicationModal)
+        check_imports.resize(900, 566)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
-        CheckImports.setFont(font)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(CheckImports)
+        check_imports.setFont(font)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(check_imports)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label = QtWidgets.QLabel(CheckImports)
+        self.label = QtWidgets.QLabel(check_imports)
         self.label.setObjectName("label")
         self.horizontalLayout_2.addWidget(self.label)
-        self.le_cip_cur_env = QtWidgets.QLineEdit(CheckImports)
+        self.le_cip_cur_env = QtWidgets.QLineEdit(check_imports)
         self.le_cip_cur_env.setFrame(False)
         self.le_cip_cur_env.setReadOnly(True)
         self.le_cip_cur_env.setObjectName("le_cip_cur_env")
@@ -37,7 +37,7 @@ class Ui_CheckImports(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.tw_missing_imports = QtWidgets.QTableWidget(CheckImports)
+        self.tw_missing_imports = QtWidgets.QTableWidget(check_imports)
         self.tw_missing_imports.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tw_missing_imports.setObjectName("tw_missing_imports")
         self.tw_missing_imports.setColumnCount(3)
@@ -55,28 +55,28 @@ class Ui_CheckImports(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.pb_install_all_missing = QtWidgets.QPushButton(CheckImports)
+        self.pb_install_all_missing = QtWidgets.QPushButton(check_imports)
         self.pb_install_all_missing.setObjectName("pb_install_all_missing")
         self.horizontalLayout.addWidget(self.pb_install_all_missing)
-        self.pb_confirm = QtWidgets.QPushButton(CheckImports)
+        self.pb_confirm = QtWidgets.QPushButton(check_imports)
         self.pb_confirm.setObjectName("pb_confirm")
         self.horizontalLayout.addWidget(self.pb_confirm)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.horizontalLayout_3.addLayout(self.verticalLayout_2)
 
-        self.retranslateUi(CheckImports)
-        QtCore.QMetaObject.connectSlotsByName(CheckImports)
+        self.retranslateUi(check_imports)
+        QtCore.QMetaObject.connectSlotsByName(check_imports)
 
-    def retranslateUi(self, CheckImports):
+    def retranslateUi(self, check_imports):
         _translate = QtCore.QCoreApplication.translate
-        CheckImports.setWindowTitle(_translate("CheckImports", "导入项检查(测试)"))
-        self.label.setText(_translate("CheckImports", "当前环境:"))
+        check_imports.setWindowTitle(_translate("check_imports", "导入项检查(测试)"))
+        self.label.setText(_translate("check_imports", "当前环境:"))
         item = self.tw_missing_imports.horizontalHeaderItem(0)
-        item.setText(_translate("CheckImports", "项目文件"))
+        item.setText(_translate("check_imports", "项目文件"))
         item = self.tw_missing_imports.horizontalHeaderItem(1)
-        item.setText(_translate("CheckImports", "文件导入项"))
+        item.setText(_translate("check_imports", "文件导入项"))
         item = self.tw_missing_imports.horizontalHeaderItem(2)
-        item.setText(_translate("CheckImports", "环境缺失项"))
-        self.pb_install_all_missing.setText(_translate("CheckImports", "一键安装"))
-        self.pb_confirm.setText(_translate("CheckImports", "确定"))
+        item.setText(_translate("check_imports", "环境缺失项"))
+        self.pb_install_all_missing.setText(_translate("check_imports", "一键安装"))
+        self.pb_confirm.setText(_translate("check_imports", "确定"))

@@ -1,17 +1,17 @@
 # coding: utf-8
 
-from .MainInterface import Ui_MainInterface
-from .PackageManager import Ui_PackageManager
-from .MirrorSourceManager import Ui_MirrorSourceManager
-from .PyInstallerTool import Ui_PyInstallerTool
-from .PyiToolChoosePyEnv import Ui_PyiToolChoosePyEnv
-from .CheckImportWin import Ui_CheckImports
+from .check_imports import Ui_check_imports
+from .choose_env import Ui_choose_env
+from .index_url_manager import Ui_index_url_manager
+from .main_interface import Ui_main_interface
+from .package_manager import Ui_package_manager
+from .pyinstaller_tool import Ui_pyinstaller_tool
 
 __all__ = [
-    "Ui_MainInterface",
-    "Ui_PackageManager",
-    "Ui_MirrorSourceManager",
-    "Ui_PyInstallerTool",
-    "Ui_PyiToolChoosePyEnv",
-    "Ui_CheckImports",
+    "Ui_check_imports",
+    "Ui_choose_env",
+    "Ui_index_url_manager",
+    "Ui_main_interface",
+    "Ui_package_manager",
+    "Ui_pyinstaller_tool",
 ]
