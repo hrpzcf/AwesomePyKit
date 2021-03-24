@@ -284,13 +284,15 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         thread_get_pkgs_info = NewTask(do_get_pkgs_info)
         if not no_connect:
-            thread_get_pkgs_info.started.connect(self.lock_widgets)
-            thread_get_pkgs_info.started.connect(
-                lambda: self.show_loading("正在加载包信息...")
+            thread_get_pkgs_info.at_start(
+                self.lock_widgets,
+                lambda: self.show_loading("正在加载包信息..."),
             )
-            thread_get_pkgs_info.finished.connect(self.table_widget_pkgs_info_update)
-            thread_get_pkgs_info.finished.connect(self.hide_loading)
-            thread_get_pkgs_info.finished.connect(self.release_widgets)
+            thread_get_pkgs_info.at_finish(
+                self.table_widget_pkgs_info_update,
+                self.hide_loading,
+                self.release_widgets,
+            )
         thread_get_pkgs_info.start()
         self.thread_repo.put(thread_get_pkgs_info, 1)
         return thread_get_pkgs_info
@@ -323,15 +325,17 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         path_list_lower = [p.lower() for p in self.path_list]
         thread_search_envs = NewTask(search_env)
-        thread_search_envs.started.connect(self.lock_widgets)
-        thread_search_envs.started.connect(
-            lambda: self.show_loading("正在搜索PYTHON安装目录...")
+        thread_search_envs.at_start(
+            self.lock_widgets,
+            lambda: self.show_loading("正在搜索PYTHON安装目录..."),
         )
-        thread_search_envs.finished.connect(self._clear_pkgs_table_widget)
-        thread_search_envs.finished.connect(self.list_widget_pyenvs_update)
-        thread_search_envs.finished.connect(self.hide_loading)
-        thread_search_envs.finished.connect(self.release_widgets)
-        thread_search_envs.finished.connect(lambda: save_conf(self.path_list, "pths"))
+        thread_search_envs.at_finish(
+            self._clear_pkgs_table_widget,
+            self.list_widget_pyenvs_update,
+            self.hide_loading,
+            self.release_widgets,
+            lambda: save_conf(self.path_list, "pths"),
+        )
         thread_search_envs.start()
         self.thread_repo.put(thread_search_envs, 0)
 
@@ -383,13 +387,15 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 ] = outdated_info[2]
 
         thread_get_outdated = NewTask(do_get_outdated)
-        thread_get_outdated.started.connect(self.lock_widgets)
-        thread_get_outdated.started.connect(
-            lambda: self.show_loading("正在检查更新，请耐心等待...")
+        thread_get_outdated.at_start(
+            self.lock_widgets,
+            lambda: self.show_loading("正在检查更新，请耐心等待..."),
         )
-        thread_get_outdated.finished.connect(self.table_widget_pkgs_info_update)
-        thread_get_outdated.finished.connect(self.hide_loading)
-        thread_get_outdated.finished.connect(self.release_widgets)
+        thread_get_outdated.at_finish(
+            self.table_widget_pkgs_info_update,
+            self.hide_loading,
+            self.release_widgets,
+        )
         thread_get_outdated.start()
         self.thread_repo.put(thread_get_outdated, 1)
 
@@ -447,11 +453,15 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 item[2] = "安装成功" if code else "安装失败"
 
         thread_install_pkgs = NewTask(do_install)
-        thread_install_pkgs.started.connect(self.lock_widgets)
-        thread_install_pkgs.started.connect(lambda: self.show_loading("正在安装，请稍候..."))
-        thread_install_pkgs.finished.connect(self.table_widget_pkgs_info_update)
-        thread_install_pkgs.finished.connect(self.hide_loading)
-        thread_install_pkgs.finished.connect(self.release_widgets)
+        thread_install_pkgs.at_start(
+            self.lock_widgets,
+            lambda: self.show_loading("正在安装，请稍候..."),
+        )
+        thread_install_pkgs.at_finish(
+            self.table_widget_pkgs_info_update,
+            self.hide_loading,
+            self.release_widgets,
+        )
         thread_install_pkgs.start()
         self.thread_repo.put(thread_install_pkgs, 0)
 
@@ -484,11 +494,15 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 item[2] = "卸载成功" if code else "卸载失败"
 
         thread_uninstall_pkgs = NewTask(do_uninstall)
-        thread_uninstall_pkgs.started.connect(self.lock_widgets)
-        thread_uninstall_pkgs.started.connect(lambda: self.show_loading("正在卸载，请稍候..."))
-        thread_uninstall_pkgs.finished.connect(self.table_widget_pkgs_info_update)
-        thread_uninstall_pkgs.finished.connect(self.hide_loading)
-        thread_uninstall_pkgs.finished.connect(self.release_widgets)
+        thread_uninstall_pkgs.at_start(
+            self.lock_widgets,
+            lambda: self.show_loading("正在卸载，请稍候..."),
+        )
+        thread_uninstall_pkgs.at_finish(
+            self.table_widget_pkgs_info_update,
+            self.hide_loading,
+            self.release_widgets,
+        )
         thread_uninstall_pkgs.start()
         self.thread_repo.put(thread_uninstall_pkgs, 0)
 
@@ -523,11 +537,13 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 item[2] = "升级成功" if code else "升级失败"
 
         thread_upgrade_pkgs = NewTask(do_upgrade)
-        thread_upgrade_pkgs.started.connect(self.lock_widgets)
-        thread_upgrade_pkgs.started.connect(lambda: self.show_loading("正在升级，请稍候..."))
-        thread_upgrade_pkgs.finished.connect(self.table_widget_pkgs_info_update)
-        thread_upgrade_pkgs.finished.connect(self.hide_loading)
-        thread_upgrade_pkgs.finished.connect(self.release_widgets)
+        thread_upgrade_pkgs.at_start(
+            self.lock_widgets,
+            lambda: self.show_loading("正在升级，请稍候..."),
+        )
+        thread_upgrade_pkgs.at_finish(
+            self.table_widget_pkgs_info_update, self.hide_loading, self.release_widgets
+        )
         thread_upgrade_pkgs.start()
         self.thread_repo.put(thread_upgrade_pkgs, 0)
 
@@ -565,11 +581,13 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 item[2] = "升级成功" if code else "升级失败"
 
         thread_upgrade_pkgs = NewTask(do_upgrade)
-        thread_upgrade_pkgs.started.connect(self.lock_widgets)
-        thread_upgrade_pkgs.started.connect(lambda: self.show_loading("正在升级，请稍候..."))
-        thread_upgrade_pkgs.finished.connect(self.table_widget_pkgs_info_update)
-        thread_upgrade_pkgs.finished.connect(self.hide_loading)
-        thread_upgrade_pkgs.finished.connect(self.release_widgets)
+        thread_upgrade_pkgs.at_start(
+            self.lock_widgets,
+            lambda: self.show_loading("正在升级，请稍候..."),
+        )
+        thread_upgrade_pkgs.at_finish(
+            self.table_widget_pkgs_info_update, self.hide_loading, self.release_widgets
+        )
         thread_upgrade_pkgs.start()
         self.thread_repo.put(thread_upgrade_pkgs, 0)
 
@@ -925,18 +943,19 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 )
             )
 
-        check_imp = NewTask(get_missing_imps)
-        check_imp.started.connect(self.lock_widgets)
-        check_imp.started.connect(lambda: self.show_running("正在分析环境中导入项安装情况..."))
-        check_imp.finished.connect(self.hide_running)
-        check_imp.finished.connect(self.release_widgets)
-        check_imp.finished.connect(
-            lambda: win_check_imp.set_cur_env_info(self.toolwin_cur_env)
+        thread_check_imp = NewTask(get_missing_imps)
+        thread_check_imp.at_start(
+            self.lock_widgets, lambda: self.show_running("正在分析环境中导入项安装信息...")
         )
-        check_imp.finished.connect(lambda: win_check_imp.table_update(missings))
-        check_imp.finished.connect(win_check_imp.show)
-        check_imp.start()
-        self.thread_repo.put(check_imp, 1)
+        thread_check_imp.at_finish(
+            self.hide_running,
+            self.release_widgets,
+            lambda: win_check_imp.set_cur_env_info(self.toolwin_cur_env),
+            lambda: win_check_imp.table_update(missings),
+            win_check_imp.show,
+        )
+        thread_check_imp.start()
+        self.thread_repo.put(thread_check_imp, 1)
 
     def set_le_program_entry(self):
         selected_file = self._select_file_dir(
@@ -1251,13 +1270,17 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.toolwin_cur_env.install("pyinstaller", upgrade=1)
             self._set_pyi_info(dont_set_enable=True)
 
-        reinstall = NewTask(target=do_reinstall_pyi)
-        reinstall.started.connect(self.lock_widgets)
-        reinstall.started.connect(lambda: self.show_running("正在安装PYINSTALLER..."))
-        reinstall.finished.connect(self.hide_running)
-        reinstall.finished.connect(self.release_widgets)
-        reinstall.start()
-        self.thread_repo.put(reinstall, 0)
+        thread_reinstall = NewTask(target=do_reinstall_pyi)
+        thread_reinstall.at_start(
+            self.lock_widgets,
+            lambda: self.show_running("正在安装PYINSTALLER..."),
+        )
+        thread_reinstall.at_finish(
+            self.hide_running,
+            self.release_widgets,
+        )
+        thread_reinstall.start()
+        self.thread_repo.put(thread_reinstall, 0)
 
     def set_platform_info(self):
         self.lb_platform_info.setText(f"{platform()}-{machine()}")
@@ -1350,13 +1373,14 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             return
         self.pyi_tool.prepare_cmd(self._stored_conf)
         self.handle = self.pyi_tool.handle()
-        build = NewTask(self.pyi_tool.execute_cmd)
-        build.started.connect(self.lock_widgets)
-        build.started.connect(lambda: self.show_running("正在生成可执行文件..."))
-        build.finished.connect(self.hide_running)
-        build.finished.connect(self.release_widgets)
-        build.start()
-        self.thread_repo.put(build, 0)
+        thread_build = NewTask(self.pyi_tool.execute_cmd)
+        thread_build.at_start(
+            self.lock_widgets,
+            lambda: self.show_running("正在生成可执行文件..."),
+        )
+        thread_build.at_finish(self.hide_running, self.release_widgets)
+        thread_build.start()
+        self.thread_repo.put(thread_build, 0)
 
     def install_missings(self, missings):
         if not missings:
@@ -1375,18 +1399,26 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             for name in missings:
                 self.toolwin_cur_env.install(name)
 
-        ins_mis = NewTask(install_mis)
-        ins_mis.started.connect(self.lock_widgets)
-        ins_mis.started.connect(lambda: self.show_running("正在安装缺失模块..."))
-        ins_mis.started.connect(win_check_imp.close)
-        ins_mis.finished.connect(self.hide_running)
-        ins_mis.finished.connect(self.release_widgets)
-        ins_mis.finished.connect(self.ins_mis_completion_tip)
-        ins_mis.start()
-        self.thread_repo.put(ins_mis, 0)
+        thread_ins_mis = NewTask(install_mis)
+        thread_ins_mis.at_start(
+            self.lock_widgets,
+            lambda: self.show_running("正在安装缺失模块..."),
+            win_check_imp.close,
+        )
+        thread_ins_mis.at_finish(
+            self.hide_running,
+            self.release_widgets,
+            self.ins_mis_completion_tip,
+        )
+        thread_ins_mis.start()
+        self.thread_repo.put(thread_ins_mis, 0)
 
     def ins_mis_completion_tip(self):
-        NewMessageBox("完成", "已执行安装程序，请重新检查是否安装成功。", QMessageBox.Information).exec_()
+        NewMessageBox(
+            "完成",
+            "已执行安装程序，请重新检查是否安装成功。",
+            QMessageBox.Information,
+        ).exec_()
 
 
 class ChooseEnvWindow(Ui_choose_env, QWidget):

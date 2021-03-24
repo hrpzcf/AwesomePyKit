@@ -176,6 +176,16 @@ class NewTask(QThread):
 
     __str__ = __repr__
 
+    def at_start(self, *callable_objs):
+        for cab in callable_objs:
+            if callable(cab):
+                self.started.connect(cab)
+
+    def at_finish(self, *callable_objs):
+        for cab in callable_objs:
+            if callable(cab):
+                self.finished.connect(cab)
+
 
 class ThreadRepo:
     def __init__(self, interval):
@@ -235,9 +245,9 @@ class ThreadRepo:
 
 def get_cmd_o(*commands, regexp="", timeout=None):
     """用于从cmd命令执行输出的字符匹配想要的信息。"""
-    exec_f = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP)
+    proc = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP)
     try:
-        strings, _ = exec_f.communicate(timeout=timeout)
+        strings, _ = proc.communicate(timeout=timeout)
     except Exception:
         return ""
     if not regexp:
