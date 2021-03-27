@@ -1348,7 +1348,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     @staticmethod
     def task_completion_tip(retcode):
         if retcode == 0:
-            NewMessageBox("任务结束", "可执行文件已打包完成！").exec_()
+            NewMessageBox(
+                "任务结束",
+                "可执行文件已打包完成！",
+            ).exec_()
         else:
             NewMessageBox(
                 "任务结束",
@@ -1384,7 +1387,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def install_missings(self, missings):
         if not missings:
-            NewMessageBox("提示", "没有缺失的模块，无需安装。").exec_()
+            NewMessageBox(
+                "提示",
+                "没有缺失的模块，无需安装。",
+            ).exec_()
             win_check_imp.close()
             return
         if NewMessageBox(
@@ -1408,17 +1414,14 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_ins_mis.at_finish(
             self.hide_running,
             self.release_widgets,
-            self.ins_mis_completion_tip,
+            lambda: NewMessageBox(
+                "完成",
+                "已完成安装流程，请重新检查是否安装成功。",
+                QMessageBox.Information,
+            ).exec_(),
         )
         thread_ins_mis.start()
         self.thread_repo.put(thread_ins_mis, 0)
-
-    def ins_mis_completion_tip(self):
-        NewMessageBox(
-            "完成",
-            "已执行安装程序，请重新检查是否安装成功。",
-            QMessageBox.Information,
-        ).exec_()
 
 
 class ChooseEnvWindow(Ui_choose_env, QWidget):
