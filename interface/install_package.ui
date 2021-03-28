@@ -9,19 +9,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>470</width>
+    <width>480</width>
     <height>467</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>470</width>
+    <width>480</width>
     <height>467</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>470</width>
+    <width>480</width>
     <height>467</height>
    </size>
   </property>
@@ -126,7 +126,7 @@
              <item>
               <widget class="QPushButton" name="pb_save_as_text">
                <property name="text">
-                <string>保存名称至文件</string>
+                <string>名称保存至文件</string>
                </property>
               </widget>
              </item>
@@ -139,6 +139,49 @@
                <width>0</width>
                <height>50</height>
               </size>
+             </property>
+             <property name="palette">
+              <palette>
+               <active>
+                <colorrole role="ButtonText">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>0</red>
+                   <green>0</green>
+                   <blue>255</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </active>
+               <inactive>
+                <colorrole role="ButtonText">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>0</red>
+                   <green>0</green>
+                   <blue>0</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </inactive>
+               <disabled>
+                <colorrole role="ButtonText">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>120</red>
+                   <green>120</green>
+                   <blue>120</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </disabled>
+              </palette>
+             </property>
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei UI</family>
+               <pointsize>12</pointsize>
+              </font>
              </property>
              <property name="text">
               <string>开始安装</string>

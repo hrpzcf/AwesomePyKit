@@ -190,6 +190,17 @@ class Ui_download_package(object):
         self.verticalLayout_7.addWidget(self.groupBox)
         self.pb_start_download = QtWidgets.QPushButton(download_package)
         self.pb_start_download.setMinimumSize(QtCore.QSize(0, 50))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ButtonText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ButtonText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ButtonText, brush)
+        self.pb_start_download.setPalette(palette)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(12)
@@ -207,7 +218,7 @@ class Ui_download_package(object):
         download_package.setWindowTitle(_translate("download_package", "下载"))
         self.label.setText(_translate("download_package", "名称："))
         self.pb_load_from_text.setText(_translate("download_package", "从文件加载名称"))
-        self.pb_save_as_text.setText(_translate("download_package", "保存名称到文件"))
+        self.pb_save_as_text.setText(_translate("download_package", "名称保存到文件"))
         self.label_2.setText(_translate("download_package", "名称后支持跟随以下符号限定要下载的版本：\n"
 "\"==\"、\">=\"、\"<=\"、\">\"、\"<\"、\",\"\n"
 "每行一个名称，名称和限定符中不允许出现空格。\n"
