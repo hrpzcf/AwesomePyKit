@@ -76,7 +76,7 @@ def load_conf(conf="all"):
         _load_json(conf_path_py_paths, list),
         _load_json(conf_path_index_urls, index_urls.copy),
         _load_json(conf_path_pyi_defs, dict),
-        _load_json(conf_path_install_package, dict)
+        _load_json(conf_path_install_package, dict),
     )
 
 
@@ -111,11 +111,17 @@ def get_pyenv_list(py_dir_paths=None):
     return py_env_list
 
 
-def loop_install(pyenv, sequence, *, index_url="", upgrade=False):
+def loop_install(
+    pyenv, sequence, *, index_url="", pre=False, user=False, upgrade=False
+):
     """循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.install 安装。"""
     for name in sequence:
         cmd_exec_result = pyenv.install(
-            name, index_url=index_url, upgrade=upgrade
+            name,
+            pre=pre,
+            user=user,
+            index_url=index_url,
+            upgrade=upgrade,
         )
         yield cmd_exec_result[0][0], cmd_exec_result[1]
 
@@ -127,13 +133,17 @@ def loop_uninstall(pyenv, sequence):
         yield cmd_exec_result[0][0], cmd_exec_result[1]
 
 
-def multi_install(pyenv, sequence, *, index_url="", upgrade=False):
+def multi_install(
+    pyenv, sequence, *, index_url="", pre=False, user=False, upgrade=False
+):
     """
     一次安装包名列表 sequence 中所有的包。
     注意：如果 sequence 中有一个包不可安装（没有匹配的包等原因），那sequence中所有的
     包都不会被安装，所以不是必须的情况下尽量不用这个函数来安装。
     """
-    return pyenv.install(*sequence, index_url=index_url, upgrade=upgrade)
+    return pyenv.install(
+        *sequence, pre=pre, user=user, index_url=index_url, upgrade=upgrade
+    )
 
 
 def multi_uninstall(pyenv, sequence):
