@@ -1481,7 +1481,7 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         self.setupUi(self)
         self._setup_others()
         self._normal_size = self.size()
-        self._connect_signal_slot()
+        self.pb_confirm.clicked.connect(self.close)
         self.all_missings = None
 
     def _setup_others(self):
@@ -1494,9 +1494,6 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
             2, QHeaderView.Stretch
         )
 
-    def _connect_signal_slot(self):
-        self.pb_confirm.clicked.connect(self.close)
-
     def resizeEvent(self, event):
         old_size = event.oldSize()
         if (
@@ -1505,9 +1502,6 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
             and (old_size.width(), old_size.height()) != (-1, -1)
         ):
             self._normal_size = old_size
-
-    def close(self):
-        super().close()
 
     def show(self):
         self.resize(self._normal_size)
@@ -1525,7 +1519,7 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         self.tw_missing_imports.setRowCount(len(missing_data))
         for rowind, value in enumerate(missing_data):
             # value[0]即filepath为None，按照ImportInspector类
-            # missing_items特点，可知项目内一个可以打开的文件都没有，直接中断
+            # missing_items特点，可知项目内没有可以打开的文件，直接中断
             if value[0] is None:
                 break
             item0 = QTableWidgetItem(os.path.basename(value[0]))
