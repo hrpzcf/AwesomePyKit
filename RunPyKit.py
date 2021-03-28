@@ -64,7 +64,7 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = "0.5.0"
+PYKIT_VERSION = "0.5.1"
 
 
 class MainInterface(Ui_main_interface, QMainWindow):
@@ -204,7 +204,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         win_ins_pkg.pb_do_install.clicked.connect(self.install_pkgs)
 
     def set_win_install_package_envinfo(self):
-        if self.selected_env_index != -1:
+        if self.env_list:
             win_ins_pkg.le_target_env.setText(
                 str(self.env_list[self.selected_env_index])
             )
@@ -456,11 +456,12 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             widget.setEnabled(True)
 
     def install_pkgs(self):
+        if not self.env_list:
+            return
         cur_env = self.env_list[self.lw_env_list.currentRow()]
         package_to_be_installed = win_ins_pkg.package_names
         if not package_to_be_installed:
             return
-
         conf = win_ins_pkg.conf_dict
         install_pre = conf.get("include_pre", False)
         user = conf.get("install_for_user", False)
