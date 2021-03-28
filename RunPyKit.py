@@ -183,9 +183,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.lb_loading_gif.clear()
         self.lb_loading_tip.clear()
 
-    def show_message(self, text):
-        self.lb_loading_tip.setText(text)
-
     def _connect_signal_and_slot(self):
         self.btn_autosearch.clicked.connect(self.auto_search_env)
         self.btn_delselected.clicked.connect(self.del_selected_py_env)
@@ -350,23 +347,39 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         save_conf(self.path_list, "pths")
 
     def add_py_path_manully(self):
-        input_dialog = NewInputDialog(self, 560, 0, "添加Python目录", "请输入Python目录路径：")
+        input_dialog = NewInputDialog(
+            self,
+            560,
+            0,
+            "添加Python目录",
+            "请输入Python目录路径：",
+        )
         _path, ok = input_dialog.get_text()
         if not (ok and _path):
             return
         if not check_py_path(_path):
-            self.show_message("无效的Python目录路径！")
-            return
+            return NewMessageBox(
+                "警告",
+                "无效的Python目录路径！",
+                QMessageBox.Warning,
+            ).exec_()
         _path = os.path.normpath(_path)
         if _path.lower() in [p.lower() for p in self.path_list]:
-            self.show_message("要添加的Python目录已存在。")
-            return
+            return NewMessageBox(
+                "警告",
+                "要添加的Python目录已存在。",
+                QMessageBox.Warning,
+            ).exec_()
         try:
             env = PyEnv(_path)
             self.env_list.append(env)
             self.path_list.append(env.path)
         except Exception:
-            return
+            return NewMessageBox(
+                "警告",
+                "目录添加失败，路径参数类型异常，请向开发者反馈，谢谢~",
+                QMessageBox.Warning,
+            ).exec_()
         self.list_widget_pyenvs_update()
         save_conf(self.path_list, "pths")
 
