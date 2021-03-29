@@ -206,7 +206,7 @@
        <item>
         <widget class="QCheckBox" name="cb_use_index_url">
          <property name="text">
-          <string>使用临时镜像源安装：</string>
+          <string>临时使用其他镜像源：</string>
          </property>
         </widget>
        </item>

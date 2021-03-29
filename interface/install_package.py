@@ -147,7 +147,7 @@ class Ui_install_package(object):
         self.pb_load_from_text.setText(_translate("install_package", "从文件加载名称"))
         self.pb_save_as_text.setText(_translate("install_package", "名称保存至文件"))
         self.pb_do_install.setText(_translate("install_package", "开始安装"))
-        self.cb_use_index_url.setText(_translate("install_package", "使用临时镜像源安装："))
+        self.cb_use_index_url.setText(_translate("install_package", "临时使用其他镜像源："))
         self.label_2.setText(_translate("install_package", "名称后支持跟随以下符号限定要安装的版本：\n"
 "\"==\"、\">=\"、\"<=\"、\">\"、\"<\"、\",\"\n"
 "每行一个名称，名称和限定符中不允许出现空格。\n"
