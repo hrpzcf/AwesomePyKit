@@ -57,6 +57,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from information import VERSION
 from interface import *
 from library import *
 from library.libcip import ImportInspector
@@ -64,14 +65,12 @@ from library.libm import PyEnv
 from library.libpyi import PyiTool
 from library.libqt import QLineEditMod, QTextEditMod
 
-PYKIT_VERSION = "0.5.1"
-
 
 class MainInterface(Ui_main_interface, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle(f"AwesomePyKit - {PYKIT_VERSION}")
+        self.setWindowTitle(f"AwesomePyKit - {VERSION}")
         self.action_about.triggered.connect(self._show_about)
         self.pb_pkg_mgr.clicked.connect(win_pkg_mgr.show)
         self.pb_pyi_tool.clicked.connect(win_pyi_tool.show)
@@ -98,7 +97,7 @@ class MainInterface(Ui_main_interface, QMainWindow):
     def _show_about():
         try:
             with open("help/About.html", encoding="utf-8") as help_html:
-                info = help_html.read().replace("0.0.0", PYKIT_VERSION)
+                info = help_html.read().replace("0.0.0", VERSION)
                 icon = QMessageBox.Information
         except Exception:
             info = '"关于"信息文件(help/About.html)已丢失。'
