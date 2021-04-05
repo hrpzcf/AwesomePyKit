@@ -14,8 +14,9 @@
 
 > 从exe文件运行：
 
-1. 下载打包好的程序包AwesomePyKit - x.x.x.7z；
-2. 将压缩包解压，找到RunPyKit.exe运行。
+1. 打开<a href="https://gitee.com/hrpzcf/AwesomePyKit/releases" target="_blank">AwesomePyKit版本发布页</a>；
+2. 下载打包好的程序包AwesomePyKit - x.x.x.7z；
+3. 将压缩包解压，找到RunPyKit.exe运行。
 
 <br />
 
