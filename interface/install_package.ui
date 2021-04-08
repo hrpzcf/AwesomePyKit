@@ -10,19 +10,19 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>467</height>
+    <height>486</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>480</width>
-    <height>467</height>
+    <height>486</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>480</width>
-    <height>467</height>
+    <height>486</height>
    </size>
   </property>
   <property name="font">
@@ -41,6 +41,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,9">
        <item>
         <widget class="QLabel" name="label_3">
+         <property name="toolTip">
+          <string>当前即将安装的包的目标环境。</string>
+         </property>
          <property name="text">
           <string>目标环境：</string>
          </property>
@@ -50,6 +53,9 @@
         <widget class="QLineEdit" name="le_target_env">
          <property name="contextMenuPolicy">
           <enum>Qt::NoContextMenu</enum>
+         </property>
+         <property name="toolTip">
+          <string>当前即将安装的包的目标环境。</string>
          </property>
          <property name="frame">
           <bool>false</bool>
@@ -82,7 +88,7 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QPlainTextEdit" name="pte_package_names">
+         <widget class="QPlainTextEdit" name="pte_package_names_old">
           <property name="contextMenuPolicy">
            <enum>Qt::NoContextMenu</enum>
           </property>
@@ -93,6 +99,10 @@
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
               <widget class="QCheckBox" name="cb_including_pre">
+               <property name="toolTip">
+                <string>从网络安装时是否查找包括预发行版和开发版在内的版本。
+如果预发行版或开发版是最新版本，则安装预发行版或开发版。</string>
+               </property>
                <property name="text">
                 <string>包括预发行版和开发版</string>
                </property>
@@ -100,6 +110,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="cb_install_for_user">
+               <property name="toolTip">
+                <string>将包安装到系统当前登录的用户的用户目录内。</string>
+               </property>
                <property name="text">
                 <string>仅为当前用户安装</string>
                </property>
@@ -118,6 +131,10 @@
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
               <widget class="QPushButton" name="pb_load_from_text">
+               <property name="toolTip">
+                <string>从文本文件载入名称及版本等内容。
+例如从常见的requirements.txt文件载入。</string>
+               </property>
                <property name="text">
                 <string>从文件加载名称</string>
                </property>
@@ -125,6 +142,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="pb_save_as_text">
+               <property name="toolTip">
+                <string>将文本框内的内容保存至文本文件。</string>
+               </property>
                <property name="text">
                 <string>名称保存至文件</string>
                </property>
@@ -238,7 +258,8 @@
         <string>名称后支持跟随以下符号限定要安装的版本：
 &quot;==&quot;、&quot;&gt;=&quot;、&quot;&lt;=&quot;、&quot;&gt;&quot;、&quot;&lt;&quot;、&quot;,&quot;
 每行一个名称，名称和限定符中不允许出现空格。
-例如：fastpip&gt;=0.6.2,&lt;0.10.0</string>
+例如：fastpip&gt;=0.6.2,&lt;0.10.0
+支持将whl文件拖入文本框内以从本地文件安装该包，whl文件需为正确版本。</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>

@@ -110,7 +110,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self._setup_others()
+        self._setup_other_widgets()
         self.connect_signal_slots()
         self.env_list = get_pyenv_list(load_conf("pths"))
         self.path_list = [env.path for env in self.env_list]
@@ -120,7 +120,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.thread_repo = ThreadRepo(500)
         self._normal_size = self.size()
 
-    def _setup_others(self):
+    def _setup_other_widgets(self):
         self.tw_installed_info.setColumnWidth(0, 220)
         self.tw_installed_info.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
@@ -620,7 +620,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.thread_repo.put(thread_upgrade_pkgs, 0)
 
 
-class LoadAndSaveTextFile:
+class AskPathForFile:
     def load_from_text(self, last_path):
         text_path, _ = QFileDialog.getOpenFileName(
             self, "选择文本文件", last_path, "文本文件 (*.txt)"
@@ -657,14 +657,23 @@ class LoadAndSaveTextFile:
         return os.path.dirname(save_path)
 
 
-class InstallPackagesWindow(Ui_install_package, QWidget, LoadAndSaveTextFile):
+class InstallPackagesWindow(Ui_install_package, QWidget, AskPathForFile):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self._setup_other_widgets()
         self.conf_dict = load_conf("insp")
         self.last_path = self.conf_dict.get("last_path", ".")
         self.package_names = None
         self.connect_signal_slots()
+
+    def _setup_other_widgets(self):
+        self.pte_package_names = QTextEditMod(
+            file_filter={".whl"},
+        )
+        self.splitter.replaceWidget(0, self.pte_package_names)
+        self.pte_package_names_old.deleteLater()
+        self.pte_package_names.show()
 
     def save_package_names(self):
         data = self.pte_package_names.toPlainText()
@@ -682,9 +691,11 @@ class InstallPackagesWindow(Ui_install_package, QWidget, LoadAndSaveTextFile):
         text, fpath = self.load_from_text(self.last_path)
         if text:
             self.pte_package_names.setPlainText(text)
-            self.package_names = [
-                name for name in text.splitlines(keepends=False) if name
-            ]
+            self.package_names = list()
+            names = text.splitlines(keepends=False)
+            for name in names:
+                if name and (name not in self.package_names):
+                    self.package_names.append(name)
         if fpath:
             self.last_path = fpath
             self.conf_dict["last_path"] = fpath
@@ -934,7 +945,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.le_product_version_2,
             self.le_product_version_3,
         )
-        self._setup_others()
+        self._setup_other_widgets()
         self.thread_repo = ThreadRepo(500)
         self._stored_conf = {}
         self.toolwin_cur_env = None
@@ -976,7 +987,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         ):
             self._normal_size = old_size
 
-    def _setup_others(self):
+    def _setup_other_widgets(self):
         # 替换“主程序”LineEdit控件
         self.le_program_entry = QLineEditMod("file", {".py", ".pyc", ".pyw", ".spec"})
         self.le_program_entry.setToolTip(
@@ -1609,12 +1620,12 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self._setup_others()
+        self._setup_other_widgets()
         self._normal_size = self.size()
         self.pb_confirm.clicked.connect(self.close)
         self.all_missings = None
 
-    def _setup_others(self):
+    def _setup_other_widgets(self):
         self.tw_missing_imports.setColumnWidth(0, 260)
         self.tw_missing_imports.setColumnWidth(1, 350)
         self.tw_missing_imports.horizontalHeader().setSectionResizeMode(
