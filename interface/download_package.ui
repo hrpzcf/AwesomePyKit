@@ -9,14 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>706</width>
-    <height>706</height>
+    <width>675</width>
+    <height>730</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>675</width>
+    <height>730</height>
+   </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>706</width>
-    <height>706</height>
+    <width>675</width>
+    <height>730</height>
    </size>
   </property>
   <property name="font">
@@ -25,47 +31,72 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>下载</string>
+   <string>模块安装包下载器</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_9">
+      <layout class="QVBoxLayout" name="verticalLayout_11">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
+        <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>名称：</string>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>名称：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPlainTextEdit" name="pte_package_names"/>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QPlainTextEdit" name="pte_package_names"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QPushButton" name="pb_load_from_text">
-           <property name="text">
-            <string>从文件加载名称</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pb_save_as_text">
-           <property name="text">
-            <string>名称保存到文件</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QPushButton" name="pb_load_from_text">
+             <property name="text">
+              <string>从文件加载名称</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pb_save_as_text">
+             <property name="text">
+              <string>名称保存到文件</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
        <item>
         <widget class="Line" name="line_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>兼容此Python：</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cb_select_env"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_8">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -94,41 +125,61 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_7">
+      <layout class="QVBoxLayout" name="verticalLayout_13">
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>下载限制条件</string>
+          <string>下载条件</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <layout class="QVBoxLayout" name="verticalLayout_12">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
+           <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
              <widget class="QCheckBox" name="cb_download_deps">
               <property name="text">
-               <string>同时下载依赖库</string>
+               <string>下载其依赖库</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="rb_no_binary">
-              <property name="text">
-               <string>仅选择源代码包</string>
+             <widget class="QGroupBox" name="groupBox_2">
+              <property name="title">
+               <string/>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="rb_only_binary">
-              <property name="text">
-               <string>仅选择二进制包</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="rb_prefer_binary">
-              <property name="text">
-               <string>宁选择旧二进制包而非新源代码包</string>
-              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_6">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_5">
+                 <item>
+                  <widget class="QRadioButton" name="radioButton">
+                   <property name="text">
+                    <string>不限制下载的包类型</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="rb_no_binary">
+                   <property name="text">
+                    <string>仅选择源代码包</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="rb_only_binary">
+                   <property name="text">
+                    <string>仅选择二进制包</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="rb_prefer_binary">
+                   <property name="text">
+                    <string>宁选择旧二进制包而非新源代码包</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -141,7 +192,7 @@
             <item>
              <widget class="QCheckBox" name="cb_ignore_requires_python">
               <property name="text">
-               <string>忽略包的Python版本要求</string>
+               <string>忽略包的Python版本限制</string>
               </property>
              </widget>
             </item>
@@ -154,6 +205,9 @@
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_2">
+              <property name="spacing">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,0">
                 <item>
@@ -186,6 +240,9 @@
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QLabel" name="label_4">
                 <property name="text">
@@ -264,6 +321,11 @@
                 </property>
                 <item>
                  <property name="text">
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
                   <string>无特定实现</string>
                  </property>
                 </item>
@@ -274,17 +336,17 @@
                 </item>
                 <item>
                  <property name="text">
+                  <string>Jython</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
                   <string>PyPy</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
                   <string>IronPython</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Jython</string>
                  </property>
                 </item>
                </widget>
@@ -300,6 +362,9 @@
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_3">
+              <property name="spacing">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QLabel" name="label_7">
                 <property name="text">
@@ -321,6 +386,9 @@
             </item>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="spacing">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QCheckBox" name="cb_use_index_url">
                 <property name="text">
