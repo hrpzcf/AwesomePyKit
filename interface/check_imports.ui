@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>导入项检查(测试)</string>
+   <string>导入项检查</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>
@@ -92,6 +92,10 @@
          </item>
          <item>
           <widget class="QPushButton" name="pb_install_all_missing">
+           <property name="toolTip">
+            <string>一键安装该环境所有缺失的项目导入项。
+注意，当缺失的导入项无法在该环境安装时，不会有错误提示。</string>
+           </property>
            <property name="text">
             <string>一键安装</string>
            </property>
@@ -99,6 +103,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="pb_confirm">
+           <property name="toolTip">
+            <string>什么都不做，关闭窗口并返回。</string>
+           </property>
            <property name="text">
             <string>确定</string>
            </property>

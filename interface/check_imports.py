@@ -70,7 +70,7 @@ class Ui_check_imports(object):
 
     def retranslateUi(self, check_imports):
         _translate = QtCore.QCoreApplication.translate
-        check_imports.setWindowTitle(_translate("check_imports", "导入项检查(测试)"))
+        check_imports.setWindowTitle(_translate("check_imports", "导入项检查"))
         self.label.setText(_translate("check_imports", "当前环境:"))
         item = self.tw_missing_imports.horizontalHeaderItem(0)
         item.setText(_translate("check_imports", "项目文件"))
@@ -78,5 +78,8 @@ class Ui_check_imports(object):
         item.setText(_translate("check_imports", "文件导入项"))
         item = self.tw_missing_imports.horizontalHeaderItem(2)
         item.setText(_translate("check_imports", "环境缺失项"))
+        self.pb_install_all_missing.setToolTip(_translate("check_imports", "一键安装该环境所有缺失的项目导入项。\n"
+"注意，当缺失的导入项无法在该环境安装时，不会有错误提示。"))
         self.pb_install_all_missing.setText(_translate("check_imports", "一键安装"))
+        self.pb_confirm.setToolTip(_translate("check_imports", "什么都不做，关闭窗口并返回。"))
         self.pb_confirm.setText(_translate("check_imports", "确定"))
