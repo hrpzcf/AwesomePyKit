@@ -38,7 +38,7 @@ def file_encodings(project_root):
 
 
 class ImportInspector:
-    pt = re.compile(r"^[^#\n]*?import [_0-9a-zA-Z .,;(]+$", re.M)
+    match_all = re.compile(r"^[^#\n]*?import [_0-9a-zA-Z .,;(]+$", re.M)
 
     def __init__(self, python_dir, project_root):
         self._root = project_root
@@ -70,23 +70,28 @@ class ImportInspector:
         查找环境中未安装但string中需要导入的模块。
         pre3为最终处理后得到的string中所有导入的模块列表。
         """
-        pre1, pre2, pre3 = self.pt.findall(string), [], set()
-        for item in pre1:
+        final_res, processed_2, processed_1 = (
+            set(),
+            [],
+            self.match_all.findall(string),
+        )
+        for item in processed_1:
             if ";" in item:
-                pre2.extend(s.strip() for s in item.split(";"))
+                processed_2.extend(s.strip() for s in item.split(";"))
             else:
-                pre2.append(item)
-        for item in pre2:
+                processed_2.append(item)
+        for item in processed_2:
             if "from " in item:
                 m_obj = re.match(
-                    r"^\s*from (?:([^.]+).*|\.([^.]+)) import", item
+                    r"^\s*from (?:([^.]+).*|\.([^.]+)) import",
+                    item,
                 )
                 if not m_obj:
                     continue
                 for s in m_obj.groups():
                     if s is None:
                         continue
-                    pre3.add(s)
+                    final_res.add(s)
             else:
                 m_obj = re.match(r"\s*import (.+)", item)
                 if not m_obj:
@@ -96,22 +101,27 @@ class ImportInspector:
                     m_obj = re.match(r"([^.]+).* as", tmp_string)
                     if not m_obj:
                         continue
-                    pre3.add(m_obj.group(1))
+                    final_res.add(m_obj.group(1))
                 elif "," in tmp_string:
-                    pre3.update(s.strip() for s in tmp_string.split(","))
+                    string_list = tmp_string.split(",")
+                    for string in string_list:
+                        m_obj = re.match(r"[^\.]+", string.strip())
+                        if not m_obj:
+                            continue
+                        final_res.add(m_obj.group())
                 else:
-                    pre3.add(tmp_string)
-        return pre3, set(p for p in pre3 if p not in self._imports)
+                    final_res.add(tmp_string)
+        return final_res, set(p for p in final_res if p not in self._imports)
 
     def project_imports(self):
         """项目目录下可导入的包、模块。"""
         project_imports = set()
-        pt = re.compile(r"^([0-9a-zA-Z_]+).*(?<!_d)\.py[cdw]?$")
+        m_pattern = re.compile(r"^([0-9a-zA-Z_]+).*(?<!_d)\.py[cdw]?$")
         for root, _, files in os.walk(self._root):
             if "__init__.py" in files:
                 project_imports.add(os.path.basename(root))
             for file_name in files:
-                m_obj = pt.match(file_name)
+                m_obj = m_pattern.match(file_name)
                 if not m_obj:
                     continue
                 project_imports.add(m_obj.group(1))
