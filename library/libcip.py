@@ -77,40 +77,43 @@ class ImportInspector:
         )
         for item in processed_1:
             if ";" in item:
-                processed_2.extend(s.strip() for s in item.split(";"))
+                for string in item.split(";"):
+                    if string:
+                        processed_2.append(string.strip())
             else:
                 processed_2.append(item)
         for item in processed_2:
             if "from " in item:
-                m_obj = re.match(
+                matched = re.match(
                     r"^\s*from (?:([^.]+).*|\.([^.]+)) import",
                     item,
                 )
-                if not m_obj:
+                if not matched:
                     continue
-                for s in m_obj.groups():
-                    if s is None:
+                for group in matched.groups():
+                    if group is None:
                         continue
-                    final_res.add(s)
+                    final_res.add(group)
             else:
-                m_obj = re.match(r"\s*import (.+)", item)
-                if not m_obj:
+                matched = re.match(r"\s*import (.+)", item)
+                if not matched:
                     continue
-                tmp_string = m_obj.group(1)
+                tmp_string = matched.group(1)
                 if " as " in tmp_string:
-                    m_obj = re.match(r"([^.]+).* as", tmp_string)
-                    if not m_obj:
-                        continue
-                    final_res.add(m_obj.group(1))
+                    matched = re.match(r"([^.]+).* as", tmp_string)
+                    if matched:
+                        final_res.add(matched.group(1))
                 elif "," in tmp_string:
                     string_list = tmp_string.split(",")
                     for string in string_list:
-                        m_obj = re.match(r"[^\.]+", string.strip())
-                        if not m_obj:
-                            continue
-                        final_res.add(m_obj.group())
+                        string = string.strip()
+                        package_name = string.split(".")[0]
+                        if package_name:
+                            final_res.add(package_name)
                 else:
-                    final_res.add(tmp_string)
+                    package_name = tmp_string.split(".")[0]
+                    if package_name:
+                        final_res.add(package_name)
         return final_res, set(p for p in final_res if p not in self._imports)
 
     def project_imports(self):
@@ -121,8 +124,8 @@ class ImportInspector:
             if "__init__.py" in files:
                 project_imports.add(os.path.basename(root))
             for file_name in files:
-                m_obj = m_pattern.match(file_name)
-                if not m_obj:
+                matched = m_pattern.match(file_name)
+                if not matched:
                     continue
-                project_imports.add(m_obj.group(1))
+                project_imports.add(matched.group(1))
         return project_imports
