@@ -51,9 +51,7 @@ class PyiTool(QObject):
     @property
     def pyi_path(self):
         """ 返回给出的Python路径中的pyinstaller可执行文件路径。"""
-        pyi_exec_path = os.path.join(
-            self._py_path, "Scripts", "pyinstaller.exe"
-        )
+        pyi_exec_path = os.path.join(self._py_path, "Scripts", "pyinstaller.exe")
         if not os.path.isfile(pyi_exec_path):
             return ""
         return pyi_exec_path
@@ -191,15 +189,13 @@ class PyiTool(QObject):
             self._commands.extend(("--upx-dir", temp_var))
         if cmd_dict.get("clean_before_build", False):
             self._commands.append("--clean")
-        self._commands.extend(
-            ("--log-level", cmd_dict.get("log_level", "INFO"))
-        )
+        self._commands.extend(("--log-level", cmd_dict.get("log_level", "INFO")))
         self._commands.append(cmd_dict.get("program_entry", ""))
 
     def pyi_info(self):
         if self.pyi_ready:
             return get_cmd_o(self.pyi_path, "-v")
-        return "0.0.0"
+        return "0.0"
 
     @staticmethod
     def _build_info_file(cmd_dict):

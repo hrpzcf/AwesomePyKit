@@ -1172,7 +1172,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_output_dir(self):
         selected_dir = self._select_file_dir(
-            "选择打包文件储存目录", self._stored_conf.get("project_root", ""), cht="dir"
+            "选择生成文件储存目录", self._stored_conf.get("project_root", ""), cht="dir"
         )[0]
         if not selected_dir:
             return
@@ -1393,7 +1393,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             if not dont_set_enable:
                 self.pb_reinstall_pyi.setEnabled(True)
             pyi_info = self.pyi_tool.pyi_info()
-            if pyi_info == "0.0.0":
+            if pyi_info == "0.0":
                 self.pb_reinstall_pyi.setText("安装")
             else:
                 self.pb_reinstall_pyi.setText("重新安装")
