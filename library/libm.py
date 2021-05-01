@@ -28,6 +28,7 @@ conf_path_py_paths = os.path.join(conf_path, "PythonPaths.json")
 conf_path_index_urls = os.path.join(conf_path, "IndexURLs.json")
 conf_path_pyi_defs = os.path.join(conf_path, "PyiDefault.json")
 conf_path_install_package = os.path.join(conf_path, "InstallPackage.json")
+conf_path_dload_package = os.path.join(conf_path, "DownloadPackage.json")
 
 
 def _load_json(path, get_data):
@@ -56,27 +57,34 @@ def _load_json(path, get_data):
 
 def load_conf(conf="all"):
     """
-    调用 _load_json 函数从 json 文件读取 Python 目录路径列表、镜像源地址字典。
-    :return: tuple[list, dict, dict, dict], (Python路径列表, 镜像源地址字典, 程序打包工具配置字典, 包安装界面配置字典)元组。
+    调用 _load_json 函数从 json 文件读取 Python 目录路径列表、镜像源地址字典等。
     """
     if not os.path.exists(conf_path):
         os.mkdir(conf_path)
     if os.path.isfile(conf_path):
         os.remove(conf_path)
         os.mkdir(conf_path)
+    # 本机 Python 环境路径列表
     if conf == "pths":
         return _load_json(conf_path_py_paths, list)
+    # 保存镜像源地址的字典
     if conf == "urls":
         return _load_json(conf_path_index_urls, index_urls.copy)
+    # 保存 pyinstaller 工具设置的字典
     if conf == "pyic":
         return _load_json(conf_path_pyi_defs, dict)
+    # 保存包管理器安装界面设置的字典
     if conf == "insp":
         return _load_json(conf_path_install_package, dict)
+    # 保存模块下载界面设置的字典
+    if conf == "dlpc":
+        return _load_json(conf_path_dload_package, dict)
     return (
         _load_json(conf_path_py_paths, list),
         _load_json(conf_path_index_urls, index_urls.copy),
         _load_json(conf_path_pyi_defs, dict),
         _load_json(conf_path_install_package, dict),
+        _load_json(conf_path_dload_package, dict),
     )
 
 
@@ -89,6 +97,8 @@ def save_conf(sequence, conf):
         pth = conf_path_pyi_defs
     elif conf == "insp":
         pth = conf_path_install_package
+    elif conf == "dlpc":
+        pth = conf_path_dload_package
     else:
         return
     with open(pth, "wt", encoding="utf-8") as fo:
