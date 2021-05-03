@@ -1738,19 +1738,21 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
             self.le_save_to.setText(dir_path)
 
     def closeEvent(self, event):
-        if not self.repo.is_empty():
+        if self.repo.is_empty():
+            self.store_config()
+            save_conf(self.config, "dlpc")
+        else:
             NewMessageBox(
                 "警告",
                 "有下载任务正在运行，关闭窗口并不会结束任务。",
                 QMessageBox.Warning,
             ).exec_()
-        self.store_conf()
-        save_conf(self.config, "dlpc")
         super().closeEvent(event)
 
     def show(self):
         super().show()
-        self.apply_conf()
+        if self.repo.is_empty():
+            self.apply_config()
 
     def update_envpaths_and_combobox(self):
         if self.env_paths is None:
@@ -1759,15 +1761,15 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
             self.env_paths.clear()
         self.env_paths.extend(load_conf("pths"))
         self.environments = get_pyenv_list(self.env_paths)
-        combo_index = self.config.get("derived_from", 0)
-        combo_text_list = [str(e) for e in self.environments]
-        if combo_index >= len(combo_text_list):
-            combo_index = 0
+        index = self.config.get("derived_from", 0)
+        text_list = [str(e) for e in self.environments]
+        if index < 0 or index >= len(text_list):
+            index = 0
         self.cmb_derived_from.clear()
-        self.cmb_derived_from.addItems(combo_text_list)
-        self.cmb_derived_from.setCurrentIndex(combo_index)
+        self.cmb_derived_from.addItems(text_list)
+        self.cmb_derived_from.setCurrentIndex(index)
 
-    def store_conf(self):
+    def store_config(self):
         self.config["package_names"] = [
             s for s in self.pte_package_names.toPlainText().split("\n") if s
         ]
@@ -1795,7 +1797,7 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         self.config["use_index_url"] = self.cb_use_index_url.isChecked()
         self.config["index_url"] = self.le_index_url.text()
 
-    def apply_conf(self):
+    def apply_config(self):
         self.update_envpaths_and_combobox()
         self.pte_package_names.setPlainText(
             "\n".join(self.config.get("package_names", []))
@@ -1832,44 +1834,48 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
                 "提示",
                 "当前没有任何Python环境，请到'包管理器'中自动或手动添加Python环境路径。",
             ).exec_()
-        self.store_conf()
+        self.store_config()
         package_names = self.config.get("package_names", [])
         if not package_names:
             return NewMessageBox("提示", "下载项目为空。").exec_()
-        env = self.environments[self.config.get("derived_from", 0)]
+        index = self.config.get("derived_from", 0)
+        if index < 0 or index >= len(self.environments):
+            index = 0
+            self.cmb_derived_from.setCurrentIndex(0)
+        env = self.environments[index]
         if not env.env_path:
             return NewMessageBox(
                 "提示",
                 "不可用的Python环境，请检查是否环境已卸载。",
             ).exec_()
-        down_config = dict()
+        configure = dict()
         if not self.config.get("download_deps", True):
-            down_config.update(no_deps=True)
+            configure.update(no_deps=True)
         download_type = self.config.get("download_type", "unlimited")
         if download_type == "no_binary":
-            down_config.update(no_binary=parse_package_names(package_names))
+            configure.update(no_binary=parse_package_names(package_names))
         elif download_type == "only_binary":
-            down_config.update(only_binary=parse_package_names(package_names))
+            configure.update(only_binary=parse_package_names(package_names))
         elif download_type == "prefer_binary":
-            down_config.update(prefer_binary=True)
+            configure.update(prefer_binary=True)
         if self.config.get("include_pre", False):
-            down_config.update(pre=True)
+            configure.update(pre=True)
         if self.config.get("ignore_requires_python", False):
-            down_config.update(ignore_requires_python=True)
+            configure.update(ignore_requires_python=True)
         saved_path = self.config.get("save_to", "")
         if saved_path:
-            down_config.update(dest=saved_path)
+            configure.update(dest=saved_path)
         platform_name = self.config.get("platform", [])
         if platform_name:
-            down_config.update(platform=platform_name)
+            configure.update(platform=platform_name)
         python_version = self.config.get("python_version", "")
         if python_version:
-            down_config.update(python_version=python_version)
+            configure.update(python_version=python_version)
         impl_name = self.config.get("implementation", "")
         if impl_name == "无特定实现":
             impl_name = "py"
         if impl_name:
-            down_config.update(implementation=impl_name)
+            configure.update(implementation=impl_name)
         abis = self.config.get("abis", [])
         if abis:
             if not (platform_name and python_version and impl_name):
@@ -1877,18 +1883,15 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
                     "提示",
                     "当指定ABI时，通常需同时指定'兼容平台'、'兼容Python版本'、'兼容解释器实现'三个下载条件。",
                 ).exec_()
-            down_config.update(abis=abis)
+            configure.update(abis=abis)
         index_url = self.config.get("index_url", "")
         if self.config.get("use_index_url") and index_url:
-            down_config.update(index_url=index_url)
+            configure.update(index_url=index_url)
 
         def do_download():
             self.download.clear()
             try:
-                dest, retcode = env.download(
-                    *package_names,
-                    **down_config, no_output=0
-                )
+                dest, retcode = env.download(*package_names, **configure)
                 if not retcode:
                     dest = "找不到符合条件的Python包下载资源。"
             except Exception as err:
