@@ -29,9 +29,11 @@ def compile_ui(any_path):
             os.system(compile_cmd.format(ui_name, src_name))
             print(f"编译完成...\n")
         except Exception:
-            print(f"文件 <{ui_name}> 编译失败，请检查是否已安装PyQt5库...\n")
-    print("全部ui文件编译完成...")
+            print(f"文件 <{ui_name}> 编译失败，请检查是否已安装PyQt5...\n")
+            break
+    print("编译结束...")
     os.chdir(current_dir)
 
 
-compile_ui(ui_dir_path)
+if __name__ == "__main__":
+    compile_ui(ui_dir_path)
