@@ -1848,45 +1848,9 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
                 "提示",
                 "不可用的Python环境，请检查是否环境已卸载。",
             ).exec_()
-        configure = dict()
-        if not self.config.get("download_deps", True):
-            configure.update(no_deps=True)
-        download_type = self.config.get("download_type", "unlimited")
-        if download_type == "no_binary":
-            configure.update(no_binary=parse_package_names(package_names))
-        elif download_type == "only_binary":
-            configure.update(only_binary=parse_package_names(package_names))
-        elif download_type == "prefer_binary":
-            configure.update(prefer_binary=True)
-        if self.config.get("include_pre", False):
-            configure.update(pre=True)
-        if self.config.get("ignore_requires_python", False):
-            configure.update(ignore_requires_python=True)
-        saved_path = self.config.get("save_to", "")
-        if saved_path:
-            configure.update(dest=saved_path)
-        platform_name = self.config.get("platform", [])
-        if platform_name:
-            configure.update(platform=platform_name)
-        python_version = self.config.get("python_version", "")
-        if python_version:
-            configure.update(python_version=python_version)
-        impl_name = self.config.get("implementation", "")
-        if impl_name == "无特定实现":
-            impl_name = "py"
-        if impl_name:
-            configure.update(implementation=impl_name)
-        abis = self.config.get("abis", [])
-        if abis:
-            if not (platform_name and python_version and impl_name):
-                return NewMessageBox(
-                    "提示",
-                    "当指定ABI时，通常需同时指定'兼容平台'、'兼容Python版本'、'兼容解释器实现'三个下载条件。",
-                ).exec_()
-            configure.update(abis=abis)
-        index_url = self.config.get("index_url", "")
-        if self.config.get("use_index_url") and index_url:
-            configure.update(index_url=index_url)
+        configure = self.make_configure(package_names)
+        if not isinstance(configure, dict):
+            return
 
         def do_download():
             self.download.clear()
@@ -1919,6 +1883,85 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
             f"下载失败：\n{dest}",
             QMessageBox.Critical,
         ).exec_()
+
+    def make_configure(self, names):
+        configure = dict()
+
+        def unqualified():
+            return (
+                not configure.get("no_deps", False)
+                or configure.get("no_binary", False)
+                or configure.get("only_binary", False)
+            )
+
+        if not self.config.get("download_deps", True):
+            configure.update(no_deps=True)
+        download_type = self.config.get("download_type", "unlimited")
+        if download_type == "no_binary":
+            configure.update(no_binary=parse_package_names(names))
+        elif download_type == "only_binary":
+            configure.update(only_binary=parse_package_names(names))
+        elif download_type == "prefer_binary":
+            configure.update(prefer_binary=True)
+        if self.config.get("include_pre", False):
+            configure.update(pre=True)
+        if self.config.get("ignore_requires_python", False):
+            configure.update(ignore_requires_python=True)
+        saved_path = self.config.get("save_to", "")
+        if saved_path:
+            configure.update(dest=saved_path)
+        platform_name = self.config.get("platform", [])
+        if platform_name:
+            if unqualified():
+                return NewMessageBox(
+                    "提示",
+                    "设置'兼容平台'后，不能勾选'下载需要下载的包的依赖库'，\
+不能选择'仅选择源代码包'或'仅选择二进制包'。",
+                    QMessageBox.Warning,
+                ).exec_()
+            configure.update(platform=platform_name)
+        python_version = self.config.get("python_version", "")
+        if python_version:
+            if unqualified():
+                return NewMessageBox(
+                    "提示",
+                    "设置'兼容Python版本'后，不能勾选'下载需要下载的包的依赖库'，\
+不能选择'仅选择源代码包'或'仅选择二进制包'。",
+                    QMessageBox.Warning,
+                ).exec_()
+            configure.update(python_version=python_version)
+        impl_name = self.config.get("implementation", "")
+        if impl_name == "无特定实现":
+            impl_name = "py"
+        if impl_name:
+            if unqualified():
+                return NewMessageBox(
+                    "提示",
+                    "设置'兼容解释器实现'后，不能勾选'下载需要下载的包的依赖库'，\
+不能选择'仅选择源代码包'或'仅选择二进制包'。",
+                    QMessageBox.Warning,
+                ).exec_()
+            configure.update(implementation=impl_name)
+        abis = self.config.get("abis", [])
+        if abis:
+            if unqualified():
+                return NewMessageBox(
+                    "提示",
+                    "设置'兼容ABI'后，不能勾选'下载需要下载的包的依赖库'，\
+不能选择'仅选择源代码包'或'仅选择二进制包'。",
+                    QMessageBox.Warning,
+                ).exec_()
+            if not (platform_name and python_version and impl_name):
+                return NewMessageBox(
+                    "提示",
+                    "当指定ABI时，通常需同时指定'兼容平台'、'兼容Python版本'、\
+'兼容解释器实现'三个下载条件。",
+                ).exec_()
+            configure.update(abis=abis)
+        index_url = self.config.get("index_url", "")
+        if self.config.get("use_index_url") and index_url:
+            configure.update(index_url=index_url)
+        return configure
 
 
 class NewMessageBox(QMessageBox):
