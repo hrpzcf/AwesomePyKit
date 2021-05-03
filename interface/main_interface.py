@@ -95,6 +95,7 @@ class Ui_main_interface(object):
         self.pb_pyi_tool.setText(_translate("main_interface", "程序打包工具"))
         self.pb_index_mgr.setToolTip(_translate("main_interface", "设置pip全局镜像源地址。"))
         self.pb_index_mgr.setText(_translate("main_interface", "镜像源设置"))
+        self.pb_pkg_dload.setToolTip(_translate("main_interface", "Python包下载工具，此工具当前处于测试阶段。"))
         self.pb_pkg_dload.setText(_translate("main_interface", "模块安装包下载器"))
         self.menu_help.setTitle(_translate("main_interface", "帮助"))
         self.description.setText(_translate("main_interface", "功能说明"))

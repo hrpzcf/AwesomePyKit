@@ -9,19 +9,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>675</width>
+    <width>720</width>
     <height>730</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>675</width>
+    <width>720</width>
     <height>730</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>675</width>
+    <width>720</width>
     <height>730</height>
    </size>
   </property>
@@ -31,7 +31,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>模块安装包下载器</string>
+   <string>模块安装包下载器(测试)</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
@@ -50,12 +50,23 @@
             </widget>
            </item>
            <item>
-            <widget class="QPlainTextEdit" name="pte_package_names"/>
+            <widget class="QPlainTextEdit" name="pte_package_names">
+             <property name="contextMenuPolicy">
+              <enum>Qt::NoContextMenu</enum>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,1">
+           <item>
+            <widget class="QPushButton" name="pb_clear_package_names">
+             <property name="text">
+              <string>清空</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QPushButton" name="pb_load_from_text">
              <property name="text">
@@ -83,15 +94,18 @@
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_9">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_8">
            <property name="text">
-            <string>兼容此Python：</string>
+            <string>下载条件默认派生自：</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cb_select_env"/>
+          <widget class="QComboBox" name="cmb_derived_from"/>
          </item>
         </layout>
        </item>
@@ -150,7 +164,7 @@
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_5">
                  <item>
-                  <widget class="QRadioButton" name="radioButton">
+                  <widget class="QRadioButton" name="rb_unlimited">
                    <property name="text">
                     <string>不限制下载的包类型</string>
                    </property>
@@ -227,7 +241,11 @@
                </layout>
               </item>
               <item>
-               <widget class="QLineEdit" name="le_save_to"/>
+               <widget class="QLineEdit" name="le_save_to">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -251,7 +269,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="le_platform"/>
+               <widget class="QLineEdit" name="le_platform">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -284,6 +306,9 @@
                   <width>180</width>
                   <height>16777215</height>
                  </size>
+                </property>
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
                 </property>
                </widget>
               </item>
@@ -373,7 +398,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="le_abis"/>
+               <widget class="QLineEdit" name="le_abis">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -397,7 +426,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="le_use_index_url"/>
+               <widget class="QLineEdit" name="le_index_url">
+                <property name="contextMenuPolicy">
+                 <enum>Qt::NoContextMenu</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>

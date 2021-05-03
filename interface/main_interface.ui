@@ -91,6 +91,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip">
+         <string>Python包下载工具，此工具当前处于测试阶段。</string>
+        </property>
         <property name="text">
          <string>模块安装包下载器</string>
         </property>
