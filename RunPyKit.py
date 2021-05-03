@@ -31,6 +31,7 @@ import sys
 from platform import machine, platform
 
 from chardet import detect
+from fastpip.fastpip import parse_package_names
 from PyQt5.QtCore import (
     QRegExp,
     QSize,
@@ -71,13 +72,21 @@ class MainInterface(Ui_main_interface, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle(f"AwesomePyKit - {VERSION}")
+        self.connect_signal_slot()
+
+    def connect_signal_slot(self):
         self.action_about.triggered.connect(self._show_about)
-        self.pb_pkg_mgr.clicked.connect(win_pkg_mgr.show)
+        self.pb_pkg_mgr.clicked.connect(win_package_mgr.show)
         self.pb_pyi_tool.clicked.connect(win_pyi_tool.show)
         self.pb_index_mgr.clicked.connect(win_index_mgr.show)
+        self.pb_pkg_dload.clicked.connect(win_dload_pkg.show)
 
     def closeEvent(self, event):
-        if win_pkg_mgr.thread_repo.is_empty() and win_pyi_tool.thread_repo.is_empty():
+        if (
+            win_package_mgr.repo.is_empty()
+            and win_pyi_tool.repo.is_empty()
+            and win_dload_pkg.repo.is_empty()
+        ):
             event.accept()
         else:
             role = NewMessageBox(
@@ -87,8 +96,8 @@ class MainInterface(Ui_main_interface, QMainWindow):
                 (("accept", "强制退出"), ("reject", "取消")),
             ).exec_()
             if role == 0:
-                win_pkg_mgr.thread_repo.kill_all()
-                win_pyi_tool.thread_repo.kill_all()
+                win_package_mgr.repo.kill_all()
+                win_pyi_tool.repo.kill_all()
                 event.accept()
             else:
                 event.ignore()
@@ -117,7 +126,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.cur_pkgs_info = {}
         self._reverseds = [True, True, True, True]
         self.selected_env_index = 0
-        self.thread_repo = ThreadRepo(500)
+        self.repo = ThreadRepo(500)
         self._normal_size = self.size()
 
     def _setup_other_widgets(self):
@@ -153,9 +162,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         ).exec_()
 
     def closeEvent(self, event):
-        if not self.thread_repo.is_empty():
+        if not self.repo.is_empty():
             if self._stop_before_close():
-                self.thread_repo.stop_all()
+                self.repo.stop_all()
                 self._clear_pkgs_table_widget()
                 save_conf(self.path_list, "pths")
                 event.accept()
@@ -299,7 +308,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 self.release_widgets,
             )
         thread_get_pkgs_info.start()
-        self.thread_repo.put(thread_get_pkgs_info, 1)
+        self.repo.put(thread_get_pkgs_info, 1)
         return thread_get_pkgs_info
 
     def indexs_of_selected_rows(self):
@@ -342,7 +351,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             lambda: save_conf(self.path_list, "pths"),
         )
         thread_search_envs.start()
-        self.thread_repo.put(thread_search_envs, 0)
+        self.repo.put(thread_search_envs, 0)
 
     def del_selected_py_env(self):
         cur_index = self.lw_env_list.currentRow()
@@ -418,7 +427,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_get_outdated.start()
-        self.thread_repo.put(thread_get_outdated, 1)
+        self.repo.put(thread_get_outdated, 1)
 
     def lock_widgets(self):
         for widget in (
@@ -491,7 +500,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_install_pkgs.start()
-        self.thread_repo.put(thread_install_pkgs, 0)
+        self.repo.put(thread_install_pkgs, 0)
 
     def uninstall_pkgs(self):
         pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
@@ -532,7 +541,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_uninstall_pkgs.start()
-        self.thread_repo.put(thread_uninstall_pkgs, 0)
+        self.repo.put(thread_uninstall_pkgs, 0)
 
     def upgrade_pkgs(self):
         pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
@@ -573,7 +582,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.table_widget_pkgs_info_update, self.hide_loading, self.release_widgets
         )
         thread_upgrade_pkgs.start()
-        self.thread_repo.put(thread_upgrade_pkgs, 0)
+        self.repo.put(thread_upgrade_pkgs, 0)
 
     def upgrade_all_pkgs(self):
         upgradeable = [item[0] for item in self.cur_pkgs_info.items() if item[1][1]]
@@ -617,10 +626,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.table_widget_pkgs_info_update, self.hide_loading, self.release_widgets
         )
         thread_upgrade_pkgs.start()
-        self.thread_repo.put(thread_upgrade_pkgs, 0)
+        self.repo.put(thread_upgrade_pkgs, 0)
 
 
-class AskPathForFile:
+class AskFilePath:
     def load_from_text(self, last_path):
         text_path, _ = QFileDialog.getOpenFileName(
             self, "选择文本文件", last_path, "文本文件 (*.txt)"
@@ -640,7 +649,7 @@ class AskPathForFile:
             ).exec_()
             return "", ""
 
-    def save_as_text(self, data, last_path):
+    def save_as_text_file(self, data, last_path):
         save_path, _ = QFileDialog.getSaveFileName(
             self, "保存文件", last_path, "文本文件 (*.txt)"
         )
@@ -656,8 +665,14 @@ class AskPathForFile:
             ).exec_()
         return os.path.dirname(save_path)
 
+    def get_dir_path(self, last_path):
+        _path = QFileDialog.getExistingDirectory(self, "选择目录", last_path)
+        if _path:
+            return os.path.normpath(_path)
+        return ""
 
-class InstallPackagesWindow(Ui_install_package, QWidget, AskPathForFile):
+
+class InstallPackagesWindow(Ui_install_package, QWidget, AskFilePath):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -682,7 +697,7 @@ class InstallPackagesWindow(Ui_install_package, QWidget, AskPathForFile):
                 "提示",
                 "要保存的内容为空！",
             ).exec_()
-        last_path = self.save_as_text(data, self.last_path)
+        last_path = self.save_as_text_file(data, self.last_path)
         if last_path:
             self.last_path = last_path
             self.conf_dict["last_path"] = last_path
@@ -946,7 +961,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.le_product_version_3,
         )
         self._setup_other_widgets()
-        self.thread_repo = ThreadRepo(500)
+        self.repo = ThreadRepo(500)
         self._stored_conf = {}
         self.toolwin_cur_env = None
         self.pyi_tool = PyiTool()
@@ -957,7 +972,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self._normal_size = self.size()
 
     def closeEvent(self, event):
-        if not self.thread_repo.is_empty():
+        if not self.repo.is_empty():
             NewMessageBox(
                 "提醒",
                 "任务正在运行中，关闭此窗口后任务将在后台运行。\n请勿对相关目录进行任何操作，否则可能会造成打包失败！",
@@ -970,7 +985,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def show(self):
         self.resize(self._normal_size)
         super().show()
-        if self.thread_repo.is_empty():
+        if self.repo.is_empty():
             self.apply_stored_config()
             self.pyi_tool.initialize(
                 self._stored_conf.get("env_path", ""),
@@ -1109,7 +1124,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             win_check_imp.show,
         )
         thread_check_imp.start()
-        self.thread_repo.put(thread_check_imp, 1)
+        self.repo.put(thread_check_imp, 1)
 
     def set_le_program_entry(self):
         selected_file = self._select_file_dir(
@@ -1434,7 +1449,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.release_widgets,
         )
         thread_reinstall.start()
-        self.thread_repo.put(thread_reinstall, 0)
+        self.repo.put(thread_reinstall, 0)
 
     def set_platform_info(self):
         self.lb_platform_info.setText(f"{platform()}-{machine()}")
@@ -1537,7 +1552,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         thread_build.at_finish(self.hide_running, self.release_widgets)
         thread_build.start()
-        self.thread_repo.put(thread_build, 0)
+        self.repo.put(thread_build, 0)
 
     def install_missings(self, missings):
         if not missings:
@@ -1575,7 +1590,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             ).exec_(),
         )
         thread_ins_mis.start()
-        self.thread_repo.put(thread_ins_mis, 0)
+        self.repo.put(thread_ins_mis, 0)
 
 
 class ChooseEnvWindow(Ui_choose_env, QWidget):
@@ -1680,6 +1695,229 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         self.le_cip_cur_env.setText(str(env))
 
 
+class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.config = load_conf("dlpc")
+        self.env_paths = None
+        self.environments = None
+        self.connect_signal_slot()
+        self.last_path = None
+        self.download = list()
+        self.repo = ThreadRepo(500)
+
+    def connect_signal_slot(self):
+        self.cb_use_index_url.clicked.connect(self.change_le_index_url)
+        self.pb_load_from_text.clicked.connect(self.names_from_file)
+        self.pb_save_as_text.clicked.connect(self.save_names_to_file)
+        self.pb_save_to.clicked.connect(self.select_saved_dir)
+        self.pb_clear_package_names.clicked.connect(self.pte_package_names.clear)
+        self.pb_start_download.clicked.connect(self.start_download_package)
+
+    def change_le_index_url(self):
+        self.le_index_url.setEnabled(self.cb_use_index_url.isChecked())
+
+    def names_from_file(self):
+        text, _path = self.load_from_text(self.last_path)
+        if _path:
+            self.last_path = _path
+        if text:
+            self.pte_package_names.setPlainText(text)
+
+    def save_names_to_file(self):
+        data = self.pte_package_names.toPlainText()
+        _path = self.save_as_text_file(data, self.last_path)
+        if _path:
+            self.last_path = _path
+
+    def select_saved_dir(self):
+        dir_path = self.get_dir_path(self.last_path)
+        if dir_path:
+            self.last_path = dir_path
+            self.le_save_to.setText(dir_path)
+
+    def closeEvent(self, event):
+        if not self.repo.is_empty():
+            NewMessageBox(
+                "警告",
+                "有下载任务正在运行，关闭窗口并不会结束任务。",
+                QMessageBox.Warning,
+            ).exec_()
+        self.store_conf()
+        save_conf(self.config, "dlpc")
+        super().closeEvent(event)
+
+    def show(self):
+        super().show()
+        self.apply_conf()
+
+    def update_envpaths_and_combobox(self):
+        if self.env_paths is None:
+            self.env_paths = list()
+        else:
+            self.env_paths.clear()
+        self.env_paths.extend(load_conf("pths"))
+        self.environments = get_pyenv_list(self.env_paths)
+        combo_index = self.config.get("derived_from", 0)
+        combo_text_list = [str(e) for e in self.environments]
+        if combo_index >= len(combo_text_list):
+            combo_index = 0
+        self.cmb_derived_from.clear()
+        self.cmb_derived_from.addItems(combo_text_list)
+        self.cmb_derived_from.setCurrentIndex(combo_index)
+
+    def store_conf(self):
+        self.config["package_names"] = [
+            s for s in self.pte_package_names.toPlainText().split("\n") if s
+        ]
+        self.config["derived_from"] = self.cmb_derived_from.currentIndex()
+        self.config["download_deps"] = self.cb_download_deps.isChecked()
+        download_type = (
+            "unlimited"
+            if self.rb_unlimited.isChecked()
+            else "no_binary"
+            if self.rb_no_binary.isChecked()
+            else "only_binary"
+            if self.rb_only_binary.isChecked()
+            else "prefer_binary"
+        )
+        self.config["download_type"] = download_type
+        self.config["include_pre"] = self.cb_include_pre.isChecked()
+        self.config[
+            "ignore_requires_python"
+        ] = self.cb_ignore_requires_python.isChecked()
+        self.config["save_to"] = self.le_save_to.text()
+        self.config["platform"] = [s for s in self.le_platform.text().split() if s]
+        self.config["python_version"] = self.le_python_version.text()
+        self.config["implementation"] = self.cmb_implementation.currentText()
+        self.config["abis"] = [s for s in self.le_abis.text().split() if s]
+        self.config["use_index_url"] = self.cb_use_index_url.isChecked()
+        self.config["index_url"] = self.le_index_url.text()
+
+    def apply_conf(self):
+        self.update_envpaths_and_combobox()
+        self.pte_package_names.setPlainText(
+            "\n".join(self.config.get("package_names", []))
+        )
+        self.cb_download_deps.setChecked(self.config.get("download_deps", True))
+        download_type = self.config.get("download_type", "unlimited")
+        if download_type == "unlimited":
+            self.rb_unlimited.setChecked(True)
+        elif download_type == "no_binary":
+            self.rb_no_binary.setChecked(True)
+        elif download_type == "only_binary":
+            self.rb_only_binary.setChecked(True)
+        elif download_type == "prefer_binary":
+            self.rb_prefer_binary.setChecked(True)
+        else:
+            self.rb_unlimited.setChecked(True)
+        self.cb_include_pre.setChecked(self.config.get("include_pre", False))
+        self.cb_ignore_requires_python.setChecked(
+            self.config.get("ignore_requires_python", False)
+        )
+        self.le_save_to.setText(self.config.get("save_to", ""))
+        self.le_platform.setText(" ".join(self.config.get("platform", [])))
+        self.le_python_version.setText(self.config.get("python_version", ""))
+        self.cmb_implementation.setCurrentText(self.config.get("implementation", ""))
+        self.le_abis.setText("".join(self.config.get("abis", [])))
+        use_index_url = self.config.get("use_index_url", False)
+        self.cb_use_index_url.setChecked(use_index_url)
+        self.le_index_url.setText(self.config.get("index_url", ""))
+        self.le_index_url.setEnabled(use_index_url)
+
+    def start_download_package(self):
+        if not self.environments:
+            return NewMessageBox(
+                "提示",
+                "当前没有任何Python环境，请到'包管理器'中自动或手动添加Python环境路径。",
+            ).exec_()
+        self.store_conf()
+        package_names = self.config.get("package_names", [])
+        if not package_names:
+            return NewMessageBox("提示", "下载项目为空。").exec_()
+        env = self.environments[self.config.get("derived_from", 0)]
+        if not env.env_path:
+            return NewMessageBox(
+                "提示",
+                "不可用的Python环境，请检查是否环境已卸载。",
+            ).exec_()
+        down_config = dict()
+        if not self.config.get("download_deps", True):
+            down_config.update(no_deps=True)
+        download_type = self.config.get("download_type", "unlimited")
+        if download_type == "no_binary":
+            down_config.update(no_binary=parse_package_names(package_names))
+        elif download_type == "only_binary":
+            down_config.update(only_binary=parse_package_names(package_names))
+        elif download_type == "prefer_binary":
+            down_config.update(prefer_binary=True)
+        if self.config.get("include_pre", False):
+            down_config.update(pre=True)
+        if self.config.get("ignore_requires_python", False):
+            down_config.update(ignore_requires_python=True)
+        saved_path = self.config.get("save_to", "")
+        if saved_path:
+            down_config.update(dest=saved_path)
+        platform_name = self.config.get("platform", [])
+        if platform_name:
+            down_config.update(platform=platform_name)
+        python_version = self.config.get("python_version", "")
+        if python_version:
+            down_config.update(python_version=python_version)
+        impl_name = self.config.get("implementation", "")
+        if impl_name == "无特定实现":
+            impl_name = "py"
+        if impl_name:
+            down_config.update(implementation=impl_name)
+        abis = self.config.get("abis", [])
+        if abis:
+            if not (platform_name and python_version and impl_name):
+                return NewMessageBox(
+                    "提示",
+                    "当指定ABI时，通常需同时指定'兼容平台'、'兼容Python版本'、'兼容解释器实现'三个下载条件。",
+                ).exec_()
+            down_config.update(abis=abis)
+        index_url = self.config.get("index_url", "")
+        if self.config.get("use_index_url") and index_url:
+            down_config.update(index_url=index_url)
+
+        def do_download():
+            self.download.clear()
+            try:
+                dest, retcode = env.download(
+                    *package_names,
+                    **down_config, no_output=0
+                )
+                if not retcode:
+                    dest = "找不到符合条件的Python包下载资源。"
+            except Exception as err:
+                return self.download.extend((str(err), False))
+            self.download.extend((dest, retcode))
+
+        thread_download = NewTask(target=do_download)
+        thread_download.at_start(lambda: self.pb_start_download.setEnabled(False))
+        thread_download.at_finish(
+            self.check_download,
+            lambda: self.pb_start_download.setEnabled(True),
+        )
+        thread_download.start()
+        self.repo.put(thread_download, 0)
+
+    def check_download(self):
+        dest, code = self.download
+        if code:
+            return NewMessageBox(
+                "提示",
+                f"下载成功，保存位置：\n{dest}",
+            ).exec_()
+        return NewMessageBox(
+            "提示",
+            f"下载失败：\n{dest}",
+            QMessageBox.Critical,
+        ).exec_()
+
+
 class NewMessageBox(QMessageBox):
     """
     只有一个按钮，点击按钮和直接关闭窗口都返回0(默认)
@@ -1732,21 +1970,22 @@ class NewInputDialog(QInputDialog):
 
 
 def main():
-    # 把 global声明写一行里不美观，犯强迫症
     global win_ins_pkg
-    global win_pkg_mgr
+    global win_package_mgr
     global win_ch_env
     global win_pyi_tool
     global win_index_mgr
     global win_check_imp
+    global win_dload_pkg
     app_awesomepykit = QApplication(sys.argv)
     app_awesomepykit.setWindowIcon(QIcon(os.path.join(resources_path, "icon.ico")))
     win_ins_pkg = InstallPackagesWindow()
-    win_pkg_mgr = PackageManagerWindow()
+    win_package_mgr = PackageManagerWindow()
     win_ch_env = ChooseEnvWindow()
     win_check_imp = CheckImportsWindow()
     win_pyi_tool = PyinstallerToolWindow()
     win_index_mgr = IndexUrlManagerWindow()
+    win_dload_pkg = DownloadPackageWindow()
     win_main_interface = MainInterface()
     win_main_interface.show()
     sys.exit(app_awesomepykit.exec_())
