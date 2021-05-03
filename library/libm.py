@@ -28,7 +28,7 @@ conf_path_py_paths = os.path.join(conf_path, "PythonPaths.json")
 conf_path_index_urls = os.path.join(conf_path, "IndexURLs.json")
 conf_path_pyi_defs = os.path.join(conf_path, "PyiDefault.json")
 conf_path_install_package = os.path.join(conf_path, "InstallPackage.json")
-conf_path_dload_package = os.path.join(conf_path, "DownloadPackage.json")
+conf_path_dload_package = os.path.join(conf_path, "DloadPackage.json")
 
 
 def _load_json(path, get_data):
