@@ -109,16 +109,14 @@ def get_cur_pyenv():
     return PyEnv()
 
 
-def get_pyenv_list(py_dir_paths=None):
+def get_pyenv_list(paths=None):
     """返回 PyEnv 实例列表。"""
-    if not py_dir_paths:
-        py_dir_paths = load_conf("pths")
-    py_env_list = []
-    for py_dir_path in py_dir_paths:
-        env = PyEnv(py_dir_path)
-        if env.env_path:
-            py_env_list.append(env)
-    return py_env_list
+    if not paths:
+        paths = load_conf("pths")
+    env_list = list()
+    for _path in paths:
+        env_list.append(PyEnv(_path))
+    return env_list
 
 
 def loop_install(
