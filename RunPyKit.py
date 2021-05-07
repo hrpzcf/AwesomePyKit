@@ -963,7 +963,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self._setup_other_widgets()
         self.repo = ThreadRepo(500)
         self._stored_conf = {}
-        self.toolwin_cur_env = None
+        self.toolwin_env = None
         self.pyi_tool = PyiTool()
         self.set_platform_info()
         self.pyi_running_mov = QMovie(os.path.join(resources_path, "loading.gif"))
@@ -1050,7 +1050,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def _connect_signal_slot(self):
         self.pyi_tool.completed.connect(self.task_completion_tip)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
-        self.pb_select_py_env.clicked.connect(win_ch_env.show)
+        self.pb_select_py_env.clicked.connect(win_chenviron.show)
         self.le_program_entry.textChanged.connect(self.set_le_project_root)
         self.pb_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
@@ -1074,12 +1074,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyi)
         self.pb_check_imports.clicked.connect(self._check_project_imports)
         win_check_imp.pb_install_all_missing.clicked.connect(
-            lambda: self.install_missings(win_check_imp.all_missings)
+            lambda: self.install_missings(win_check_imp.all_missing_modules)
         )
 
     def _check_project_imports(self):
         self.store_state_of_widgets()
-        if not self.toolwin_cur_env:
+        if not self.toolwin_env:
             NewMessageBox(
                 "提示",
                 "还没有选择PYTHON环境！",
@@ -1106,9 +1106,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         def get_missing_imps():
             missings.append(
                 tuple(
-                    ImportInspector(
-                        self.toolwin_cur_env.path, project_root
-                    ).missing_items()
+                    ImportInspector(self.toolwin_env.path, project_root).missing_items()
                 )
             )
 
@@ -1119,8 +1117,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_check_imp.at_finish(
             self.hide_running,
             self.release_widgets,
-            lambda: win_check_imp.set_cur_env_info(self.toolwin_cur_env),
-            lambda: win_check_imp.table_update(missings),
+            lambda: win_check_imp.set_env_info(self.toolwin_env),
+            lambda: win_check_imp.checkimp_table_update(missings),
             win_check_imp.show,
         )
         thread_check_imp.start()
@@ -1244,12 +1242,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         return file_dir_paths
 
     def set_env_update_info(self):
-        self.toolwin_cur_env = win_ch_env.chwin_env_list[
-            win_ch_env.lw_env_list.currentRow()
+        self.toolwin_env = win_chenviron.winch_envlist[
+            win_chenviron.lw_env_list.currentRow()
         ]
-        self.lb_py_info.setText(self.toolwin_cur_env.py_info())
+        self.lb_py_info.setText(self.toolwin_env.py_info())
         self.pyi_tool.initialize(
-            self.toolwin_cur_env.env_path,
+            self.toolwin_env.env_path,
             self._stored_conf.get("program_entry", os.getcwd()),
         )
         self._set_pyi_info()
@@ -1296,8 +1294,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         _path = self._stored_conf.get("env_path", "")
         if _path:
             try:
-                self.toolwin_cur_env = PyEnv(_path)
-                self.lb_py_info.setText(self.toolwin_cur_env.py_info())
+                self.toolwin_env = PyEnv(_path)
+                self.lb_py_info.setText(self.toolwin_env.py_info())
             except Exception:
                 pass
         self.le_exefile_specfile_name.setText(
@@ -1338,10 +1336,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             for string in self.te_upx_exclude_files.toPlainText().split("\n")
             if string
         ]
-        if self.toolwin_cur_env is None:
+        if self.toolwin_env is None:
             self._stored_conf["env_path"] = ""
         else:
-            self._stored_conf["env_path"] = self.toolwin_cur_env.path
+            self._stored_conf["env_path"] = self.toolwin_env.path
         self._stored_conf["log_level"] = self.cb_log_level.currentText()
         self._stored_conf["file_ver_info"] = self._file_ver_info_text()
         self._stored_conf["debug_options"] = self._change_debug_options("get")
@@ -1404,7 +1402,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def _set_pyi_info(self, dont_set_enable=False):
         # 此处不能用 self.pyi_tool，因为 self.pyi_tool 总有一个空实例
-        if self.toolwin_cur_env:
+        if self.toolwin_env:
             if not dont_set_enable:
                 self.pb_reinstall_pyi.setEnabled(True)
             pyi_info = self.pyi_tool.pyi_info()
@@ -1426,7 +1424,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             (("accept", "确定"), ("reject", "取消")),
         ).exec_():
             return
-        if not self.toolwin_cur_env:
+        if not self.toolwin_env:
             NewMessageBox(
                 "提示",
                 "当前未选择任何PYTHON环境。",
@@ -1435,8 +1433,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             return
 
         def do_reinstall_pyi():
-            self.toolwin_cur_env.uninstall("pyinstaller")
-            self.toolwin_cur_env.install("pyinstaller", upgrade=1)
+            self.toolwin_env.uninstall("pyinstaller")
+            self.toolwin_env.install("pyinstaller", upgrade=1)
             self._set_pyi_info(dont_set_enable=True)
 
         thread_reinstall = NewTask(target=do_reinstall_pyi)
@@ -1572,7 +1570,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
         def install_mis():
             for name in missings:
-                self.toolwin_cur_env.install(name)
+                self.toolwin_env.install(name)
 
         thread_ins_mis = NewTask(install_mis)
         thread_ins_mis.at_start(
@@ -1606,7 +1604,7 @@ class ChooseEnvWindow(Ui_choose_env, QWidget):
     def pyenv_list_update(self):
         row_size = QSize(0, 28)
         self.lw_env_list.clear()
-        for env in self.chwin_env_list:
+        for env in self.winch_envlist:
             item = QListWidgetItem(str(env))
             item.setSizeHint(row_size)
             self.lw_env_list.addItem(item)
@@ -1626,7 +1624,7 @@ class ChooseEnvWindow(Ui_choose_env, QWidget):
 
     def show(self):
         self.resize(self._normal_size)
-        self.chwin_env_list = get_pyenv_list(load_conf("pths"))
+        self.winch_envlist = get_pyenv_list(load_conf("pths"))
         super().show()
         self.pyenv_list_update()
 
@@ -1638,7 +1636,7 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         self._setup_other_widgets()
         self._normal_size = self.size()
         self.pb_confirm.clicked.connect(self.close)
-        self.all_missings = None
+        self.all_missing_modules = None
 
     def _setup_other_widgets(self):
         self.tw_missing_imports.setColumnWidth(0, 260)
@@ -1663,14 +1661,14 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         self.resize(self._normal_size)
         super().show()
 
-    def table_update(self, missing_data):
+    def checkimp_table_update(self, missing_data):
         # missing_data: ((filepath, {imps...}, {missings...})...)
         if not missing_data:
             return
         missing_data, *_ = missing_data
-        self.all_missings = []
-        for _, _, m in missing_data:
-            self.all_missings.extend(m)
+        self.all_missing_modules = set()
+        for *_, m in missing_data:
+            self.all_missing_modules.update(m)
         self.tw_missing_imports.clearContents()
         self.tw_missing_imports.setRowCount(len(missing_data))
         for rowind, value in enumerate(missing_data):
@@ -1689,7 +1687,7 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
             self.tw_missing_imports.setItem(rowind, 2, item2)
         self.show()
 
-    def set_cur_env_info(self, env):
+    def set_env_info(self, env):
         if not env:
             return
         self.le_cip_cur_env.setText(str(env))
@@ -2018,7 +2016,7 @@ class NewInputDialog(QInputDialog):
 def main():
     global win_ins_pkg
     global win_package_mgr
-    global win_ch_env
+    global win_chenviron
     global win_pyi_tool
     global win_index_mgr
     global win_check_imp
@@ -2027,7 +2025,7 @@ def main():
     app_awesomepykit.setWindowIcon(QIcon(os.path.join(resources_path, "icon.ico")))
     win_ins_pkg = InstallPackagesWindow()
     win_package_mgr = PackageManagerWindow()
-    win_ch_env = ChooseEnvWindow()
+    win_chenviron = ChooseEnvWindow()
     win_check_imp = CheckImportsWindow()
     win_pyi_tool = PyinstallerToolWindow()
     win_index_mgr = IndexUrlManagerWindow()
