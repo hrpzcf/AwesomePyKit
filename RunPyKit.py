@@ -975,7 +975,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if not self.repo.is_empty():
             NewMessageBox(
                 "提醒",
-                "任务正在运行中，关闭此窗口后任务将在后台运行。\n请勿对相关目录进行任何操作，否则可能会造成打包失败！",
+                "任务正在运行中，关闭此窗口后任务将在后台运行。\n请勿对相关目录进行任\
+何操作，否则可能会造成打包失败！",
                 QMessageBox.Warning,
             ).exec_()
         self.store_state_of_widgets()
@@ -1017,7 +1018,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod("dir")
         self.te_module_search_path.setToolTip(
-            "程序的其他模块的搜索路径，此项可留空。\n仅当PYINSTALLER无法自动找到时使用，支持将文件夹直接拖放到此处。"
+            "程序的其他模块的搜索路径，此项可留空。\n仅当PYINSTALLER无法自动找到时使\
+用，支持将文件夹直接拖放到此处。"
         )
         self.verticalLayout_3.replaceWidget(
             self.te_module_search_path_old, self.te_module_search_path
@@ -1027,7 +1029,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.te_other_data = QTextEditMod("file")
         self.te_other_data.setToolTip(
             """非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n"""
-            """注意资源文件要在项目根目录范围内，否则打包后程序可能无法运行。可将文件或者文件夹直接拖到此处。"""
+            """注意资源文件要在项目根目录范围内，否则打包后程序可能无法运行。可将文件\
+或者文件夹直接拖到此处。"""
         )
         self.verticalLayout_4.replaceWidget(self.te_other_data_old, self.te_other_data)
         self.te_other_data_old.deleteLater()
