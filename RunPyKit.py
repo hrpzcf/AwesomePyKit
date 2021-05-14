@@ -72,9 +72,9 @@ class MainInterface(Ui_main_interface, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle(f"AwesomePyKit - {VERSION}")
-        self.connect_signal_slot()
+        self.connect_signals_slots()
 
-    def connect_signal_slot(self):
+    def connect_signals_slots(self):
         self.action_about.triggered.connect(self._show_about)
         self.pb_pkg_mgr.clicked.connect(win_package_mgr.show)
         self.pb_pyi_tool.clicked.connect(win_pyi_tool.show)
@@ -120,7 +120,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self._setup_other_widgets()
-        self.connect_signal_slots()
+        self.connect_signals_slots()
         self.env_list = get_pyenv_list(load_conf("pths"))
         self.path_list = [env.path for env in self.env_list]
         self.cur_pkgs_info = {}
@@ -192,7 +192,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.lb_loading_gif.clear()
         self.lb_loading_tip.clear()
 
-    def connect_signal_slots(self):
+    def connect_signals_slots(self):
         self.btn_autosearch.clicked.connect(self.auto_search_env)
         self.btn_delselected.clicked.connect(self.del_selected_py_env)
         self.btn_addmanully.clicked.connect(self.add_py_path_manully)
@@ -680,7 +680,7 @@ class InstallPackagesWindow(Ui_install_package, QWidget, AskFilePath):
         self.conf_dict = load_conf("insp")
         self.last_path = self.conf_dict.get("last_path", ".")
         self.package_names = None
-        self.connect_signal_slots()
+        self.connect_signals_slots()
 
     def _setup_other_widgets(self):
         self.pte_package_names = QTextEditMod(
@@ -747,7 +747,7 @@ class InstallPackagesWindow(Ui_install_package, QWidget, AskFilePath):
         super().show()
         self.apply_default_conf()
 
-    def connect_signal_slots(self):
+    def connect_signals_slots(self):
         self.pb_do_install.clicked.connect(self.store_default_conf)
         self.pb_do_install.clicked.connect(self.close)
         self.pb_save_as_text.clicked.connect(self.save_package_names)
@@ -766,7 +766,7 @@ class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self._urls_dict = load_conf("urls")
-        self.connect_signal_slots()
+        self.connect_signals_slots()
         self._normal_size = self.size()
 
     def show(self):
@@ -806,7 +806,7 @@ class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
         if self.li_indexurls.count():
             self.li_indexurls.setCurrentRow(0)
 
-    def connect_signal_slots(self):
+    def connect_signals_slots(self):
         self.btn_clearle.clicked.connect(self._clear_line_edit)
         self.btn_saveurl.clicked.connect(self._save_index_urls)
         self.btn_delurl.clicked.connect(self._del_index_url)
@@ -968,7 +968,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.set_platform_info()
         self.pyi_running_mov = QMovie(os.path.join(resources_path, "loading.gif"))
         self.pyi_running_mov.setScaledSize(QSize(18, 18))
-        self._connect_signal_slot()
+        self.connect_signals_slots()
         self._normal_size = self.size()
 
     def closeEvent(self, event):
@@ -992,7 +992,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 self._stored_conf.get("env_path", ""),
                 self._stored_conf.get("project_root", os.getcwd()),
             )
-            self._set_pyi_info()
+            self.set_pyi_info()
 
     def resizeEvent(self, event):
         old_size = event.oldSize()
@@ -1050,7 +1050,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             line_edit.setValidator(reg_exp_val2)
         self.le_runtime_tmpdir.setValidator(reg_exp_val1)
 
-    def _connect_signal_slot(self):
+    def connect_signals_slots(self):
         self.pyi_tool.completed.connect(self.task_completion_tip)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
         self.pb_select_py_env.clicked.connect(win_chenviron.show)
@@ -1075,12 +1075,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pb_select_upx_search_path.clicked.connect(self.set_le_upx_search_path)
         self.pb_gen_executable.clicked.connect(self.build_executable)
         self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyi)
-        self.pb_check_imports.clicked.connect(self._check_project_imports)
+        self.pb_check_imports.clicked.connect(self.check_project_imports)
         win_check_imp.pb_install_all_missing.clicked.connect(
             lambda: self.install_missings(win_check_imp.all_missing_modules)
         )
 
-    def _check_project_imports(self):
+    def check_project_imports(self):
         self.store_state_of_widgets()
         if not self.toolwin_env:
             NewMessageBox(
@@ -1104,18 +1104,18 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
             return
-        missings = []
+        missings = list()
 
         def get_missing_imps():
-            missings.append(
-                tuple(
-                    ImportInspector(self.toolwin_env.path, project_root).missing_items()
-                )
-            )
+            imp_missings = ImportInspector(
+                self.toolwin_env.path, project_root
+            ).missing_items()
+            missings.append(tuple(imp_missings))
 
         thread_check_imp = NewTask(get_missing_imps)
         thread_check_imp.at_start(
-            self.lock_widgets, lambda: self.show_running("正在分析环境中导入项安装信息...")
+            self.lock_widgets,
+            lambda: self.show_running("正在分析环境中导入项安装信息..."),
         )
         thread_check_imp.at_finish(
             self.hide_running,
@@ -1253,7 +1253,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.toolwin_env.env_path,
             self._stored_conf.get("program_entry", os.getcwd()),
         )
-        self._set_pyi_info()
+        self.set_pyi_info()
 
     def apply_stored_config(self):
         if not self._stored_conf:
@@ -1306,7 +1306,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         self.cb_log_level.setCurrentText(self._stored_conf.get("log_level", "INFO"))
         self.set_file_ver_info_text()
-        self._change_debug_options("set")
+        self.change_debug_options("set")
         self.le_runtime_tmpdir.setText(self._stored_conf.get("runtime_tmpdir", ""))
 
     def store_state_of_widgets(self):
@@ -1344,8 +1344,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         else:
             self._stored_conf["env_path"] = self.toolwin_env.path
         self._stored_conf["log_level"] = self.cb_log_level.currentText()
-        self._stored_conf["file_ver_info"] = self._file_ver_info_text()
-        self._stored_conf["debug_options"] = self._change_debug_options("get")
+        self._stored_conf["file_ver_info"] = self.file_ver_info_text()
+        self._stored_conf["debug_options"] = self.change_debug_options("get")
         self._stored_conf["runtime_tmpdir"] = self.le_runtime_tmpdir.text()
 
     def _abs_rel_groups(self, starting_point):
@@ -1360,7 +1360,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             abs_rel_path_groups.append((abs_path, rel_path))
         return abs_rel_path_groups
 
-    def _change_debug_options(self, opt):
+    def change_debug_options(self, opt):
         """ 从关于"以调试模式打包"的控件获取状态或设置这些控件的状态。"""
         if opt == "get":
             return {
@@ -1374,7 +1374,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.cb_db_bootloader.setChecked(db.get("bootloader", False))
             self.cb_db_noarchive.setChecked(db.get("noarchive", False))
 
-    def _file_ver_info_text(self):
+    def file_ver_info_text(self):
         file_vers = tuple(int(x.text() or 0) for x in self.le_group_vers[:4])
         prod_vers = tuple(int(x.text() or 0) for x in self.le_group_vers[4:])
         return {
@@ -1403,7 +1403,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.le_legal_trademarks.setText(info.get("$LegalTrademarks$", ""))
         self.le_original_filename.setText(info.get("$OriginalFilename$", ""))
 
-    def _set_pyi_info(self, dont_set_enable=False):
+    def set_pyi_info(self, dont_set_enable=False):
         # 此处不能用 self.pyi_tool，因为 self.pyi_tool 总有一个空实例
         if self.toolwin_env:
             if not dont_set_enable:
@@ -1438,7 +1438,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         def do_reinstall_pyi():
             self.toolwin_env.uninstall("pyinstaller")
             self.toolwin_env.install("pyinstaller", upgrade=1)
-            self._set_pyi_info(dont_set_enable=True)
+            self.set_pyi_info(dont_set_enable=True)
 
         thread_reinstall = NewTask(target=do_reinstall_pyi)
         thread_reinstall.at_start(
@@ -1598,10 +1598,10 @@ class ChooseEnvWindow(Ui_choose_env, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self._connect_signal_slot()
+        self.connect_signals_slots()
         self._normal_size = self.size()
 
-    def _connect_signal_slot(self):
+    def connect_signals_slots(self):
         self.lw_env_list.pressed.connect(self.close)
 
     def pyenv_list_update(self):
@@ -1703,12 +1703,12 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         self.config = load_conf("dlpc")
         self.env_paths = None
         self.environments = None
-        self.connect_signal_slot()
+        self.connect_signals_slots()
         self.last_path = None
         self.download = list()
         self.repo = ThreadRepo(500)
 
-    def connect_signal_slot(self):
+    def connect_signals_slots(self):
         self.cb_use_index_url.clicked.connect(self.change_le_index_url)
         self.pb_load_from_text.clicked.connect(self.names_from_file)
         self.pb_save_as_text.clicked.connect(self.save_names_to_file)
