@@ -39,6 +39,7 @@ class Ui_check_imports(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.tw_missing_imports = QtWidgets.QTableWidget(check_imports)
         self.tw_missing_imports.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.tw_missing_imports.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.tw_missing_imports.setObjectName("tw_missing_imports")
         self.tw_missing_imports.setColumnCount(3)
         self.tw_missing_imports.setRowCount(0)
