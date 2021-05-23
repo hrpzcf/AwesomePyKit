@@ -36,6 +36,7 @@ from PyQt5.QtCore import (
     QRegExp,
     QSize,
     Qt,
+    pyqtSignal,
 )
 from PyQt5.QtGui import (
     QColor,
@@ -91,7 +92,7 @@ class MainInterface(Ui_main_interface, QMainWindow):
         else:
             role = NewMessageBox(
                 "警告",
-                "有任务尚未完成，请耐心等待...",
+                "有任务正在运行...",
                 QMessageBox.Warning,
                 (("accept", "强制退出"), ("reject", "取消")),
             ).exec_()
@@ -131,18 +132,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def _setup_other_widgets(self):
         self.tw_installed_info.setColumnWidth(0, 220)
-        self.tw_installed_info.horizontalHeader().setSectionResizeMode(
-            QHeaderView.Stretch
-        )
-        self.tw_installed_info.horizontalHeader().setSectionResizeMode(
-            0, QHeaderView.Interactive
-        )
-        self.tw_installed_info.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeToContents
-        )
-        self.tw_installed_info.horizontalHeader().setSectionResizeMode(
-            2, QHeaderView.ResizeToContents
-        )
+        horiz_head = self.tw_installed_info.horizontalHeader()
+        horiz_head.setSectionResizeMode(0, QHeaderView.Interactive)
+        horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        horiz_head.setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        horiz_head.setSectionResizeMode(3, QHeaderView.Stretch)
         self.loading_mov = QMovie(os.path.join(resources_path, "loading.gif"))
         self.loading_mov.setScaledSize(QSize(18, 18))
 
@@ -341,7 +335,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_search_envs = NewTask(search_env)
         thread_search_envs.at_start(
             self.lock_widgets,
-            lambda: self.show_loading("正在搜索PYTHON安装目录..."),
+            lambda: self.show_loading("正在搜索Python安装目录..."),
         )
         thread_search_envs.at_finish(
             self._clear_pkgs_table_widget,
@@ -394,7 +388,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         except Exception:
             return NewMessageBox(
                 "警告",
-                "目录添加失败，路径参数类型异常，请向开发者反馈，谢谢~",
+                "目录添加失败，路径参数类型异常，请向开发者反馈~",
                 QMessageBox.Warning,
             ).exec_()
         self.list_widget_pyenvs_update()
@@ -419,7 +413,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_get_outdated = NewTask(do_get_outdated)
         thread_get_outdated.at_start(
             self.lock_widgets,
-            lambda: self.show_loading("正在检查更新，请耐心等待..."),
+            lambda: self.show_loading("正在检查更新..."),
         )
         thread_get_outdated.at_finish(
             self.table_widget_pkgs_info_update,
@@ -492,7 +486,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_install_pkgs = NewTask(do_install)
         thread_install_pkgs.at_start(
             self.lock_widgets,
-            lambda: self.show_loading("正在安装，请稍候..."),
+            lambda: self.show_loading("正在安装..."),
         )
         thread_install_pkgs.at_finish(
             self.table_widget_pkgs_info_update,
@@ -533,7 +527,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_uninstall_pkgs = NewTask(do_uninstall)
         thread_uninstall_pkgs.at_start(
             self.lock_widgets,
-            lambda: self.show_loading("正在卸载，请稍候..."),
+            lambda: self.show_loading("正在卸载..."),
         )
         thread_uninstall_pkgs.at_finish(
             self.table_widget_pkgs_info_update,
@@ -576,7 +570,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.at_start(
             self.lock_widgets,
-            lambda: self.show_loading("正在升级，请稍候..."),
+            lambda: self.show_loading("正在升级..."),
         )
         thread_upgrade_pkgs.at_finish(
             self.table_widget_pkgs_info_update, self.hide_loading, self.release_widgets
@@ -620,7 +614,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.at_start(
             self.lock_widgets,
-            lambda: self.show_loading("正在升级，请稍候..."),
+            lambda: self.show_loading("正在升级..."),
         )
         thread_upgrade_pkgs.at_finish(
             self.table_widget_pkgs_info_update, self.hide_loading, self.release_widgets
@@ -898,7 +892,7 @@ class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
             except Exception:
                 continue
         else:
-            warn_box("没有找到PYTHON环境，请在'包管理器'中添加PYTHON目录。")
+            warn_box("没有找到Python环境，请在'包管理器'中添加Python目录。")
         return
 
     def _set_global_index_url(self):
@@ -912,13 +906,13 @@ class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
             env = self._get_cur_env()
             if not env:
                 warn_box = warn_box(
-                    "未找到PYTHON环境，全局镜像源启用失败。\n请在'包管理器'中添加PYTHON目录。",
+                    "未找到Python环境，全局镜像源启用失败。\n请在'包管理器'中添加Python目录。",
                 )
             elif env.set_global_index(url):
                 warn_box = NewMessageBox("提示", f"全局镜像源地址设置成功：\n{url}")
             else:
                 warn_box = warn_box(
-                    "未找到PYTHON环境，全局镜像源地址启用失败。\n请在'包管理器'中添加PYTHON目录。",
+                    "未找到Python环境，全局镜像源地址启用失败。\n请在'包管理器'中添加Python目录。",
                 )
         warn_box.exec_()
 
@@ -926,11 +920,11 @@ class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
         env = self._get_cur_env()
         if not env:
             self.le_effectiveurl.setText(
-                "未找到PYTHON环境，无法获取当前全局镜像源地址。",
+                "未找到Python环境，无法获取当前全局镜像源地址。",
             )
             return
         self.le_effectiveurl.setText(
-            env.get_global_index() or "无效的PYTHON环境或当前全局镜像源地址为空。"
+            env.get_global_index() or "无效的Python环境或当前全局镜像源地址为空。"
         )
 
 
@@ -1085,7 +1079,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if not self.toolwin_env:
             NewMessageBox(
                 "提示",
-                "还没有选择PYTHON环境！",
+                "还没有选择Python环境！",
                 QMessageBox.Warning,
             ).exec_()
             return
@@ -1430,7 +1424,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if not self.toolwin_env:
             NewMessageBox(
                 "提示",
-                "当前未选择任何PYTHON环境。",
+                "当前未选择任何Python环境。",
                 QMessageBox.Warning,
             ).exec_()
             return
@@ -1540,7 +1534,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if not self.pyi_tool.pyi_ready:
             NewMessageBox(
                 "提示",
-                "PYINSTALLER不可用，请将PYINSTALLER安装到所选环境。",
+                "PYINSTALLER不可用，请点击右上角'安装'按钮将PYINSTALLER安装到所选环境。",
                 QMessageBox.Warning,
             ).exec_()
             return
@@ -1565,7 +1559,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             return
         if NewMessageBox(
             "安装",
-            "确定将所有缺失模块安装至所选PYTHON环境中吗？",
+            "确定将所有缺失模块安装至所选Python环境中吗？",
             QMessageBox.Question,
             (("accept", "确定"), ("reject", "取消")),
         ).exec_():
@@ -1697,6 +1691,10 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
 
 
 class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
+    set_download_table = pyqtSignal(list)
+    download_completed = pyqtSignal(str)
+    download_status = pyqtSignal(int, str)
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1705,7 +1703,6 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         self.environments = None
         self.connect_signals_slots()
         self.last_path = None
-        self.download = list()
         self.repo = ThreadRepo(500)
 
     def connect_signals_slots(self):
@@ -1715,6 +1712,10 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         self.pb_save_to.clicked.connect(self.select_saved_dir)
         self.pb_clear_package_names.clicked.connect(self.pte_package_names.clear)
         self.pb_start_download.clicked.connect(self.start_download_package)
+        self.download_status.connect(win_downloading.status_changed)
+        self.set_download_table.connect(win_downloading.setup_table)
+        self.download_completed.connect(self.check_download)
+        self.pb_show_dl_list.clicked.connect(win_downloading.show)
 
     def change_le_index_url(self):
         self.le_index_url.setEnabled(self.cb_use_index_url.isChecked())
@@ -1829,16 +1830,55 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         self.le_index_url.setText(self.config.get("index_url", ""))
         self.le_index_url.setEnabled(use_index_url)
 
+    @staticmethod
+    def confirm_dest(dest):
+        # 保存位置未填写时
+        if not dest:
+            return True
+        if not os.path.exists(dest):
+            # 选择'否'或关闭窗口返回1，所以需要not取非
+            create_folder = not NewMessageBox(
+                "提示",
+                "保存目录不存在，是否创建目录？",
+                QMessageBox.Warning,
+                (("accept", "是"), ("reject", "否")),
+            ).exec_()
+            if create_folder:
+                try:
+                    os.makedirs(dest)
+                    return True
+                except Exception as e:
+                    NewMessageBox(
+                        "提示",
+                        f"保存目录创建失败：\n{e}。",
+                    ).exec_()
+                    return False
+            else:
+                return False
+        elif os.path.isfile(dest):
+            NewMessageBox(
+                "提示",
+                "该位置已存在同名的文件，请修改目录路径。",
+            ).exec_()
+            return False
+        return True
+
     def start_download_package(self):
         if not self.environments:
             return NewMessageBox(
                 "提示",
-                "当前没有任何Python环境，请到'包管理器'中自动或手动添加Python环境路径。",
+                "没有任何Python环境，请到'包管理器'中自动或手动添加Python环境路径。",
             ).exec_()
         self.store_config()
-        package_names = self.config.get("package_names", [])
-        if not package_names:
-            return NewMessageBox("提示", "下载项目为空。").exec_()
+        destination = self.config.get("save_to", "")
+        pkg_names = self.config.get("package_names", [])
+        if not self.confirm_dest(destination):
+            return
+        if not pkg_names:
+            return NewMessageBox(
+                "提示",
+                "没有需要下载的安装包。",
+            ).exec_()
         index = self.config.get("derived_from", 0)
         if index < 0 or index >= len(self.environments):
             index = 0
@@ -1847,42 +1887,48 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         if not env.env_path:
             return NewMessageBox(
                 "提示",
-                "不可用的Python环境，请检查是否环境已卸载。",
+                "无效的Python环境，请检查环境是否已卸载。",
             ).exec_()
-        configure = self.make_configure(package_names)
-        if not isinstance(configure, dict):
+        config = self.make_configure(pkg_names)
+        if not isinstance(config, dict):
             return
 
         def do_download():
-            self.download.clear()
-            try:
-                dest, retcode = env.download(*package_names, **configure)
-                if not retcode:
-                    dest = "找不到符合条件的Python包下载资源。"
-            except Exception as err:
-                return self.download.extend((str(err), False))
-            self.download.extend((dest, retcode))
+            saved_path = ""
+            self.set_download_table.emit(pkg_names)
+            for index, name in enumerate(pkg_names):
+                self.download_status.emit(index, "下载中...")
+                try:
+                    status = env.download(name, **config)
+                    if status[0]:
+                        self.download_status.emit(index, "下载完成")
+                    else:
+                        self.download_status.emit(index, "下载失败")
+                except Exception:
+                    status = False, ""
+                    self.download_status.emit(index, "下载失败")
+                if status[1]:
+                    saved_path = status[1]
+            self.download_completed.emit(saved_path)
 
         thread_download = NewTask(target=do_download)
         thread_download.at_start(lambda: self.pb_start_download.setEnabled(False))
         thread_download.at_finish(
-            self.check_download,
             lambda: self.pb_start_download.setEnabled(True),
         )
         thread_download.start()
         self.repo.put(thread_download, 0)
 
-    def check_download(self):
-        dest, code = self.download
-        if code:
+    def check_download(self, dest):
+        if not dest:
             return NewMessageBox(
                 "提示",
-                f"下载成功，保存位置：\n{dest}",
+                f"安装包全部下载失败!",
+                QMessageBox.Critical,
             ).exec_()
         return NewMessageBox(
-            "提示",
-            f"下载失败：\n{dest}",
-            QMessageBox.Critical,
+            "下载结束",
+            f"安装包保存位置：\n{dest}",
         ).exec_()
 
     def make_configure(self, names):
@@ -1965,6 +2011,52 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         return configure
 
 
+class ShowDownloadingWindow(Ui_downloading, QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self._setup_other_widgets()
+
+    def status_changed(self, index, status):
+        if index >= self.tw_downloading.rowCount():
+            return False
+        color_red = QColor(255, 0, 0)
+        color_green = QColor(0, 170, 0)
+        item = self.tw_downloading.item(index, 1)
+        if item is None:
+            item = QTableWidgetItem("等待下载")
+            self.tw_downloading.setItem(index, 1, item)
+        item.setText(status)
+        if status == "下载失败":
+            item.setForeground(color_red)
+        elif status == "下载完成":
+            item.setForeground(color_green)
+        return True
+
+    def clear_table(self):
+        self.tw_downloading.clearContents()
+        self.tw_downloading.setRowCount(0)
+
+    def setup_table(self, iterable):
+        color_gray = QColor(243, 243, 243)
+        self.clear_table()
+        self.tw_downloading.setRowCount(len(iterable))
+        for index, pkg_name in enumerate(iterable):
+            item1 = QTableWidgetItem(pkg_name)
+            item2 = QTableWidgetItem("等待下载")
+            if not index % 2:
+                item1.setBackground(color_gray)
+                item2.setBackground(color_gray)
+            self.tw_downloading.setItem(index, 0, item1)
+            self.tw_downloading.setItem(index, 1, item2)
+        return True
+
+    def _setup_other_widgets(self):
+        horiz_head = self.tw_downloading.horizontalHeader()
+        horiz_head.setSectionResizeMode(0, QHeaderView.Stretch)
+        horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+
+
 class NewMessageBox(QMessageBox):
     """
     只有一个按钮，点击按钮和直接关闭窗口都返回0(默认)
@@ -2024,6 +2116,7 @@ def main():
     global win_index_mgr
     global win_check_imp
     global win_dload_pkg
+    global win_downloading
     app_awesomepykit = QApplication(sys.argv)
     app_awesomepykit.setWindowIcon(QIcon(os.path.join(resources_path, "icon.ico")))
     win_ins_pkg = InstallPackagesWindow()
@@ -2032,6 +2125,7 @@ def main():
     win_check_imp = CheckImportsWindow()
     win_pyi_tool = PyinstallerToolWindow()
     win_index_mgr = IndexUrlManagerWindow()
+    win_downloading = ShowDownloadingWindow()
     win_dload_pkg = DownloadPackageWindow()
     win_main_interface = MainInterface()
     win_main_interface.show()

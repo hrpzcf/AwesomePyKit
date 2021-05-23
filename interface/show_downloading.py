@@ -14,6 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_downloading(object):
     def setupUi(self, downloading):
         downloading.setObjectName("downloading")
+        downloading.setWindowModality(QtCore.Qt.ApplicationModal)
         downloading.resize(350, 660)
         downloading.setMinimumSize(QtCore.QSize(350, 660))
         downloading.setMaximumSize(QtCore.QSize(350, 660))
@@ -21,7 +22,7 @@ class Ui_downloading(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.tw_downloading = QtWidgets.QTableWidget(downloading)
         self.tw_downloading.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.tw_downloading.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.tw_downloading.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.tw_downloading.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.tw_downloading.setCornerButtonEnabled(False)
         self.tw_downloading.setObjectName("tw_downloading")
