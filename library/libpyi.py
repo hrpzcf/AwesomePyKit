@@ -45,12 +45,12 @@ class PyiTool(QObject):
 
     @staticmethod
     def _check(py_path):
-        """ 检查给出的Python路径是否有效。"""
+        """检查给出的Python路径是否有效。"""
         return os.path.isfile(os.path.join(py_path, "python.exe"))
 
     @property
     def pyi_path(self):
-        """ 返回给出的Python路径中的pyinstaller可执行文件路径。"""
+        """返回给出的Python路径中的pyinstaller可执行文件路径。"""
         pyi_exec_path = os.path.join(self._py_path, "Scripts", "pyinstaller.exe")
         if not os.path.isfile(pyi_exec_path):
             return ""
@@ -58,7 +58,7 @@ class PyiTool(QObject):
 
     @property
     def pyi_ready(self):
-        """ 给出的Python目录中安装了pyinstaller返回True,否则返回False。"""
+        """给出的Python目录中安装了pyinstaller返回True,否则返回False。"""
         return bool(self.pyi_path)
 
     def initialize(self, py_path, cwd):
@@ -113,7 +113,7 @@ class PyiTool(QObject):
         self.run_time.emit(0)
 
     def execute_cmd(self):
-        """ 执行命令并读取输出流，通过信号发射字符串、返回码更新主界面面板。"""
+        """执行命令并读取输出流，通过信号发射字符串、返回码更新主界面面板。"""
         if self.pyi_ready and self._process:
             if self._log_level == "TRACE":
                 self._emit_split_time()
@@ -127,7 +127,7 @@ class PyiTool(QObject):
             self.completed.emit(-1)
 
     def prepare_cmd(self, cmd_dict=None):
-        """ 从cmd_dict添加PyInstaller命令选项。"""
+        """从cmd_dict添加PyInstaller命令选项。"""
         if cmd_dict is None:
             cmd_dict = {}
         self._log_level = cmd_dict.get("log_level", None)
