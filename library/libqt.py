@@ -42,9 +42,7 @@ class QLineEditMod(QLineEdit):
 
     def dropEvent(self, event):
         if not self._drag_temp:
-            self._drag_temp = os.path.realpath(
-                event.mimeData().urls()[0].toLocalFile()
-            )
+            self._drag_temp = os.path.realpath(event.mimeData().urls()[0].toLocalFile())
         if self._accept == "file" and os.path.isfile(self._drag_temp):
             self.setText(self._drag_temp)
         elif self._accept == "dir" and os.path.isdir(self._drag_temp):
@@ -112,19 +110,13 @@ class QTextEditMod(QTextEdit):
         if self._accept == "file":
             self.setText(
                 cur_text
-                + "\n".join(
-                    path for path in self._drag_temp if os.path.isfile(path)
-                )
+                + "\n".join(path for path in self._drag_temp if os.path.isfile(path))
             )
         elif self._accept == "dir":
             self.setText(
                 cur_text
-                + "\n".join(
-                    path for path in self._drag_temp if os.path.isdir(path)
-                )
+                + "\n".join(path for path in self._drag_temp if os.path.isdir(path))
             )
         else:
             self.setText("")
-        self.verticalScrollBar().setValue(
-            self.verticalScrollBar().maximumHeight()
-        )
+        self.verticalScrollBar().setValue(self.verticalScrollBar().maximumHeight())
