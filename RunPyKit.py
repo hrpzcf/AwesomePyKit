@@ -23,7 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 ################################################################################
-# Formatted with black 20.8b1.
+# Formatted with black 21.9b0
 ################################################################################
 
 import os
@@ -72,7 +72,7 @@ class MainInterface(Ui_main_interface, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle(f"AwesomePyKit - {VERSION}")
+        self.setWindowTitle(f"AwesPyKit - {VERSION}")
         self.connect_signals_slots()
 
     def connect_signals_slots(self):
@@ -1343,7 +1343,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self._stored_conf["runtime_tmpdir"] = self.le_runtime_tmpdir.text()
 
     def _abs_rel_groups(self, starting_point):
-        """ 获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
+        """获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
         other_data_local_paths = self.te_other_data.local_paths
         abs_rel_path_groups = []
         for abs_path in other_data_local_paths:
@@ -1355,7 +1355,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         return abs_rel_path_groups
 
     def change_debug_options(self, opt):
-        """ 从关于"以调试模式打包"的控件获取状态或设置这些控件的状态。"""
+        """从关于"以调试模式打包"的控件获取状态或设置这些控件的状态。"""
         if opt == "get":
             return {
                 "imports": self.cb_db_imports.isChecked(),
