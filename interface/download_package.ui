@@ -31,7 +31,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>模块安装包下载器(测试)</string>
+   <string>模块安装包下载器</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_7">
    <item>

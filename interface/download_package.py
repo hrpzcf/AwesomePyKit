@@ -275,7 +275,7 @@ class Ui_download_package(object):
 
     def retranslateUi(self, download_package):
         _translate = QtCore.QCoreApplication.translate
-        download_package.setWindowTitle(_translate("download_package", "模块安装包下载器(测试)"))
+        download_package.setWindowTitle(_translate("download_package", "模块安装包下载器"))
         self.label.setToolTip(_translate("download_package", "需要下载的模块名称，每行一个名称。"))
         self.label.setText(_translate("download_package", "名称："))
         self.pte_package_names.setToolTip(_translate("download_package", "需要下载的模块名称，每行一个名称。"))
