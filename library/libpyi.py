@@ -43,11 +43,6 @@ class PyiTool(QObject):
         if os.path.isdir(path):
             self._cwd = path
 
-    @staticmethod
-    def _check(py_path):
-        """检查给出的Python路径是否有效。"""
-        return os.path.isfile(os.path.join(py_path, "python.exe"))
-
     @property
     def pyi_path(self):
         """返回给出的Python路径中的pyinstaller可执行文件路径。"""
@@ -62,10 +57,8 @@ class PyiTool(QObject):
         return bool(self.pyi_path)
 
     def initialize(self, py_path, cwd):
-        if self._check(py_path):
-            self._py_path = py_path
-        else:
-            self._py_path = ""
+        # 信任传入的py_path
+        self._py_path = py_path
         self._cwd = cwd
         self._process = None
         self._commands = [self.pyi_path]
