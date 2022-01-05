@@ -319,12 +319,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         else:
             self.tw_installed_info.clearSelection()
 
+
     def auto_search_env(self):
         def search_env():
             for _path in all_py_paths():
-                p = os.path.dirname(_path)
-                if os.path.isfile(os.path.join(p, "pyvenv.cfg")):
-                    _path = p
+                _path = _check_venv(_path)
                 if _path.lower() in path_list_lower:
                     continue
                 try:
@@ -377,7 +376,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 "无效的Python目录路径！",
                 QMessageBox.Warning,
             ).exec_()
-        _path = os.path.normpath(_path)
+        _path = _check_venv(os.path.normpath(os.path.abspath(_path)))
         if _path.lower() in [p.lower() for p in self.path_list]:
             return NewMessageBox(
                 "警告",
@@ -2109,6 +2108,14 @@ class NewInputDialog(QInputDialog):
 
     def get_text(self):
         return self.textValue(), self._confirm
+
+
+def _check_venv(_path):
+    """检查是否是venv创建的虚拟Python环境并返回相应路径"""
+    p = os.path.dirname(_path)
+    if os.path.isfile(os.path.join(p, "pyvenv.cfg")):
+        return p
+    return _path
 
 
 def main():
