@@ -123,7 +123,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self._setup_other_widgets()
         self.connect_signals_slots()
         self.env_list = get_pyenv_list(load_conf("pths"))
-        self.path_list = [env.path for env in self.env_list]
+        self.path_list = [env.env_path for env in self.env_list]
         self.cur_pkgs_info = {}
         self._reverseds = [True, True, True, True]
         self.selected_env_index = 0
@@ -329,7 +329,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 except Exception:
                     continue
                 self.env_list.append(env)
-                self.path_list.append(env.path)
+                self.path_list.append(env.env_path)
 
         path_list_lower = [p.lower() for p in self.path_list]
         thread_search_envs = NewTask(search_env)
@@ -384,7 +384,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         try:
             env = PyEnv(_path)
             self.env_list.append(env)
-            self.path_list.append(env.path)
+            self.path_list.append(env.env_path)
         except Exception:
             return NewMessageBox(
                 "警告",
@@ -1102,7 +1102,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
         def get_missing_imps():
             imp_missings = ImportInspector(
-                self.toolwin_env.path, project_root
+                self.toolwin_env.env_path, project_root
             ).missing_items()
             missings.append(tuple(imp_missings))
 
@@ -1245,7 +1245,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.lb_py_info.setText(self.toolwin_env.py_info())
         self.pyi_tool.initialize(
             self.toolwin_env.env_path,
-            self._stored_conf.get("program_entry", os.getcwd()),
+            self._stored_conf.get("project_root", os.getcwd()),
         )
         self.set_pyi_info()
 
@@ -1336,7 +1336,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if self.toolwin_env is None:
             self._stored_conf["env_path"] = ""
         else:
-            self._stored_conf["env_path"] = self.toolwin_env.path
+            self._stored_conf["env_path"] = self.toolwin_env.env_path
         self._stored_conf["log_level"] = self.cb_log_level.currentText()
         self._stored_conf["file_ver_info"] = self.file_ver_info_text()
         self._stored_conf["debug_options"] = self.change_debug_options("get")
