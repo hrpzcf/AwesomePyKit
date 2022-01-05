@@ -322,6 +322,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def auto_search_env(self):
         def search_env():
             for _path in all_py_paths():
+                p = os.path.dirname(_path)
+                if os.path.isfile(os.path.join(p, "pyvenv.cfg")):
+                    _path = p
                 if _path.lower() in path_list_lower:
                     continue
                 try:
