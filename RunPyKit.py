@@ -31,7 +31,12 @@ import sys
 from platform import machine, platform
 
 from chardet import detect
-from fastpip.fastpip import parse_package_names
+
+try:
+    from fastpip import parse_package_names
+except:
+    from fastpip.fastpip import parse_package_names
+
 from PyQt5.QtCore import (
     QRegExp,
     QSize,
@@ -318,7 +323,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.tw_installed_info.selectAll()
         else:
             self.tw_installed_info.clearSelection()
-
 
     def auto_search_env(self):
         def search_env():
