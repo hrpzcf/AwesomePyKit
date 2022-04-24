@@ -37,19 +37,8 @@ try:
 except:
     from fastpip.fastpip import parse_package_names
 
-from PyQt5.QtCore import (
-    QRegExp,
-    QSize,
-    Qt,
-    pyqtSignal,
-)
-from PyQt5.QtGui import (
-    QColor,
-    QFont,
-    QIcon,
-    QMovie,
-    QRegExpValidator,
-)
+from PyQt5.QtCore import QRegExp, QSize, Qt, pyqtSignal
+from PyQt5.QtGui import QColor, QFont, QIcon, QMovie, QRegExpValidator
 from PyQt5.QtWidgets import (
     QApplication,
     QFileDialog,
@@ -579,7 +568,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             lambda: self.show_loading("正在升级..."),
         )
         thread_upgrade_pkgs.at_finish(
-            self.table_widget_pkgs_info_update, self.hide_loading, self.release_widgets
+            self.table_widget_pkgs_info_update,
+            self.hide_loading,
+            self.release_widgets,
         )
         thread_upgrade_pkgs.start()
         self.repo.put(thread_upgrade_pkgs, 0)
@@ -623,7 +614,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             lambda: self.show_loading("正在升级..."),
         )
         thread_upgrade_pkgs.at_finish(
-            self.table_widget_pkgs_info_update, self.hide_loading, self.release_widgets
+            self.table_widget_pkgs_info_update,
+            self.hide_loading,
+            self.release_widgets,
         )
         thread_upgrade_pkgs.start()
         self.repo.put(thread_upgrade_pkgs, 0)
@@ -1671,6 +1664,7 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         missing_data, *_ = missing_data
         self.all_missing_modules = set()
         for *_, m in missing_data:
+            # BUG Python环境在项目内时出错
             self.all_missing_modules.update(m)
         self.tw_missing_imports.clearContents()
         self.tw_missing_imports.setRowCount(len(missing_data))
@@ -2122,15 +2116,7 @@ def _check_venv(_path):
     return _path
 
 
-def main():
-    global win_ins_pkg
-    global win_package_mgr
-    global win_chenviron
-    global win_pyi_tool
-    global win_index_mgr
-    global win_check_imp
-    global win_dload_pkg
-    global win_downloading
+if __name__ == "__main__":
     app_awesomepykit = QApplication(sys.argv)
     app_awesomepykit.setWindowIcon(QIcon(os.path.join(resources_path, "icon.ico")))
     win_ins_pkg = InstallPackagesWindow()
@@ -2144,7 +2130,3 @@ def main():
     win_main_interface = MainInterface()
     win_main_interface.show()
     sys.exit(app_awesomepykit.exec_())
-
-
-if __name__ == "__main__":
-    main()
