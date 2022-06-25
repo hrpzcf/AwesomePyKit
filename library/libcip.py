@@ -43,7 +43,7 @@ class ImportInspector:
 
     def __init__(self, python_dir, project_root):
         self._root = project_root
-        self._imports = PyEnv(python_dir).imports()
+        self._imports = PyEnv(python_dir).names_for_import()
         self._imports.extend(self.project_imports())
 
     def gen_missing_items(self):
