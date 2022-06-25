@@ -23,7 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 ################################################################################
-# Formatted with black 21.9b0
+# Formatted with black
 ################################################################################
 
 import os
@@ -1102,7 +1102,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         def get_missing_imps():
             imp_missings = ImportInspector(
                 self.toolwin_env.env_path, project_root
-            ).missing_items()
+            ).gen_missing_items()
             missings.append(tuple(imp_missings))
 
         thread_check_imp = NewTask(get_missing_imps)
@@ -1658,13 +1658,12 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         super().show()
 
     def checkimp_table_update(self, missing_data):
-        # missing_data: ((filepath, {imps...}, {missings...})...)
+        # missing_data: [(filepath, {imps...}, {missings...})...]
         if not missing_data:
             return
         missing_data, *_ = missing_data
         self.all_missing_modules = set()
         for *_, m in missing_data:
-            # BUG Python环境在项目内时出错
             self.all_missing_modules.update(m)
         self.tw_missing_imports.clearContents()
         self.tw_missing_imports.setRowCount(len(missing_data))

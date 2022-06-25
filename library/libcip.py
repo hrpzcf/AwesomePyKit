@@ -10,31 +10,32 @@ from chardet.universaldetector import UniversalDetector
 from .libm import PyEnv
 
 
-def file_encodings(project_root):
+def det_files_coding(project_root):
     pattern = re.compile(r"^.+\.py[w]?$")
-    path_encoding_groups = []
+    path_coding_groups = []
     for root, _, files in os.walk(project_root):
         for name in files:
             if not pattern.match(name):
                 continue
-            path_encoding_groups.append(os.path.join(root, name))
-    encoding_detector = UniversalDetector()
-    for index, file_path in enumerate(path_encoding_groups):
-        encoding_detector.reset()
+            path_coding_groups.append(os.path.join(root, name))
+    coding_detector = UniversalDetector()
+    for index, file_path in enumerate(path_coding_groups):
+        coding_detector.reset()
         try:
             with open(file_path, "rb") as sf:
                 for line in sf:
-                    encoding_detector.feed(line)
-                    if encoding_detector.done:
+                    coding_detector.feed(line)
+                    if coding_detector.done:
                         break
-            encoding_detector.close()
-            path_encoding_groups[index] = (
-                file_path,
-                encoding_detector.result["encoding"],
-            )
+            coding_detector.close()
+            if coding_detector.result["confidence"] < 0.9:
+                coding = "utf-8"
+            else:
+                coding = coding_detector.result["encoding"]
+            path_coding_groups[index] = (file_path, coding)
         except Exception:
-            path_encoding_groups[index] = file_path, None
-    return path_encoding_groups
+            path_coding_groups[index] = file_path, None
+    return path_coding_groups
 
 
 class ImportInspector:
@@ -45,12 +46,12 @@ class ImportInspector:
         self._imports = PyEnv(python_dir).imports()
         self._imports.extend(self.project_imports())
 
-    def missing_items(self):
+    def gen_missing_items(self):
         """
         返回给定Python环境中，给定目录内脚本导入但环境未安装的模块集合。
         返回值类型：(文件路径, {文件中导入的模块}, {环境中未安装的模块})。
         """
-        groups = file_encodings(self._root)
+        groups = det_files_coding(self._root)
         if groups:
             for _path, encoding in groups:
                 if encoding is None:
@@ -61,9 +62,9 @@ class ImportInspector:
                     imps, missing = self.missing_imports(string)
                     yield _path, imps, missing
                 except Exception:
-                    yield _path, None, None
+                    yield _path, set(), set()
         else:
-            yield None, None, None
+            yield None, set(), set()
 
     def missing_imports(self, string):
         """
