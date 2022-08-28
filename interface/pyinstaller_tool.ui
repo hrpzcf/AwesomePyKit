@@ -22,7 +22,7 @@
    <string>程序打包工具</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_19">
+   <layout class="QVBoxLayout" name="verticalLayout_18">
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -961,125 +961,127 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout_20">
+      <widget class="QWidget" name="">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,9">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_16">
+            <property name="toolTip">
+             <string>所选PYTHON环境下的PYINSTALLER的版本信息。</string>
+            </property>
+            <property name="text">
+             <string>Pyi版本</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="9,0">
             <item>
-             <widget class="QLabel" name="label_16">
+             <widget class="QLabel" name="lb_pyi_info">
               <property name="toolTip">
                <string>所选PYTHON环境下的PYINSTALLER的版本信息。</string>
-              </property>
-              <property name="text">
-               <string>Pyi版本：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_6">
-              <property name="toolTip">
-               <string>选择在不同PYTHON环境中将程序打包成可执行文件。
-如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机PYTHON环境。
-选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
-              </property>
-              <property name="text">
-               <string>Py信息：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_15">
-              <property name="toolTip">
-               <string>操作系统的版本信息。</string>
-              </property>
-              <property name="text">
-               <string>系统信息：</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_18">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="9,0">
-              <item>
-               <widget class="QLabel" name="lb_pyi_info">
-                <property name="toolTip">
-                 <string>所选PYTHON环境下的PYINSTALLER的版本信息。</string>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::Box</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pb_reinstall_pyi">
-                <property name="toolTip">
-                 <string>在当前选择的PYTHON环境中安装或重新安装PYINSTALLER。</string>
-                </property>
-                <property name="text">
-                 <string>安装</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout" stretch="9,0">
-              <item>
-               <widget class="QLabel" name="lb_py_info">
-                <property name="toolTip">
-                 <string>当前选择的PYTHON环境的版本信息。
-选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。</string>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::Box</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pb_select_py_env">
-                <property name="toolTip">
-                 <string>选择在不同PYTHON环境中将程序打包成可执行文件。
-如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机PYTHON环境。
-选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
-                </property>
-                <property name="text">
-                 <string>选择环境</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QLabel" name="lb_platform_info">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>29</height>
-               </size>
-              </property>
-              <property name="toolTip">
-               <string>操作系统的版本信息。</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QPushButton" name="pb_reinstall_pyi">
+              <property name="toolTip">
+               <string>在当前选择的PYTHON环境中安装或重新安装PYINSTALLER。</string>
+              </property>
+              <property name="text">
+               <string>安装</string>
+              </property>
+             </widget>
+            </item>
            </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="toolTip">
+             <string>选择在不同PYTHON环境中将程序打包成可执行文件。
+如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机PYTHON环境。
+选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
+            </property>
+            <property name="text">
+             <string>Py版本</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout" stretch="9,0">
+            <item>
+             <widget class="QLabel" name="lb_py_info">
+              <property name="toolTip">
+               <string>当前选择的PYTHON环境的版本信息。
+选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。</string>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_select_py_env">
+              <property name="toolTip">
+               <string>选择在不同PYTHON环境中将程序打包成可执行文件。
+如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机PYTHON环境。
+选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
+              </property>
+              <property name="text">
+               <string>选择环境</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="toolTip">
+             <string>操作系统的版本信息。</string>
+            </property>
+            <property name="text">
+             <string>系统版本</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="lb_platform_info">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>操作系统的版本信息。</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Box</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="cb_prioritize_use_virtualenv">
+            <property name="text">
+             <string>优先使用项目目录下的 Python 虚拟环境</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -1289,7 +1291,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,2">
           <property name="spacing">
-           <number>0</number>
+           <number>4</number>
           </property>
           <item>
            <widget class="QPushButton" name="pb_check_imports">

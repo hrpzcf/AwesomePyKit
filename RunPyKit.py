@@ -1301,6 +1301,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.set_file_ver_info_text()
         self.change_debug_options("set")
         self.le_runtime_tmpdir.setText(self._stored_conf.get("runtime_tmpdir", ""))
+        self.cb_prioritize_use_virtualenv.setChecked(
+            self._stored_conf.get("prioritize_use_virtualenv", False)
+        )
 
     def store_state_of_widgets(self):
         self._stored_conf["program_entry"] = self.le_program_entry.local_path
@@ -1340,6 +1343,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self._stored_conf["file_ver_info"] = self.file_ver_info_text()
         self._stored_conf["debug_options"] = self.change_debug_options("get")
         self._stored_conf["runtime_tmpdir"] = self.le_runtime_tmpdir.text()
+        self._stored_conf[
+            "prioritize_use_virtualenv"
+        ] = self.cb_prioritize_use_virtualenv.isChecked()
 
     def _abs_rel_groups(self, starting_point):
         """获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
