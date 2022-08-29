@@ -961,7 +961,7 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -1077,7 +1077,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QCheckBox" name="cb_prioritize_use_virtualenv">
+           <widget class="QCheckBox" name="cb_prioritize_venv">
             <property name="text">
              <string>优先使用项目目录下的 Python 虚拟环境</string>
             </property>
