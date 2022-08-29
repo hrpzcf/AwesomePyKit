@@ -48,23 +48,25 @@ class ImportInspector:
 
     def gen_missing_items(self):
         """
-        返回给定Python环境中，给定目录内脚本导入但环境未安装的模块集合。
-        返回值类型：(文件路径, {文件中导入的模块}, {环境中未安装的模块})。
+        返回给定 Python 环境中，给定目录内脚本导入但环境未安装的模块集合
+        返回值类型：List[(文件路径, {文件中导入的模块}, {环境中未安装的模块})...]
         """
+        results = list()
         groups = det_files_coding(self._root)
         if groups:
             for _path, encoding in groups:
                 if encoding is None:
                     continue
                 try:
-                    with open(_path, encoding=encoding) as sf:
-                        string = sf.read()
-                    imps, missing = self.missing_imports(string)
-                    yield _path, imps, missing
+                    with open(_path, encoding=encoding) as f:
+                        string = f.read()
+                    imps, miss = self.missing_imports(string)
+                    results.append((_path, imps, miss)) 
                 except Exception:
-                    yield _path, set(), set()
+                    results.append((_path, set(), set())) 
         else:
-            yield None, set(), set()
+            results.append((None, set(), set()))
+        return results
 
     def missing_imports(self, string):
         """
