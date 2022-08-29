@@ -10,10 +10,21 @@ from chardet.universaldetector import UniversalDetector
 from .libm import PyEnv
 
 
-def det_files_coding(project_root):
+def to_be_excluded(_dirpath: str, exclude_dirs):
+    for p in exclude_dirs:
+        if not p:
+            continue
+        if _dirpath.lower().startswith(p.lower()):
+            return True
+    return False
+
+
+def det_files_coding(project_root, exclude_dirs):
     pattern = re.compile(r"^.+\.py[w]?$")
     path_coding_groups = []
     for root, _, files in os.walk(project_root):
+        if to_be_excluded(root, exclude_dirs):
+            continue
         for name in files:
             if not pattern.match(name):
                 continue
@@ -41,8 +52,11 @@ def det_files_coding(project_root):
 class ImportInspector:
     match_all = re.compile(r"^[^#\n]*?import [_0-9a-zA-Z .,;(]+$", re.M)
 
-    def __init__(self, python_dir, project_root):
+    def __init__(self, python_dir, project_root, excludes=None):
         self._root = project_root
+        self._excludes = list()
+        if isinstance(excludes, (list, tuple)):
+            self._excludes.extend(excludes)
         self._imports = PyEnv(python_dir).names_for_import()
         self._imports.extend(self.project_imports())
 
@@ -52,18 +66,18 @@ class ImportInspector:
         返回值类型：List[(文件路径, {文件中导入的模块}, {环境中未安装的模块})...]
         """
         results = list()
-        groups = det_files_coding(self._root)
+        groups = det_files_coding(self._root, self._excludes)
         if groups:
             for _path, encoding in groups:
                 if encoding is None:
                     continue
                 try:
                     with open(_path, encoding=encoding) as f:
-                        string = f.read()
-                    imps, miss = self.missing_imports(string)
-                    results.append((_path, imps, miss)) 
+                        string_from_file = f.read()
+                    imps, miss = self.missing_imports(string_from_file)
+                    results.append((_path, imps, miss))
                 except Exception:
-                    results.append((_path, set(), set())) 
+                    results.append((_path, set(), set()))
         else:
             results.append((None, set(), set()))
         return results
@@ -124,6 +138,8 @@ class ImportInspector:
         project_imports = set()
         m_pattern = re.compile(r"^([0-9a-zA-Z_]+).*(?<!_d)\.py[cdw]?$")
         for root, _, files in os.walk(self._root):
+            if to_be_excluded(root, self._excludes):
+                continue
             if "__init__.py" in files:
                 project_imports.add(os.path.basename(root))
             for file_name in files:
