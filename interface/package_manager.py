@@ -15,7 +15,7 @@ class Ui_package_manager(object):
     def setupUi(self, package_manager):
         package_manager.setObjectName("package_manager")
         package_manager.setWindowModality(QtCore.Qt.ApplicationModal)
-        package_manager.resize(1016, 697)
+        package_manager.resize(780, 580)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         package_manager.setFont(font)
