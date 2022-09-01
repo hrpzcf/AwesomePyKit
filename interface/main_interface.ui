@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
-    <height>350</height>
+    <width>260</width>
+    <height>320</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>420</width>
-    <height>350</height>
+    <width>260</width>
+    <height>320</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>420</width>
-    <height>350</height>
+    <width>260</width>
+    <height>320</height>
    </size>
   </property>
   <property name="font">
@@ -108,8 +108,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>420</width>
-     <height>29</height>
+     <width>260</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="layoutDirection">
@@ -128,9 +128,7 @@
     <string>功能说明</string>
    </property>
    <property name="font">
-    <font>
-     <family>Microsoft YaHei UI</family>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="action_about">
@@ -138,9 +136,7 @@
     <string>关于软件</string>
    </property>
    <property name="font">
-    <font>
-     <family>Microsoft YaHei UI</family>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="contribution">
