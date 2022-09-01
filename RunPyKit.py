@@ -67,10 +67,10 @@ class MainInterface(Ui_main_interface, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle(f"AwesPyKit - {VERSION}")
-        self.connect_signals_slots()
+        self.setWindowTitle(f"AwesPyKit")
+        self.signal_slot_connection()
 
-    def connect_signals_slots(self):
+    def signal_slot_connection(self):
         self.action_about.triggered.connect(self._show_about)
         self.pb_pkg_mgr.clicked.connect(win_package_mgr.show)
         self.pb_pyi_tool.clicked.connect(win_pyi_tool.show)
@@ -116,7 +116,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self._setup_other_widgets()
-        self.connect_signals_slots()
+        self.signal_slot_connection()
         self.env_list = get_pyenv_list(load_conf("pths"))
         self.path_list = [env.env_path for env in self.env_list]
         self.cur_pkgs_info = {}
@@ -181,7 +181,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.lb_loading_gif.clear()
         self.lb_loading_tip.clear()
 
-    def connect_signals_slots(self):
+    def signal_slot_connection(self):
         self.btn_autosearch.clicked.connect(self.auto_search_env)
         self.btn_delselected.clicked.connect(self.del_selected_py_env)
         self.btn_addmanully.clicked.connect(self.add_py_path_manully)
@@ -476,7 +476,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             ):
                 item = self.cur_pkgs_info.setdefault(name, ["", "", ""])
                 if not item[0]:
-                    item[0] = "- N/A -"
+                    item[0] = "N/A"
                 item[2] = "安装成功" if code else "安装失败"
 
         thread_install_pkgs = NewTask(do_install)
@@ -517,7 +517,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             for pkg_name, code in loop_uninstall(cur_env, pkg_names):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
                 if code:
-                    item[0] = "- N/A -"
+                    item[0] = "N/A"
                 item[2] = "卸载成功" if code else "卸载失败"
 
         thread_uninstall_pkgs = NewTask(do_uninstall)
@@ -674,7 +674,7 @@ class InstallPackagesWindow(Ui_install_package, QWidget, AskFilePath):
         self.conf_dict = load_conf("insp")
         self.last_path = self.conf_dict.get("last_path", ".")
         self.package_names = None
-        self.connect_signals_slots()
+        self.signal_slot_connection()
 
     def _setup_other_widgets(self):
         self.pte_package_names = QTextEditMod(
@@ -741,7 +741,7 @@ class InstallPackagesWindow(Ui_install_package, QWidget, AskFilePath):
         super().show()
         self.apply_default_conf()
 
-    def connect_signals_slots(self):
+    def signal_slot_connection(self):
         self.pb_do_install.clicked.connect(self.store_default_conf)
         self.pb_do_install.clicked.connect(self.close)
         self.pb_save_as_text.clicked.connect(self.save_package_names)
@@ -760,7 +760,7 @@ class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self._urls_dict = load_conf("urls")
-        self.connect_signals_slots()
+        self.signal_slot_connection()
         self._normal_size = self.size()
 
     def show(self):
@@ -800,7 +800,7 @@ class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
         if self.li_indexurls.count():
             self.li_indexurls.setCurrentRow(0)
 
-    def connect_signals_slots(self):
+    def signal_slot_connection(self):
         self.btn_clearle.clicked.connect(self._clear_line_edit)
         self.btn_saveurl.clicked.connect(self._save_index_urls)
         self.btn_delurl.clicked.connect(self._del_index_url)
@@ -964,7 +964,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.set_platform_info()
         self.pyi_running_mov = QMovie(os.path.join(resources_path, "loading.gif"))
         self.pyi_running_mov.setScaledSize(QSize(18, 18))
-        self.connect_signals_slots()
+        self.signal_slot_connection()
         self._normal_size = self.size()
         self._venv_creating_result = 1
 
@@ -1047,7 +1047,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             line_edit.setValidator(reg_exp_val2)
         self.le_runtime_tmpdir.setValidator(reg_exp_val1)
 
-    def connect_signals_slots(self):
+    def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.task_completion_tip)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
         self.pb_select_py_env.clicked.connect(win_chenviron.show)
@@ -1681,10 +1681,10 @@ class ChooseEnvWindow(Ui_choose_env, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.connect_signals_slots()
+        self.signal_slot_connection()
         self._normal_size = self.size()
 
-    def connect_signals_slots(self):
+    def signal_slot_connection(self):
         self.lw_env_list.pressed.connect(self.close)
 
     def pyenv_list_update(self):
@@ -1790,11 +1790,11 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         self.config = load_conf("dlpc")
         self.env_paths = None
         self.environments = None
-        self.connect_signals_slots()
+        self.signal_slot_connection()
         self.last_path = None
         self.repo = ThreadRepo(500)
 
-    def connect_signals_slots(self):
+    def signal_slot_connection(self):
         self.cb_use_index_url.clicked.connect(self.change_le_index_url)
         self.pb_load_from_text.clicked.connect(self.names_from_file)
         self.pb_save_as_text.clicked.connect(self.save_names_to_file)
