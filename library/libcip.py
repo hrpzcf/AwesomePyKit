@@ -11,10 +11,11 @@ from .libm import PyEnv
 
 
 def to_be_excluded(_dirpath: str, exclude_dirs):
+    _dirpath = _dirpath.lower()
     for p in exclude_dirs:
         if not p:
             continue
-        if _dirpath.lower().startswith(p.lower()):
+        if _dirpath.startswith(p.lower()):
             return True
     return False
 
