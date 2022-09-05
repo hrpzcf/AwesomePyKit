@@ -1098,7 +1098,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
             return
-        project_root = self._stored_conf.get("project_root", None)
+        project_root = self._stored_conf.get("project_root", "")
         if not project_root:
             NewMessageBox(
                 "提示",
@@ -1114,12 +1114,15 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             ).exec_()
             return
         missings = list()
+        self.pyi_tool.initialize(environ.env_path, project_root)
+        if not self.pyi_tool.pyi_ready:
+            missings.append(("打包功能核心模块", {}, {"pyinstaller"}))
 
         def get_missing_imps():
             imp_missings = ImportInspector(
                 environ.env_path, project_root, [self.toolwin_venv.env_path]
             ).gen_missing_items()
-            missings.append(tuple(imp_missings))
+            missings.extend(imp_missings) 
 
         thread_check_imp = NewTask(get_missing_imps)
         thread_check_imp.at_start(
@@ -1458,7 +1461,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_reinstall = NewTask(target=do_reinstall_pyi)
         thread_reinstall.at_start(
             self.lock_widgets,
-            lambda: self.show_running("正在安装PYINSTALLER..."),
+            lambda: self.show_running("正在安装 Pyinstaller..."),
         )
         thread_reinstall.at_finish(
             self.hide_running,
@@ -1617,9 +1620,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             NewMessageBox(
                 "Pyinstaller 不可用",
                 "请点击右上角'选择环境'并点击'安装'按钮将 Pyinstaller 安装到所选主环境。\n"
-                "如果选择环境列表没有可选项，请先到'包管理器'界面添加Python环境。\n"
-                "如果勾选了'优先使用项目目录下的虚拟环境'，则请到项目目录下以'venv_'开头的目录"
-                "的'Scripts'目录内手动使用 pip 安装 Pyinstaller 等相关模块。",
+                "如果选择环境列表没有可选项，请先到'包管理器'界面添加 Python 环境。\n"
+                "如果勾选了'优先使用项目目录下的虚拟环境'，则请点击'模块检测'按钮检测环境中缺失的模块并点击'一键安装'。",
                 QMessageBox.Warning,
             ).exec_()
             return
@@ -1751,15 +1753,14 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         # missing_data: [(filepath, {imps...}, {missings...})...]
         if not missing_data:
             return
-        missing_data, *_ = missing_data
         self.all_missing_modules = set()
         for *_, m in missing_data:
             self.all_missing_modules.update(m)
         self.tw_missing_imports.clearContents()
         self.tw_missing_imports.setRowCount(len(missing_data))
         for rowind, value in enumerate(missing_data):
-            # value[0]即filepath为None，按照ImportInspector类
-            # missing_items特点，可知项目内没有可以打开的文件，直接中断
+            # value[0] 即 filepath 为 None，按照 ImportInspector 类
+            # missing_items 特点，可知项目内没有可以打开的文件，直接中断
             if value[0] is None:
                 break
             item0 = QTableWidgetItem(os.path.basename(value[0]))
