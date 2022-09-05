@@ -84,8 +84,8 @@ class ImportInspector:
 
     def missing_imports(self, string):
         """
-        查找环境中未安装但string中需要导入的模块。
-        pre3为最终处理后得到的string中所有导入的模块列表。
+        查找环境中未安装但 string 中需要导入的模块。
+        final_res 为最终处理后得到的 string 中所有导入的模块列表。
         """
         final_res, processed_2, processed_1 = (
             set(),
