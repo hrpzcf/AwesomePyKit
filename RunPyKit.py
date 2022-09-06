@@ -53,6 +53,7 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
+from common.pkgsmapping import importable_published
 from information import VERSION
 from interface import *
 from library import *
@@ -91,9 +92,10 @@ class MainInterface(Ui_main_interface, QMainWindow):
                 QMessageBox.Warning,
                 (("accept", "强制退出"), ("reject", "取消")),
             ).exec_()
+            # BUG 程序打包工具创建虚拟环境过程中强行退出造成卡死
             if role == 0:
-                win_package_mgr.repo.kill_all()
                 win_pyi_tool.repo.kill_all()
+                win_package_mgr.repo.kill_all()
                 event.accept()
             else:
                 event.ignore()
@@ -1653,7 +1655,13 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             environ = self.toolwin_pyenv
 
         def install_pkgs():
+            names_for_install = set()
             for name in missings:
+                if name not in importable_published:
+                    names_for_install.add(name)
+                else:
+                    names_for_install.add(importable_published[name])
+            for name in names_for_install:
                 environ.install(name)
 
         thread_install_missings = NewTask(install_pkgs)
