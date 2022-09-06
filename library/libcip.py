@@ -30,10 +30,13 @@ class TreeVisit(ast.NodeVisitor):
     def visit_Call(self, node):
         if isinstance(node.func, ast.Name):
             if node.func.id == "__import__":
-                if isinstance(node.args[0], ast.Str):
-                    self.__result.add(self.split(node.args[0].s))
-                elif isinstance(node.args[0], ast.Constant):
-                    self.__result.add(self.split(node.args[0].value))
+                self.add_call_node_args0(node.args[0])
+        elif isinstance(node.func, ast.Attribute):
+            attr = node.func.attr
+            name = node.func.value
+            if isinstance(name, ast.Name) and name.id == "importlib":
+                if attr == "__import__" or attr == "import_module":
+                    self.add_call_node_args0(node.args[0])
         self.generic_visit(node)
 
     def getresult(self):
@@ -42,6 +45,12 @@ class TreeVisit(ast.NodeVisitor):
     @staticmethod
     def split(string: str):
         return string.split(".", 1)[0]
+
+    def add_call_node_args0(self, args0):
+        if isinstance(args0, ast.Str):
+            self.__result.add(self.split(args0.s))
+        elif isinstance(args0, ast.Constant):
+            self.__result.add(self.split(args0.value))
 
 
 def to_be_excluded(_dirpath: str, exclude_dirs):
