@@ -171,7 +171,7 @@ def get_index_url(pyenv):
 
 
 def check_py_path(py_dir_path):
-    return os.path.isfile(os.path.join(py_dir_path, "python.exe"))
+    return PyEnv(py_dir_path).env_path != ""
 
 
 def clean_py_paths(paths):
