@@ -191,6 +191,8 @@ class NewTask(QThread):
         super().__init__()
         self._args = args
         self._target = target
+        self._at_start = list()
+        self._at_finish = list()
 
     def run(self):
         self._target(*self._args)
@@ -202,13 +204,19 @@ class NewTask(QThread):
 
     def at_start(self, *callable_objs):
         for cab in callable_objs:
-            if callable(cab):
-                self.started.connect(cab)
+            self.started.connect(cab)
+        self._at_start.extend(callable_objs)
 
     def at_finish(self, *callable_objs):
         for cab in callable_objs:
-            if callable(cab):
-                self.finished.connect(cab)
+            self.finished.connect(cab)
+        self._at_finish.extend(callable_objs)
+
+    def broken_signal(self):
+        for cab in self._at_start:
+            self.started.disconnect(cab)
+        for cab in self._at_finish:
+            self.finished.disconnect(cab)
 
 
 class ThreadRepo:
@@ -250,6 +258,7 @@ class ThreadRepo:
         其他：未知等级，安全退出。
         """
         for thread, level in self._thread_repo:
+            thread.broken_signal()
             if level == 0:
                 thread.quit()
             elif level == 1:
@@ -260,6 +269,7 @@ class ThreadRepo:
     def kill_all(self):
         """立即终止所有线程。"""
         for thread, _ in self._thread_repo:
+            thread.broken_signal()
             thread.terminate()
 
     def is_empty(self):
