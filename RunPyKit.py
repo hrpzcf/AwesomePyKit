@@ -92,7 +92,6 @@ class MainInterface(Ui_main_interface, QMainWindow):
                 QMessageBox.Warning,
                 (("accept", "强制退出"), ("reject", "取消")),
             ).exec_()
-            # BUG 程序打包工具创建虚拟环境过程中强行退出造成卡死
             if role == 0:
                 win_pyi_tool.repo.kill_all()
                 win_package_mgr.repo.kill_all()
