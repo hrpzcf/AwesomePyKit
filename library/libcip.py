@@ -1,13 +1,47 @@
 # coding: utf-8
 
-__doc__ = "包含检查项目导入模块所需的类、函数等。"
+__doc__ = "检查项目导入的所有模块所需的类、函数等。"
 
-import os
+import ast
 import re
+from os import walk
+from os.path import basename, join
 
 from chardet.universaldetector import UniversalDetector
 
 from .libm import PyEnv
+
+
+class TreeVisit(ast.NodeVisitor):
+    def __init__(self, out=None):
+        if isinstance(out, set):
+            self.__result = out
+        else:
+            self.__result = set()
+
+    def visit_ImportFrom(self, node):
+        self.__result.add(self.split(node.module))
+        self.generic_visit(node)
+
+    def visit_Import(self, node):
+        self.__result.update(self.split(n.name) for n in node.names)
+        self.generic_visit(node)
+
+    def visit_Call(self, node):
+        if isinstance(node.func, ast.Name):
+            if node.func.id == "__import__":
+                if isinstance(node.args[0], ast.Str):
+                    self.__result.add(self.split(node.args[0].s))
+                elif isinstance(node.args[0], ast.Constant):
+                    self.__result.add(self.split(node.args[0].value))
+        self.generic_visit(node)
+
+    def getresult(self):
+        return self.__result
+
+    @staticmethod
+    def split(string: str):
+        return string.split(".", 1)[0]
 
 
 def to_be_excluded(_dirpath: str, exclude_dirs):
@@ -20,16 +54,16 @@ def to_be_excluded(_dirpath: str, exclude_dirs):
     return False
 
 
-def det_files_coding(project_root, exclude_dirs):
+def file_codings(project_root, exclude_dirs):
     pattern = re.compile(r"^.+\.py[w]?$")
     path_coding_groups = []
-    for root, _, files in os.walk(project_root):
+    for root, _, files in walk(project_root):
         if to_be_excluded(root, exclude_dirs):
             continue
         for name in files:
             if not pattern.match(name):
                 continue
-            path_coding_groups.append(os.path.join(root, name))
+            path_coding_groups.append(join(root, name))
     coding_detector = UniversalDetector()
     for index, file_path in enumerate(path_coding_groups):
         coding_detector.reset()
@@ -51,101 +85,58 @@ def det_files_coding(project_root, exclude_dirs):
 
 
 class ImportInspector:
-    match_all = re.compile(r"^[^#\n]*?import [_0-9a-zA-Z .,;(]+$", re.M)
-
     def __init__(self, python_dir, project_root, excludes=None):
         self._root = project_root
         self._excludes = list()
         if isinstance(excludes, (list, tuple)):
             self._excludes.extend(excludes)
-        self._imports = PyEnv(python_dir).names_for_import()
-        self._imports.extend(self.project_imports())
+        self.__importables = self.__project_importables()
+        self.__importables.update(PyEnv(python_dir).names_for_import())
 
-    def gen_missing_items(self):
+    def __imports_and_missings(self, string):
         """
-        返回给定 Python 环境中，给定目录内脚本导入但环境未安装的模块集合
-        返回值类型：List[(文件路径, {文件中导入的模块}, {环境中未安装的模块})...]
+        查找并返回 string 中所有需要导入的模块列表
         """
-        results = list()
-        groups = det_files_coding(self._root, self._excludes)
-        if groups:
-            for _path, encoding in groups:
-                if encoding is None:
-                    continue
-                try:
-                    with open(_path, encoding=encoding) as f:
-                        string_from_file = f.read()
-                    imps, miss = self.missing_imports(string_from_file)
-                    results.append((_path, imps, miss))
-                except Exception:
-                    results.append((_path, set(), set()))
-        else:
-            results.append((None, set(), set()))
-        return results
+        try:
+            node = ast.parse(string, "<string>", "exec")
+        except:
+            return set()
+        abstract_syntax_tree_visit = TreeVisit()
+        abstract_syntax_tree_visit.visit(node)
+        return abstract_syntax_tree_visit.getresult()
 
-    def missing_imports(self, string):
-        """
-        查找环境中未安装但 string 中需要导入的模块。
-        final_res 为最终处理后得到的 string 中所有导入的模块列表。
-        """
-        final_res, processed_2, processed_1 = (
-            set(),
-            [],
-            self.match_all.findall(string),
-        )
-        for item in processed_1:
-            if ";" in item:
-                for string in item.split(";"):
-                    if string:
-                        processed_2.append(string.strip())
-            else:
-                processed_2.append(item)
-        for item in processed_2:
-            if "from " in item:
-                matched = re.match(
-                    r"^\s*from (?:([^.]+).*|\.([^.]+)) import",
-                    item,
-                )
-                if not matched:
-                    continue
-                for group in matched.groups():
-                    if group is None:
-                        continue
-                    final_res.add(group)
-            else:
-                matched = re.match(r"\s*import (.+)", item)
-                if not matched:
-                    continue
-                tmp_string = matched.group(1)
-                if " as " in tmp_string:
-                    matched = re.match(r"([^.]+).* as", tmp_string)
-                    if matched:
-                        final_res.add(matched.group(1))
-                elif "," in tmp_string:
-                    string_list = tmp_string.split(",")
-                    for string in string_list:
-                        string = string.strip()
-                        package_name = string.split(".")[0]
-                        if package_name:
-                            final_res.add(package_name)
-                else:
-                    package_name = tmp_string.split(".")[0]
-                    if package_name:
-                        final_res.add(package_name)
-        return final_res, set(p for p in final_res if p not in self._imports)
-
-    def project_imports(self):
+    def __project_importables(self):
         """项目目录下可导入的包、模块。"""
         project_imports = set()
-        m_pattern = re.compile(r"^([0-9a-zA-Z_]+).*(?<!_d)\.py[cdw]?$")
-        for root, _, files in os.walk(self._root):
+        fnp = re.compile(r"^([0-9a-zA-Z_]+).*(?<!_d)\.py[cdw]?$")
+        for root, _, files in walk(self._root):
             if to_be_excluded(root, self._excludes):
                 continue
             if "__init__.py" in files:
-                project_imports.add(os.path.basename(root))
+                project_imports.add(basename(root))
             for file_name in files:
-                matched = m_pattern.match(file_name)
+                matched = fnp.match(file_name)
                 if not matched:
                     continue
                 project_imports.add(matched.group(1))
         return project_imports
+
+    def get_missing_items(self):
+        """
+        查找指定目录内源码所有需要导入的模块，并计算哪些模块未在指定环境中安装
+        返回值类型：[(源码文件路径, {源码导入的模块}, {环境中未安装的模块})...]
+        """
+        results = list()
+        for p, c in file_codings(self._root, self._excludes):
+            if c is None:
+                continue
+            try:
+                with open(p, encoding=c) as f:
+                    file_string = f.read()
+                imps = self.__imports_and_missings(file_string)
+                results.append((p, imps, imps - self.__importables))
+            except Exception:
+                results.append((p, set(), set()))
+        if not results:
+            results.append((None, set(), set()))
+        return results

@@ -1121,8 +1121,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         def get_missing_imps():
             imp_missings = ImportInspector(
                 environ.env_path, project_root, [self.toolwin_venv.env_path]
-            ).gen_missing_items()
-            missings.extend(imp_missings) 
+            ).get_missing_items()
+            missings.extend(imp_missings)
 
         thread_check_imp = NewTask(get_missing_imps)
         thread_check_imp.at_start(
@@ -1362,9 +1362,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self._stored_conf["file_ver_info"] = self.file_ver_info_text()
         self._stored_conf["debug_options"] = self.change_debug_options("get")
         self._stored_conf["runtime_tmpdir"] = self.le_runtime_tmpdir.text()
-        self._stored_conf[
-            "prioritize_venv"
-        ] = self.cb_prioritize_venv.isChecked()
+        self._stored_conf["prioritize_venv"] = self.cb_prioritize_venv.isChecked()
 
     def _abs_rel_groups(self, starting_point):
         """获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
@@ -1555,7 +1553,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 [self.toolwin_venv.env_path],
             )
             missings = set()
-            for i in import_inspect.gen_missing_items():
+            for i in import_inspect.get_missing_items():
                 missings.update(i[2])
             missings.add("pyinstaller")
             for pkg in missings:
