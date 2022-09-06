@@ -102,9 +102,9 @@ class ImportInspector:
         self.__importables = self.__project_importables()
         self.__importables.update(PyEnv(python_dir).names_for_import())
 
-    def __imports_and_missings(self, string):
+    def __modules_tobe_imported(self, string):
         """
-        查找并返回 string 中所有需要导入的模块列表
+        查找并返回 string 中所有需要导入的模块集合
         """
         try:
             node = ast.parse(string, "<string>", "exec")
@@ -142,7 +142,7 @@ class ImportInspector:
             try:
                 with open(p, encoding=c) as f:
                     file_string = f.read()
-                imps = self.__imports_and_missings(file_string)
+                imps = self.__modules_tobe_imported(file_string)
                 results.append((p, imps, imps - self.__importables))
             except Exception:
                 results.append((p, set(), set()))
