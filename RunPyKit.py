@@ -62,6 +62,7 @@ from PyQt5.QtWidgets import (
 
 from com.mapping import importable_published
 from info import VERSION
+from res.res import *
 from ui import *
 from utils import *
 from utils.cip import ImportInspector
@@ -140,7 +141,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         horiz_head.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         horiz_head.setSectionResizeMode(3, QHeaderView.Stretch)
-        self.loading_mov = QMovie(os.path.join(resources_dir, "loading.gif"))
+        self.loading_mov = QMovie(":/loading.gif")
         self.loading_mov.setScaledSize(QSize(18, 18))
 
     def show(self):
@@ -968,7 +969,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.toolwin_pyenv = None
         self.pyi_tool = PyiTool()
         self.set_platform_info()
-        self.pyi_running_mov = QMovie(os.path.join(resources_dir, "loading.gif"))
+        self.pyi_running_mov = QMovie(":/loading.gif")
         self.pyi_running_mov.setScaledSize(QSize(18, 18))
         self.signal_slot_connection()
         self._normal_size = self.size()
@@ -2213,7 +2214,7 @@ class NewInputDialog(QInputDialog):
 
 if __name__ == "__main__":
     app_awesomepykit = QApplication(sys.argv)
-    app_awesomepykit.setWindowIcon(QIcon(os.path.join(resources_dir, "icon.ico")))
+    app_awesomepykit.setWindowIcon(QIcon(":/icon.ico"))
     win_ins_pkg = InstallPackagesWindow()
     win_package_mgr = PackageManagerWindow()
     win_chenviron = ChooseEnvWindow()
