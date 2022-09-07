@@ -1342,7 +1342,7 @@
              <string>检测程序运行所需的所有模块是否在已选的PYTHON环境中安装。</string>
             </property>
             <property name="text">
-             <string>环境检测</string>
+             <string>环境检查</string>
             </property>
            </widget>
           </item>

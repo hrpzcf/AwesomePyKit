@@ -754,6 +754,6 @@ class Ui_pyitool(object):
         self.cb_log_level.setItemText(4, _translate("pyitool", "ERROR"))
         self.cb_log_level.setItemText(5, _translate("pyitool", "CRITICAL"))
         self.pb_check_imports.setToolTip(_translate("pyitool", "检测程序运行所需的所有模块是否在已选的PYTHON环境中安装。"))
-        self.pb_check_imports.setText(_translate("pyitool", "环境检测"))
+        self.pb_check_imports.setText(_translate("pyitool", "环境检查"))
         self.pb_gen_executable.setToolTip(_translate("pyitool", "将PY脚本及所选资源文件打包成可执行文件。"))
         self.pb_gen_executable.setText(_translate("pyitool", "生成可执行文件"))
