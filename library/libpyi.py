@@ -14,7 +14,7 @@ from subprocess import (
 
 from PyQt5.QtCore import QObject, QTimer, pyqtSignal
 
-from library.libm import conf_path, get_cmd_o
+from library.libm import config_dir, get_cmd_out
 
 
 class PyiTool(QObject):
@@ -187,7 +187,7 @@ class PyiTool(QObject):
 
     def pyi_info(self):
         if self.pyi_ready:
-            return get_cmd_o(self.pyi_path, "-v")
+            return get_cmd_out(self.pyi_path, "-v")
         return "0.0"
 
     @staticmethod
@@ -222,7 +222,7 @@ VSVersionInfo(
 """
         for key, val in cmd_dict.get("file_ver_info", {}).items():
             FILE_VERSION_INFO = FILE_VERSION_INFO.replace(key, val)
-        file_info_path = os.path.join(conf_path, "FILE_INFO")
+        file_info_path = os.path.join(config_dir, "FILE_INFO")
         try:
             with open(file_info_path, "w", encoding="utf-8") as file_info:
                 file_info.write(FILE_VERSION_INFO)

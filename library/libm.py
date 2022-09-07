@@ -5,124 +5,98 @@ __doc__ = """包含AwesomePyKit的主要类、函数、配置文件路径等。"
 import json
 import os
 import re
-from subprocess import (
-    PIPE,
-    STARTF_USESHOWWINDOW,
-    STARTUPINFO,
-    SW_HIDE,
-    Popen,
-)
+from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, SW_HIDE, Popen
 
 from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
 from PyQt5.QtCore import QMutex, QThread, QTimer
 
-_STARTUP = STARTUPINFO()
-_STARTUP.dwFlags = STARTF_USESHOWWINDOW
-_STARTUP.wShowWindow = SW_HIDE
-
+# 此程序打包为单目录形式时，__file__ 是 libm.pyc 文件的虚拟路径
+# 路径在程序可执行文件的目录下：.\library\libm.pyc，文件不是真实存在的
 _root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-conf_path = os.path.join(_root_path, "config")
-resources_path = os.path.join(_root_path, "resources")
-conf_path_py_paths = os.path.join(conf_path, "PythonPaths.json")
-conf_path_index_urls = os.path.join(conf_path, "IndexURLs.json")
-conf_path_pyi_defs = os.path.join(conf_path, "PyiDefault.json")
-conf_path_install_package = os.path.join(conf_path, "InstallPackage.json")
-conf_path_dload_package = os.path.join(conf_path, "DloadPackage.json")
+config_dir = os.path.join(_root_path, "config")
+resources_dir = os.path.join(_root_path, "resources")
+config_file_py_paths = os.path.join(config_dir, "PythonPaths.json")
+config_file_index_urls = os.path.join(config_dir, "IndexURLs.json")
+config_file_pyi_defs = os.path.join(config_dir, "PyiDefault.json")
+config_file_install_package = os.path.join(config_dir, "InstallPackage.json")
+config_file_dload_package = os.path.join(config_dir, "DloadPackage.json")
 
 
 def _load_json(path, get_data):
     """
-    读取 json 配置文件的函数。
-    如果 path 路径的配置文件不存在，则调用 get_data 函数取默认值并创建配置。
-    如果无法读取 path 配置文件，则调用 get_data 函数取值并返回该值。
-    :param path: str, json 文件完整路径。
-    :param get_data: callable, 返回值是列表或字典的可调用对象。
-    :return: list or dict, 从 json 文件读取的列表或字典或 get_data 函数的返回值。
+    如果 path 文件不存在，则调用 get_data 获取数据创建配置并返回
+
+    如果无法读取 path 配置文件，则调用 get_data 函数取值并返回该值
     """
     if not os.path.exists(path):
         data = get_data()
         try:
-            with open(path, "wt", encoding="utf-8") as fo:
-                json.dump(data, fo, indent=4, ensure_ascii=False)
+            with open(path, "wt", encoding="utf-8") as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
         except Exception:
             pass
         return data
     try:
-        with open(path, "rt", encoding="utf-8") as fo:
-            return json.load(fo)
+        with open(path, "rt", encoding="utf-8") as f:
+            return json.load(f)
     except Exception:
         return get_data()
 
 
-def load_conf(conf="all"):
-    """
-    调用 _load_json 函数从 json 文件读取 Python 目录路径列表、镜像源地址字典等。
-    """
-    if not os.path.exists(conf_path):
-        os.mkdir(conf_path)
-    if os.path.isfile(conf_path):
-        os.remove(conf_path)
-        os.mkdir(conf_path)
-    # 本机 Python 环境路径列表
-    if conf == "pths":
-        return _load_json(conf_path_py_paths, list)
-    # 保存镜像源地址的字典
-    if conf == "urls":
-        return _load_json(conf_path_index_urls, index_urls.copy)
-    # 保存 pyinstaller 工具设置的字典
-    if conf == "pyic":
-        return _load_json(conf_path_pyi_defs, dict)
-    # 保存包管理器安装界面设置的字典
-    if conf == "insp":
-        return _load_json(conf_path_install_package, dict)
-    # 保存模块下载界面设置的字典
-    if conf == "dlpc":
-        return _load_json(conf_path_dload_package, dict)
-    return (
-        _load_json(conf_path_py_paths, list),
-        _load_json(conf_path_index_urls, index_urls.copy),
-        _load_json(conf_path_pyi_defs, dict),
-        _load_json(conf_path_install_package, dict),
-        _load_json(conf_path_dload_package, dict),
-    )
+def load_conf(option):
+    if not os.path.exists(config_dir):
+        os.makedirs(config_dir)
+    elif os.path.isfile(config_dir):
+        os.remove(config_dir)
+        os.makedirs(config_dir)
+    # 加载包管理器安装界面设置字典
+    if option == "insp":
+        return _load_json(config_file_install_package, dict)
+    # 加载已保存的环境路径列表
+    if option == "pths":
+        return _load_json(config_file_py_paths, list)
+    # 加载程序打包工具设置字典
+    if option == "pyic":
+        return _load_json(config_file_pyi_defs, dict)
+    # 加载镜像源地址字典
+    if option == "urls":
+        return _load_json(config_file_index_urls, index_urls.copy)
+    # 加载模块下载器设置字典
+    if option == "dlpc":
+        return _load_json(config_file_dload_package, dict)
+    raise Exception(f"没有此选项：{option}")
 
 
-def save_conf(sequence, conf):
-    if conf == "pths":
-        pth = conf_path_py_paths
-    elif conf == "urls":
-        pth = conf_path_index_urls
-    elif conf == "pyic":
-        pth = conf_path_pyi_defs
-    elif conf == "insp":
-        pth = conf_path_install_package
-    elif conf == "dlpc":
-        pth = conf_path_dload_package
+def save_conf(sequence, option):
+    if option == "pths":
+        pth = config_file_py_paths
+    elif option == "urls":
+        pth = config_file_index_urls
+    elif option == "pyic":
+        pth = config_file_pyi_defs
+    elif option == "insp":
+        pth = config_file_install_package
+    elif option == "dlpc":
+        pth = config_file_dload_package
     else:
         return
-    with open(pth, "wt", encoding="utf-8") as fo:
-        json.dump(sequence, fo, indent=4, ensure_ascii=False)
-
-
-def get_cur_pyenv():
-    return PyEnv()
+    try:
+        with open(pth, "wt", encoding="utf-8") as f:
+            json.dump(sequence, f, indent=4, ensure_ascii=False)
+    except Exception:
+        pass
 
 
 def get_pyenv_list(paths=None):
-    """返回 PyEnv 实例列表。"""
     if not paths:
         paths = load_conf("pths")
-    env_list = list()
-    for _path in paths:
-        env_list.append(PyEnv(_path))
-    return env_list
+    return [PyEnv(p) for p in paths]
 
 
 def loop_install(
     pyenv, sequence, *, index_url="", pre=False, user=False, upgrade=False
 ):
-    """循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.install 安装。"""
     for name in sequence:
         cmd_exec_result = pyenv.install(
             name,
@@ -135,39 +109,9 @@ def loop_install(
 
 
 def loop_uninstall(pyenv, sequence):
-    """循环历遍包名列表 sequence 每一个包名 name，根据包名调用 pyenv.uninstall 卸载。"""
     for name in sequence:
         cmd_exec_result = pyenv.uninstall(name)
         yield cmd_exec_result[0][0], cmd_exec_result[1]
-
-
-def multi_install(
-    pyenv, sequence, *, index_url="", pre=False, user=False, upgrade=False
-):
-    """
-    一次安装包名列表 sequence 中所有的包。
-    注意：如果 sequence 中有一个包不可安装（没有匹配的包等原因），那sequence中所有的
-    包都不会被安装，所以不是必须的情况下尽量不用这个函数来安装。
-    """
-    return pyenv.install(
-        *sequence, pre=pre, user=user, index_url=index_url, upgrade=upgrade
-    )
-
-
-def multi_uninstall(pyenv, sequence):
-    """
-    一次卸载包名列表 sequence 中所有的包。
-    注意：未安装的包则跳过卸载。
-    """
-    return pyenv.uninstall(*sequence)
-
-
-def set_index_url(pyenv, index_url):
-    return pyenv.set_global_index(index_url)
-
-
-def get_index_url(pyenv):
-    return pyenv.get_global_index()
 
 
 def check_py_path(py_dir_path):
@@ -277,8 +221,11 @@ class ThreadRepo:
         return not self._thread_repo
 
 
-def get_cmd_o(*commands, regexp="", timeout=None):
+def get_cmd_out(*commands, regexp="", timeout=None):
     """用于从cmd命令执行输出的字符匹配想要的信息。"""
+    _STARTUP = STARTUPINFO()
+    _STARTUP.dwFlags = STARTF_USESHOWWINDOW
+    _STARTUP.wShowWindow = SW_HIDE
     proc = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP)
     try:
         strings, _ = proc.communicate(timeout=timeout)

@@ -140,7 +140,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         horiz_head.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         horiz_head.setSectionResizeMode(3, QHeaderView.Stretch)
-        self.loading_mov = QMovie(os.path.join(resources_path, "loading.gif"))
+        self.loading_mov = QMovie(os.path.join(resources_dir, "loading.gif"))
         self.loading_mov.setScaledSize(QSize(18, 18))
 
     def show(self):
@@ -968,7 +968,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.toolwin_pyenv = None
         self.pyi_tool = PyiTool()
         self.set_platform_info()
-        self.pyi_running_mov = QMovie(os.path.join(resources_path, "loading.gif"))
+        self.pyi_running_mov = QMovie(os.path.join(resources_dir, "loading.gif"))
         self.pyi_running_mov.setScaledSize(QSize(18, 18))
         self.signal_slot_connection()
         self._normal_size = self.size()
@@ -2213,7 +2213,7 @@ class NewInputDialog(QInputDialog):
 
 if __name__ == "__main__":
     app_awesomepykit = QApplication(sys.argv)
-    app_awesomepykit.setWindowIcon(QIcon(os.path.join(resources_path, "icon.ico")))
+    app_awesomepykit.setWindowIcon(QIcon(os.path.join(resources_dir, "icon.ico")))
     win_ins_pkg = InstallPackagesWindow()
     win_package_mgr = PackageManagerWindow()
     win_chenviron = ChooseEnvWindow()
