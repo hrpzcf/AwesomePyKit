@@ -3,18 +3,11 @@
 __doc__ = """包含pyinstaller相关的类或函数。"""
 
 import os
-from subprocess import (
-    PIPE,
-    STARTF_USESHOWWINDOW,
-    STARTUPINFO,
-    STDOUT,
-    SW_HIDE,
-    Popen,
-)
+from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, STDOUT, SW_HIDE, Popen
 
 from PyQt5.QtCore import QObject, QTimer, pyqtSignal
 
-from library.libm import config_dir, get_cmd_out
+from utils.main import config_dir, get_cmd_out
 
 
 class PyiTool(QObject):
@@ -137,7 +130,7 @@ class PyiTool(QObject):
         temp_var = cmd_dict.get("other_data", None)
         if temp_var:
             for data in temp_var:
-                self._commands.extend(("--add-data", fr"{data[0]};{data[1]}"))
+                self._commands.extend(("--add-data", rf"{data[0]};{data[1]}"))
         temp_var = cmd_dict.get("module_search_path", None)
         if temp_var:
             for module_path in temp_var:

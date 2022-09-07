@@ -1,5 +1,7 @@
 # coding: utf-8
 
+__doc__ = "模块的 import 使用名与模块的发布名映射表"
+
 importable_published = {
     "PIL": "Pillow",
     "PyISAPI_loader": "pywin32",

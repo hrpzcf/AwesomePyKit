@@ -15,7 +15,7 @@ from PyQt5.QtCore import QMutex, QThread, QTimer
 # 路径在程序可执行文件的目录下：.\library\libm.pyc，文件不是真实存在的
 _root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 config_dir = os.path.join(_root_path, "config")
-resources_dir = os.path.join(_root_path, "resources")
+resources_dir = os.path.join(_root_path, "res")
 config_file_py_paths = os.path.join(config_dir, "PythonPaths.json")
 config_file_index_urls = os.path.join(config_dir, "IndexURLs.json")
 config_file_pyi_defs = os.path.join(config_dir, "PyiDefault.json")

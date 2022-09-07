@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>pyinstaller_tool</class>
- <widget class="QMainWindow" name="pyinstaller_tool">
+ <class>pyitool</class>
+ <widget class="QMainWindow" name="pyitool">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -1342,7 +1342,7 @@
              <string>检测程序运行所需的所有模块是否在已选的PYTHON环境中安装。</string>
             </property>
             <property name="text">
-             <string>模块检测</string>
+             <string>环境检测</string>
             </property>
            </widget>
           </item>

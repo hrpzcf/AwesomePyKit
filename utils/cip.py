@@ -9,7 +9,7 @@ from os.path import basename, join
 
 from chardet.universaldetector import UniversalDetector
 
-from .libm import PyEnv
+from .main import PyEnv
 
 
 class TreeVisit(ast.NodeVisitor):

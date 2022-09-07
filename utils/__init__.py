@@ -1,27 +1,5 @@
 # coding: utf-8
 
-from .libm import (
-    NewTask,
-    ThreadRepo,
-    all_py_paths,
-    check_index_url,
-    check_py_path,
-    clean_index_urls,
-    clean_py_paths,
-    config_dir,
-    config_file_index_urls,
-    config_file_py_paths,
-    config_file_pyi_defs,
-    cur_py_path,
-    get_cmd_out,
-    get_pyenv_list,
-    load_conf,
-    loop_install,
-    loop_uninstall,
-    resources_dir,
-    save_conf,
-)
-
 __all__ = [
     "NewTask",
     "ThreadRepo",
@@ -43,3 +21,25 @@ __all__ = [
     "resources_dir",
     "save_conf",
 ]
+
+from .main import (
+    NewTask,
+    ThreadRepo,
+    all_py_paths,
+    check_index_url,
+    check_py_path,
+    clean_index_urls,
+    clean_py_paths,
+    config_dir,
+    config_file_index_urls,
+    config_file_py_paths,
+    config_file_pyi_defs,
+    cur_py_path,
+    get_cmd_out,
+    get_pyenv_list,
+    load_conf,
+    loop_install,
+    loop_uninstall,
+    resources_dir,
+    save_conf,
+)

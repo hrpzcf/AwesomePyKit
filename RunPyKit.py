@@ -60,18 +60,18 @@ from PyQt5.QtWidgets import (
     QWidget,
 )
 
-from common.pkgsmapping import importable_published
-from information import VERSION
-from interface import *
-from library import *
-from library.libcip import ImportInspector
-from library.libm import PyEnv
-from library.libpyi import PyiTool
-from library.libqt import QLineEditMod, QTextEditMod
-from library.libvenv import VirtualEnv
+from com.mapping import importable_published
+from info import VERSION
+from ui import *
+from utils import *
+from utils.cip import ImportInspector
+from utils.main import PyEnv
+from utils.pyi import PyiTool
+from utils.qt import QLineEditMod, QTextEditMod
+from utils.venv import VirtualEnv
 
 
-class MainInterface(Ui_main_interface, QMainWindow):
+class MainInterface(Ui_mainentry, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -119,7 +119,7 @@ class MainInterface(Ui_main_interface, QMainWindow):
         about_panel.exec_()
 
 
-class PackageManagerWindow(Ui_package_manager, QMainWindow):
+class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -672,7 +672,7 @@ class AskFilePath:
         return ""
 
 
-class InstallPackagesWindow(Ui_install_package, QWidget, AskFilePath):
+class InstallPackagesWindow(Ui_pkginstall, QWidget, AskFilePath):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -761,7 +761,7 @@ class InstallPackagesWindow(Ui_install_package, QWidget, AskFilePath):
         self.le_use_index_url.setEnabled(self.cb_use_index_url.isChecked())
 
 
-class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
+class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -934,7 +934,7 @@ class IndexUrlManagerWindow(Ui_index_url_manager, QMainWindow):
         )
 
 
-class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
+class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1689,7 +1689,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.repo.put(thread_install_missings, 0)
 
 
-class ChooseEnvWindow(Ui_choose_env, QWidget):
+class ChooseEnvWindow(Ui_environch, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1727,7 +1727,7 @@ class ChooseEnvWindow(Ui_choose_env, QWidget):
         self.pyenv_list_update()
 
 
-class CheckImportsWindow(Ui_check_imports, QWidget):
+class CheckImportsWindow(Ui_impcheck, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1790,7 +1790,7 @@ class CheckImportsWindow(Ui_check_imports, QWidget):
         self.le_cip_cur_env.setText(str(env))
 
 
-class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
+class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
     set_download_table = pyqtSignal(list)
     download_completed = pyqtSignal(str)
     download_status = pyqtSignal(int, str)
@@ -2111,7 +2111,7 @@ class DownloadPackageWindow(Ui_download_package, QWidget, AskFilePath):
         return configure
 
 
-class ShowDownloadingWindow(Ui_downloading, QWidget):
+class ShowDownloadingWindow(Ui_showdload, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)

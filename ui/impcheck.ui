@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>check_imports</class>
- <widget class="QWidget" name="check_imports">
+ <class>impcheck</class>
+ <widget class="QWidget" name="impcheck">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
