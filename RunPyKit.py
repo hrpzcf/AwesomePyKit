@@ -26,6 +26,13 @@
 # Formatted with black
 ################################################################################
 
+from fastpip import VERNUM as fastpipver
+
+# 运行前对 fastpip 的版本检查
+req_ver = (0, 14, 1)
+if fastpipver < req_ver:
+    raise Exception(f"当前环境的 fastpip 版本{fastpipver}低于{req_ver}。")
+
 import os
 import sys
 from platform import machine, platform
