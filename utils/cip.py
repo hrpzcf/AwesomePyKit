@@ -116,19 +116,26 @@ class ImportInspector:
 
     def __project_importables(self):
         """项目目录下可导入的包、模块。"""
-        project_imports = set()
-        fnp = re.compile(r"^([0-9a-zA-Z_]+).*(?<!_d)\.py[cdw]?$")
+        pkg_pattern = re.compile(r"^[A-Za-z0-9_]+$")
+        mod_pattern = re.compile(r"^([A-Za-z0-9_]+).*(?<!_d)\.py[cdw]?$", re.I)
+        project_importables = set()
         for root, _, files in walk(self._root):
             if to_be_excluded(root, self._excludes):
                 continue
             if "__init__.py" in files:
-                project_imports.add(basename(root))
+                project_importables.add(basename(root))
+            module_in_dir = False
             for file_name in files:
-                matched = fnp.match(file_name)
+                matched = mod_pattern.match(file_name)
                 if not matched:
                     continue
-                project_imports.add(matched.group(1))
-        return project_imports
+                module_in_dir = True
+                project_importables.add(matched.group(1))
+            if module_in_dir:
+                pkg_name = pkg_pattern.match(basename(root))
+                if pkg_name:
+                    project_importables.add(pkg_name.group())
+        return project_importables
 
     def get_missing_items(self):
         """
