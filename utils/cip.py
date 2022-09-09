@@ -12,7 +12,7 @@ from chardet.universaldetector import UniversalDetector
 from .main import PyEnv
 
 
-class TreeVisit(ast.NodeVisitor):
+class FindImport(ast.NodeVisitor):
     def __init__(self, out=None):
         if isinstance(out, set):
             self.__result = out
@@ -30,13 +30,13 @@ class TreeVisit(ast.NodeVisitor):
     def visit_Call(self, node):
         if isinstance(node.func, ast.Name):
             if node.func.id == "__import__":
-                self.add_call_node_args0(node.args[0])
+                self.add_call_node_arg(node.args[0])
         elif isinstance(node.func, ast.Attribute):
             attr = node.func.attr
             name = node.func.value
             if isinstance(name, ast.Name) and name.id == "importlib":
                 if attr == "__import__" or attr == "import_module":
-                    self.add_call_node_args0(node.args[0])
+                    self.add_call_node_arg(node.args[0])
         self.generic_visit(node)
 
     def getresult(self):
@@ -46,11 +46,11 @@ class TreeVisit(ast.NodeVisitor):
     def split(string: str):
         return string.split(".", 1)[0]
 
-    def add_call_node_args0(self, args0):
-        if isinstance(args0, ast.Str):
-            self.__result.add(self.split(args0.s))
-        elif isinstance(args0, ast.Constant):
-            self.__result.add(self.split(args0.value))
+    def add_call_node_arg(self, arg):
+        if isinstance(arg, ast.Str):
+            self.__result.add(self.split(arg.s))
+        elif isinstance(arg, ast.Constant):
+            self.__result.add(self.split(arg.value))
 
 
 def to_be_excluded(_dirpath: str, exclude_dirs):
@@ -110,7 +110,7 @@ class ImportInspector:
             node = ast.parse(string, "<string>", "exec")
         except:
             return set()
-        abstract_syntax_tree_visit = TreeVisit()
+        abstract_syntax_tree_visit = FindImport()
         abstract_syntax_tree_visit.visit(node)
         return abstract_syntax_tree_visit.getresult()
 
