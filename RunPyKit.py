@@ -238,15 +238,18 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         color_red = QColor(255, 0, 0)
         color_gray = QColor(243, 243, 243)
         for rowind, pkg_name in enumerate(self.cur_pkgs_info):
+            header = QTableWidgetItem(f" {rowind + 1} ")
+            header.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.tw_installed_info.setVerticalHeaderItem(rowind, header)
+            item0 = QTableWidgetItem(f" {pkg_name} ")
+            self.tw_installed_info.setItem(rowind, 0, item0)
             even_num_row = rowind % 2
-            item = QTableWidgetItem(pkg_name)
-            self.tw_installed_info.setItem(rowind, 0, item)
             if not even_num_row:
-                item.setBackground(color_gray)
+                item0.setBackground(color_gray)
             for colind, item_text in enumerate(
                 self.cur_pkgs_info.get(pkg_name, ["", "", ""])
             ):
-                item = QTableWidgetItem(item_text)
+                item = QTableWidgetItem(f" {item_text} ")
                 if colind == 2:
                     if item_text in ("升级成功", "安装成功", "卸载成功"):
                         item.setForeground(color_green)
