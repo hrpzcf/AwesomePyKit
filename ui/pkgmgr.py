@@ -83,7 +83,7 @@ class Ui_pkgmgr(object):
         self.tw_installed_info.setPalette(palette)
         self.tw_installed_info.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.tw_installed_info.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.tw_installed_info.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        self.tw_installed_info.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.tw_installed_info.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.tw_installed_info.setCornerButtonEnabled(False)
         self.tw_installed_info.setColumnCount(4)
