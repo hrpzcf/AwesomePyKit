@@ -238,9 +238,9 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         color_red = QColor(255, 0, 0)
         color_gray = QColor(243, 243, 243)
         for rowind, pkg_name in enumerate(self.cur_pkgs_info):
-            header = QTableWidgetItem(f" {rowind + 1} ")
-            header.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            self.tw_installed_info.setVerticalHeaderItem(rowind, header)
+            self.tw_installed_info.setVerticalHeaderItem(
+                rowind, QTableWidgetItem(f" {rowind + 1} ")
+            )
             item0 = QTableWidgetItem(f" {pkg_name} ")
             self.tw_installed_info.setItem(rowind, 0, item0)
             even_num_row = rowind % 2
@@ -1776,15 +1776,18 @@ class ImportsCheckWindow(Ui_impcheck, QWidget):
             # missing_items 特点，可知项目内没有可以打开的文件，直接中断
             if value[0] is None:
                 break
-            item0 = QTableWidgetItem(os.path.basename(value[0]))
-            item1 = QTableWidgetItem("，".join(value[1]))
-            item2 = QTableWidgetItem("，".join(value[2]))
-            item0.setToolTip(value[0])
-            item1.setToolTip("\n".join(value[1]))
-            item2.setToolTip("\n".join(value[2]))
-            self.tw_missing_imports.setItem(rowind, 0, item0)
-            self.tw_missing_imports.setItem(rowind, 1, item1)
-            self.tw_missing_imports.setItem(rowind, 2, item2)
+            self.tw_missing_imports.setVerticalHeaderItem(
+                rowind, QTableWidgetItem(f" {rowind + 1} ")
+            )
+            item1 = QTableWidgetItem(os.path.basename(value[0]))
+            item2 = QTableWidgetItem("，".join(value[1]))
+            item3 = QTableWidgetItem("，".join(value[2]))
+            item1.setToolTip(value[0])
+            item2.setToolTip("\n".join(value[1]))
+            item3.setToolTip("\n".join(value[2]))
+            self.tw_missing_imports.setItem(rowind, 0, item1)
+            self.tw_missing_imports.setItem(rowind, 1, item2)
+            self.tw_missing_imports.setItem(rowind, 2, item3)
         self.show()
 
     def set_env_info(self, env):
