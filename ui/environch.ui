@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>396</width>
-    <height>262</height>
+    <width>380</width>
+    <height>200</height>
    </rect>
   </property>
   <property name="font">
@@ -21,9 +21,20 @@
   <property name="windowTitle">
    <string>选择 Python 环境</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QListWidget" name="lw_env_list"/>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QListWidget" name="lw_env_list"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>如果此处没有可选择的 Python 环境则需先到&lt;包管理器&gt;中添加。</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

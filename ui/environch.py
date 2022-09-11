@@ -15,15 +15,21 @@ class Ui_environch(object):
     def setupUi(self, environch):
         environch.setObjectName("environch")
         environch.setWindowModality(QtCore.Qt.ApplicationModal)
-        environch.resize(396, 262)
+        environch.resize(380, 200)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         environch.setFont(font)
-        self.verticalLayout = QtWidgets.QVBoxLayout(environch)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(environch)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.lw_env_list = QtWidgets.QListWidget(environch)
         self.lw_env_list.setObjectName("lw_env_list")
         self.verticalLayout.addWidget(self.lw_env_list)
+        self.label = QtWidgets.QLabel(environch)
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
 
         self.retranslateUi(environch)
         QtCore.QMetaObject.connectSlotsByName(environch)
@@ -31,3 +37,4 @@ class Ui_environch(object):
     def retranslateUi(self, environch):
         _translate = QtCore.QCoreApplication.translate
         environch.setWindowTitle(_translate("environch", "选择 Python 环境"))
+        self.label.setText(_translate("environch", "如果此处没有可选择的 Python 环境则需先到<包管理器>中添加。"))
