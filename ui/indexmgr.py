@@ -15,7 +15,7 @@ class Ui_indexmgr(object):
     def setupUi(self, indexmgr):
         indexmgr.setObjectName("indexmgr")
         indexmgr.setWindowModality(QtCore.Qt.ApplicationModal)
-        indexmgr.resize(660, 600)
+        indexmgr.resize(480, 520)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         indexmgr.setFont(font)
