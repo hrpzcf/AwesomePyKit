@@ -1122,6 +1122,9 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
             return
+        dist_dir = self._stored_conf.get("output_dir", "")
+        if not dist_dir:
+            dist_dir = os.path.join(project_root, "dist")
         missings = list()
         self.pyi_tool.initialize(environ.env_path, project_root)
         if not self.pyi_tool.pyi_ready:
@@ -1129,7 +1132,9 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
 
         def get_missing_imps():
             imp_missings = ImportInspector(
-                environ.env_path, project_root, [self.toolwin_venv.env_path]
+                environ.env_path,
+                project_root,
+                [self.toolwin_venv.env_path, dist_dir],
             ).get_missing_items()
             missings.extend(imp_missings)
 
@@ -1555,11 +1560,14 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             ).exec_()
 
     def creating_virtualenv(self):
+        dist_dir = self._stored_conf.get("output_dir", "")
+        if not dist_dir:
+            dist_dir = os.path.join(self.toolwin_venv.project, "dist")
         if self.toolwin_venv.create_project_venv(self.toolwin_pyenv.interpreter):
             import_inspect = ImportInspector(
                 self.toolwin_venv.env_path,
                 self.toolwin_venv.project,
-                [self.toolwin_venv.env_path],
+                [self.toolwin_venv.env_path, dist_dir],
             )
             missings = set()
             for i in import_inspect.get_missing_items():
@@ -1576,9 +1584,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             return
         self.te_pyi_out_stream.clear()
         if self._stored_conf.get("prioritize_venv", False):
-            self.toolwin_venv = VirtualEnv(
-                self._stored_conf.get("project_root", os.getcwd())
-            )
+            self.toolwin_venv = VirtualEnv(self._stored_conf.get("project_root", ""))
             self._venv_creating_result = 0
             if not self.toolwin_venv.find_project_venv():
                 role = NewMessageBox(
