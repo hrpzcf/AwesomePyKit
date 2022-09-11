@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>620</width>
-    <height>670</height>
+    <width>622</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="font">
@@ -30,6 +30,9 @@
         <layout class="QVBoxLayout" name="verticalLayout_10">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_8">
+           <property name="spacing">
+            <number>2</number>
+           </property>
            <item>
             <widget class="QLabel" name="label">
              <property name="toolTip">
@@ -98,7 +101,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <property name="spacing">
-          <number>0</number>
+          <number>2</number>
          </property>
          <item>
           <widget class="QLabel" name="label_8">
@@ -255,7 +258,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <property name="spacing">
-               <number>0</number>
+               <number>2</number>
               </property>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,0">
@@ -303,7 +306,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout">
               <property name="spacing">
-               <number>0</number>
+               <number>2</number>
               </property>
               <item>
                <widget class="QLabel" name="label_4">
@@ -450,7 +453,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <property name="spacing">
-               <number>0</number>
+               <number>2</number>
               </property>
               <item>
                <widget class="QLabel" name="label_7">
@@ -484,7 +487,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <property name="spacing">
-               <number>0</number>
+               <number>2</number>
               </property>
               <item>
                <widget class="QCheckBox" name="cb_use_index_url">
@@ -540,7 +543,7 @@
            <property name="font">
             <font>
              <family>Microsoft YaHei UI</family>
-             <pointsize>11</pointsize>
+             <pointsize>10</pointsize>
             </font>
            </property>
            <property name="text">
