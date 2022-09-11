@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>模块安装包下载器</string>
+   <string>模块安装包下载</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_14">
    <item>
@@ -103,7 +103,7 @@
          <item>
           <widget class="QLabel" name="label_8">
            <property name="toolTip">
-            <string>下载安装包时需调用的Python环境。
+            <string>下载安装包时需调用的 Python 环境。
 右侧留空的下载条件，下载时会使用从此环境派生的条件。</string>
            </property>
            <property name="text">
@@ -114,7 +114,7 @@
          <item>
           <widget class="QComboBox" name="cmb_derived_from">
            <property name="toolTip">
-            <string>下载安装包时需调用的Python环境。
+            <string>下载安装包时需调用的 Python 环境。
 右侧留空的下载条件，下载时会使用从此环境派生的条件。</string>
            </property>
           </widget>
@@ -238,10 +238,10 @@
             <item>
              <widget class="QCheckBox" name="cb_ignore_requires_python">
               <property name="toolTip">
-               <string>对于那些对Python版本有限制要求的模块，是否忽略其限制要求。</string>
+               <string>对于那些对 Python 版本有限制要求的模块，是否忽略其限制要求。</string>
               </property>
               <property name="text">
-               <string>忽略包的Python版本限制</string>
+               <string>忽略包的 Python 版本限制</string>
               </property>
              </widget>
             </item>
@@ -339,10 +339,10 @@
               <item>
                <widget class="QLabel" name="label_5">
                 <property name="toolTip">
-                 <string>是否只下载兼容此处列出的Python版本的模块安装包。</string>
+                 <string>是否只下载兼容此处列出的 Python 版本的模块安装包。</string>
                 </property>
                 <property name="text">
-                 <string>兼容Python版本：</string>
+                 <string>兼容 Python 版本：</string>
                 </property>
                </widget>
               </item>
@@ -364,7 +364,7 @@
                  <enum>Qt::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
-                 <string>是否只下载兼容此处列出的Python版本的模块安装包。</string>
+                 <string>是否只下载兼容此处列出的 Python 版本的模块安装包。</string>
                 </property>
                </widget>
               </item>
@@ -382,7 +382,7 @@
               <item>
                <widget class="QLabel" name="label_6">
                 <property name="toolTip">
-                 <string>是否只下载兼容此处列出的Python实现的模块安装包。</string>
+                 <string>是否只下载兼容此处列出的 Python 实现的模块安装包。</string>
                 </property>
                 <property name="text">
                  <string>兼容解释器实现：</string>
@@ -404,7 +404,7 @@
                  </size>
                 </property>
                 <property name="toolTip">
-                 <string>是否只下载兼容此处列出的Python实现的模块安装包。</string>
+                 <string>是否只下载兼容此处列出的 Python 实现的模块安装包。</string>
                 </property>
                 <item>
                  <property name="text">
@@ -455,7 +455,7 @@
               <item>
                <widget class="QLabel" name="label_7">
                 <property name="toolTip">
-                 <string>是否只下载兼容此处列出的Python ABI的模块安装包。</string>
+                 <string>是否只下载兼容此处列出的 Python ABI的模块安装包。</string>
                 </property>
                 <property name="text">
                  <string>兼容ABI(空格分隔)：</string>
@@ -468,7 +468,7 @@
                  <enum>Qt::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
-                 <string>是否只下载兼容此处列出的Python ABI的模块安装包。</string>
+                 <string>是否只下载兼容此处列出的 Python ABI的模块安装包。</string>
                 </property>
                </widget>
               </item>

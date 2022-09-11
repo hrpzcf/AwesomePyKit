@@ -275,7 +275,7 @@ class Ui_pkgdload(object):
 
     def retranslateUi(self, pkgdload):
         _translate = QtCore.QCoreApplication.translate
-        pkgdload.setWindowTitle(_translate("pkgdload", "模块安装包下载器"))
+        pkgdload.setWindowTitle(_translate("pkgdload", "模块安装包下载"))
         self.label.setToolTip(_translate("pkgdload", "需要下载的模块名称，每行一个名称。"))
         self.label.setText(_translate("pkgdload", "名称："))
         self.pte_package_names.setToolTip(_translate("pkgdload", "需要下载的模块名称，每行一个名称。"))
@@ -285,10 +285,10 @@ class Ui_pkgdload(object):
         self.pb_load_from_text.setText(_translate("pkgdload", "从文件加载名称"))
         self.pb_save_as_text.setToolTip(_translate("pkgdload", "将名称编辑区的文字保存到文本文件。"))
         self.pb_save_as_text.setText(_translate("pkgdload", "名称保存到文件"))
-        self.label_8.setToolTip(_translate("pkgdload", "下载安装包时需调用的Python环境。\n"
+        self.label_8.setToolTip(_translate("pkgdload", "下载安装包时需调用的 Python 环境。\n"
 "右侧留空的下载条件，下载时会使用从此环境派生的条件。"))
         self.label_8.setText(_translate("pkgdload", "下载条件默认派生自："))
-        self.cmb_derived_from.setToolTip(_translate("pkgdload", "下载安装包时需调用的Python环境。\n"
+        self.cmb_derived_from.setToolTip(_translate("pkgdload", "下载安装包时需调用的 Python 环境。\n"
 "右侧留空的下载条件，下载时会使用从此环境派生的条件。"))
         self.label_2.setText(_translate("pkgdload", "名称后支持跟随以下符号限定要下载的版本：\n"
 "\"==\"、\">=\"、\"<=\"、\">\"、\"<\"、\",\"\n"
@@ -310,8 +310,8 @@ class Ui_pkgdload(object):
         self.cb_include_pre.setToolTip(_translate("pkgdload", "如果模块的最新版本是预发行版或者是开发版，\n"
 "也下载这些版本，否则只下载模块的最新稳定版本。"))
         self.cb_include_pre.setText(_translate("pkgdload", "包括预发行版和开发版"))
-        self.cb_ignore_requires_python.setToolTip(_translate("pkgdload", "对于那些对Python版本有限制要求的模块，是否忽略其限制要求。"))
-        self.cb_ignore_requires_python.setText(_translate("pkgdload", "忽略包的Python版本限制"))
+        self.cb_ignore_requires_python.setToolTip(_translate("pkgdload", "对于那些对 Python 版本有限制要求的模块，是否忽略其限制要求。"))
+        self.cb_ignore_requires_python.setText(_translate("pkgdload", "忽略包的 Python 版本限制"))
         self.label_3.setToolTip(_translate("pkgdload", "下载的模块安装包的保存路径。"))
         self.label_3.setText(_translate("pkgdload", "下载至："))
         self.pb_save_to.setToolTip(_translate("pkgdload", "选择下载的模块安装包的保存路径。"))
@@ -320,20 +320,20 @@ class Ui_pkgdload(object):
         self.label_4.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的平台的模块安装包。"))
         self.label_4.setText(_translate("pkgdload", "兼容平台(空格分隔)："))
         self.le_platform.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的平台的模块安装包。"))
-        self.label_5.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的Python版本的模块安装包。"))
-        self.label_5.setText(_translate("pkgdload", "兼容Python版本："))
-        self.le_python_version.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的Python版本的模块安装包。"))
-        self.label_6.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的Python实现的模块安装包。"))
+        self.label_5.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的 Python 版本的模块安装包。"))
+        self.label_5.setText(_translate("pkgdload", "兼容 Python 版本："))
+        self.le_python_version.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的 Python 版本的模块安装包。"))
+        self.label_6.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的 Python 实现的模块安装包。"))
         self.label_6.setText(_translate("pkgdload", "兼容解释器实现："))
-        self.cmb_implementation.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的Python实现的模块安装包。"))
+        self.cmb_implementation.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的 Python 实现的模块安装包。"))
         self.cmb_implementation.setItemText(1, _translate("pkgdload", "无特定实现"))
         self.cmb_implementation.setItemText(2, _translate("pkgdload", "CPython"))
         self.cmb_implementation.setItemText(3, _translate("pkgdload", "Jython"))
         self.cmb_implementation.setItemText(4, _translate("pkgdload", "PyPy"))
         self.cmb_implementation.setItemText(5, _translate("pkgdload", "IronPython"))
-        self.label_7.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的Python ABI的模块安装包。"))
+        self.label_7.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的 Python ABI的模块安装包。"))
         self.label_7.setText(_translate("pkgdload", "兼容ABI(空格分隔)："))
-        self.le_abis.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的Python ABI的模块安装包。"))
+        self.le_abis.setToolTip(_translate("pkgdload", "是否只下载兼容此处列出的 Python ABI的模块安装包。"))
         self.cb_use_index_url.setToolTip(_translate("pkgdload", "是否从临时镜像源下载安装包。\n"
 "如果不勾选此选项，则默认从系统已设置的镜像源地址下载。"))
         self.cb_use_index_url.setText(_translate("pkgdload", "使用临时镜像源："))

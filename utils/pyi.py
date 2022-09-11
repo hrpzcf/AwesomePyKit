@@ -38,7 +38,7 @@ class PyiTool(QObject):
 
     @property
     def pyi_path(self):
-        """返回给出的Python路径中的pyinstaller可执行文件路径。"""
+        """返回给出的 Python 路径中的 Pyinstaller 可执行文件路径。"""
         pyi_exec_path = os.path.join(self._py_path, "Scripts", "pyinstaller.exe")
         if not os.path.isfile(pyi_exec_path):
             return ""
@@ -46,7 +46,7 @@ class PyiTool(QObject):
 
     @property
     def pyi_ready(self):
-        """给出的Python目录中安装了pyinstaller返回True,否则返回False。"""
+        """给出的 Python 目录中安装了 Pyinstaller 返回 True,否则返回 False。"""
         return bool(self.pyi_path)
 
     def initialize(self, py_path, cwd):
@@ -107,7 +107,7 @@ class PyiTool(QObject):
                 self._emit_split_line()
         else:
             if not self.pyi_ready:
-                self.stdout.emit("当前Python环境中找不到PYINSTALLER。")
+                self.stdout.emit("当前 Python 环境中找不到 Pyinstaller 。")
             if self._process is None:
                 self.stdout.emit("请先调用handle方法获取进程操作句柄。")
             self.completed.emit(-1)

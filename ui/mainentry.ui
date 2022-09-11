@@ -44,7 +44,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>管理不同Python环境中的第三方模块。</string>
+         <string>管理不同 Python 环境中的第三方模块。</string>
         </property>
         <property name="text">
          <string>包管理器</string>
@@ -60,7 +60,7 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>使用PYINSTALLER将py程序打包成exe可执行文件。</string>
+         <string>使用 Pyinstaller 将 Python 程序打包成 exe 可执行文件。</string>
         </property>
         <property name="text">
          <string>程序打包工具</string>
@@ -92,10 +92,10 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>Python包下载工具，此工具当前处于测试阶段。</string>
+         <string>Python 包下载工具，此工具当前处于测试阶段。</string>
         </property>
         <property name="text">
-         <string>模块安装包下载器</string>
+         <string>模块安装包下载</string>
         </property>
        </widget>
       </item>
@@ -117,7 +117,7 @@
    </property>
    <widget class="QMenu" name="menu_help">
     <property name="title">
-     <string>帮助</string>
+     <string>关于</string>
     </property>
     <addaction name="action_about"/>
    </widget>

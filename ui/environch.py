@@ -30,4 +30,4 @@ class Ui_environch(object):
 
     def retranslateUi(self, environch):
         _translate = QtCore.QCoreApplication.translate
-        environch.setWindowTitle(_translate("environch", "选择Python环境"))
+        environch.setWindowTitle(_translate("environch", "选择 Python 环境"))

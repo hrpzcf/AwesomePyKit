@@ -72,7 +72,7 @@ from utils.qt import QLineEditMod, QTextEditMod
 from utils.venv import VirtualEnv
 
 
-class MainInterface(Ui_mainentry, QMainWindow):
+class MainEntry(Ui_mainentry, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -81,16 +81,16 @@ class MainInterface(Ui_mainentry, QMainWindow):
 
     def signal_slot_connection(self):
         self.action_about.triggered.connect(self._show_about)
-        self.pb_pkg_mgr.clicked.connect(win_package_mgr.show)
-        self.pb_pyi_tool.clicked.connect(win_pyi_tool.show)
-        self.pb_index_mgr.clicked.connect(win_index_mgr.show)
-        self.pb_pkg_dload.clicked.connect(win_dload_pkg.show)
+        self.pb_pkg_mgr.clicked.connect(window_pkg_manager.show)
+        self.pb_pyi_tool.clicked.connect(window_pyinstaller_tool.show)
+        self.pb_index_mgr.clicked.connect(window_index_mgr.show)
+        self.pb_pkg_dload.clicked.connect(window_pkg_download.show)
 
     def closeEvent(self, event):
         if (
-            win_package_mgr.repo.is_empty()
-            and win_pyi_tool.repo.is_empty()
-            and win_dload_pkg.repo.is_empty()
+            window_pkg_manager.repo.is_empty()
+            and window_pyinstaller_tool.repo.is_empty()
+            and window_pkg_download.repo.is_empty()
         ):
             event.accept()
         else:
@@ -101,8 +101,8 @@ class MainInterface(Ui_mainentry, QMainWindow):
                 (("accept", "强制退出"), ("reject", "取消")),
             ).exec_()
             if role == 0:
-                win_pyi_tool.repo.kill_all()
-                win_package_mgr.repo.kill_all()
+                window_pkg_manager.repo.kill_all()
+                window_pyinstaller_tool.repo.kill_all()
                 event.accept()
             else:
                 event.ignore()
@@ -110,14 +110,13 @@ class MainInterface(Ui_mainentry, QMainWindow):
     @staticmethod
     def _show_about():
         try:
-            with open("help/About.html", encoding="utf-8") as help_html:
-                info = help_html.read().replace("0.0.0", VERSION)
+            with open("./help/About.html", encoding="utf-8") as h:
+                info = h.read().replace("0.0.0", VERSION)
                 icon = QMessageBox.Information
         except Exception:
-            info = '"关于"信息文件(help/About.html)已丢失。'
+            info = "无法打开<关于>信息文件<./help/About.html>，文件已丢失。"
             icon = QMessageBox.Critical
-        about_panel = NewMessageBox("关于", info, icon)
-        about_panel.exec_()
+        NewMessageBox("关于", info, icon).exec_()
 
 
 class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
@@ -142,7 +141,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         horiz_head.setSectionResizeMode(2, QHeaderView.ResizeToContents)
         horiz_head.setSectionResizeMode(3, QHeaderView.Stretch)
         self.loading_mov = QMovie(":/loading.gif")
-        self.loading_mov.setScaledSize(QSize(18, 18))
+        self.loading_mov.setScaledSize(QSize(16, 16))
 
     def show(self):
         self.resize(self._normal_size)
@@ -154,9 +153,9 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
     def _stop_before_close():
         return not NewMessageBox(
             "警告",
-            "当前有任务正在运行！\n是否安全停止所有正在运行的任务并关闭窗口？",
+            "当前有任务正在运行！\n是否尝试停止所有正在运行的任务并关闭窗口？",
             QMessageBox.Question,
-            (("accept", "安全停止并关闭"), ("reject", "取消")),
+            (("accept", "尝试停止并关闭"), ("reject", "取消")),
         ).exec_()
 
     def closeEvent(self, event):
@@ -197,7 +196,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         self.cb_check_uncheck_all.clicked.connect(self.select_all_or_cancel_all)
         self.lw_env_list.itemPressed.connect(lambda: self.get_pkgs_info(0))
         self.btn_check_for_updates.clicked.connect(self.check_cur_pkgs_for_updates)
-        self.btn_install_package.clicked.connect(win_ins_pkg.show)
+        self.btn_install_package.clicked.connect(window_pkg_install.show)
         self.btn_install_package.clicked.connect(self.set_win_install_package_envinfo)
         self.btn_uninstall_package.clicked.connect(self.uninstall_pkgs)
         self.btn_upgrade_package.clicked.connect(self.upgrade_pkgs)
@@ -207,11 +206,11 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         )
         self.tw_installed_info.clicked.connect(self._show_tip_num_selected)
         self.cb_check_uncheck_all.clicked.connect(self._show_tip_num_selected)
-        win_ins_pkg.pb_do_install.clicked.connect(self.install_pkgs)
+        window_pkg_install.pb_do_install.clicked.connect(self.install_pkgs)
 
     def set_win_install_package_envinfo(self):
         if self.env_list:
-            win_ins_pkg.le_target_env.setText(
+            window_pkg_install.le_target_env.setText(
                 str(self.env_list[self.selected_env_index])
             )
 
@@ -339,7 +338,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         thread_search_envs = NewTask(search_env)
         thread_search_envs.at_start(
             self.lock_widgets,
-            lambda: self.show_loading("正在搜索Python安装目录..."),
+            lambda: self.show_loading("正在搜索 Python 安装目录..."),
         )
         thread_search_envs.at_finish(
             self._clear_pkgs_table_widget,
@@ -366,8 +365,8 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
             self,
             560,
             0,
-            "添加Python目录",
-            "请输入Python目录路径：",
+            "添加 Python 目录",
+            "请输入 Python 目录路径：",
         )
         _path, ok = input_dialog.get_text()
         if not (ok and _path):
@@ -375,13 +374,13 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         if not check_py_path(_path):
             return NewMessageBox(
                 "警告",
-                "无效的Python目录路径！",
+                "无效的 Python 目录路径！",
                 QMessageBox.Warning,
             ).exec_()
         if _path.lower() in [p.lower() for p in self.path_list]:
             return NewMessageBox(
                 "警告",
-                "要添加的Python目录已存在。",
+                "要添加的 Python 目录已存在。",
                 QMessageBox.Warning,
             ).exec_()
         try:
@@ -464,10 +463,10 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         if not self.env_list:
             return
         cur_env = self.env_list[self.lw_env_list.currentRow()]
-        package_to_be_installed = win_ins_pkg.package_names
+        package_to_be_installed = window_pkg_install.package_names
         if not package_to_be_installed:
             return
-        conf = win_ins_pkg.conf_dict
+        conf = window_pkg_install.conf_dict
         install_pre = conf.get("include_pre", False)
         user = conf.get("install_for_user", False)
         use_index_url = conf.get("use_index_url", False)
@@ -673,7 +672,7 @@ class AskFilePath:
         return ""
 
 
-class InstallPackagesWindow(Ui_pkginstall, QWidget, AskFilePath):
+class PackageInstallWindow(Ui_pkginstall, QWidget, AskFilePath):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -800,7 +799,7 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
         for name, url in self._urls_dict.items():
             item_widget = self._widget_for_list_item(url)
             li_item = QListWidgetItem()
-            li_item.setSizeHint(QSize(560, 42))
+            li_item.setSizeHint(QSize(560, 36))
             li_item.setText(name)
             self.li_indexurls.addItem(li_item)
             self.li_indexurls.setItemWidget(li_item, item_widget)
@@ -882,8 +881,8 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
     @staticmethod
     def _get_cur_env():
         """
-        首先使用配置文件中保存的Python路径实例化一个PyEnv，如果路径为空，
-        则使用系统环境变量PATH中第一个Python路径，环境变量中还未找到则返回None。
+        首先使用配置文件中保存的 Python 路径实例化一个 PyEnv，如果路径为空，
+        则使用系统环境变量 PATH 中第一个 Python 路径，环境变量中还未找到则返回 None。
         """
         saved_paths = load_conf("pths")
         warn_box = lambda m: NewMessageBox(
@@ -899,7 +898,7 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
             except Exception:
                 continue
         else:
-            warn_box("没有找到Python环境，请在'包管理器'中添加Python目录。")
+            warn_box("没有找到 Python 环境，请在'包管理器'中添加 Python 目录。")
         return
 
     def _set_global_index_url(self):
@@ -913,13 +912,13 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
             env = self._get_cur_env()
             if not env:
                 warn_box = warn_box(
-                    "未找到Python环境，全局镜像源启用失败。\n请在'包管理器'中添加Python目录。",
+                    "未找到 Python 环境，全局镜像源启用失败。\n请在'包管理器'中添加 Python 目录。",
                 )
             elif env.set_global_index(url):
                 warn_box = NewMessageBox("提示", f"全局镜像源地址设置成功：\n{url}")
             else:
                 warn_box = warn_box(
-                    "未找到Python环境，全局镜像源地址启用失败。\n请在'包管理器'中添加Python目录。",
+                    "未找到 Python 环境，全局镜像源地址启用失败。\n请在'包管理器'中添加 Python 目录。",
                 )
         warn_box.exec_()
 
@@ -927,11 +926,11 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
         env = self._get_cur_env()
         if not env:
             self.le_effectiveurl.setText(
-                "未找到Python环境，无法获取当前全局镜像源地址。",
+                "未找到 Python 环境，无法获取当前全局镜像源地址。",
             )
             return
         self.le_effectiveurl.setText(
-            env.get_global_index() or "无效的Python环境或当前全局镜像源地址为空。"
+            env.get_global_index() or "无效的 Python 环境或当前全局镜像源地址为空。"
         )
 
 
@@ -970,7 +969,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.pyi_tool = PyiTool()
         self.set_platform_info()
         self.pyi_running_mov = QMovie(":/loading.gif")
-        self.pyi_running_mov.setScaledSize(QSize(18, 18))
+        self.pyi_running_mov.setScaledSize(QSize(16, 16))
         self.signal_slot_connection()
         self._normal_size = self.size()
         self._venv_creating_result = 1
@@ -1022,7 +1021,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod("dir")
         self.te_module_search_path.setToolTip(
-            "程序的其他模块的搜索路径，此项可留空。\n仅当PYINSTALLER无法自动找到时使\
+            "程序的其他模块的搜索路径，此项可留空。\n仅当 Pyinstaller 无法自动找到时使\
 用，支持将文件夹直接拖放到此处。"
         )
         self.verticalLayout_3.replaceWidget(
@@ -1057,7 +1056,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.task_completion_tip)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
-        self.pb_select_py_env.clicked.connect(win_chenviron.show)
+        self.pb_select_py_env.clicked.connect(window_environch.show)
         self.le_program_entry.textChanged.connect(self.set_le_project_root)
         self.pb_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
@@ -1080,8 +1079,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.pb_gen_executable.clicked.connect(self.build_executable)
         self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyi)
         self.pb_check_imports.clicked.connect(self.check_project_imports)
-        win_check_imp.pb_install_all_missing.clicked.connect(
-            lambda: self.install_missings(win_check_imp.all_missing_modules)
+        window_imports_check.pb_install_all_missing.clicked.connect(
+            lambda: self.install_missings(window_imports_check.all_missing_modules)
         )
 
     def check_project_imports(self):
@@ -1139,9 +1138,9 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         thread_check_imp.at_finish(
             self.hide_running,
             self.release_widgets,
-            lambda: win_check_imp.set_env_info(environ),
-            lambda: win_check_imp.checkimp_table_update(missings),
-            win_check_imp.show,
+            lambda: window_imports_check.set_env_info(environ),
+            lambda: window_imports_check.checkimp_table_update(missings),
+            window_imports_check.show,
         )
         thread_check_imp.start()
         self.repo.put(thread_check_imp, 1)
@@ -1264,8 +1263,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         return file_dir_paths
 
     def set_env_update_info(self):
-        self.toolwin_pyenv = win_chenviron.winch_envlist[
-            win_chenviron.lw_env_list.currentRow()
+        self.toolwin_pyenv = window_environch.winch_envlist[
+            window_environch.lw_env_list.currentRow()
         ]
         self.lb_py_info.setText(self.toolwin_pyenv.py_info())
         self.pyi_tool.initialize(
@@ -1445,7 +1444,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         # NewMessageBox的exec_方法返回0才是选择"确定"按钮
         if NewMessageBox(
             "安装",
-            "确定安装PYINSTALLER吗？",
+            "确定安装 Pyinstaller 吗？",
             QMessageBox.Question,
             (("accept", "确定"), ("reject", "取消")),
         ).exec_():
@@ -1453,7 +1452,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         if not self.toolwin_pyenv:
             NewMessageBox(
                 "提示",
-                "当前未选择任何Python环境。",
+                "当前未选择任何 Python 环境。",
                 QMessageBox.Warning,
             ).exec_()
             return
@@ -1626,7 +1625,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
                 "Pyinstaller 不可用",
                 "请点击右上角'选择环境'并点击'安装'按钮将 Pyinstaller 安装到所选主环境。\n"
                 "如果选择环境列表没有可选项，请先到'包管理器'界面添加 Python 环境。\n"
-                "如果勾选了'优先使用项目目录下的虚拟环境'，则请点击'模块检测'按钮检测环境中缺失的模块并点击'一键安装'。",
+                "如果勾选了'优先使用项目目录下的虚拟环境'，则请点击'环境检查'按钮检查环境中缺失的模块并点击'一键安装'。",
                 QMessageBox.Warning,
             ).exec_()
             return
@@ -1647,11 +1646,11 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
                 "提示",
                 "没有缺失的模块，无需安装。",
             ).exec_()
-            win_check_imp.close()
+            window_imports_check.close()
             return
         if NewMessageBox(
             "安装",
-            "确定将所有缺失模块安装至所选Python环境中吗？",
+            "确定将所有缺失模块安装至所选 Python 环境中吗？",
             QMessageBox.Question,
             (("accept", "确定"), ("reject", "取消")),
         ).exec_():
@@ -1675,7 +1674,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         thread_install_missings.at_start(
             self.lock_widgets,
             lambda: self.show_running("正在安装缺失模块..."),
-            win_check_imp.close,
+            window_imports_check.close,
         )
         thread_install_missings.at_finish(
             self.hide_running,
@@ -1690,7 +1689,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.repo.put(thread_install_missings, 0)
 
 
-class ChooseEnvWindow(Ui_environch, QWidget):
+class EnvironChosenWindow(Ui_environch, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1719,7 +1718,7 @@ class ChooseEnvWindow(Ui_environch, QWidget):
 
     def close(self):
         super().close()
-        win_pyi_tool.set_env_update_info()
+        window_pyinstaller_tool.set_env_update_info()
 
     def show(self):
         self.resize(self._normal_size)
@@ -1728,7 +1727,7 @@ class ChooseEnvWindow(Ui_environch, QWidget):
         self.pyenv_list_update()
 
 
-class CheckImportsWindow(Ui_impcheck, QWidget):
+class ImportsCheckWindow(Ui_impcheck, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -1813,10 +1812,10 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
         self.pb_save_to.clicked.connect(self.select_saved_dir)
         self.pb_clear_package_names.clicked.connect(self.pte_package_names.clear)
         self.pb_start_download.clicked.connect(self.start_download_package)
-        self.download_status.connect(win_downloading.status_changed)
-        self.set_download_table.connect(win_downloading.setup_table)
+        self.download_status.connect(window_show_download.status_changed)
+        self.set_download_table.connect(window_show_download.setup_table)
         self.download_completed.connect(self.check_download)
-        self.pb_show_dl_list.clicked.connect(win_downloading.show)
+        self.pb_show_dl_list.clicked.connect(window_show_download.show)
 
     def change_le_index_url(self):
         self.le_index_url.setEnabled(self.cb_use_index_url.isChecked())
@@ -1968,7 +1967,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
         if not self.environments:
             return NewMessageBox(
                 "提示",
-                "没有任何Python环境，请到'包管理器'中自动或手动添加Python环境路径。",
+                "没有任何 Python 环境，请到'包管理器'中自动或手动添加 Python 环境路径。",
             ).exec_()
         self.store_config()
         destination = self.config.get("save_to", "")
@@ -1988,7 +1987,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
         if not env.env_path:
             return NewMessageBox(
                 "提示",
-                "无效的Python环境，请检查环境是否已卸载。",
+                "无效的 Python 环境，请检查环境是否已卸载。",
             ).exec_()
         config = self.make_configure(pkg_names)
         if not isinstance(config, dict):
@@ -2073,7 +2072,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
             if unqualified():
                 return NewMessageBox(
                     "提示",
-                    "设置'兼容Python版本'后，不能勾选'下载需要下载的包的依赖库'，\
+                    "设置'兼容 Python 版本'后，不能勾选'下载需要下载的包的依赖库'，\
 不能选择'仅选择源代码包'或'仅选择二进制包'。",
                     QMessageBox.Warning,
                 ).exec_()
@@ -2102,7 +2101,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
             if not (platform_name and python_version and impl_name):
                 return NewMessageBox(
                     "提示",
-                    "当指定ABI时，通常需同时指定'兼容平台'、'兼容Python版本'、\
+                    "当指定ABI时，通常需同时指定'兼容平台'、'兼容 Python 版本'、\
 '兼容解释器实现'三个下载条件。",
                 ).exec_()
             configure.update(abis=abis)
@@ -2112,7 +2111,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
         return configure
 
 
-class ShowDownloadingWindow(Ui_showdload, QWidget):
+class ShowDownloadWindow(Ui_showdload, QWidget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -2213,16 +2212,17 @@ class NewInputDialog(QInputDialog):
 
 
 if __name__ == "__main__":
-    app_awesomepykit = QApplication(sys.argv)
-    app_awesomepykit.setWindowIcon(QIcon(":/icon.ico"))
-    win_ins_pkg = InstallPackagesWindow()
-    win_package_mgr = PackageManagerWindow()
-    win_chenviron = ChooseEnvWindow()
-    win_check_imp = CheckImportsWindow()
-    win_pyi_tool = PyinstallerToolWindow()
-    win_index_mgr = IndexUrlManagerWindow()
-    win_downloading = ShowDownloadingWindow()
-    win_dload_pkg = DownloadPackageWindow()
-    win_main_interface = MainInterface()
-    win_main_interface.show()
-    sys.exit(app_awesomepykit.exec_())
+    awespykit = QApplication(sys.argv)
+    awespykit.setWindowIcon(QIcon(":/icon.ico"))
+    awespykit.setStyle("fusion")
+    window_pkg_install = PackageInstallWindow()
+    window_pkg_manager = PackageManagerWindow()
+    window_environch = EnvironChosenWindow()
+    window_imports_check = ImportsCheckWindow()
+    window_pyinstaller_tool = PyinstallerToolWindow()
+    window_index_mgr = IndexUrlManagerWindow()
+    window_show_download = ShowDownloadWindow()
+    window_pkg_download = DownloadPackageWindow()
+    window_main_entry = MainEntry()
+    window_main_entry.show()
+    sys.exit(awespykit.exec_())

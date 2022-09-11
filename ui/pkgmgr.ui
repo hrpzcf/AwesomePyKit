@@ -32,7 +32,7 @@
           <item>
            <widget class="QLabel" name="lb_python_dir">
             <property name="toolTip">
-             <string>显示当前搜索到的/用户添加的Python目录路径。</string>
+             <string>显示当前搜索到的/用户添加的 Python 目录路径。</string>
             </property>
             <property name="text">
              <string>Python 环境：</string>
@@ -45,7 +45,7 @@
              <enum>Qt::NoContextMenu</enum>
             </property>
             <property name="toolTip">
-             <string>显示当前搜索到的/用户添加的Python目录路径。</string>
+             <string>显示当前搜索到的/用户添加的 Python 目录路径。</string>
             </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
@@ -57,7 +57,7 @@
             <item>
              <widget class="QPushButton" name="btn_autosearch">
               <property name="toolTip">
-               <string>自动搜索常用安装位置中的Python目录并将路径添加到Python环境列表保存。</string>
+               <string>自动搜索常用安装位置中的 Python 目录并将路径添加到 Python 环境列表保存。</string>
               </property>
               <property name="text">
                <string>自动搜索</string>
@@ -67,7 +67,7 @@
             <item>
              <widget class="QPushButton" name="btn_addmanully">
               <property name="toolTip">
-               <string>手动将Python目录路径添加到本Python环境列表以便下次使用。</string>
+               <string>手动将 Python 目录路径添加到本 Python 环境列表以便下次使用。</string>
               </property>
               <property name="text">
                <string>手动添加</string>
@@ -77,7 +77,7 @@
             <item>
              <widget class="QPushButton" name="btn_delselected">
               <property name="toolTip">
-               <string>将本Python环境列表中的选中项移除(仅从本Python环境列表中移除，不会删除本机Python目录)。</string>
+               <string>将本 Python 环境列表中的选中项移除(仅从本 Python 环境列表中移除，不会删除本机 Python 目录)。</string>
               </property>
               <property name="text">
                <string>删除选中项</string>
@@ -100,7 +100,7 @@
           <item>
            <widget class="QLabel" name="lb_installed_pkgs_info">
             <property name="toolTip">
-             <string>选中的Python环境中已安装的包名、当前版本、最新版本、安装状态信息。</string>
+             <string>选中的 Python 环境中已安装的包名、当前版本、最新版本、安装状态信息。</string>
             </property>
             <property name="text">
              <string>已安装的包信息：</string>
@@ -224,7 +224,7 @@
             <item row="0" column="3">
              <widget class="QPushButton" name="btn_check_for_updates">
               <property name="toolTip">
-               <string>检查选中的Python环境中的所有模块的最新版本，有新版本则在&quot;最新版本&quot;列中显示版本号。</string>
+               <string>检查选中的 Python 环境中的所有模块的最新版本，有新版本则在&quot;最新版本&quot;列中显示版本号。</string>
               </property>
               <property name="text">
                <string>检查更新</string>
@@ -234,8 +234,8 @@
             <item row="1" column="0">
              <widget class="QPushButton" name="btn_install_package">
               <property name="toolTip">
-               <string>将输入的包名安装到选中的Python环境中。
-多个包名请用空格隔开，支持输入与pip命令install选项相同的参数。</string>
+               <string>将输入的包名安装到选中的 Python 环境中。
+多个包名请用空格隔开，支持输入与 pip 命令 install 选项相同的参数。</string>
               </property>
               <property name="text">
                <string>安装</string>
@@ -245,7 +245,7 @@
             <item row="1" column="1">
              <widget class="QPushButton" name="btn_uninstall_package">
               <property name="toolTip">
-               <string>将表格中选中的包卸载(仅从选中的Python环境中卸载)。
+               <string>将表格中选中的包卸载(仅从选中的 Python 环境中卸载)。
 注意，卸载时表格中的条目支持多选。</string>
               </property>
               <property name="text">

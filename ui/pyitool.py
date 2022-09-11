@@ -639,7 +639,7 @@ class Ui_pyitool(object):
         self.pb_up_level_root.setToolTip(_translate("pyitool", "将项目根目录向上移一级。"))
         self.pb_up_level_root.setText(_translate("pyitool", "上一级"))
         self.le_project_root.setToolTip(_translate("pyitool", "当前的项目根目录，选择主程序文件后自动确定。"))
-        self.label_3.setToolTip(_translate("pyitool", "程序的其他模块的搜索目录(仅当PYINSTALLER无法自动找到时使用)。"))
+        self.label_3.setToolTip(_translate("pyitool", "程序的其他模块的搜索目录(仅当 Pyinstaller 无法自动找到时使用)。"))
         self.label_3.setText(_translate("pyitool", "其他模块搜索路径："))
         self.pb_clear_module_search_path.setToolTip(_translate("pyitool", "清空其他模块搜索目录文本框。"))
         self.pb_clear_module_search_path.setText(_translate("pyitool", "清空"))
@@ -665,7 +665,7 @@ class Ui_pyitool(object):
 "注意，某些二进制文件在经过upx压缩后可能无法正常运行。\n"
 "仅当系统环境变量PATH中有upx路径信息或在以下“upx可执行文件查找路径”指定了upx查找路径时，此项设置才生效。"))
         self.cb_use_upx.setText(_translate("pyitool", "使用UPX对文件进行压缩"))
-        self.cb_clean_before_build.setToolTip(_translate("pyitool", "生成exe可执行文件前是否清空PYINSTALLER生成的临时文件夹(临时文件可用于下次加速生成)。"))
+        self.cb_clean_before_build.setToolTip(_translate("pyitool", "生成exe可执行文件前是否清空 Pyinstaller 生成的临时文件夹(临时文件可用于下次加速生成)。"))
         self.cb_clean_before_build.setText(_translate("pyitool", "构建前清理缓存并删除临时文件"))
         self.cb_write_info_to_exec.setToolTip(_translate("pyitool", "勾选此选项则将\"附加信息\"标签页中的条目写入生成的exe文件。"))
         self.cb_write_info_to_exec.setText(_translate("pyitool", "将附加信息写入生成的可执行文件"))
@@ -723,17 +723,17 @@ class Ui_pyitool(object):
 "\"_MEIxxxxxx\"文件夹将在您指定的位置创建，仅当您知道自己在做什么时，才使用此选项。"))
         self.groupBox_2.setTitle(_translate("pyitool", "打包单文件运行时临时目录"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_advanced_setup), _translate("pyitool", "高级设置"))
-        self.label_16.setToolTip(_translate("pyitool", "所选PYTHON环境下的PYINSTALLER的版本信息。"))
+        self.label_16.setToolTip(_translate("pyitool", "所选PYTHON环境下的 Pyinstaller 的版本信息。"))
         self.label_16.setText(_translate("pyitool", "Pyi版本"))
-        self.lb_pyi_info.setToolTip(_translate("pyitool", "所选PYTHON环境下的PYINSTALLER的版本信息。"))
-        self.pb_reinstall_pyi.setToolTip(_translate("pyitool", "在当前选择的PYTHON环境中安装或重新安装PYINSTALLER。"))
+        self.lb_pyi_info.setToolTip(_translate("pyitool", "所选PYTHON环境下的 Pyinstaller 的版本信息。"))
+        self.pb_reinstall_pyi.setToolTip(_translate("pyitool", "在当前选择的PYTHON环境中安装或重新安装 Pyinstaller 。"))
         self.pb_reinstall_pyi.setText(_translate("pyitool", "安装"))
         self.label_6.setToolTip(_translate("pyitool", "选择在不同PYTHON环境中将程序打包成可执行文件。\n"
 "如果可选条目为空，需要先在\"包管理器\"中添加本机PYTHON环境。\n"
 "选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。"))
         self.label_6.setText(_translate("pyitool", "Py版本"))
         self.lb_py_info.setToolTip(_translate("pyitool", "当前选择的PYTHON环境的版本信息。\n"
-"选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。"))
+"选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。"))
         self.pb_select_py_env.setToolTip(_translate("pyitool", "选择在不同PYTHON环境中将程序打包成可执行文件。\n"
 "如果可选条目为空，需要先在\"包管理器\"中添加本机PYTHON环境。\n"
 "选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。"))
@@ -753,7 +753,7 @@ class Ui_pyitool(object):
         self.cb_log_level.setItemText(3, _translate("pyitool", "WARN"))
         self.cb_log_level.setItemText(4, _translate("pyitool", "ERROR"))
         self.cb_log_level.setItemText(5, _translate("pyitool", "CRITICAL"))
-        self.pb_check_imports.setToolTip(_translate("pyitool", "检测程序运行所需的所有模块是否在已选的PYTHON环境中安装。"))
+        self.pb_check_imports.setToolTip(_translate("pyitool", "检查程序运行所需的所有模块是否在已选的 Python 环境中安装。"))
         self.pb_check_imports.setText(_translate("pyitool", "环境检查"))
         self.pb_gen_executable.setToolTip(_translate("pyitool", "将PY脚本及所选资源文件打包成可执行文件。"))
         self.pb_gen_executable.setText(_translate("pyitool", "生成可执行文件"))

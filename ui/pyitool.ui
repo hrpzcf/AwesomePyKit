@@ -169,7 +169,7 @@
                <item>
                 <widget class="QLabel" name="label_3">
                  <property name="toolTip">
-                  <string>程序的其他模块的搜索目录(仅当PYINSTALLER无法自动找到时使用)。</string>
+                  <string>程序的其他模块的搜索目录(仅当 Pyinstaller 无法自动找到时使用)。</string>
                  </property>
                  <property name="text">
                   <string>其他模块搜索路径：</string>
@@ -355,7 +355,7 @@
            <item>
             <widget class="QCheckBox" name="cb_clean_before_build">
              <property name="toolTip">
-              <string>生成exe可执行文件前是否清空PYINSTALLER生成的临时文件夹(临时文件可用于下次加速生成)。</string>
+              <string>生成exe可执行文件前是否清空 Pyinstaller 生成的临时文件夹(临时文件可用于下次加速生成)。</string>
              </property>
              <property name="text">
               <string>构建前清理缓存并删除临时文件</string>
@@ -971,7 +971,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_16">
             <property name="toolTip">
-             <string>所选PYTHON环境下的PYINSTALLER的版本信息。</string>
+             <string>所选PYTHON环境下的 Pyinstaller 的版本信息。</string>
             </property>
             <property name="text">
              <string>Pyi版本</string>
@@ -986,7 +986,7 @@
             <item>
              <widget class="QLabel" name="lb_pyi_info">
               <property name="toolTip">
-               <string>所选PYTHON环境下的PYINSTALLER的版本信息。</string>
+               <string>所选PYTHON环境下的 Pyinstaller 的版本信息。</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
@@ -996,7 +996,7 @@
             <item>
              <widget class="QPushButton" name="pb_reinstall_pyi">
               <property name="toolTip">
-               <string>在当前选择的PYTHON环境中安装或重新安装PYINSTALLER。</string>
+               <string>在当前选择的PYTHON环境中安装或重新安装 Pyinstaller 。</string>
               </property>
               <property name="text">
                <string>安装</string>
@@ -1026,7 +1026,7 @@
              <widget class="QLabel" name="lb_py_info">
               <property name="toolTip">
                <string>当前选择的PYTHON环境的版本信息。
-选择不同Python环境时，在该环境中也应安装运行项目所需的所有模块。</string>
+选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
@@ -1339,7 +1339,7 @@
              </palette>
             </property>
             <property name="toolTip">
-             <string>检测程序运行所需的所有模块是否在已选的PYTHON环境中安装。</string>
+             <string>检查程序运行所需的所有模块是否在已选的 Python 环境中安装。</string>
             </property>
             <property name="text">
              <string>环境检查</string>

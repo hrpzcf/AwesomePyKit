@@ -160,16 +160,16 @@ class Ui_pkgmgr(object):
     def retranslateUi(self, pkgmgr):
         _translate = QtCore.QCoreApplication.translate
         pkgmgr.setWindowTitle(_translate("pkgmgr", "包管理器"))
-        self.lb_python_dir.setToolTip(_translate("pkgmgr", "显示当前搜索到的/用户添加的Python目录路径。"))
+        self.lb_python_dir.setToolTip(_translate("pkgmgr", "显示当前搜索到的/用户添加的 Python 目录路径。"))
         self.lb_python_dir.setText(_translate("pkgmgr", "Python 环境："))
-        self.lw_env_list.setToolTip(_translate("pkgmgr", "显示当前搜索到的/用户添加的Python目录路径。"))
-        self.btn_autosearch.setToolTip(_translate("pkgmgr", "自动搜索常用安装位置中的Python目录并将路径添加到Python环境列表保存。"))
+        self.lw_env_list.setToolTip(_translate("pkgmgr", "显示当前搜索到的/用户添加的 Python 目录路径。"))
+        self.btn_autosearch.setToolTip(_translate("pkgmgr", "自动搜索常用安装位置中的 Python 目录并将路径添加到 Python 环境列表保存。"))
         self.btn_autosearch.setText(_translate("pkgmgr", "自动搜索"))
-        self.btn_addmanully.setToolTip(_translate("pkgmgr", "手动将Python目录路径添加到本Python环境列表以便下次使用。"))
+        self.btn_addmanully.setToolTip(_translate("pkgmgr", "手动将 Python 目录路径添加到本 Python 环境列表以便下次使用。"))
         self.btn_addmanully.setText(_translate("pkgmgr", "手动添加"))
-        self.btn_delselected.setToolTip(_translate("pkgmgr", "将本Python环境列表中的选中项移除(仅从本Python环境列表中移除，不会删除本机Python目录)。"))
+        self.btn_delselected.setToolTip(_translate("pkgmgr", "将本 Python 环境列表中的选中项移除(仅从本 Python 环境列表中移除，不会删除本机 Python 目录)。"))
         self.btn_delselected.setText(_translate("pkgmgr", "删除选中项"))
-        self.lb_installed_pkgs_info.setToolTip(_translate("pkgmgr", "选中的Python环境中已安装的包名、当前版本、最新版本、安装状态信息。"))
+        self.lb_installed_pkgs_info.setToolTip(_translate("pkgmgr", "选中的 Python 环境中已安装的包名、当前版本、最新版本、安装状态信息。"))
         self.lb_installed_pkgs_info.setText(_translate("pkgmgr", "已安装的包信息："))
         item = self.tw_installed_info.horizontalHeaderItem(0)
         item.setText(_translate("pkgmgr", "名称"))
@@ -179,12 +179,12 @@ class Ui_pkgmgr(object):
         item.setText(_translate("pkgmgr", "最新版本"))
         item = self.tw_installed_info.horizontalHeaderItem(3)
         item.setText(_translate("pkgmgr", "状态"))
-        self.btn_check_for_updates.setToolTip(_translate("pkgmgr", "检查选中的Python环境中的所有模块的最新版本，有新版本则在\"最新版本\"列中显示版本号。"))
+        self.btn_check_for_updates.setToolTip(_translate("pkgmgr", "检查选中的 Python 环境中的所有模块的最新版本，有新版本则在\"最新版本\"列中显示版本号。"))
         self.btn_check_for_updates.setText(_translate("pkgmgr", "检查更新"))
-        self.btn_install_package.setToolTip(_translate("pkgmgr", "将输入的包名安装到选中的Python环境中。\n"
-"多个包名请用空格隔开，支持输入与pip命令install选项相同的参数。"))
+        self.btn_install_package.setToolTip(_translate("pkgmgr", "将输入的包名安装到选中的 Python 环境中。\n"
+"多个包名请用空格隔开，支持输入与 pip 命令 install 选项相同的参数。"))
         self.btn_install_package.setText(_translate("pkgmgr", "安装"))
-        self.btn_uninstall_package.setToolTip(_translate("pkgmgr", "将表格中选中的包卸载(仅从选中的Python环境中卸载)。\n"
+        self.btn_uninstall_package.setToolTip(_translate("pkgmgr", "将表格中选中的包卸载(仅从选中的 Python 环境中卸载)。\n"
 "注意，卸载时表格中的条目支持多选。"))
         self.btn_uninstall_package.setText(_translate("pkgmgr", "卸载"))
         self.btn_upgrade_package.setToolTip(_translate("pkgmgr", "升级表格中被选中的包。\n"

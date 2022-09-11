@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>选择Python环境</string>
+   <string>选择 Python 环境</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
