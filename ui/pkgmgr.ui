@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
+    <width>800</width>
     <height>580</height>
    </rect>
   </property>
@@ -41,6 +41,70 @@
           </item>
           <item>
            <widget class="QListWidget" name="lw_env_list">
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="Highlight">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>136</green>
+                  <blue>238</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="HighlightedText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Highlight">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>136</green>
+                  <blue>238</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="HighlightedText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="Highlight">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>190</red>
+                  <green>190</green>
+                  <blue>190</blue>
+                 </color>
+                </brush>
+               </colorrole>
+               <colorrole role="HighlightedText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
             <property name="contextMenuPolicy">
              <enum>Qt::NoContextMenu</enum>
             </property>
@@ -116,17 +180,17 @@
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
                   <red>0</red>
-                  <green>170</green>
-                  <blue>255</blue>
+                  <green>136</green>
+                  <blue>238</blue>
                  </color>
                 </brush>
                </colorrole>
                <colorrole role="HighlightedText">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>47</red>
-                  <green>47</green>
-                  <blue>47</blue>
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -136,17 +200,17 @@
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
                   <red>0</red>
-                  <green>170</green>
-                  <blue>255</blue>
+                  <green>136</green>
+                  <blue>238</blue>
                  </color>
                 </brush>
                </colorrole>
                <colorrole role="HighlightedText">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>0</red>
-                  <green>0</green>
-                  <blue>0</blue>
+                  <red>255</red>
+                  <green>255</green>
+                  <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
