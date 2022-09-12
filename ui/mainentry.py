@@ -93,7 +93,7 @@ class Ui_mainentry(object):
         self.pb_pyi_tool.setText(_translate("mainentry", "程序打包工具"))
         self.pb_index_mgr.setToolTip(_translate("mainentry", "设置pip全局镜像源地址。"))
         self.pb_index_mgr.setText(_translate("mainentry", "镜像源设置"))
-        self.pb_pkg_dload.setToolTip(_translate("mainentry", "Python 包下载工具，此工具当前处于测试阶段。"))
+        self.pb_pkg_dload.setToolTip(_translate("mainentry", "Python 的模块、包下载工具，可批量下载。"))
         self.pb_pkg_dload.setText(_translate("mainentry", "模块安装包下载"))
         self.menu_help.setTitle(_translate("mainentry", "关于"))
         self.description.setText(_translate("mainentry", "功能说明"))
