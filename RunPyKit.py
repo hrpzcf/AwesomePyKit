@@ -466,8 +466,8 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         if not self.env_list:
             return
         cur_env = self.env_list[self.lw_env_list.currentRow()]
-        package_to_be_installed = window_pkg_install.package_names
-        if not package_to_be_installed:
+        pkgs_tobe_installed = window_pkg_install.package_names
+        if not pkgs_tobe_installed:
             return
         conf = window_pkg_install.conf_dict
         install_pre = conf.get("include_pre", False)
@@ -476,17 +476,23 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         index_url = conf.get("index_url", "") if use_index_url else ""
 
         def do_install():
-            for name, code in loop_install(
-                cur_env,
-                package_to_be_installed,
-                pre=install_pre,
-                user=user,
-                index_url=index_url,
-            ):
+            installed = [
+                [name, result]
+                for name, result in loop_install(
+                    cur_env,
+                    pkgs_tobe_installed,
+                    pre=install_pre,
+                    user=user,
+                    index_url=index_url,
+                )
+            ]
+            separated = parse_package_names(i[0] for i in installed)
+            for i, value in enumerate(installed):
+                value[0] = separated[i]
+            for name, result in installed:
                 item = self.cur_pkgs_info.setdefault(name, ["", "", ""])
-                if not item[0]:
-                    item[0] = "N/A"
-                item[2] = "安装成功" if code else "安装失败"
+                item[0] = "N/A"
+                item[2] = "安装成功" if result else "安装失败"
 
         thread_install_pkgs = NewTask(do_install)
         thread_install_pkgs.at_start(
