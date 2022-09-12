@@ -1,7 +1,7 @@
 # coding: utf-8
 
-NAME = "AwesomePyKit"
-VERSION = "0.10.0-Beta"
+NAME = "AwesPyKit"
+VERSION = "0.11.0-beta"
 AUTHOR = "hrp/hrpzcf"
 EMAIL = "hrpzcf@foxmail.com"
 WEBSITE = "https://gitee.com/hrpzcf/AwesomePyKit"
