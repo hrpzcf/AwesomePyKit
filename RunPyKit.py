@@ -545,14 +545,14 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
     def upgrade_pkgs(self):
         pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
         pkg_indexs = self.indexs_of_selected_rows()
-        pkg_names = [pkgs_info_keys[index] for index in pkg_indexs]
-        if not pkg_names:
+        names = [pkgs_info_keys[index] for index in pkg_indexs]
+        if not names:
             return
         cur_env = self.env_list[self.lw_env_list.currentRow()]
         names_text = (
-            "\n".join(pkg_names)
-            if len(pkg_names) <= 10
-            else "\n".join(("\n".join(pkg_names[:10]), "......"))
+            "\n".join(names)
+            if len(names) <= 10
+            else "\n".join(("\n".join(names[:10]), "......"))
         )
         if (
             NewMessageBox(
@@ -566,11 +566,16 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
             return
 
         def do_upgrade():
-            for pkg_name, code in loop_install(cur_env, pkg_names, upgrade=1):
-                item = self.cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
-                if code and item[1]:
-                    item[0] = item[1]
-                item[2] = "升级成功" if code else "升级失败"
+            for pkg, res in loop_install(cur_env, names, upgrade=1):
+                item = self.cur_pkgs_info.setdefault(pkg, ["", "", ""])
+                if res:
+                    item[2] = "升级成功"
+                    if item[1]:
+                        item[0] = item[1]
+                    else:
+                        item[0] = "N/A"
+                else:
+                    item[2] = "升级失败"
 
         thread_upgrade_pkgs = NewTask(do_upgrade)
         thread_upgrade_pkgs.at_start(
