@@ -1598,7 +1598,11 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
                     "提示",
                     "项目目录下不存在虚拟环境，请选择合适选项。",
                     QMessageBox.Warning,
-                    (("accept", "使用主环境"), ("destructive", "创建虚拟环境"), ("reject", "取消")),
+                    (
+                        ("accept", "使用主环境"),
+                        ("destructive", "创建虚拟环境"),
+                        ("reject", "取消"),
+                    ),
                 ).exec_()
                 if role == 0:
                     using_py_path = self._stored_conf.get("env_path", "")
