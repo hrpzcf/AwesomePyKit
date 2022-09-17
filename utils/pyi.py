@@ -67,7 +67,6 @@ class PyiTool(QObject):
                 text=True,
                 cwd=self._cwd,
                 startupinfo=self.STARTUP,
-                encoding="utf-8",
             )
         return self._process
 
@@ -83,48 +82,60 @@ class PyiTool(QObject):
             self._qtimer.stop()
             self.cumulative = -200
 
-    def _emit_split_line(self):
-        try:
-            for line in self._process.stdout:
-                self.stdout.emit(line.strip())
-        except UnicodeDecodeError as e:
-            self.stdout.emit(f"[{NAME}] 管道内容解码异常：\n    {e}")
+    def _line_division_emit(self):
+        while self._process.poll() is None:
+            try:
+                line = self._process.stdout.readline()
+                if line is not None:
+                    line = line.strip(os.linesep)
+                    if line:
+                        self.stdout.emit(line)
+            except Exception as e:
+                self.stdout.emit(f"[{NAME}] 信息流读取异常(不影响打包)：\n    {e}")
+                continue
         self.completed.emit(self._process.wait())
 
-    def _emit_split_time(self):
+    def _time_division_emit(self):
         self.run_time.emit(1)
-        lines = []
-        try:
-            for line in self._process.stdout:
-                lines.append(line.strip())
-                if self.cumulative > 80:
+        lines = list()
+        while self._process.poll() is None:
+            try:
+                line = self._process.stdout.readline()
+                if line is not None:
+                    line = line.strip(os.linesep)
+                    if line:
+                        lines.append(line)
+                if self.cumulative > 100:
                     self.stdout.emit("\n".join(lines))
                     lines.clear()
                     self.cumulative = 0
-        except UnicodeDecodeError as e:
-            self.stdout.emit(f"[{NAME}] 管道内容解码异常：\n    {e}")
-        self.completed.emit(self._process.wait())
+            except Exception as e:
+                self.stdout.emit(f"[{NAME}] 信息流读取异常(不影响打包)：\n    {e}")
+                continue
+        if lines:
+            self.stdout.emit("\n".join(lines))
         self.run_time.emit(0)
+        self.completed.emit(self._process.wait())
 
     def execute_cmd(self):
         """执行命令并读取输出流，通过信号发射字符串、返回码更新主界面面板。"""
         if self.pyi_ready and self._process:
             if self._log_level == "TRACE":
-                self._emit_split_time()
+                self._time_division_emit()
             else:
-                self._emit_split_line()
+                self._line_division_emit()
         else:
             if not self.pyi_ready:
-                self.stdout.emit("当前 Python 环境中找不到 Pyinstaller 。")
+                self.stdout.emit("当前环境中找不到 pyinstaller.exe。")
             if self._process is None:
-                self.stdout.emit("请先调用handle方法获取进程操作句柄。")
+                self.stdout.emit("请先调用 handle 方法获取进程操作句柄。")
             self.completed.emit(-1)
 
     def prepare_cmd(self, cmd_dict=None):
         """从cmd_dict添加PyInstaller命令选项。"""
         if cmd_dict is None:
             cmd_dict = {}
-        self._log_level = cmd_dict.get("log_level", None)
+        self._log_level = cmd_dict.get("log_level", "INFO")
         if cmd_dict.get("pack_to_one", "dir") == "dir":
             self._commands.append("-D")
         else:
