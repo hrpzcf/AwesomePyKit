@@ -5,6 +5,7 @@ __doc__ = """包含pyinstaller相关的类或函数。"""
 import os
 from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, STDOUT, SW_HIDE, Popen
 
+from info import NAME
 from PyQt5.QtCore import QObject, QTimer, pyqtSignal
 
 from utils.main import config_dir, get_cmd_out
@@ -22,8 +23,8 @@ class PyiTool(QObject):
         super().__init__()
         self.initialize(py_path, cwd)
         self.cumulative = -200
-        self.emt = QTimer()
-        self.emt.timeout.connect(self._time)
+        self._qtimer = QTimer()
+        self._qtimer.timeout.connect(self._time)
         self.run_time.connect(self.timer_ctrl)
         self._log_level = None
 
@@ -66,6 +67,7 @@ class PyiTool(QObject):
                 text=True,
                 cwd=self._cwd,
                 startupinfo=self.STARTUP,
+                encoding="utf-8",
             )
         return self._process
 
@@ -76,25 +78,31 @@ class PyiTool(QObject):
 
     def timer_ctrl(self, code):
         if code:
-            self.emt.start(10)
+            self._qtimer.start(10)
         else:
-            self.emt.stop()
+            self._qtimer.stop()
             self.cumulative = -200
 
     def _emit_split_line(self):
-        for line in self._process.stdout:
-            self.stdout.emit(line.strip())
+        try:
+            for line in self._process.stdout:
+                self.stdout.emit(line.strip())
+        except UnicodeDecodeError as e:
+            self.stdout.emit(f"[{NAME}] 管道内容解码异常：\n    {e}")
         self.completed.emit(self._process.wait())
 
     def _emit_split_time(self):
         self.run_time.emit(1)
         lines = []
-        for line in self._process.stdout:
-            lines.append(line.strip())
-            if self.cumulative > 80:
-                self.stdout.emit("\n".join(lines))
-                lines.clear()
-                self.cumulative = 0
+        try:
+            for line in self._process.stdout:
+                lines.append(line.strip())
+                if self.cumulative > 80:
+                    self.stdout.emit("\n".join(lines))
+                    lines.clear()
+                    self.cumulative = 0
+        except UnicodeDecodeError as e:
+            self.stdout.emit(f"[{NAME}] 管道内容解码异常：\n    {e}")
         self.completed.emit(self._process.wait())
         self.run_time.emit(0)
 
