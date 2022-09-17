@@ -1012,11 +1012,11 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self._normal_size = old_size
 
     def _setup_other_widgets(self):
-        # 替换“主程序”LineEdit控件
+        # 替换“程序启动入口”LineEdit控件
         self.le_program_entry = QLineEditMod("file", {".py", ".pyc", ".pyw", ".spec"})
         self.le_program_entry.setToolTip(
-            "要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。\n"
-            "如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。\n"
+            "要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。\n"
+            "如果指定了 SPEC 文件，则以下绝大部分项目文件及生成控制都将不生效。\n"
             "可将格式正确的文件拖放到此处。"
         )
         self.horizontalLayout_3.replaceWidget(
@@ -1148,7 +1148,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         thread_check_imp = NewTask(get_missing_imps)
         thread_check_imp.at_start(
             self.lock_widgets,
-            lambda: self.show_running("正在分析环境中导入项安装信息..."),
+            lambda: self.show_running("正在分析项目依赖在环境中的安装情况..."),
         )
         thread_check_imp.at_finish(
             self.hide_running,
@@ -1162,7 +1162,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
 
     def set_le_program_entry(self):
         selected_file = self._ask_file_or_dir_path(
-            "选择主程序",
+            "选择程序启动入口",
             self._stored_conf.get("project_root", ""),
             file_filter="脚本文件 (*.py *.pyc *.pyw *.spec)",
         )[0]
@@ -1512,14 +1512,14 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         if not program_entry:
             NewMessageBox(
                 "错误",
-                "主程序未填写！",
+                "程序启动入口未填写！",
                 QMessageBox.Critical,
             ).exec_()
             return False
         if not os.path.isfile(program_entry):
             NewMessageBox(
                 "错误",
-                "主程序文件不存在！",
+                "程序启动入口文件不存在！",
                 QMessageBox.Critical,
             ).exec_()
             return False
@@ -1639,9 +1639,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         if not self.pyi_tool.pyi_ready:
             NewMessageBox(
                 "Pyinstaller 不可用",
-                "请点击右上角'选择环境'并点击'安装'按钮将 Pyinstaller 安装到所选主环境。\n"
-                "如果选择环境列表没有可选项，请先到'包管理器'界面添加 Python 环境。\n"
-                "如果勾选了'优先使用项目目录下的虚拟环境'，则请点击'环境检查'按钮检查环境中缺失的模块并点击'一键安装'。",
+                "请点击右上角'选择环境'按钮选择打包环境，再点击'安装'按钮将 Pyinstaller 安装到所选的打包环境。\n"
+                "如果勾选了'使用项目目录下的虚拟环境而不是以上环境'，则请点击'环境检查'按钮检查环境中缺失的模块并点击'一键安装'。",
                 QMessageBox.Warning,
             ).exec_()
             return

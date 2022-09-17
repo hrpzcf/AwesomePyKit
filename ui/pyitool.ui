@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>685</width>
-    <height>716</height>
+    <height>722</height>
    </rect>
   </property>
   <property name="font">
@@ -44,11 +44,11 @@
              <item>
               <widget class="QLabel" name="label">
                <property name="toolTip">
-                <string>要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。
+                <string>要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。
 如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
                </property>
                <property name="text">
-                <string>主程序：</string>
+                <string>程序启动入口：</string>
                </property>
               </widget>
              </item>
@@ -60,7 +60,7 @@
                   <enum>Qt::NoContextMenu</enum>
                  </property>
                  <property name="toolTip">
-                  <string>要打包的程序的启动入口脚本(*.py *.pyw *.pyc *.spec)，此项必填。
+                  <string>要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。
 如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
                  </property>
                 </widget>
@@ -81,7 +81,7 @@
              <item>
               <widget class="QLabel" name="label_13">
                <property name="toolTip">
-                <string>打包完成后的exe可执行文件文件的名称，此项留空则使用主程序文件名。</string>
+                <string>打包完成后的exe可执行文件文件的名称，此项留空则使用程序启动入口文件名。</string>
                </property>
                <property name="text">
                 <string>生成文件名称：</string>
@@ -94,7 +94,7 @@
                 <enum>Qt::NoContextMenu</enum>
                </property>
                <property name="toolTip">
-                <string>打包完成后的exe可执行文件文件的名称，此项留空则使用主程序文件名。</string>
+                <string>打包完成后的exe可执行文件文件的名称，此项留空则使用程序启动入口文件名。</string>
                </property>
               </widget>
              </item>
@@ -107,7 +107,7 @@
                <item>
                 <widget class="QLabel" name="label_2">
                  <property name="toolTip">
-                  <string>当前的项目根目录，选择主程序文件后自动确定。</string>
+                  <string>当前的项目根目录，选择程序启动入口文件后自动确定。</string>
                  </property>
                  <property name="text">
                   <string>项目根目录：</string>
@@ -119,7 +119,7 @@
                  <item>
                   <widget class="QPushButton" name="pb_reset_root_level">
                    <property name="toolTip">
-                    <string>将项目根目录重置为主程序所在目录。</string>
+                    <string>将项目根目录重置为程序启动入口所在目录。</string>
                    </property>
                    <property name="text">
                     <string>重置</string>
@@ -146,7 +146,7 @@
                 <enum>Qt::NoContextMenu</enum>
                </property>
                <property name="toolTip">
-                <string>当前的项目根目录，选择主程序文件后自动确定。</string>
+                <string>当前的项目根目录，选择程序启动入口文件后自动确定。</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -323,7 +323,7 @@
            <item>
             <widget class="QCheckBox" name="cb_execute_with_console">
              <property name="toolTip">
-              <string>打包完成后启动程序是否显示命令行窗口，注意，后缀为pyw的主程序打包后不显示控制台，此项设置失效。</string>
+              <string>打包完成后启动程序是否显示命令行窗口，注意，后缀为 .pyw 的程序启动入口打包后不显示控制台，此项设置失效。</string>
              </property>
              <property name="text">
               <string>打包的程序运行时显示控制台</string>
@@ -518,7 +518,7 @@
 当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。</string>
                </property>
                <property name="text">
-                <string>UPX可执行文件查找路径：</string>
+                <string>UPX 可执行文件所在目录：</string>
                </property>
               </widget>
              </item>
@@ -556,7 +556,7 @@
 某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。</string>
                </property>
                <property name="text">
-                <string>UPX压缩时排除的文件名：</string>
+                <string>UPX 压缩时排除的文件名：</string>
                </property>
               </widget>
              </item>
@@ -974,7 +974,7 @@
              <string>所选PYTHON环境下的 Pyinstaller 的版本信息。</string>
             </property>
             <property name="text">
-             <string>Pyi版本</string>
+             <string>Pyi 版本</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1013,7 +1013,7 @@
 选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
             </property>
             <property name="text">
-             <string>Py版本</string>
+             <string>打包环境</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1053,7 +1053,7 @@
              <string>操作系统的版本信息。</string>
             </property>
             <property name="text">
-             <string>系统版本</string>
+             <string>系统信息</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1079,7 +1079,7 @@
           <item row="3" column="1">
            <widget class="QCheckBox" name="cb_prioritize_venv">
             <property name="text">
-             <string>优先使用项目目录下的 Python 虚拟环境</string>
+             <string>使用项目目录下的虚拟环境而不是以上环境</string>
             </property>
            </widget>
           </item>
@@ -1398,7 +1398,7 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>将PY脚本及所选资源文件打包成可执行文件。</string>
+             <string>将 Python 程序及所选资源文件打包成 .exe 文件。</string>
             </property>
             <property name="text">
              <string>生成可执行文件</string>
