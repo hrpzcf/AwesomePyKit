@@ -1557,12 +1557,12 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         if retcode == 0:
             NewMessageBox(
                 "任务结束",
-                "可执行文件已打包完成！",
+                "Python 程序已打包完成！",
             ).exec_()
         else:
             NewMessageBox(
                 "任务结束",
-                "可执行文件生成失败，请检查错误信息！",
+                "打包失败，请检查错误信息！",
                 QMessageBox.Critical,
             ).exec_()
 
