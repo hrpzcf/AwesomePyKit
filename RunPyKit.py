@@ -1133,12 +1133,17 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             missings.append(("打包功能核心模块", {}, {"pyinstaller"}))
 
         def get_missing_imps():
-            imp_missings = ImportInspector(
+            inspector = ImportInspector(
                 environ.env_path,
                 project_root,
                 [self.toolwin_venv.env_path, dist_dir],
-            ).get_missing_items()
-            missings.extend(imp_missings)
+            )
+            if (
+                self._stored_conf.get("key", "")
+                and "tinyaes" not in inspector.importables
+            ):
+                missings.append(("字节码加密功能", {}, {"tinyaes"}))
+            missings.extend(inspector.get_missing_items())
 
         thread_check_imp = NewTask(get_missing_imps)
         thread_check_imp.at_start(

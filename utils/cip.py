@@ -99,8 +99,8 @@ class ImportInspector:
         self._excludes = list()
         if isinstance(excludes, (list, tuple)):
             self._excludes.extend(excludes)
-        self.__importables = self.__project_importables()
-        self.__importables.update(PyEnv(python_dir).names_for_import())
+        self.importables = self.__project_importables()
+        self.importables.update(PyEnv(python_dir).names_for_import())
 
     def __modules_tobe_imported(self, string):
         """
@@ -150,7 +150,7 @@ class ImportInspector:
                 with open(p, encoding=c) as f:
                     file_string = f.read()
                 imps = self.__modules_tobe_imported(file_string)
-                results.append((p, imps, imps - self.__importables))
+                results.append((p, imps, imps - self.importables))
             except Exception:
                 results.append((p, set(), set()))
         if not results:
