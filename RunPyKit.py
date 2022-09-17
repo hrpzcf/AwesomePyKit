@@ -1156,7 +1156,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.repo.put(thread_check_imp, 1)
 
     def set_le_program_entry(self):
-        selected_file = self._select_file_dir(
+        selected_file = self._ask_file_or_dir_path(
             "选择主程序",
             self._stored_conf.get("project_root", ""),
             file_filter="脚本文件 (*.py *.pyc *.pyw *.spec)",
@@ -1171,7 +1171,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self._stored_conf["project_root"] = root
 
     def set_te_module_search_path(self):
-        selected_dir = self._select_file_dir(
+        selected_dir = self._ask_file_or_dir_path(
             "其他模块搜索目录", self._stored_conf.get("project_root", ""), cht="dir"
         )[0]
         if not selected_dir:
@@ -1179,7 +1179,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.te_module_search_path.append(selected_dir)
 
     def set_te_other_data(self):
-        selected_files = self._select_file_dir(
+        selected_files = self._ask_file_or_dir_path(
             "选择非源码资源文件", self._stored_conf.get("project_root", ""), mult=True
         )
         if not selected_files:
@@ -1187,7 +1187,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.te_other_data.append("\n".join(selected_files))
 
     def set_le_file_icon_path(self):
-        selected_file = self._select_file_dir(
+        selected_file = self._ask_file_or_dir_path(
             "选择可执行文件图标",
             self._stored_conf.get("project_root", ""),
             file_filter="图标文件 (*.ico *.icns)",
@@ -1197,7 +1197,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.le_file_icon_path.setText(selected_file)
 
     def set_le_spec_dir(self):
-        selected_dir = self._select_file_dir(
+        selected_dir = self._ask_file_or_dir_path(
             "选择SPEC文件储存目录",
             self._stored_conf.get("project_root", ""),
             cht="dir",
@@ -1207,7 +1207,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.le_spec_dir.setText(selected_dir)
 
     def set_le_temp_working_dir(self):
-        selected_dir = self._select_file_dir(
+        selected_dir = self._ask_file_or_dir_path(
             "选择临时文件目录", self._stored_conf.get("project_root", ""), cht="dir"
         )[0]
         if not selected_dir:
@@ -1215,7 +1215,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.le_temp_working_dir.setText(selected_dir)
 
     def set_le_output_dir(self):
-        selected_dir = self._select_file_dir(
+        selected_dir = self._ask_file_or_dir_path(
             "选择生成文件储存目录", self._stored_conf.get("project_root", ""), cht="dir"
         )[0]
         if not selected_dir:
@@ -1223,14 +1223,14 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.le_output_dir.setText(selected_dir)
 
     def set_le_upx_search_path(self):
-        selected_dir = self._select_file_dir(
+        selected_dir = self._ask_file_or_dir_path(
             "选择UPX程序搜索目录", self._stored_conf.get("project_root", ""), cht="dir"
         )[0]
         if not selected_dir:
             return
         self.le_upx_search_path.setText(selected_dir)
 
-    def _select_file_dir(
+    def _ask_file_or_dir_path(
         self,
         title="",
         start="",
@@ -1334,11 +1334,12 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         )
         self.cb_log_level.setCurrentText(self._stored_conf.get("log_level", "INFO"))
         self.set_file_ver_info_text()
-        self.change_debug_options("set")
+        self.pyi_debug_options("set")
         self.le_runtime_tmpdir.setText(self._stored_conf.get("runtime_tmpdir", ""))
         self.cb_prioritize_venv.setChecked(
             self._stored_conf.get("prioritize_venv", False)
         )
+        self.le_bytecode_encryption_key.setText(self._stored_conf.get("key", ""))
 
     def store_state_of_widgets(self):
         self._stored_conf["program_entry"] = self.le_program_entry.local_path
@@ -1376,9 +1377,10 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self._stored_conf["env_path"] = self.toolwin_pyenv.env_path
         self._stored_conf["log_level"] = self.cb_log_level.currentText()
         self._stored_conf["file_ver_info"] = self.file_ver_info_text()
-        self._stored_conf["debug_options"] = self.change_debug_options("get")
+        self._stored_conf["debug_options"] = self.pyi_debug_options("get")
         self._stored_conf["runtime_tmpdir"] = self.le_runtime_tmpdir.text()
         self._stored_conf["prioritize_venv"] = self.cb_prioritize_venv.isChecked()
+        self._stored_conf["key"] = self.le_bytecode_encryption_key.text()
 
     def _abs_rel_groups(self, starting_point):
         """获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
@@ -1392,7 +1394,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             abs_rel_path_groups.append((abs_path, rel_path))
         return abs_rel_path_groups
 
-    def change_debug_options(self, opt):
+    def pyi_debug_options(self, opt):
         """从关于"以调试模式打包"的控件获取状态或设置这些控件的状态。"""
         if opt == "get":
             return {
@@ -1488,8 +1490,6 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.lb_platform_info.setText(f"{platform()}-{machine()}")
 
     def project_root_level(self, opt):
-        if opt not in ("up", "reset"):
-            return
         root = self.le_project_root.text()
         if not root:
             return
