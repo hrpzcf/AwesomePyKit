@@ -1057,6 +1057,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         for line_edit in self.le_group_vers:
             line_edit.setValidator(reg_exp_val2)
         self.le_runtime_tmpdir.setValidator(reg_exp_val1)
+        self.splitter.setStretchFactor(0, 1)
+        self.splitter.setStretchFactor(1, 3)
 
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.task_completion_tip)

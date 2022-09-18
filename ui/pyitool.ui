@@ -25,9 +25,6 @@
    <layout class="QVBoxLayout" name="verticalLayout_18">
     <item>
      <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
         <number>0</number>
@@ -1125,6 +1122,9 @@
                <widget class="QComboBox" name="cb_log_level">
                 <property name="toolTip">
                  <string>打包程序时输出的流程信息的详细程度，越靠前越详细，默认INFO。</string>
+                </property>
+                <property name="currentIndex">
+                 <number>2</number>
                 </property>
                 <item>
                  <property name="text">

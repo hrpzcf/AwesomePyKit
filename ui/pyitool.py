@@ -24,7 +24,6 @@ class Ui_pyitool(object):
         self.verticalLayout_18 = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout_18.setObjectName("verticalLayout_18")
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.tabWidget = QtWidgets.QTabWidget(self.splitter)
         self.tabWidget.setObjectName("tabWidget")
@@ -622,6 +621,7 @@ class Ui_pyitool(object):
 
         self.retranslateUi(pyitool)
         self.tabWidget.setCurrentIndex(0)
+        self.cb_log_level.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(pyitool)
 
     def retranslateUi(self, pyitool):
