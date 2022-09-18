@@ -66,7 +66,7 @@ from res.res import *
 from ui import *
 from utils import *
 from utils.cip import ImportInspector
-from utils.main import PyEnv
+from utils.main import PyEnv, open_explorer
 from utils.pyi import PyiTool
 from utils.qt import QLineEditMod, QTextEditMod
 from utils.venv import VirtualEnv
