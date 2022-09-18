@@ -1026,7 +1026,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod("dir")
         self.te_module_search_path.setToolTip(
-            "程序的其他模块的搜索路径，此项可留空。\n仅当 Pyinstaller 无法自动找到时使\
+            "程序的其他模块的搜索路径(模块的父目录)，此项可留空。\n仅当 Pyinstaller 无法自动找到时使\
 用，支持将文件夹直接拖放到此处。"
         )
         self.verticalLayout_3.replaceWidget(
@@ -1037,7 +1037,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.te_other_data = QTextEditMod("file")
         self.te_other_data.setToolTip(
             """非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n"""
-            """注意资源文件要在项目根目录范围内，否则打包后程序可能无法运行。可将文件\
+            """注意：资源文件需是打包前程序真正使用的资源且在项目根目录范围内，否则打包后程序可能无法运行。可将文件\
 或者文件夹直接拖到此处。"""
         )
         self.verticalLayout_4.replaceWidget(self.te_other_data_old, self.te_other_data)
