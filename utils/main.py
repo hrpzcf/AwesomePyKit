@@ -11,6 +11,10 @@ from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
 from PyQt5.QtCore import QMutex, QThread, QTimer
 
+_STARTUP_INFO = STARTUPINFO()
+_STARTUP_INFO.dwFlags = STARTF_USESHOWWINDOW
+_STARTUP_INFO.wShowWindow = SW_HIDE
+
 # 此程序打包为单目录形式时，__file__ 是 libm.pyc 文件的虚拟路径
 # 路径在程序可执行文件的目录下：.\library\libm.pyc，文件不是真实存在的
 _root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -223,10 +227,7 @@ class ThreadRepo:
 
 def get_cmd_out(*commands, regexp="", timeout=None):
     """用于从cmd命令执行输出的字符匹配想要的信息。"""
-    _STARTUP = STARTUPINFO()
-    _STARTUP.dwFlags = STARTF_USESHOWWINDOW
-    _STARTUP.wShowWindow = SW_HIDE
-    proc = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP)
+    proc = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP_INFO)
     try:
         strings, _ = proc.communicate(timeout=timeout)
     except Exception:
@@ -234,3 +235,16 @@ def get_cmd_out(*commands, regexp="", timeout=None):
     if not regexp:
         return strings.strip()
     return re.search(regexp, strings)
+
+
+def open_explorer(path, option="root"):
+    assert isinstance(path, str)
+    assert option in ("root", "select")
+    path = os.path.normpath(path.strip())
+    if os.path.isfile(path):
+        commands = f"explorer /select,{path}"
+    elif os.path.isdir(path):
+        commands = f"explorer /{option},{path}"
+    else:
+        return
+    os.system(commands)
