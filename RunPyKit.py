@@ -1572,7 +1572,9 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             sub_directory = ""
         else:
             sub_directory = program_name
-        final_execfn = os.path.splitext(program_name)[0]
+        final_execfn, ext = os.path.splitext(program_name)
+        if ext.lower() != ".exe":
+            final_execfn = program_name
         folder = self._stored_conf.get("output_dir", "")
         if not folder:
             folder = os.path.join(self._stored_conf.get("project_root", ""), "dist")
