@@ -1559,18 +1559,30 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             widget.setEnabled(True)
         self.hide_running()
 
+    def open_explorer_select_file(self):
+        program_name = self._stored_conf.get("exefile_specfile_name", "")
+        if not program_name:
+            program_name = os.path.splitext(
+                os.path.basename(self._stored_conf.get("program_entry", ""))
+            )[0]
+        if self.rb_pack_to_one_file.isChecked():
+            sub_directory = ""
+        else:
+            sub_directory = program_name
+        final_execfn = os.path.splitext(program_name)[0]
+        folder = self._stored_conf.get("output_dir", "")
+        if not folder:
+            folder = os.path.join(self._stored_conf.get("project_root", ""), "dist")
+        explorer_selected = os.path.join(folder, sub_directory, final_execfn) + ".exe"
+        open_explorer(explorer_selected, "select")
+
     def after_task_completed(self, retcode):
         if retcode == 0:
-            NewMessageBox(
-                "任务结束",
-                "Python 程序已打包完成！",
-            ).exec_()
+            if self.rb_open_dir_select_file.isChecked():
+                self.open_explorer_select_file()
+            NewMessageBox("任务结束", "Python 程序已打包完成！").exec_()
         else:
-            NewMessageBox(
-                "任务结束",
-                "打包失败，请检查错误信息！",
-                QMessageBox.Critical,
-            ).exec_()
+            NewMessageBox("任务结束", "打包失败，请检查错误信息！", QMessageBox.Critical).exec_()
 
     def creating_virtualenv(self):
         dist_dir = self._stored_conf.get("output_dir", "")
