@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
+    <width>860</width>
     <height>722</height>
    </rect>
   </property>
@@ -25,6 +25,9 @@
    <layout class="QVBoxLayout" name="verticalLayout_18">
     <item>
      <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
         <number>0</number>
@@ -81,7 +84,7 @@
                 <string>打包完成后的exe可执行文件文件的名称，此项留空则使用程序启动入口文件名。</string>
                </property>
                <property name="text">
-                <string>生成文件名称：</string>
+                <string>打包后的文件名称：</string>
                </property>
               </widget>
              </item>
@@ -169,7 +172,7 @@
                   <string>程序的其他模块的搜索目录(仅当 Pyinstaller 无法自动找到时使用)。</string>
                  </property>
                  <property name="text">
-                  <string>其他模块搜索路径：</string>
+                  <string>其他模块的搜索目录：</string>
                  </property>
                 </widget>
                </item>
@@ -255,7 +258,7 @@
                 <string>生成的exe可执行文件的图标，支持.ico、.icns图标文件。</string>
                </property>
                <property name="text">
-                <string>文件图标路径：</string>
+                <string>可执行文件的图标路径：</string>
                </property>
               </widget>
              </item>
@@ -957,6 +960,60 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="tab_pyitool_settings">
+        <attribute name="title">
+         <string>工具设置</string>
+        </attribute>
+        <layout class="QHBoxLayout" name="horizontalLayout_31">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_20">
+           <item>
+            <widget class="QGroupBox" name="groupBox_3">
+             <property name="title">
+              <string>打包完成后...</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_19">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <item>
+                 <widget class="QRadioButton" name="rb_open_dir_select_file">
+                  <property name="text">
+                   <string>打开目录</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="rb_no_option">
+                  <property name="text">
+                   <string>无操作</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </widget>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -968,7 +1025,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_16">
             <property name="toolTip">
-             <string>所选PYTHON环境下的 Pyinstaller 的版本信息。</string>
+             <string>所选 Python 环境下的 Pyinstaller 的版本信息。</string>
             </property>
             <property name="text">
              <string>Pyi 版本</string>
@@ -983,7 +1040,7 @@
             <item>
              <widget class="QLabel" name="lb_pyi_info">
               <property name="toolTip">
-               <string>所选PYTHON环境下的 Pyinstaller 的版本信息。</string>
+               <string>所选 Python 环境下的 Pyinstaller 的版本信息。</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
@@ -993,7 +1050,7 @@
             <item>
              <widget class="QPushButton" name="pb_reinstall_pyi">
               <property name="toolTip">
-               <string>在当前选择的PYTHON环境中安装或重新安装 Pyinstaller 。</string>
+               <string>在当前选择的 Python 环境中安装或重新安装 Pyinstaller 。</string>
               </property>
               <property name="text">
                <string>安装</string>
@@ -1005,9 +1062,9 @@
           <item row="1" column="0">
            <widget class="QLabel" name="label_6">
             <property name="toolTip">
-             <string>选择在不同PYTHON环境中将程序打包成可执行文件。
-如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机PYTHON环境。
-选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
+             <string>选择在不同 Python 环境中将程序打包成可执行文件。
+如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机 Python 环境。
+选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。</string>
             </property>
             <property name="text">
              <string>打包环境</string>
@@ -1022,7 +1079,7 @@
             <item>
              <widget class="QLabel" name="lb_py_info">
               <property name="toolTip">
-               <string>当前选择的PYTHON环境的版本信息。
+               <string>当前选择的 Python 环境的版本信息。
 选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。</string>
               </property>
               <property name="frameShape">
@@ -1033,9 +1090,9 @@
             <item>
              <widget class="QPushButton" name="pb_select_py_env">
               <property name="toolTip">
-               <string>选择在不同PYTHON环境中将程序打包成可执行文件。
-如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机PYTHON环境。
-选择不同PYTHON环境时，在该环境中也应安装运行项目所需的所有模块。</string>
+               <string>选择在不同 Python 环境中将程序打包成可执行文件。
+如果可选条目为空，需要先在&quot;包管理器&quot;中添加本机 Python 环境。
+选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。</string>
               </property>
               <property name="text">
                <string>选择环境</string>
@@ -1404,10 +1461,10 @@
              </font>
             </property>
             <property name="toolTip">
-             <string>将 Python 程序及所选资源文件打包成 .exe 文件。</string>
+             <string>将 Python 程序及所选资源文件打包成 .exe 可执行文件。</string>
             </property>
             <property name="text">
-             <string>生成可执行文件</string>
+             <string>开始打包</string>
             </property>
            </widget>
           </item>
