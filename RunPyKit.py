@@ -1061,7 +1061,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.splitter.setStretchFactor(1, 2)
 
     def signal_slot_connection(self):
-        self.pyi_tool.completed.connect(self.task_completion_tip)
+        self.pyi_tool.completed.connect(self.after_task_completed)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
         self.pb_select_py_env.clicked.connect(window_environch.show)
         self.le_program_entry.textChanged.connect(self.set_le_project_root)
@@ -1559,8 +1559,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             widget.setEnabled(True)
         self.hide_running()
 
-    @staticmethod
-    def task_completion_tip(retcode):
+    def after_task_completed(self, retcode):
         if retcode == 0:
             NewMessageBox(
                 "任务结束",
@@ -1587,6 +1586,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             for i in import_inspect.get_missing_items():
                 missings.update(i[2])
             missings.add("pyinstaller")
+            if self._stored_conf.get("key", ""):
+                missings.add("tinyaes")
             for pkg in missings:
                 self.toolwin_venv.install(pkg)
             self._venv_creating_result = 0  # 虚拟环境创建成功
