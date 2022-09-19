@@ -1347,6 +1347,10 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self._stored_conf.get("prioritize_venv", False)
         )
         self.le_bytecode_encryption_key.setText(self._stored_conf.get("key", ""))
+        if not self._stored_conf.get("open_folder", False):
+            self.rb_no_option.setChecked(True)
+        else:
+            self.rb_open_dir_select_file.setChecked(True)
 
     def store_state_of_widgets(self):
         self._stored_conf["program_entry"] = self.le_program_entry.local_path
@@ -1388,6 +1392,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self._stored_conf["runtime_tmpdir"] = self.le_runtime_tmpdir.text()
         self._stored_conf["prioritize_venv"] = self.cb_prioritize_venv.isChecked()
         self._stored_conf["key"] = self.le_bytecode_encryption_key.text()
+        self._stored_conf["open_folder"] = self.rb_open_dir_select_file.isChecked()
 
     def _abs_rel_groups(self, starting_point):
         """获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
