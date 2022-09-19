@@ -964,31 +964,35 @@
         <attribute name="title">
          <string>工具设置</string>
         </attribute>
-        <layout class="QHBoxLayout" name="horizontalLayout_31">
+        <layout class="QVBoxLayout" name="verticalLayout_27">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_20">
+          <layout class="QVBoxLayout" name="verticalLayout_26">
            <item>
             <widget class="QGroupBox" name="groupBox_3">
              <property name="title">
               <string>打包完成后...</string>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_19">
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
+               <layout class="QVBoxLayout" name="verticalLayout_20">
                 <item>
-                 <widget class="QRadioButton" name="rb_open_dir_select_file">
+                 <widget class="QCheckBox" name="cb_explorer_show_file">
                   <property name="text">
-                   <string>打开目录</string>
+                   <string>在资源管理器中显示</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="rb_no_option">
+                 <widget class="QCheckBox" name="cb_delete_spec_file">
                   <property name="text">
-                   <string>无操作</string>
+                   <string>删除 SPEC 文件</string>
                   </property>
-                  <property name="checked">
-                   <bool>true</bool>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="cb_delete_temp_dir">
+                  <property name="text">
+                   <string>删除临时工作文件夹</string>
                   </property>
                  </widget>
                 </item>

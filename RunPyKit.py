@@ -1347,10 +1347,11 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self._stored_conf.get("prioritize_venv", False)
         )
         self.le_bytecode_encryption_key.setText(self._stored_conf.get("key", ""))
-        if not self._stored_conf.get("open_folder", False):
-            self.rb_no_option.setChecked(True)
-        else:
-            self.rb_open_dir_select_file.setChecked(True)
+        self.cb_explorer_show_file.setChecked(
+            self._stored_conf.get("open_folder", False)
+        )
+        self.cb_delete_temp_dir.setChecked(self._stored_conf.get("delete_temp", False))
+        self.cb_delete_spec_file.setChecked(self._stored_conf.get("delete_spec", False))
 
     def store_state_of_widgets(self):
         self._stored_conf["program_entry"] = self.le_program_entry.local_path
@@ -1392,7 +1393,9 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self._stored_conf["runtime_tmpdir"] = self.le_runtime_tmpdir.text()
         self._stored_conf["prioritize_venv"] = self.cb_prioritize_venv.isChecked()
         self._stored_conf["key"] = self.le_bytecode_encryption_key.text()
-        self._stored_conf["open_folder"] = self.rb_open_dir_select_file.isChecked()
+        self._stored_conf["open_folder"] = self.cb_explorer_show_file.isChecked()
+        self._stored_conf["delete_temp"] = self.cb_delete_temp_dir.isChecked()
+        self._stored_conf["delete_spec"] = self.cb_delete_spec_file.isChecked()
 
     def _abs_rel_groups(self, starting_point):
         """获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
@@ -1578,7 +1581,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
 
     def after_task_completed(self, retcode):
         if retcode == 0:
-            if self.rb_open_dir_select_file.isChecked():
+            if self.cb_explorer_show_file.isChecked():
                 self.open_explorer_select_file()
             NewMessageBox("任务结束", "Python 程序已打包完成！").exec_()
         else:
