@@ -84,7 +84,7 @@
                 <string>打包完成后的exe可执行文件文件的名称，此项留空则使用程序启动入口文件名。</string>
                </property>
                <property name="text">
-                <string>打包后的文件名称：</string>
+                <string>打包后的文件名（不含后缀）：</string>
                </property>
               </widget>
              </item>

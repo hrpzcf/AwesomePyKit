@@ -662,7 +662,7 @@ class Ui_pyitool(object):
 "如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。"))
         self.pb_select_program_entry.setText(_translate("pyitool", "选择"))
         self.label_13.setToolTip(_translate("pyitool", "打包完成后的exe可执行文件文件的名称，此项留空则使用程序启动入口文件名。"))
-        self.label_13.setText(_translate("pyitool", "打包后的文件名称："))
+        self.label_13.setText(_translate("pyitool", "打包后的文件名（不含后缀）："))
         self.le_exefile_specfile_name.setToolTip(_translate("pyitool", "打包完成后的exe可执行文件文件的名称，此项留空则使用程序启动入口文件名。"))
         self.label_2.setToolTip(_translate("pyitool", "当前的项目根目录，选择程序启动入口文件后自动确定。"))
         self.label_2.setText(_translate("pyitool", "项目根目录："))
