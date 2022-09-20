@@ -411,7 +411,7 @@
                 <string>此项可留空，默认储存位置：&quot;项目根目录/DIST&quot;。</string>
                </property>
                <property name="text">
-                <string>生成文件储存位置：</string>
+                <string>打包后的文件储存位置：</string>
                </property>
               </widget>
              </item>
@@ -446,7 +446,7 @@
                 <string>此项可留空，默认储存位置：&quot;项目根目录&quot;。</string>
                </property>
                <property name="text">
-                <string>SPEC文件储存位置：</string>
+                <string>SPEC 文件储存位置：</string>
                </property>
               </widget>
              </item>
@@ -481,7 +481,7 @@
                 <string>此项可留空，默认目录：&quot;项目根目录/BUILD&quot;。</string>
                </property>
                <property name="text">
-                <string>临时文件目录：</string>
+                <string>临时工作目录所在位置：</string>
                </property>
               </widget>
              </item>
@@ -977,6 +977,9 @@
                <layout class="QVBoxLayout" name="verticalLayout_20">
                 <item>
                  <widget class="QCheckBox" name="cb_explorer_show">
+                  <property name="toolTip">
+                   <string>打包成功后打开资源管理器并选中打包好的 .exe 文件，如果打包失败则不会打开资源管理器。</string>
+                  </property>
                   <property name="text">
                    <string>在资源管理器中显示</string>
                   </property>
@@ -984,6 +987,9 @@
                 </item>
                 <item>
                  <widget class="QCheckBox" name="cb_delete_spec_file">
+                  <property name="toolTip">
+                   <string>打包成功后删除 Pyinstaller 生成的 .spec 文件，打包失败则不会执行删除操作。</string>
+                  </property>
                   <property name="text">
                    <string>删除 spec 文件</string>
                   </property>
@@ -991,6 +997,10 @@
                 </item>
                 <item>
                  <widget class="QCheckBox" name="cb_delete_working_dir">
+                  <property name="toolTip">
+                   <string>打包成功后删除临时工作文件夹，打包失败则不会执行删除操作。
+如果你没有自定义临时工作目录所在目录，则临时工作目录指的就是项目根目录下的 build 目录。</string>
+                  </property>
                   <property name="text">
                    <string>删除临时工作文件夹</string>
                   </property>
