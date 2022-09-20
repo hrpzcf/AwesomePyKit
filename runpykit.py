@@ -81,7 +81,7 @@ class MainEntry(Ui_mainentry, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle(f"AwesPyKit")
+        self.setWindowTitle(f"Awespykit")
         self.signal_slot_connection()
 
     def signal_slot_connection(self):
