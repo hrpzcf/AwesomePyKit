@@ -1129,6 +1129,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         dist_dir = self._stored_conf.get("output_dir", "")
         if not dist_dir:
             dist_dir = os.path.join(project_root, "dist")
+        elif not os.path.isabs(dist_dir):
+            dist_dir = os.path.join(project_root, dist_dir)
         missings = list()
         self.pyi_tool.initialize(environ.env_path, project_root)
         if not self.pyi_tool.pyi_ready:
@@ -1578,6 +1580,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         folder = self._stored_conf.get("output_dir", "")
         if not folder:
             folder = os.path.join(self._stored_conf.get("project_root", ""), "dist")
+        elif not os.path.isabs(folder):
+            folder = os.path.join(self._stored_conf.get("project_root", ""), folder)
         explorer_selected = os.path.join(folder, sub_directory, final_execfn) + ".exe"
         open_explorer(explorer_selected, "select")
 
@@ -1593,6 +1597,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         dist_dir = self._stored_conf.get("output_dir", "")
         if not dist_dir:
             dist_dir = os.path.join(self.toolwin_venv.project, "dist")
+        elif not os.path.isabs(dist_dir):
+            dist_dir = os.path.join(self.toolwin_venv.project, dist_dir)
         if self.toolwin_venv.create_project_venv(self.toolwin_pyenv.interpreter):
             import_inspect = ImportInspector(
                 self.toolwin_venv.env_path,
