@@ -34,6 +34,7 @@ if fastpipver < req_ver:
     raise Exception(f"当前环境的 fastpip 版本{fastpipver}低于{req_ver}。")
 
 import os
+import shutil
 import sys
 from platform import machine, platform
 
@@ -1349,10 +1350,10 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self._stored_conf.get("prioritize_venv", False)
         )
         self.le_bytecode_encryption_key.setText(self._stored_conf.get("key", ""))
-        self.cb_explorer_show_file.setChecked(
-            self._stored_conf.get("open_folder", False)
+        self.cb_explorer_show.setChecked(self._stored_conf.get("open_folder", False))
+        self.cb_delete_working_dir.setChecked(
+            self._stored_conf.get("delete_working", False)
         )
-        self.cb_delete_temp_dir.setChecked(self._stored_conf.get("delete_temp", False))
         self.cb_delete_spec_file.setChecked(self._stored_conf.get("delete_spec", False))
 
     def store_state_of_widgets(self):
@@ -1395,8 +1396,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self._stored_conf["runtime_tmpdir"] = self.le_runtime_tmpdir.text()
         self._stored_conf["prioritize_venv"] = self.cb_prioritize_venv.isChecked()
         self._stored_conf["key"] = self.le_bytecode_encryption_key.text()
-        self._stored_conf["open_folder"] = self.cb_explorer_show_file.isChecked()
-        self._stored_conf["delete_temp"] = self.cb_delete_temp_dir.isChecked()
+        self._stored_conf["open_folder"] = self.cb_explorer_show.isChecked()
+        self._stored_conf["delete_working"] = self.cb_delete_working_dir.isChecked()
         self._stored_conf["delete_spec"] = self.cb_delete_spec_file.isChecked()
 
     def _abs_rel_groups(self, starting_point):
@@ -1564,12 +1565,16 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             widget.setEnabled(True)
         self.hide_running()
 
-    def open_explorer_select_file(self):
+    def __get_program_name(self):
         program_name = self._stored_conf.get("exefile_specfile_name", "")
         if not program_name:
             program_name = os.path.splitext(
                 os.path.basename(self._stored_conf.get("program_entry", ""))
             )[0]
+        return program_name
+
+    def open_explorer_select_file(self):
+        program_name = self.__get_program_name()
         if self.rb_pack_to_one_file.isChecked():
             sub_directory = ""
         else:
@@ -1585,13 +1590,58 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         explorer_selected = os.path.join(folder, sub_directory, final_execfn) + ".exe"
         open_explorer(explorer_selected, "select")
 
+    def delete_spec_file(self):
+        spec_file_dir = self._stored_conf.get("spec_dir", "")
+        if not spec_file_dir:
+            spec_file_dir = self._stored_conf.get("project_root", "")
+        elif not os.path.isabs(spec_file_dir):
+            spec_file_dir = os.path.join(
+                self._stored_conf.get("project_root", ""), spec_file_dir
+            )
+        program_name = self.__get_program_name()
+        spec_file_path = os.path.join(spec_file_dir, program_name) + ".spec"
+        try:
+            os.remove(spec_file_path)
+        except Exception:
+            pass
+        # 自定义 spec 文件储存目录的情况下，考虑到目录内可能有其他文件
+        # 所以只考虑删除 spec 文件，不删除自定义目录，以防误删其他无关文件
+
+    def delete_working_dir(self):
+        program_name = self.__get_program_name()
+        custom_working_dir = self._stored_conf.get("temp_working_dir", "")
+        if not custom_working_dir:
+            working_dir_root = os.path.join(
+                self._stored_conf.get("project_root", ""), "build"
+            )
+        elif not os.path.isabs(custom_working_dir):
+            working_dir_root = os.path.join(
+                self._stored_conf.get("project_root", ""), custom_working_dir
+            )
+        else:
+            working_dir_root = os.path.join(custom_working_dir, program_name)
+        thread_delete_working = NewTask(shutil.rmtree, (working_dir_root, True))
+        thread_delete_working.start()
+        self.repo.put(thread_delete_working)
+
     def after_task_completed(self, retcode):
         if retcode == 0:
-            if self.cb_explorer_show_file.isChecked():
+            if self.cb_explorer_show.isChecked():
                 self.open_explorer_select_file()
-            NewMessageBox("任务结束", "Python 程序已打包完成！").exec_()
+            if self.cb_delete_spec_file.isChecked():
+                self.delete_spec_file()
+            if self.cb_delete_working_dir.isChecked():
+                self.delete_working_dir()
+            NewMessageBox(
+                "任务结束",
+                "Python 程序已打包完成！",
+            ).exec_()
         else:
-            NewMessageBox("任务结束", "打包失败，请检查错误信息！", QMessageBox.Critical).exec_()
+            NewMessageBox(
+                "任务结束",
+                "打包失败，请检查错误信息！",
+                QMessageBox.Critical,
+            ).exec_()
 
     def creating_virtualenv(self):
         dist_dir = self._stored_conf.get("output_dir", "")

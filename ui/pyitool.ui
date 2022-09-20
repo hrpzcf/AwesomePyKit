@@ -970,13 +970,13 @@
            <item>
             <widget class="QGroupBox" name="groupBox_3">
              <property name="title">
-              <string>打包完成后...</string>
+              <string>打包成功后执行...</string>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_20">
                 <item>
-                 <widget class="QCheckBox" name="cb_explorer_show_file">
+                 <widget class="QCheckBox" name="cb_explorer_show">
                   <property name="text">
                    <string>在资源管理器中显示</string>
                   </property>
@@ -985,12 +985,12 @@
                 <item>
                  <widget class="QCheckBox" name="cb_delete_spec_file">
                   <property name="text">
-                   <string>删除 SPEC 文件</string>
+                   <string>删除 spec 文件</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="cb_delete_temp_dir">
+                 <widget class="QCheckBox" name="cb_delete_working_dir">
                   <property name="text">
                    <string>删除临时工作文件夹</string>
                   </property>
