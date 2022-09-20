@@ -72,6 +72,10 @@ from utils.pyi import PyiTool
 from utils.qt import QLineEditMod, QTextEditMod
 from utils.venv import VirtualEnv
 
+QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))
+QREV_FILE_NAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
+QREV_FILE_PATH = QRegExpValidator(QRegExp(r'[^:*?"<>|]*'))
+
 
 class MainEntry(Ui_mainentry, QMainWindow):
     def __init__(self):
@@ -1052,12 +1056,10 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self.le_file_icon_path_old, self.le_file_icon_path
         )
         self.le_file_icon_path_old.deleteLater()
-        reg_exp_val1 = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
-        self.le_exefile_specfile_name.setValidator(reg_exp_val1)
-        reg_exp_val2 = QRegExpValidator(QRegExp(r"[0-9]*"))
         for line_edit in self.le_group_vers:
-            line_edit.setValidator(reg_exp_val2)
-        self.le_runtime_tmpdir.setValidator(reg_exp_val1)
+            line_edit.setValidator(QREV_NUMBER)
+        self.le_runtime_tmpdir.setValidator(QREV_FILE_NAME)
+        self.le_exefile_specfile_name.setValidator(QREV_FILE_NAME)
         self.splitter.setStretchFactor(0, 1)
         self.splitter.setStretchFactor(1, 2)
 
