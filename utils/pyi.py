@@ -193,6 +193,12 @@ class PyiTool(QObject):
         if cmd_dict.get("clean_before_build", False):
             self._commands.append("--clean")
         self._commands.extend(("--log-level", cmd_dict.get("log_level", "INFO")))
+        temp_var = cmd_dict.get("hidden_imports", None)
+        if temp_var:
+            for imp in temp_var:
+                self._commands.extend(("--hidden-import", imp))
+        if cmd_dict.get("uac_admin", False):
+            self._commands.append("--uac-admin")
         self._commands.append(cmd_dict.get("program_entry", ""))
 
     def pyi_info(self):

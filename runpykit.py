@@ -1092,6 +1092,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         window_imports_check.pb_install_all_missing.clicked.connect(
             lambda: self.install_missings(window_imports_check.all_missing_modules)
         )
+        self.pb_clear_hidden_imports.clicked.connect(self.pte_hidden_imports.clear)
 
     def check_project_imports(self):
         self.store_state_of_widgets()
@@ -1357,6 +1358,10 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self._stored_conf.get("delete_working", False)
         )
         self.cb_delete_spec_file.setChecked(self._stored_conf.get("delete_spec", False))
+        self.pte_hidden_imports.setPlainText(
+            "\n".join(self._stored_conf.get("hidden_imports", []))
+        )
+        self.cb_uac_admin.setChecked(self._stored_conf.get("uac_admin", False))
 
     def store_state_of_widgets(self):
         self._stored_conf["program_entry"] = self.le_program_entry.local_path
@@ -1401,6 +1406,12 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self._stored_conf["open_folder"] = self.cb_explorer_show.isChecked()
         self._stored_conf["delete_working"] = self.cb_delete_working_dir.isChecked()
         self._stored_conf["delete_spec"] = self.cb_delete_spec_file.isChecked()
+        self._stored_conf["hidden_imports"] = [
+            string
+            for string in self.pte_hidden_imports.toPlainText().split("\n")
+            if string
+        ]
+        self._stored_conf["uac_admin"] = self.cb_uac_admin.isChecked()
 
     def _abs_rel_groups(self, starting_point):
         """获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
