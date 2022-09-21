@@ -5,15 +5,12 @@ __doc__ = """包含AwesomePyKit的主要类、函数、配置文件路径等。"
 import json
 import os
 import re
+import subprocess
 from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, SW_HIDE, Popen
 
 from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
 from fastpip.errors import *
 from PyQt5.QtCore import QMutex, QThread, QTimer
-
-_STARTUP_INFO = STARTUPINFO()
-_STARTUP_INFO.dwFlags = STARTF_USESHOWWINDOW
-_STARTUP_INFO.wShowWindow = SW_HIDE
 
 # 此程序打包为单目录形式时，__file__ 是 libm.pyc 文件的虚拟路径
 # 路径在程序可执行文件的目录下：.\library\libm.pyc，文件不是真实存在的
@@ -227,7 +224,10 @@ class ThreadRepo:
 
 def get_cmd_out(*commands, regexp="", timeout=None):
     """用于从cmd命令执行输出的字符匹配想要的信息。"""
-    proc = Popen(commands, stdout=PIPE, text=True, startupinfo=_STARTUP_INFO)
+    info = STARTUPINFO()
+    info.dwFlags = STARTF_USESHOWWINDOW
+    info.wShowWindow = SW_HIDE
+    proc = Popen(commands, stdout=PIPE, text=True, startupinfo=info)
     try:
         strings, _ = proc.communicate(timeout=timeout)
     except Exception:
@@ -247,4 +247,4 @@ def open_explorer(path, option="root"):
         commands = f"explorer /{option},{path}"
     else:
         return
-    os.system(commands)
+    subprocess.run(commands)
