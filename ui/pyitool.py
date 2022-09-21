@@ -655,80 +655,75 @@ class Ui_pyitool(object):
     def retranslateUi(self, pyitool):
         _translate = QtCore.QCoreApplication.translate
         pyitool.setWindowTitle(_translate("pyitool", "程序打包工具"))
-        self.label.setToolTip(_translate("pyitool", "要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。\n"
-"如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。"))
         self.label.setText(_translate("pyitool", "程序启动入口："))
         self.le_program_entry_old.setToolTip(_translate("pyitool", "要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。\n"
 "如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。"))
         self.pb_select_program_entry.setText(_translate("pyitool", "选择"))
-        self.label_13.setToolTip(_translate("pyitool", "打包完成后的exe可执行文件文件的名称，此项留空则使用程序启动入口文件名。"))
         self.label_13.setText(_translate("pyitool", "打包后的文件名（不含后缀）："))
-        self.le_exefile_specfile_name.setToolTip(_translate("pyitool", "打包完成后的exe可执行文件文件的名称，此项留空则使用程序启动入口文件名。"))
-        self.label_2.setToolTip(_translate("pyitool", "当前的项目根目录，选择程序启动入口文件后自动确定。"))
+        self.le_exefile_specfile_name.setToolTip(_translate("pyitool", "对应选项：-n, --name\n"
+"打包完成后的 exe 可执行文件文件的名称，此项留空则使用程序启动入口文件名。"))
         self.label_2.setText(_translate("pyitool", "项目根目录："))
         self.pb_reset_root_level.setToolTip(_translate("pyitool", "将项目根目录重置为程序启动入口所在目录。"))
         self.pb_reset_root_level.setText(_translate("pyitool", "重置"))
         self.pb_up_level_root.setToolTip(_translate("pyitool", "将项目根目录向上移一级。"))
         self.pb_up_level_root.setText(_translate("pyitool", "上一级"))
         self.le_project_root.setToolTip(_translate("pyitool", "当前的项目根目录，选择程序启动入口文件后自动确定。"))
-        self.label_3.setToolTip(_translate("pyitool", "程序的其他模块的搜索目录(仅当 Pyinstaller 无法自动找到时使用)。"))
         self.label_3.setText(_translate("pyitool", "其他模块的搜索目录："))
         self.pb_clear_module_search_path.setToolTip(_translate("pyitool", "清空其他模块搜索目录文本框。"))
         self.pb_clear_module_search_path.setText(_translate("pyitool", "清空"))
         self.pb_select_module_search_path.setText(_translate("pyitool", "选择"))
-        self.label_4.setToolTip(_translate("pyitool", "非源代码性质的其他资源文件，例如一些图片、配置文件等。"))
         self.label_4.setText(_translate("pyitool", "非源代码资源文件："))
         self.pb_clear_other_data.setText(_translate("pyitool", "清空"))
         self.pb_select_other_data.setText(_translate("pyitool", "选择"))
-        self.label_7.setToolTip(_translate("pyitool", "生成的exe可执行文件的图标，支持.ico、.icns图标文件。"))
         self.label_7.setText(_translate("pyitool", "可执行文件的图标路径："))
-        self.le_file_icon_path_old.setToolTip(_translate("pyitool", "生成的exe可执行文件的图标，支持.ico、.icns图标文件。"))
         self.pb_select_file_icon.setText(_translate("pyitool", "选择"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_project_files), _translate("pyitool", "项目文件"))
-        self.rb_pack_to_one_dir.setToolTip(_translate("pyitool", "将程序打包成单文件夹形式，exe可执行程序在文件夹的首层目录内。"))
+        self.rb_pack_to_one_dir.setToolTip(_translate("pyitool", "对应选项：-D, --onedir\n"
+"将程序打包成单文件夹形式，exe 可执行程序在文件夹的首层目录内。"))
         self.rb_pack_to_one_dir.setText(_translate("pyitool", "打包成单目录(推荐)"))
-        self.rb_pack_to_one_file.setToolTip(_translate("pyitool", "将程序以及添加的其他资源文件打包成单一文件的形式，启动速度较慢。"))
+        self.rb_pack_to_one_file.setToolTip(_translate("pyitool", "对应选项；-F, --onefile\n"
+"将程序以及添加的其他资源文件打包成单一文件的形式，启动速度稍慢。"))
         self.rb_pack_to_one_file.setText(_translate("pyitool", "打包成单文件"))
-        self.cb_execute_with_console.setToolTip(_translate("pyitool", "打包完成后启动程序是否显示命令行窗口，注意，后缀为 .pyw 的程序启动入口打包后不显示控制台，此项设置失效。"))
+        self.cb_execute_with_console.setToolTip(_translate("pyitool", "勾选时对应选项：-c, --console, --nowindowed\n"
+"不勾选时对应选项：-w, --windowed, --noconsole\n"
+"打包完成后启动程序是否显示命令行窗口，注意，后缀为 .pyw 的程序启动入口打包后不显示控制台，此项设置失效。"))
         self.cb_execute_with_console.setText(_translate("pyitool", "打包的程序运行时显示控制台"))
-        self.cb_without_confirm.setToolTip(_translate("pyitool", "当要储存生成的exe可执行文件的文件夹不为空时，是否清空该文件夹。"))
+        self.cb_without_confirm.setToolTip(_translate("pyitool", "对应选项：-y, --noconfirm\n"
+"打包时如果预定的 exe 文件储存目录不为空，是清空该目录还是中断打包过程。"))
         self.cb_without_confirm.setText(_translate("pyitool", "输出目录不为空时清空而不是中断"))
-        self.cb_use_upx.setToolTip(_translate("pyitool", "打包过程中是否使用upx对文件进行压缩。\n"
-"注意，某些二进制文件在经过upx压缩后可能无法正常运行。\n"
-"仅当系统环境变量PATH中有upx路径信息或在以下“upx可执行文件查找路径”指定了upx查找路径时，此项设置才生效。"))
-        self.cb_use_upx.setText(_translate("pyitool", "使用UPX对文件进行压缩"))
-        self.cb_clean_before_build.setToolTip(_translate("pyitool", "生成exe可执行文件前是否清空 Pyinstaller 生成的临时文件夹(临时文件可用于下次加速生成)。"))
-        self.cb_clean_before_build.setText(_translate("pyitool", "构建前清理缓存并删除临时文件"))
-        self.cb_write_info_to_exec.setToolTip(_translate("pyitool", "勾选此选项则将\"附加信息\"标签页中的条目写入生成的exe文件。"))
+        self.cb_use_upx.setToolTip(_translate("pyitool", "不勾选时对应选项：--noupx\n"
+"打包过程中是否使用 upx 对文件进行压缩。注意，某些二进制文件在经过 upx 压缩后可能无法正常运行。\n"
+"仅当系统环境变量 PATH 中有 upx 所在目录信息或在以下“upx 可执行文件所在目录”指定了 upx 所在目录时，此项设置才生效。"))
+        self.cb_use_upx.setText(_translate("pyitool", "使用 upx 对文件进行压缩"))
+        self.cb_clean_before_build.setToolTip(_translate("pyitool", "对应选项：--clean\n"
+"打包前是否清空 Pyinstaller 生成的临时文件夹（临时文件可使下次打包加速）。"))
+        self.cb_clean_before_build.setText(_translate("pyitool", "打包前清理缓存并删除临时文件"))
+        self.cb_write_info_to_exec.setToolTip(_translate("pyitool", "对应选项：--version-file\n"
+"勾选此选项则将\"附加信息\"标签页中的条目写入生成的 exe 文件。"))
         self.cb_write_info_to_exec.setText(_translate("pyitool", "将附加信息写入生成的可执行文件"))
-        self.label_11.setToolTip(_translate("pyitool", "用于加密打包过程中生成PYC文件时的加密，此项可留空。"))
         self.label_11.setText(_translate("pyitool", "字节码加密秘钥："))
-        self.le_bytecode_encryption_key.setToolTip(_translate("pyitool", "用于加密打包过程中生成PYC文件时的加密，此项可留空。"))
-        self.label_8.setToolTip(_translate("pyitool", "此项可留空，默认储存位置：\"项目根目录/DIST\"。"))
+        self.le_bytecode_encryption_key.setToolTip(_translate("pyitool", "对应选项：--key\n"
+"用于加密 Python 字节码的密钥，此项可留空。"))
         self.label_8.setText(_translate("pyitool", "打包后的文件储存位置："))
-        self.le_output_dir.setToolTip(_translate("pyitool", "此项可留空，默认储存位置：\"项目根目录/DIST\"。"))
+        self.le_output_dir.setToolTip(_translate("pyitool", "对应选项：--distpath\n"
+"此项可留空，默认储存位置：\"项目根目录/dist\"。"))
         self.pb_select_output_dir.setText(_translate("pyitool", "选择"))
-        self.label_17.setToolTip(_translate("pyitool", "此项可留空，默认储存位置：\"项目根目录\"。"))
-        self.label_17.setText(_translate("pyitool", "SPEC 文件储存位置："))
-        self.le_spec_dir.setToolTip(_translate("pyitool", "此项可留空，默认储存位置：\"项目根目录\"。"))
+        self.label_17.setText(_translate("pyitool", "spec 文件储存位置："))
+        self.le_spec_dir.setToolTip(_translate("pyitool", "对应选项：--specpath\n"
+"此项可留空，默认储存位置：\"项目根目录\"。"))
         self.pb_select_spec_dir.setText(_translate("pyitool", "选择"))
-        self.label_10.setToolTip(_translate("pyitool", "此项可留空，默认目录：\"项目根目录/BUILD\"。"))
         self.label_10.setText(_translate("pyitool", "临时工作目录所在位置："))
-        self.le_temp_working_dir.setToolTip(_translate("pyitool", "此项可留空，默认目录：\"项目根目录/BUILD\"。"))
+        self.le_temp_working_dir.setToolTip(_translate("pyitool", "对应选项：--workpath\n"
+"此项可留空，默认目录：\"项目根目录/build\"。"))
         self.pb_select_temp_working_dir.setText(_translate("pyitool", "选择"))
-        self.label_9.setToolTip(_translate("pyitool", "UPX.EXE文件所在目录。\n"
-"此项可留空，找不到UPX时将不进行压缩。\n"
-"当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。"))
-        self.label_9.setText(_translate("pyitool", "UPX 可执行文件所在目录："))
-        self.le_upx_search_path.setToolTip(_translate("pyitool", "UPX.EXE文件所在目录。\n"
-"此项可留空，找不到UPX时将不进行压缩。\n"
-"当系统环境变量PATH中有UPX路径时，此项不需要指定也可使用UPX。"))
+        self.label_9.setText(_translate("pyitool", "upx 可执行文件所在目录："))
+        self.le_upx_search_path.setToolTip(_translate("pyitool", "对应选项：--upx-dir\n"
+"此项可留空，找不到 upx 时将不进行压缩。当系统环境变量 PATH 中有 upx 路径时，不需要指定此选项也可使用 upx。"))
         self.pb_select_upx_search_path.setText(_translate("pyitool", "选择"))
-        self.label_14.setToolTip(_translate("pyitool", "使用UPX进行压缩时需要忽略的文件，每行一个文件名。\n"
-"某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。"))
-        self.label_14.setText(_translate("pyitool", "UPX 压缩时排除的文件名："))
-        self.te_upx_exclude_files.setToolTip(_translate("pyitool", "使用UPX进行压缩时需要忽略的文件，每行一个文件名。\n"
-"某些动态链接库或可执行文件经过UPX压缩后可能无法运行，可将这些文件名添加到此处以使UPX在压缩时略过。"))
+        self.label_14.setText(_translate("pyitool", "upx 压缩时排除的文件名："))
+        self.te_upx_exclude_files.setToolTip(_translate("pyitool", "对应选项：--upx-exclude\n"
+"使用 upx 进行压缩时需要忽略的文件，每行一个不含路径的文件名。\n"
+"某些二进制文件经过 upx 压缩后可能无法运行，可将这些文件名添加到此处以使 upx 在压缩时略过。"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_build_control), _translate("pyitool", "生成控制"))
         self.tab_file_ver_info.setToolTip(_translate("pyitool", "需要在\"生成控制\"中勾选\"将文件信息写入生成的可执行文件\"，此设置才生效。\n"
 "生成的可执行文件的附加信息，即鼠标悬停于exe文件上显示的信息，以及exe文件属性中的详细信息。"))
@@ -742,18 +737,22 @@ class Ui_pyitool(object):
         self.label_24.setText(_translate("pyitool", "原始文件名："))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_file_ver_info), _translate("pyitool", "附加信息"))
         self.groupBox.setTitle(_translate("pyitool", "以调试模式打包程序"))
-        self.cb_db_imports.setToolTip(_translate("pyitool", "每次初始化模块时，打印一条消息，显示加载该模块的位置(文件名或内置模块)。\n"
+        self.cb_db_imports.setToolTip(_translate("pyitool", "对应选项：-d {imports}, --debug {imports}\n"
+"每次初始化模块时，打印一条消息，显示加载该模块的位置(文件名或内置模块)。\n"
 "要求源代码文件后缀名不能是 *.pyw，\"生成控制\"标签中的\"打包的程序运行时显示控制台\"选项必须勾选。"))
         self.cb_db_imports.setText(_translate("pyitool", "运行时输出模块导入信息"))
-        self.cb_db_bootloader.setToolTip(_translate("pyitool", "使引导程序在初始化和启动捆绑的应用程序时发出进度消息，用于诊断导入丢失的问题。\n"
+        self.cb_db_bootloader.setToolTip(_translate("pyitool", "对应选项：-d {bootloader}, --debug {bootloader}\n"
+"使引导程序在初始化和启动捆绑的应用程序时发出进度消息，用于诊断导入丢失的问题。\n"
 "要求源代码文件后缀名不能是 *.pyw，\"生成控制\"标签中的\"打包的程序运行时显示控制台\"选项必须勾选。"))
         self.cb_db_bootloader.setText(_translate("pyitool", "运行时输出引导进度信息"))
-        self.cb_db_noarchive.setToolTip(_translate("pyitool", "不将所有冻结的源代码文件存档在生成的可执行文件中，而是将它们作为单独的文件存储在生成的输出目录中。"))
+        self.cb_db_noarchive.setToolTip(_translate("pyitool", "对应选项：-d {noarchive}, --debug {noarchive}\n"
+"不将所有冻结的源代码文件存档在生成的可执行文件中，而是将它们作为单独的文件存储在生成的输出目录中。"))
         self.cb_db_noarchive.setText(_translate("pyitool", "不将源文件存档至可执行文件中"))
-        self.groupBox_2.setToolTip(_translate("pyitool", "以\"单文件\"模式打包的程序运行时提取的库和支持文件的临时储存位置。\n"
-"如果指定了此选项，则引导加载程序将忽略运行时操作系统定义的任何临时文件夹位置。\n"
-"\"_MEIxxxxxx\"文件夹将在您指定的位置创建，仅当您知道自己在做什么时，才使用此选项。"))
         self.groupBox_2.setTitle(_translate("pyitool", "打包单文件运行时临时目录"))
+        self.le_runtime_tmpdir.setToolTip(_translate("pyitool", "对应选项：--runtime-tmpdir\n"
+"以\"单文件\"模式打包的程序运行时提取的库和支持文件的临时储存位置。\n"
+"如果指定了此选项，则引导加载程序将忽略运行时操作系统定义的任何临时文件夹位置，\"_MEIxxxxxx\"文件夹将在您指定的位置创建。\n"
+"仅当您知道自己在做什么时，才使用此选项。"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_advanced_setup), _translate("pyitool", "高级设置"))
         self.groupBox_3.setTitle(_translate("pyitool", "打包成功后执行..."))
         self.cb_explorer_show.setToolTip(_translate("pyitool", "打包成功后打开资源管理器并选中打包好的 .exe 文件，如果打包失败则不会打开资源管理器。"))
@@ -764,14 +763,10 @@ class Ui_pyitool(object):
 "如果你没有自定义临时工作目录所在目录，则临时工作目录指的就是项目根目录下的 build 目录。"))
         self.cb_delete_working_dir.setText(_translate("pyitool", "删除临时工作文件夹"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_pyitool_settings), _translate("pyitool", "工具设置"))
-        self.label_16.setToolTip(_translate("pyitool", "所选 Python 环境下的 Pyinstaller 的版本信息。"))
         self.label_16.setText(_translate("pyitool", "Pyi 版本"))
         self.lb_pyi_info.setToolTip(_translate("pyitool", "所选 Python 环境下的 Pyinstaller 的版本信息。"))
         self.pb_reinstall_pyi.setToolTip(_translate("pyitool", "在当前选择的 Python 环境中安装或重新安装 Pyinstaller 。"))
         self.pb_reinstall_pyi.setText(_translate("pyitool", "安装"))
-        self.label_6.setToolTip(_translate("pyitool", "选择在不同 Python 环境中将程序打包成可执行文件。\n"
-"如果可选条目为空，需要先在\"包管理器\"中添加本机 Python 环境。\n"
-"选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。"))
         self.label_6.setText(_translate("pyitool", "打包环境"))
         self.lb_py_info.setToolTip(_translate("pyitool", "当前选择的 Python 环境的版本信息。\n"
 "选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。"))
@@ -779,22 +774,22 @@ class Ui_pyitool(object):
 "如果可选条目为空，需要先在\"包管理器\"中添加本机 Python 环境。\n"
 "选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。"))
         self.pb_select_py_env.setText(_translate("pyitool", "选择环境"))
-        self.label_15.setToolTip(_translate("pyitool", "操作系统的版本信息。"))
         self.label_15.setText(_translate("pyitool", "系统信息"))
         self.lb_platform_info.setToolTip(_translate("pyitool", "操作系统的版本信息。"))
         self.cb_prioritize_venv.setText(_translate("pyitool", "使用项目目录下的虚拟环境而不是以上环境"))
-        self.label_5.setToolTip(_translate("pyitool", "打包时输出的流程信息，包含一些用于分析打包问题的信息。"))
-        self.label_5.setText(_translate("pyitool", "日志信息"))
+        self.label_5.setToolTip(_translate("pyitool", "打包时向控制台输出的详细信息，用于分析打包时出现的问题。"))
+        self.label_5.setText(_translate("pyitool", "打包信息"))
         self.label_18.setToolTip(_translate("pyitool", "打包程序时输出的流程信息的详细程度，越靠前越详细，默认INFO。"))
         self.label_18.setText(_translate("pyitool", "级别："))
-        self.cb_log_level.setToolTip(_translate("pyitool", "打包程序时输出的流程信息的详细程度，越靠前越详细，默认INFO。"))
+        self.cb_log_level.setToolTip(_translate("pyitool", "对应选项：--log-level\n"
+"打包程序时输出的详细信息量，选择越靠前的选项输出的详细信息量越大，默认INFO。"))
         self.cb_log_level.setItemText(0, _translate("pyitool", "TRACE"))
         self.cb_log_level.setItemText(1, _translate("pyitool", "DEBUG"))
         self.cb_log_level.setItemText(2, _translate("pyitool", "INFO"))
         self.cb_log_level.setItemText(3, _translate("pyitool", "WARN"))
         self.cb_log_level.setItemText(4, _translate("pyitool", "ERROR"))
         self.cb_log_level.setItemText(5, _translate("pyitool", "CRITICAL"))
-        self.pb_check_imports.setToolTip(_translate("pyitool", "检查程序运行所需的所有模块是否在已选的 Python 环境中安装。"))
+        self.pb_check_imports.setToolTip(_translate("pyitool", "检查程序运行所需的所有模块是否在所选的 Python 环境中安装。"))
         self.pb_check_imports.setText(_translate("pyitool", "环境检查"))
         self.pb_gen_executable.setToolTip(_translate("pyitool", "将 Python 程序及所选资源文件打包成 .exe 可执行文件。"))
         self.pb_gen_executable.setText(_translate("pyitool", "开始打包"))

@@ -1031,8 +1031,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = QTextEditMod("dir")
         self.te_module_search_path.setToolTip(
-            "程序的其他模块的搜索路径(模块的父目录)，此项可留空。\n仅当 Pyinstaller 无法自动找到时使\
-用，支持将文件夹直接拖放到此处。"
+            "对应选项：-p, --paths\n程序的其他模块的搜索路径(模块的父目录)，此项可留空。\
+\n仅当 Pyinstaller 无法自动找到模块时使用，支持将文件夹直接拖放到此处。"
         )
         self.verticalLayout_3.replaceWidget(
             self.te_module_search_path_old, self.te_module_search_path
@@ -1041,7 +1041,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         # 替换“非源代码资源文件”LineEdit控件
         self.te_other_data = QTextEditMod("file")
         self.te_other_data.setToolTip(
-            """非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n"""
+            """对应选项：--add-data\n非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n"""
             """注意：资源文件需是打包前程序真正使用的资源且在项目根目录范围内，否则打包后程序可能无法运行。可将文件\
 或者文件夹直接拖到此处。"""
         )
@@ -1050,7 +1050,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         # 替换“文件图标路径”LineEdit控件
         self.le_file_icon_path = QLineEditMod("file", {".ico", ".icns"})
         self.le_file_icon_path.setToolTip(
-            "生成的exe可执行文件的图标。\n支持.ico、.icns图标文件，可将格式正确的文件拖放到此处。"
+            "对应选项：-i, --icon\n生成的 exe 可执行文件使用的图标，支持 .ico 等图标文件。\n可将格式正确的文件拖放到此处。"
         )
         self.horizontalLayout_11.replaceWidget(
             self.le_file_icon_path_old, self.le_file_icon_path
