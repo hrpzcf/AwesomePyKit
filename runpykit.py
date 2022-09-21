@@ -956,7 +956,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self.pb_select_py_env,
             self.pb_reinstall_pyi,
             self.cb_log_level,
-            self.le_exefile_specfile_name,
+            self.le_output_name,
             self.pb_check_imports,
             self.pb_gen_executable,
             self.cb_prioritize_venv,
@@ -1058,8 +1058,8 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.le_file_icon_path_old.deleteLater()
         for line_edit in self.le_group_vers:
             line_edit.setValidator(QREV_NUMBER)
+        self.le_output_name.setValidator(QREV_FILE_NAME)
         self.le_runtime_tmpdir.setValidator(QREV_FILE_NAME)
-        self.le_exefile_specfile_name.setValidator(QREV_FILE_NAME)
         self.splitter.setStretchFactor(0, 1)
         self.splitter.setStretchFactor(1, 2)
 
@@ -1093,6 +1093,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             lambda: self.install_missings(window_imports_check.all_missing_modules)
         )
         self.pb_clear_hidden_imports.clicked.connect(self.pte_hidden_imports.clear)
+        self.pb_clear_exclude_module.clicked.connect(self.pte_exclude_modules.clear)
 
     def check_project_imports(self):
         self.store_state_of_widgets()
@@ -1342,9 +1343,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
                 self.lb_py_info.setText(self.toolwin_pyenv.py_info())
             except Exception:
                 pass
-        self.le_exefile_specfile_name.setText(
-            self._stored_conf.get("exefile_specfile_name", "")
-        )
+        self.le_output_name.setText(self._stored_conf.get("output_name", ""))
         self.cb_log_level.setCurrentText(self._stored_conf.get("log_level", "INFO"))
         self.set_file_ver_info_text()
         self.pyi_debug_options("set")
@@ -1361,13 +1360,14 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.pte_hidden_imports.setPlainText(
             "\n".join(self._stored_conf.get("hidden_imports", []))
         )
+        self.pte_exclude_modules.setPlainText(
+            "\n".join(self._stored_conf.get("exclude_modules", []))
+        )
         self.cb_uac_admin.setChecked(self._stored_conf.get("uac_admin", False))
 
     def store_state_of_widgets(self):
         self._stored_conf["program_entry"] = self.le_program_entry.local_path
-        self._stored_conf[
-            "exefile_specfile_name"
-        ] = self.le_exefile_specfile_name.text()
+        self._stored_conf["output_name"] = self.le_output_name.text()
         project_root = self.le_project_root.text()
         self._stored_conf["project_root"] = project_root
         self._stored_conf["module_search_path"] = self.te_module_search_path.local_paths
@@ -1407,9 +1407,10 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self._stored_conf["delete_working"] = self.cb_delete_working_dir.isChecked()
         self._stored_conf["delete_spec"] = self.cb_delete_spec_file.isChecked()
         self._stored_conf["hidden_imports"] = [
-            string
-            for string in self.pte_hidden_imports.toPlainText().split("\n")
-            if string
+            s for s in self.pte_hidden_imports.toPlainText().split("\n") if s
+        ]
+        self._stored_conf["exclude_modules"] = [
+            s for s in self.pte_exclude_modules.toPlainText().split("\n") if s
         ]
         self._stored_conf["uac_admin"] = self.cb_uac_admin.isChecked()
 
@@ -1579,7 +1580,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
         self.hide_running()
 
     def __get_program_name(self):
-        program_name = self._stored_conf.get("exefile_specfile_name", "")
+        program_name = self._stored_conf.get("output_name", "")
         if not program_name:
             program_name = os.path.splitext(
                 os.path.basename(self._stored_conf.get("program_entry", ""))

@@ -36,9 +36,9 @@
         <attribute name="title">
          <string>项目文件</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_28">
+        <layout class="QVBoxLayout" name="verticalLayout_29">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_17">
+          <layout class="QVBoxLayout" name="verticalLayout_28">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <property name="spacing">
@@ -88,7 +88,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_exefile_specfile_name">
+              <widget class="QLineEdit" name="le_output_name">
                <property name="contextMenuPolicy">
                 <enum>Qt::NoContextMenu</enum>
                </property>
@@ -152,42 +152,86 @@
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <property name="spacing">
-              <number>2</number>
-             </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_31">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,0">
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <property name="spacing">
+                <number>2</number>
+               </property>
                <item>
-                <widget class="QLabel" name="label_26">
-                 <property name="text">
-                  <string>隐含的模块导入：</string>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,0">
+                 <item>
+                  <widget class="QLabel" name="label_26">
+                   <property name="text">
+                    <string>隐含的模块：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pb_clear_hidden_imports">
+                   <property name="text">
+                    <string>清空</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
-                <widget class="QPushButton" name="pb_clear_hidden_imports">
-                 <property name="text">
-                  <string>清空</string>
+                <widget class="QPlainTextEdit" name="pte_hidden_imports">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>对应选项：--hidden-import, --hiddenimport
+某些模块可能会被通过隐蔽的方式导入导致 Pyinstaller 没有发现它，将没有被发现的模块名填入此处以使 Pyinstaller 主动包含这些模块。
+每行一个模块名称，&quot;名称&quot;是指 Python 代码中 import 语句所使用的模块名称，区分大小写。</string>
+                 </property>
+                 <property name="lineWrapMode">
+                  <enum>QPlainTextEdit::NoWrap</enum>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <widget class="QPlainTextEdit" name="pte_hidden_imports">
-               <property name="contextMenuPolicy">
-                <enum>Qt::NoContextMenu</enum>
+              <layout class="QVBoxLayout" name="verticalLayout_17">
+               <property name="spacing">
+                <number>2</number>
                </property>
-               <property name="toolTip">
-                <string>对应选项：--hidden-import, --hiddenimport
-某些模块可能会被通过隐蔽的方式导入导致 Pyinstaller 没有发现它，将没有被发现的模块名填入此处以使 Pyinstaller 主动包含这些模块。
-每行一个名称，名称是指 Python 代码中 import 语句所使用的模块名称，区分大小写。</string>
-               </property>
-               <property name="lineWrapMode">
-                <enum>QPlainTextEdit::NoWrap</enum>
-               </property>
-              </widget>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0">
+                 <item>
+                  <widget class="QLabel" name="label_27">
+                   <property name="text">
+                    <string>排除的模块：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pb_clear_exclude_module">
+                   <property name="text">
+                    <string>清空</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QPlainTextEdit" name="pte_exclude_modules">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>对应选项：--exclude-module
+如果您不想让 Pyinstaller 打包某些模块，则请把模块名称填入此处，每行一个。
+以上&quot;名称&quot;是指 Python 代码中 import 语句所使用的模块名称，区分大小写。</string>
+                 </property>
+                 <property name="lineWrapMode">
+                  <enum>QPlainTextEdit::NoWrap</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -201,7 +245,7 @@
                <item>
                 <widget class="QLabel" name="label_3">
                  <property name="text">
-                  <string>其他模块的搜索目录：</string>
+                  <string>其他模块搜索目录：</string>
                  </property>
                 </widget>
                </item>
@@ -1202,9 +1246,6 @@
               </property>
               <item>
                <widget class="QLabel" name="label_18">
-                <property name="toolTip">
-                 <string>打包程序时输出的流程信息的详细程度，越靠前越详细，默认INFO。</string>
-                </property>
                 <property name="text">
                  <string>级别：</string>
                 </property>
@@ -1214,7 +1255,7 @@
                <widget class="QComboBox" name="cb_log_level">
                 <property name="toolTip">
                  <string>对应选项：--log-level
-打包程序时输出的详细信息量，选择越靠前的选项输出的详细信息量越大，默认INFO。</string>
+打包程序时输出的信息量，选择越靠前的选项输出的信息量越大，默认INFO。</string>
                 </property>
                 <property name="currentIndex">
                  <number>2</number>

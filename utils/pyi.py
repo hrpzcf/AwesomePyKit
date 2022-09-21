@@ -25,8 +25,13 @@ class PyiTool(QObject):
         self.cumulative = -200
         self._qtimer = QTimer()
         self._qtimer.timeout.connect(self._time)
-        self.run_time.connect(self.timer_ctrl)
-        self._log_level = None
+        self.run_time.connect(self._timer_control)
+        self.__debug = {
+            "imports": False,
+            "bootloader": False,
+            "noarchive": False,
+        }
+        self.__log_level = "INFO"
 
     @property
     def cwd(self):
@@ -75,7 +80,7 @@ class PyiTool(QObject):
             self.cumulative = 0
         self.cumulative += 10
 
-    def timer_ctrl(self, code):
+    def _timer_control(self, code):
         if code:
             self._qtimer.start(10)
         else:
@@ -118,7 +123,7 @@ class PyiTool(QObject):
     def execute_cmd(self):
         """执行命令并读取输出流，通过信号发射字符串、返回码更新主界面面板。"""
         if self.pyi_ready and self._process:
-            if self._log_level == "TRACE":
+            if self.__log_level == "TRACE":
                 self._time_division_emit()
             else:
                 self._line_division_emit()
@@ -130,73 +135,66 @@ class PyiTool(QObject):
             self.completed.emit(-1)
 
     def prepare_cmd(self, cmd_dict=None):
-        """从cmd_dict添加PyInstaller命令选项。"""
+        """从 cmd_dict 添加 PyInstaller 命令选项。"""
         if cmd_dict is None:
             cmd_dict = {}
-        self._log_level = cmd_dict.get("log_level", "INFO")
+        self.__log_level = cmd_dict.get("log_level", "INFO")
         if cmd_dict.get("pack_to_one", "dir") == "dir":
             self._commands.append("-D")
         else:
             self._commands.append("-F")
-        temp_var = cmd_dict.get("spec_dir", "")
-        if temp_var:
-            self._commands.extend(("--specpath", temp_var))
-        temp_var = cmd_dict.get("exefile_specfile_name", "")
-        if temp_var:
-            self._commands.extend(("-n", temp_var))
-        temp_var = cmd_dict.get("other_data", None)
-        if temp_var:
-            for data in temp_var:
-                self._commands.extend(("--add-data", rf"{data[0]};{data[1]}"))
-        temp_var = cmd_dict.get("module_search_path", None)
-        if temp_var:
-            for module_path in temp_var:
-                self._commands.extend(("-p", module_path))
-        temp_var = cmd_dict.get("key", "")
-        if temp_var:
-            self._commands.extend(("--key", temp_var))
-        temp_var = cmd_dict.get("debug_options", None)
-        if temp_var:
-            for ikey, val in temp_var.items():
-                if val:
-                    self._commands.extend(("-d", ikey))
+        temp_variable = cmd_dict.get("spec_dir", "")
+        if temp_variable:
+            self._commands.extend(("--specpath", temp_variable))
+        temp_variable = cmd_dict.get("output_name", "")
+        if temp_variable:
+            self._commands.extend(("-n", temp_variable))
+        for data in cmd_dict.get("other_data", []):
+            self._commands.extend(("--add-data", rf"{data[0]};{data[1]}"))
+        for search_path in cmd_dict.get("module_search_path", []):
+            self._commands.extend(("-p", search_path))
+        temp_variable = cmd_dict.get("key", "")
+        if temp_variable:
+            self._commands.extend(("--key", temp_variable))
+        temp_variable = cmd_dict.get("debug_options", self.__debug)
+        for option in temp_variable:
+            if temp_variable[option]:
+                self._commands.extend(("--debug", option))
         if not cmd_dict.get("use_upx", False):
             self._commands.append("--noupx")
-        temp_var = cmd_dict.get("upx_exclude_files", None)
-        if temp_var:
-            for exfile in temp_var:
-                self._commands.extend(("--upx-exclude", exfile.lower()))
+        for binary in cmd_dict.get("upx_exclude_files", []):
+            self._commands.extend(("--upx-exclude", binary.lower()))
         if cmd_dict.get("execute_with_console", True):
             self._commands.append("-c")
         else:
             self._commands.append("-w")
-        temp_var = cmd_dict.get("file_icon_path", "")
-        if temp_var:
-            self._commands.extend(("-i", temp_var))
-        temp_var = self._build_info_file(cmd_dict)
-        if cmd_dict.get("write_file_info", False) and temp_var:
-            self._commands.extend(("--version-file", temp_var))
-        temp_var = cmd_dict.get("runtime_tmpdir", None)
-        if temp_var:
-            self._commands.extend(("--runtime-tmpdir", temp_var))
-        temp_var = cmd_dict.get("output_dir", "")
-        if temp_var:
-            self._commands.extend(("--distpath", temp_var))
-        temp_var = cmd_dict.get("temp_working_dir", "")
-        if temp_var:
-            self._commands.extend(("--workpath", temp_var))
+        temp_variable = cmd_dict.get("file_icon_path", "")
+        if temp_variable:
+            self._commands.extend(("-i", temp_variable))
+        temp_variable = self._build_info_file(cmd_dict)
+        if cmd_dict.get("write_file_info", False) and temp_variable:
+            self._commands.extend(("--version-file", temp_variable))
+        temp_variable = cmd_dict.get("runtime_tmpdir", None)
+        if temp_variable:
+            self._commands.extend(("--runtime-tmpdir", temp_variable))
+        temp_variable = cmd_dict.get("output_dir", "")
+        if temp_variable:
+            self._commands.extend(("--distpath", temp_variable))
+        temp_variable = cmd_dict.get("temp_working_dir", "")
+        if temp_variable:
+            self._commands.extend(("--workpath", temp_variable))
         if cmd_dict.get("without_confirm", False):
             self._commands.append("-y")
-        temp_var = cmd_dict.get("upx_search_path", "")
-        if temp_var:
-            self._commands.extend(("--upx-dir", temp_var))
+        temp_variable = cmd_dict.get("upx_search_path", "")
+        if temp_variable:
+            self._commands.extend(("--upx-dir", temp_variable))
         if cmd_dict.get("clean_before_build", False):
             self._commands.append("--clean")
-        self._commands.extend(("--log-level", cmd_dict.get("log_level", "INFO")))
-        temp_var = cmd_dict.get("hidden_imports", None)
-        if temp_var:
-            for imp in temp_var:
-                self._commands.extend(("--hidden-import", imp))
+        self._commands.extend(("--log-level", self.__log_level))
+        for imp in cmd_dict.get("hidden_imports", []):
+            self._commands.extend(("--hidden-import", imp))
+        for mod in cmd_dict.get("exclude_modules", []):
+            self._commands.extend(("--exclude-module", mod))
         if cmd_dict.get("uac_admin", False):
             self._commands.append("--uac-admin")
         self._commands.append(cmd_dict.get("program_entry", ""))
@@ -236,7 +234,7 @@ VSVersionInfo(
     VarFileInfo([VarStruct(u'Translation', [2052, 1200])]),
     ],)
 """
-        for key, val in cmd_dict.get("file_ver_info", {}).items():
+        for key, val in cmd_dict.get("file_ver_info", dict()).items():
             FILE_VERSION_INFO = FILE_VERSION_INFO.replace(key, val)
         file_info_path = os.path.join(config_dir, "FILE_INFO")
         try:
