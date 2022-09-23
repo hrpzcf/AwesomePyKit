@@ -134,7 +134,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         self.path_list = [env.env_path for env in self.env_list]
         self.cur_pkgs_info = {}
         self._reverseds = [True, True, True, True]
-        self.selected_env_index = 0
+        self.selected_env_index = -1
         self.repo = ThreadRepo(500)
         self._normal_size = self.size()
 
@@ -167,7 +167,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         if not self.repo.is_empty():
             if self._stop_before_close():
                 self.repo.stop_all()
-                self._clear_pkgs_table_widget()
+                self.table_widget_clear_pkgs()
                 save_conf(self.path_list, "pths")
                 event.accept()
             else:
@@ -199,7 +199,8 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         self.btn_delselected.clicked.connect(self.del_selected_py_env)
         self.btn_addmanully.clicked.connect(self.add_py_path_manully)
         self.cb_check_uncheck_all.clicked.connect(self.select_all_or_cancel_all)
-        self.lw_env_list.itemPressed.connect(lambda: self.get_pkgs_info(0))
+        self.lw_env_list.clicked.connect(lambda: self.get_pkgs_info(0))
+        self.lw_env_list.currentRowChanged.connect(self.table_widget_clear_pkgs)
         self.btn_check_for_updates.clicked.connect(self.check_cur_pkgs_for_updates)
         self.btn_install_package.clicked.connect(window_pkg_install.show)
         self.btn_install_package.clicked.connect(self.set_win_install_package_envinfo)
@@ -285,7 +286,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         self.table_widget_pkgs_info_update()
         self._reverseds[colind] = not self._reverseds[colind]
 
-    def _clear_pkgs_table_widget(self):
+    def table_widget_clear_pkgs(self):
         self.lb_num_selected_items.clear()
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
@@ -349,7 +350,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
             lambda: self.show_loading("正在搜索 Python 安装目录..."),
         )
         thread_search_envs.at_finish(
-            self._clear_pkgs_table_widget,
+            self.table_widget_clear_pkgs,
             self.list_widget_pyenvs_update,
             self.hide_loading,
             self.release_widgets,
@@ -365,7 +366,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         del self.env_list[cur_index]
         del self.path_list[cur_index]
         self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
-        self._clear_pkgs_table_widget()
+        self.table_widget_clear_pkgs()
         save_conf(self.path_list, "pths")
 
     def add_py_path_manully(self):
