@@ -51,8 +51,8 @@
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
                   <red>0</red>
-                  <green>136</green>
-                  <blue>238</blue>
+                  <green>120</green>
+                  <blue>215</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -70,18 +70,18 @@
                <colorrole role="Highlight">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>0</red>
-                  <green>136</green>
-                  <blue>238</blue>
+                  <red>155</red>
+                  <green>222</green>
+                  <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
                <colorrole role="HighlightedText">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -112,7 +112,7 @@
              <enum>Qt::NoContextMenu</enum>
             </property>
             <property name="toolTip">
-             <string>显示当前搜索到的/用户添加的 Python 目录路径。</string>
+             <string>使用鼠标左键点击加载选中的 Python 环境已安装的包信息列表，使用鼠标右键点击或使用上下方向键选择则不加载。</string>
             </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
@@ -176,8 +176,8 @@
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
                   <red>0</red>
-                  <green>136</green>
-                  <blue>238</blue>
+                  <green>120</green>
+                  <blue>215</blue>
                  </color>
                 </brush>
                </colorrole>
@@ -195,18 +195,18 @@
                <colorrole role="Highlight">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>0</red>
-                  <green>136</green>
-                  <blue>238</blue>
+                  <red>155</red>
+                  <green>222</green>
+                  <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
                <colorrole role="HighlightedText">
                 <brush brushstyle="SolidPattern">
                  <color alpha="255">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
                  </color>
                 </brush>
                </colorrole>
