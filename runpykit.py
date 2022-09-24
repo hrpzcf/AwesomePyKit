@@ -213,12 +213,43 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         self.tw_installed_info.clicked.connect(self._show_tip_num_selected)
         self.cb_check_uncheck_all.clicked.connect(self._show_tip_num_selected)
         window_pkg_install.pb_do_install.clicked.connect(self.install_pkgs)
+        self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
 
     def set_win_install_package_envinfo(self):
         if self.env_list:
             window_pkg_install.le_target_env.setText(
                 str(self.env_list[self.selected_env_index])
             )
+
+    @staticmethod
+    def judging_inclusion_relationship(string_long, keyword):
+        string_long = string_long.lower()
+        keyword = keyword.strip().lower()
+        if len(keyword) < 2:
+            return string_long.startswith(keyword)
+        else:
+            initial = keyword[0]
+            letters_following = keyword[1:].strip()
+            if not string_long.startswith(initial):
+                return keyword in string_long
+            return letters_following in string_long[1:]
+
+    def search_pkg_name_by_kwd(self):
+        keyword = self.le_search_pkgs_kwd.text()
+        if not keyword:
+            for i in range(self.tw_installed_info.rowCount()):
+                self.tw_installed_info.showRow(i)
+        else:
+            for i in range(self.tw_installed_info.rowCount()):
+                if self.judging_inclusion_relationship(
+                    self.tw_installed_info.item(i, 0).text(), keyword
+                ):
+                    self.tw_installed_info.showRow(i)
+                else:
+                    self.tw_installed_info.hideRow(i)
+        # 搜索功能比较简单，关键字是单独一个字母时，检索以该字母开头的模块
+        # 如果不是单字母，则判断包名是否以关键词首字母开头、包名是否包含后续单词
+        # 因为不确定性能是否够用，所以暂时不实现更复杂的判断
 
     def _show_tip_num_selected(self):
         self.lb_num_selected_items.setText(
@@ -247,7 +278,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
             self.tw_installed_info.setVerticalHeaderItem(
                 rowind, QTableWidgetItem(f" {rowind + 1} ")
             )
-            item0 = QTableWidgetItem(f" {pkg_name} ")
+            item0 = QTableWidgetItem(f"{pkg_name}")
             self.tw_installed_info.setItem(rowind, 0, item0)
             even_num_row = rowind % 2
             if not even_num_row:
