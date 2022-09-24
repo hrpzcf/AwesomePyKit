@@ -147,3 +147,5 @@ upx/
 config/
 test.py
 venv_*/
+Debug/
+Release/
