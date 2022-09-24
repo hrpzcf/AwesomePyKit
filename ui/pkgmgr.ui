@@ -23,8 +23,23 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>4</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <property name="bottomMargin">
+     <number>4</number>
+    </property>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0">
+      <property name="spacing">
+       <number>4</number>
+      </property>
       <item>
        <widget class="QSplitter" name="splitter">
         <property name="orientation">
@@ -32,6 +47,9 @@
         </property>
         <widget class="QWidget" name="layoutWidget">
          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="spacing">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QLabel" name="lb_python_dir">
             <property name="toolTip">
@@ -121,6 +139,9 @@
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>16</number>
+            </property>
             <item>
              <widget class="QPushButton" name="btn_autosearch">
               <property name="toolTip">
@@ -157,15 +178,45 @@
         </widget>
         <widget class="QWidget" name="layoutWidget">
          <layout class="QVBoxLayout" name="verticalLayout">
+          <property name="spacing">
+           <number>2</number>
+          </property>
           <item>
-           <widget class="QLabel" name="lb_installed_pkgs_info">
-            <property name="toolTip">
-             <string>选中的 Python 环境中已安装的包名、当前版本、最新版本、安装状态信息。</string>
-            </property>
-            <property name="text">
-             <string>已安装的包信息：</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="lb_installed_pkgs_info">
+              <property name="toolTip">
+               <string>选中的 Python 环境中已安装的包名、当前版本、最新版本、安装状态信息。</string>
+              </property>
+              <property name="text">
+               <string>已安装的包信息：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="le_search_pkgs_kwd">
+              <property name="placeholderText">
+               <string>搜索</string>
+              </property>
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QTableWidget" name="tw_installed_info">
@@ -370,7 +421,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="9,0">
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
         <item>
          <widget class="QLabel" name="lb_loading_gif">
           <property name="alignment">
@@ -379,11 +430,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="lb_loading_tip">
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
+         <widget class="QLabel" name="lb_loading_tip"/>
         </item>
        </layout>
       </item>
