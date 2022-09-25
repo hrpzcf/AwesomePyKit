@@ -855,8 +855,8 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
             li_item.setSizeHint(QSize(0, 32))
             self.li_indexurls.addItem(li_item)
             self.li_indexurls.setItemWidget(li_item, item_widget)
-        if self.li_indexurls.count():
-            self.li_indexurls.setCurrentRow(0)
+        # if self.li_indexurls.count():
+        #     self.li_indexurls.setCurrentRow(0)
 
     def signal_slot_connection(self):
         self.btn_clearle.clicked.connect(self._clear_line_edit)
