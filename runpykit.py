@@ -45,6 +45,7 @@ try:
 except:
     from fastpip.fastpip import parse_package_names
 
+from fastpip import all_py_paths, cur_py_path
 from PyQt5.QtCore import QRegExp, QSize, Qt, pyqtSignal
 from PyQt5.QtGui import QColor, QFont, QIcon, QMovie, QRegExpValidator
 from PyQt5.QtWidgets import (
@@ -67,7 +68,7 @@ from res.res import *
 from ui import *
 from utils import *
 from utils.cip import ImportInspector
-from utils.main import PyEnv, open_explorer
+from utils.main import PyEnv, get_res_path, open_explorer
 from utils.pyi import PyiTool
 from utils.qt import QLineEditMod, QTextEditMod
 from utils.venv import VirtualEnv
@@ -114,12 +115,13 @@ class MainEntry(Ui_mainentry, QMainWindow):
 
     @staticmethod
     def _show_about():
+        about_path = get_res_path("help", "About.html")
         try:
-            with open("./help/About.html", encoding="utf-8") as h:
+            with open(about_path, encoding="utf-8") as h:
                 info = h.read().replace("0.0.0", VERSION)
                 icon = QMessageBox.Information
         except Exception:
-            info = "无法打开<关于>信息文件<./help/About.html>，文件已丢失。"
+            info = f"无法打开<关于>文件：{about_path}，文件已丢失或损坏。"
             icon = QMessageBox.Critical
         NewMessageBox("关于", info, icon).exec_()
 
@@ -130,7 +132,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         self.setupUi(self)
         self._setup_other_widgets()
         self.signal_slot_connection()
-        self.env_list = get_pyenv_list(load_conf("pths"))
+        self.env_list = get_pyenv_list(load_config("pths"))
         self.path_list = [env.env_path for env in self.env_list]
         self.cur_pkgs_info = {}
         self._reverseds = [True, True, True, True]
@@ -168,7 +170,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
             if self._stop_before_close():
                 self.repo.stop_all()
                 self.table_widget_clear_pkgs()
-                save_conf(self.path_list, "pths")
+                save_config(self.path_list, "pths")
                 event.accept()
             else:
                 event.ignore()
@@ -333,7 +335,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
             for pkg_info in pkgs_info:
                 self.cur_pkgs_info[pkg_info[0]] = [pkg_info[1], "", ""]
 
-        thread_get_pkgs_info = NewTask(do_get_pkgs_info)
+        thread_get_pkgs_info = QThreadModel(do_get_pkgs_info)
         if not no_connect:
             thread_get_pkgs_info.at_start(
                 self.lock_widgets,
@@ -375,7 +377,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
                 self.path_list.append(env.env_path)
 
         path_list_lower = [p.lower() for p in self.path_list]
-        thread_search_envs = NewTask(search_env)
+        thread_search_envs = QThreadModel(search_env)
         thread_search_envs.at_start(
             self.lock_widgets,
             lambda: self.show_loading("正在搜索 Python 安装目录..."),
@@ -385,7 +387,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
             self.list_widget_pyenvs_update,
             self.hide_loading,
             self.release_widgets,
-            lambda: save_conf(self.path_list, "pths"),
+            lambda: save_config(self.path_list, "pths"),
         )
         thread_search_envs.start()
         self.repo.put(thread_search_envs, 0)
@@ -398,7 +400,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
         del self.path_list[cur_index]
         self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
         self.table_widget_clear_pkgs()
-        save_conf(self.path_list, "pths")
+        save_config(self.path_list, "pths")
 
     def add_py_path_manully(self):
         input_dialog = NewInputDialog(
@@ -434,7 +436,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
         self.list_widget_pyenvs_update()
-        save_conf(self.path_list, "pths")
+        save_config(self.path_list, "pths")
 
     def check_cur_pkgs_for_updates(self):
         if self.tw_installed_info.rowCount() == 0:
@@ -452,7 +454,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
                     1
                 ] = outdated_info[2]
 
-        thread_get_outdated = NewTask(do_get_outdated)
+        thread_get_outdated = QThreadModel(do_get_outdated)
         thread_get_outdated.at_start(
             self.lock_widgets,
             lambda: self.show_loading("正在检查更新..."),
@@ -529,7 +531,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
                 item[0] = "N/A"
                 item[2] = "安装成功" if result else "安装失败"
 
-        thread_install_pkgs = NewTask(do_install)
+        thread_install_pkgs = QThreadModel(do_install)
         thread_install_pkgs.at_start(
             self.lock_widgets,
             lambda: self.show_loading("正在安装..."),
@@ -570,7 +572,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
                     item[0] = "N/A"
                 item[2] = "卸载成功" if code else "卸载失败"
 
-        thread_uninstall_pkgs = NewTask(do_uninstall)
+        thread_uninstall_pkgs = QThreadModel(do_uninstall)
         thread_uninstall_pkgs.at_start(
             self.lock_widgets,
             lambda: self.show_loading("正在卸载..."),
@@ -618,7 +620,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
                 else:
                     item[2] = "升级失败"
 
-        thread_upgrade_pkgs = NewTask(do_upgrade)
+        thread_upgrade_pkgs = QThreadModel(do_upgrade)
         thread_upgrade_pkgs.at_start(
             self.lock_widgets,
             lambda: self.show_loading("正在升级..."),
@@ -664,7 +666,7 @@ class PackageManagerWindow(Ui_pkgmgr, QMainWindow):
                     item[0] = item[1]
                 item[2] = "升级成功" if code else "升级失败"
 
-        thread_upgrade_pkgs = NewTask(do_upgrade)
+        thread_upgrade_pkgs = QThreadModel(do_upgrade)
         thread_upgrade_pkgs.at_start(
             self.lock_widgets,
             lambda: self.show_loading("正在升级..."),
@@ -726,7 +728,7 @@ class PackageInstallWindow(Ui_pkginstall, QWidget, AskFilePath):
         super().__init__()
         self.setupUi(self)
         self._setup_other_widgets()
-        self.conf_dict = load_conf("insp")
+        self.conf_dict = load_config("insp")
         self.last_path = self.conf_dict.get("last_path", ".")
         self.package_names = None
         self.signal_slot_connection()
@@ -790,7 +792,7 @@ class PackageInstallWindow(Ui_pkginstall, QWidget, AskFilePath):
     def closeEvent(self, event):
         event.accept()
         self.store_default_conf()
-        save_conf(self.conf_dict, "insp")
+        save_config(self.conf_dict, "insp")
 
     def show(self):
         super().show()
@@ -814,7 +816,7 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self._urls_dict = load_conf("urls")
+        self._urls_dict = load_config("urls")
         self.__ordered_urls = None
         self.signal_slot_connection()
         self._normal_size = self.size()
@@ -899,7 +901,7 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
         if self._check_name_url(name, url):
             self._urls_dict[name] = url
         self._list_widget_urls_update()
-        save_conf(self._urls_dict, "urls")
+        save_config(self._urls_dict, "urls")
 
     def _del_index_url(self):
         selected = self.li_indexurls.currentRow()
@@ -923,7 +925,7 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
                     else items_count - 1
                 )
                 self.li_indexurls.setCurrentRow(should_be_selected)
-        save_conf(self._urls_dict, "urls")
+        save_config(self._urls_dict, "urls")
 
     @staticmethod
     def _get_cur_environ():
@@ -931,7 +933,7 @@ class IndexUrlManagerWindow(Ui_indexmgr, QMainWindow):
         首先使用配置文件中保存的 Python 路径实例化一个 PyEnv，如果路径为空，
         则使用系统环境变量 PATH 中第一个 Python 路径，环境变量中还未找到则返回 None。
         """
-        saved_paths = load_conf("pths")
+        saved_paths = load_config("pths")
         warn_box = lambda m: NewMessageBox(
             "提示",
             m,
@@ -1025,7 +1027,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
         self.store_state_of_widgets()
-        save_conf(self._stored_conf, "pyic")
+        save_config(self._stored_conf, "pyic")
         event.accept()
 
     def show(self):
@@ -1186,7 +1188,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
                 missings.append(("字节码加密功能", {}, {"tinyaes"}))
             missings.extend(inspector.get_missing_items())
 
-        thread_check_imp = NewTask(get_missing_imps)
+        thread_check_imp = QThreadModel(get_missing_imps)
         thread_check_imp.at_start(
             self.lock_widgets,
             lambda: self.show_running("正在分析项目依赖在环境中的安装情况..."),
@@ -1331,7 +1333,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
 
     def apply_stored_config(self):
         if not self._stored_conf:
-            self._stored_conf.update(load_conf("pyic"))
+            self._stored_conf.update(load_config("pyic"))
         self.le_program_entry.setText(self._stored_conf.get("program_entry", ""))
         self.le_project_root.setText(self._stored_conf.get("project_root", ""))
         self.te_module_search_path.setText(
@@ -1538,7 +1540,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             self.toolwin_pyenv.install("pyinstaller", upgrade=1)
             self.set_pyi_info(dont_set_enable=True)
 
-        thread_reinstall = NewTask(target=do_reinstall_pyi)
+        thread_reinstall = QThreadModel(target=do_reinstall_pyi)
         thread_reinstall.at_start(
             self.lock_widgets,
             lambda: self.show_running("正在安装 Pyinstaller..."),
@@ -1666,7 +1668,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             )
         else:
             working_dir_root = os.path.join(custom_working_dir, program_name)
-        thread_delete_working = NewTask(shutil.rmtree, (working_dir_root, True))
+        thread_delete_working = QThreadModel(shutil.rmtree, (working_dir_root, True))
         thread_delete_working.start()
         self.repo.put(thread_delete_working)
 
@@ -1740,7 +1742,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
                             "没有选择主 Python 环境或者主 Python 环境不可用。",
                             QMessageBox.Warning,
                         ).exec_()
-                    thread_venv_creating = NewTask(self.creating_virtualenv)
+                    thread_venv_creating = QThreadModel(self.creating_virtualenv)
                     thread_venv_creating.at_start(
                         self.lock_widgets,
                         lambda: self.show_running("正在创建虚拟环境并安装模块..."),
@@ -1771,13 +1773,13 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             NewMessageBox(
                 "Pyinstaller 不可用",
                 "请点击右上角'选择环境'按钮选择打包环境，再点击'安装'按钮将 Pyinstaller 安装到所选的打包环境。\n"
-                "如果勾选了'使用项目目录下的虚拟环境而不是以上环境'，则请点击'环境检查'按钮检查环境中缺失的模块并点击'一键安装'。",
+                "如果勾选了'使用项目目录下的虚拟环境而不是以上环境'，请点击'环境检查'按钮检查环境中缺失的模块并'一键安装'。",
                 QMessageBox.Warning,
             ).exec_()
             return
         self.pyi_tool.prepare_cmd(self._stored_conf)
         self.handle = self.pyi_tool.handle()
-        thread_build = NewTask(self.pyi_tool.execute_cmd)
+        thread_build = QThreadModel(self.pyi_tool.execute_cmd)
         thread_build.at_start(
             self.lock_widgets,
             lambda: self.show_running("正在生成可执行文件..."),
@@ -1816,7 +1818,7 @@ class PyinstallerToolWindow(Ui_pyitool, QMainWindow):
             for name in names_for_install:
                 environ.install(name)
 
-        thread_install_missings = NewTask(install_pkgs)
+        thread_install_missings = QThreadModel(install_pkgs)
         thread_install_missings.at_start(
             self.lock_widgets,
             lambda: self.show_running("正在安装缺失模块..."),
@@ -1868,7 +1870,7 @@ class EnvironChosenWindow(Ui_environch, QWidget):
 
     def show(self):
         self.resize(self._normal_size)
-        self.winch_envlist = get_pyenv_list(load_conf("pths"))
+        self.winch_envlist = get_pyenv_list(load_config("pths"))
         super().show()
         self.pyenv_list_update()
 
@@ -1947,7 +1949,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.config = load_conf("dlpc")
+        self.config = load_config("dlpc")
         self.env_paths = None
         self.environments = None
         self.signal_slot_connection()
@@ -1991,7 +1993,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
     def closeEvent(self, event):
         if self.repo.is_empty():
             self.store_config()
-            save_conf(self.config, "dlpc")
+            save_config(self.config, "dlpc")
         else:
             NewMessageBox(
                 "警告",
@@ -2010,7 +2012,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
             self.env_paths = list()
         else:
             self.env_paths.clear()
-        self.env_paths.extend(load_conf("pths"))
+        self.env_paths.extend(load_config("pths"))
         self.environments = get_pyenv_list(self.env_paths)
         index = self.config.get("derived_from", 0)
         text_list = [str(e) for e in self.environments]
@@ -2160,7 +2162,7 @@ class DownloadPackageWindow(Ui_pkgdload, QWidget, AskFilePath):
                     saved_path = status[1]
             self.download_completed.emit(saved_path)
 
-        thread_download = NewTask(target=do_download)
+        thread_download = QThreadModel(do_download)
         thread_download.at_start(lambda: self.pb_start_download.setEnabled(False))
         thread_download.at_finish(
             lambda: self.pb_start_download.setEnabled(True),

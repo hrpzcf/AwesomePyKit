@@ -8,7 +8,7 @@ from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, STDOUT, SW_HIDE,
 from info import NAME
 from PyQt5.QtCore import QObject, QTimer, pyqtSignal
 
-from utils.main import config_dir, get_cmd_out
+from utils.main import config_root, get_cmd_out
 
 
 class PyiTool(QObject):
@@ -236,7 +236,7 @@ VSVersionInfo(
 """
         for key, val in cmd_dict.get("file_ver_info", dict()).items():
             FILE_VERSION_INFO = FILE_VERSION_INFO.replace(key, val)
-        file_info_path = os.path.join(config_dir, "FILE_INFO")
+        file_info_path = os.path.join(config_root, "FILE_INFO")
         try:
             with open(file_info_path, "w", encoding="utf-8") as file_info:
                 file_info.write(FILE_VERSION_INFO)

@@ -4,53 +4,74 @@ __doc__ = """包含AwesomePyKit的主要类、函数、配置文件路径等。"
 
 import json
 import os
+import os.path as op
 import re
 import subprocess
+import sys
 from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, SW_HIDE, Popen
 
-from fastpip import PyEnv, all_py_paths, cur_py_path, index_urls
+from fastpip import PyEnv, index_urls
 from fastpip.errors import *
 from PyQt5.QtCore import QMutex, QThread, QTimer
 
-# 此程序打包为单目录形式时，__file__ 是 libm.pyc 文件的虚拟路径
-# 路径在程序可执行文件的目录下：.\library\libm.pyc，文件不是真实存在的
-_root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-config_dir = os.path.join(_root_path, "config")
-resources_dir = os.path.join(_root_path, "res")
-config_file_py_paths = os.path.join(config_dir, "PythonPaths.json")
-config_file_index_urls = os.path.join(config_dir, "IndexURLs.json")
-config_file_pyi_defs = os.path.join(config_dir, "PyiDefault.json")
-config_file_install_package = os.path.join(config_dir, "InstallPackage.json")
-config_file_dload_package = os.path.join(config_dir, "DloadPackage.json")
+_program_runs_in_bundle_mode = getattr(sys, "frozen", False)
+if _program_runs_in_bundle_mode:
+    _res_root = sys._MEIPASS
+else:
+    _res_root = op.dirname(op.dirname(op.abspath(__file__)))
+_appdata_local_folder = os.getenv("LOCALAPPDATA")
+if not _appdata_local_folder:
+    if _program_runs_in_bundle_mode:
+        config_root = op.dirname(sys.executable)
+    else:
+        config_root = _res_root
+else:
+    config_root = op.join(_appdata_local_folder, "Awespykit")
+config_root = op.join(config_root, "config")
+
+config_file_py_paths = op.join(config_root, "PythonPaths.json")
+config_file_index_urls = op.join(config_root, "IndexURLs.json")
+config_file_pyi_defs = op.join(config_root, "PyiDefault.json")
+config_file_install_package = op.join(config_root, "InstallPackage.json")
+config_file_dload_package = op.join(config_root, "DloadPackage.json")
 
 
-def _load_json(path, get_data):
+def get_res_path(*p):
     """
-    如果 path 文件不存在，则调用 get_data 获取数据创建配置并返回
+    用于在不同运行环境之下获取正确的资源文件路径
 
-    如果无法读取 path 配置文件，则调用 get_data 函数取值并返回该值
+    不同的运行环境：Python 源代码运行、Pyinstaller 打包为单文件运行/打包为单目录运行
     """
-    if not os.path.exists(path):
+    return op.join(_res_root, *p)
+
+
+def _load_json(json_path, get_data):
+    """
+    如果 json_path 文件不存在，则调用 get_data 获取数据创建配置并返回
+
+    如果无法读取 json_path 配置文件，则调用 get_data 函数取值并返回该值
+    """
+    if not op.exists(json_path):
         data = get_data()
         try:
-            with open(path, "wt", encoding="utf-8") as f:
+            with open(json_path, "wt", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
         except Exception:
             pass
         return data
     try:
-        with open(path, "rt", encoding="utf-8") as f:
+        with open(json_path, "rt", encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return get_data()
 
 
-def load_conf(option):
-    if not os.path.exists(config_dir):
-        os.makedirs(config_dir)
-    elif os.path.isfile(config_dir):
-        os.remove(config_dir)
-        os.makedirs(config_dir)
+def load_config(option):
+    if not op.exists(config_root):
+        os.makedirs(config_root)
+    elif op.isfile(config_root):
+        os.remove(config_root)
+        os.makedirs(config_root)
     # 加载包管理器安装界面设置字典
     if option == "insp":
         return _load_json(config_file_install_package, dict)
@@ -69,7 +90,7 @@ def load_conf(option):
     raise Exception(f"没有此选项：{option}")
 
 
-def save_conf(sequence, option):
+def save_config(sequence, option):
     if option == "pths":
         pth = config_file_py_paths
     elif option == "urls":
@@ -91,7 +112,7 @@ def save_conf(sequence, option):
 
 def get_pyenv_list(paths=None):
     if not paths:
-        paths = load_conf("pths")
+        paths = load_config("pths")
     return [PyEnv(p) for p in paths]
 
 
@@ -131,7 +152,7 @@ def clean_index_urls(urls):
     return [url for url in urls if check_index_url(url)]
 
 
-class NewTask(QThread):
+class QThreadModel(QThread):
     def __init__(self, target, args=tuple()):
         super().__init__()
         self._args = args
@@ -237,14 +258,14 @@ def get_cmd_out(*commands, regexp="", timeout=None):
     return re.search(regexp, strings)
 
 
-def open_explorer(path, option="root"):
-    assert isinstance(path, str)
+def open_explorer(fd_path, option="root"):
+    assert isinstance(fd_path, str)
     assert option in ("root", "select")
-    path = os.path.normpath(path.strip())
-    if os.path.isfile(path):
-        commands = f"explorer /select,{path}"
-    elif os.path.isdir(path):
-        commands = f"explorer /{option},{path}"
+    fd_path = op.normpath(fd_path.strip())
+    if op.isfile(fd_path):
+        commands = f"explorer /select,{fd_path}"
+    elif op.isdir(fd_path):
+        commands = f"explorer /{option},{fd_path}"
     else:
         return
     subprocess.run(commands)
