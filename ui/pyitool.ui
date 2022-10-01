@@ -163,7 +163,7 @@
                  <item>
                   <widget class="QLabel" name="label_26">
                    <property name="text">
-                    <string>隐含的模块：</string>
+                    <string>隐蔽的导入：</string>
                    </property>
                   </widget>
                  </item>

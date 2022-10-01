@@ -706,7 +706,7 @@ class Ui_pyitool(object):
         self.pb_up_level_root.setToolTip(_translate("pyitool", "将项目根目录向上移一级。"))
         self.pb_up_level_root.setText(_translate("pyitool", "上一级"))
         self.le_project_root.setToolTip(_translate("pyitool", "当前的项目根目录，选择程序启动入口文件后自动确定。"))
-        self.label_26.setText(_translate("pyitool", "隐含的模块："))
+        self.label_26.setText(_translate("pyitool", "隐蔽的导入："))
         self.pb_clear_hidden_imports.setText(_translate("pyitool", "清空"))
         self.pte_hidden_imports.setToolTip(_translate("pyitool", "对应选项：--hidden-import, --hiddenimport\n"
 "某些模块可能会被通过隐蔽的方式导入导致 Pyinstaller 没有发现它，将没有被发现的模块名填入此处以使 Pyinstaller 主动包含这些模块。\n"
