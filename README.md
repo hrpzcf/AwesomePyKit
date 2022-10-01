@@ -1,14 +1,26 @@
-# AwesPyKit
+<center><h1>Python 工具箱 - Awespykit</h1></center>
 
-# 快速跳转
-- [程序概述](#程序概述)
-- [如何运行](#如何运行)
-- [程序截图](#程序截图)
-- [源码仓库](#源码仓库)
+<div align="center">
+
+[![GitHub stars](https://img.shields.io/github/stars/hrpzcf/AwesomePyKit?label=Stars&logo=github)](https://github.com/hrpzcf/AwesomePyKit/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/hrpzcf/AwesomePyKit?label=Forks&logo=github)](https://github.com/hrpzcf/AwesomePyKit/network)
+[![GitHub issues](https://img.shields.io/github/issues/hrpzcf/AwesomePyKit?label=Issues&logo=github)](https://github.com/hrpzcf/AwesomePyKit/issues)
+[![GitHub license](https://img.shields.io/github/v/release/hrpzcf/AwesomePyKit?label=Release&logo=github)](https://github.com/hrpzcf/AwesomePyKit/releases)
+[![GitHub license](https://img.shields.io/github/license/hrpzcf/AwesomePyKit?color=red&label=License)](https://github.com/hrpzcf/AwesomePyKit/blob/main/LICENSE)
+
+</div>
+
+## 快速跳转
+
+------
+
+> [程序概述](#程序概述) / [如何运行](#如何运行) / [程序截图](#程序截图) / [源码仓库](#源码仓库)
 
 <br />
 
-# 程序概述
+## 程序概述
+
+---
 
 `仅支持在windows系统上运行`
 
@@ -18,37 +30,38 @@
 
 <br />
 
-# 如何运行
+## 如何运行
 
-> 从 exe 文件运行：
+---
 
-1. 打开 AwesPyKit 发布页
-    [Gitee](https://gitee.com/hrpzcf/AwesomePyKit/releases)
-    或
-    [GitHub](https://github.com/hrpzcf/AwesomePyKit/releases)
-2. 下载打包好的程序包 AwesPyKit-x.x.x.7z
-3. 将压缩包解压，找到 RunPyKit.exe 双击运行
+> 从 exe 可执行文件运行：
+
+1. 打开 Awespykit 版本发布页 [GitHub](https://github.com/hrpzcf/AwesomePyKit/releases) / [Gitee](https://gitee.com/hrpzcf/AwesomePyKit/releases)
+2. 下载打包好的程序包 Awespykit-x.x.x.7z
+3. 将压缩包解压，找到 runpykit.exe 双击运行
 
 <br />
 
 > 从源代码运行：
 
-1. 本机安装 Python3.7 或以上版本运行环境
-2. 下载源代码包 Source code.zip，解压
-3. 在解压的 AwesPyKit 目录内打开 PowerShell 或 cmd
-4. 安装 AwesPyKit 的依赖(有多个 Python 环境的请自行选择目标环境)
+1. 本机安装 Python 3.7 或更新版本的 Python 运行环境
+2. `git clone` 克隆源代码或下载源代码包 Source code.zip 解压
+3. 在 Awespykit 目录内打开 PowerShell 或 Cmd
+4. 安装 Awespykit 的依赖，有多个 Python 环境的请自行选择环境
 
     ```cmd
     python -m pip install -r requirements.txt
     ```
 
-5. 找到 RunPyKit.py 运行。如果不想显示控制台，可以将 RunPyKit.py 重命名为 RunPyKit.pyw
+5. 找到 runpykit.py 运行。如果不想显示控制台，可以将 runpykit.py 重命名为 runpykit.pyw
 
 <br />
 
-# 程序截图
+## 程序截图
 
-> ## 包管理器：封装了 pip 命令
+---
+
+> ### 包管理器：封装了 pip 命令
 
 - 提供多 Python 环境的包管理，免于用命令行管理的混乱
     + 支持常规 Python 环境
@@ -61,7 +74,7 @@
 
 <br/>
 
-> ## 程序打包工具：封装了 Pyinstaller
+> ### 程序打包工具：封装了 Pyinstaller
 
 - 封装了 Pyinstaller 的大部分常用命令
 - 支持选择不同的环境进行打包操作
@@ -72,7 +85,7 @@
 
 <br/>
 
-> ## 镜像源设置工具：封装了 pip 命令
+> ### 镜像源设置工具：封装了 pip 命令
 
 - 使用 pip 时网络不佳，用此工具一键切换 pip 所使用的镜像源
 - 支持保存你自己常用的镜像源地址
@@ -81,7 +94,7 @@
 
 <br/>
 
-> ## 模块安装包下载器：封装了 pip 命令
+> ### 模块安装包下载器：封装了 pip 命令
 
 - 用于特殊需求时下载各个包/库/模块的安装包
 - 支持同时下载要下载的包/库/模块的依赖
@@ -91,8 +104,8 @@
 
 <br/>
 
-# 源码仓库
+## 源码仓库
 
-> [Gitee](https://gitee.com/hrpzcf/AwesomePyKit) 或 [GitHub](https://github.com/hrpzcf/AwesomePyKit)。
+---
 
-<br />
+> [Gitee](https://gitee.com/hrpzcf/AwesomePyKit) / [GitHub](https://github.com/hrpzcf/AwesomePyKit)
