@@ -354,7 +354,7 @@
        </widget>
        <widget class="QWidget" name="tab_build_control">
         <attribute name="title">
-         <string>生成控制</string>
+         <string>打包控制</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_14">
          <item>
@@ -368,7 +368,7 @@
 将程序打包成单文件夹形式，exe 可执行程序在文件夹的首层目录内。</string>
                </property>
                <property name="text">
-                <string>打包成单目录(推荐)</string>
+                <string>打包成单目录</string>
                </property>
               </widget>
              </item>
@@ -435,10 +435,10 @@
             <widget class="QCheckBox" name="cb_write_info_to_exec">
              <property name="toolTip">
               <string>对应选项：--version-file
-勾选此选项则将&quot;附加信息&quot;标签页中的条目写入生成的 exe 文件。</string>
+勾选此选项则将&quot;附加信息&quot;标签页中的内容写入生成的 exe 文件，这些信息可以在查看 exe 文件属性时看见。</string>
              </property>
              <property name="text">
-              <string>将附加信息写入生成的可执行文件</string>
+              <string>将“附加信息”标签页的内容写入生成的可执行文件</string>
              </property>
             </widget>
            </item>
@@ -1040,52 +1040,190 @@
         <attribute name="title">
          <string>工具设置</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_27">
+        <layout class="QVBoxLayout" name="verticalLayout_35">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_26">
+          <layout class="QVBoxLayout" name="verticalLayout_34">
            <item>
-            <widget class="QGroupBox" name="groupBox_3">
-             <property name="title">
-              <string>打包成功后执行...</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_20">
+            <layout class="QVBoxLayout" name="verticalLayout_33">
+             <item>
+              <widget class="QGroupBox" name="groupBox_3">
+               <property name="title">
+                <string>打包成功后执行...</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_31">
                 <item>
-                 <widget class="QCheckBox" name="cb_explorer_show">
-                  <property name="toolTip">
-                   <string>打包成功后打开资源管理器并选中打包好的 .exe 文件，如果打包失败则不会打开资源管理器。</string>
-                  </property>
-                  <property name="text">
-                   <string>在资源管理器中显示</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="cb_delete_spec_file">
-                  <property name="toolTip">
-                   <string>打包成功后删除 Pyinstaller 生成的 .spec 文件，打包失败则不会执行删除操作。</string>
-                  </property>
-                  <property name="text">
-                   <string>删除 spec 文件</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="cb_delete_working_dir">
-                  <property name="toolTip">
-                   <string>打包成功后删除临时工作文件夹，打包失败则不会执行删除操作。
+                 <layout class="QVBoxLayout" name="verticalLayout_20">
+                  <item>
+                   <widget class="QCheckBox" name="cb_explorer_show">
+                    <property name="toolTip">
+                     <string>打包成功后打开资源管理器并选中打包好的 .exe 文件，如果打包失败则不会打开资源管理器。</string>
+                    </property>
+                    <property name="text">
+                     <string>在资源管理器中显示</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="cb_delete_spec_file">
+                    <property name="toolTip">
+                     <string>打包成功后删除 Pyinstaller 生成的 .spec 文件，打包失败则不会执行删除操作。</string>
+                    </property>
+                    <property name="text">
+                     <string>删除 spec 文件</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="cb_delete_working_dir">
+                    <property name="toolTip">
+                     <string>打包成功后删除临时工作文件夹，打包失败则不会执行删除操作。
 如果你没有自定义临时工作目录所在目录，则临时工作目录指的就是项目根目录下的 build 目录。</string>
-                  </property>
-                  <property name="text">
-                   <string>删除临时工作文件夹</string>
-                  </property>
-                 </widget>
+                    </property>
+                    <property name="text">
+                     <string>删除临时工作文件夹</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
-              </item>
-             </layout>
-            </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox_4">
+               <property name="title">
+                <string>工具配置管理</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_32">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_30">
+                  <item>
+                   <layout class="QVBoxLayout" name="verticalLayout_26">
+                    <property name="spacing">
+                     <number>2</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="label_28">
+                      <property name="text">
+                       <string>保存当前配置</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_32">
+                      <item>
+                       <widget class="QLineEdit" name="uiLineEdit_config_remark">
+                        <property name="toolTip">
+                         <string>当前配置是指“程序打包工具”所有复选框、输入框等控件的设置状态。
+输入一个你容易记住的备注名称并点击“保存”按钮将这些设置保存下来以便在不同的打包项目之间快速切换。</string>
+                        </property>
+                        <property name="placeholderText">
+                         <string>输入配置的备注名称</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="uiPushButton_save_cur_config">
+                        <property name="toolTip">
+                         <string>将“程序打包工具”当前复选框、输入框等控件设置状态保存下来，以左侧输入框内容作为这个保存下来的配置的名称。</string>
+                        </property>
+                        <property name="text">
+                         <string>保存</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QVBoxLayout" name="verticalLayout_27">
+                    <property name="spacing">
+                     <number>2</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="label_29">
+                      <property name="text">
+                       <string>已保存的配置</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,0,0">
+                      <item>
+                       <widget class="QComboBox" name="uiComboBox_saved_config">
+                        <property name="toolTip">
+                         <string>所有已保存的配置，这里显示的是你在保存配置时输入的备注名称。</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="uiPushButton_delete_config">
+                        <property name="palette">
+                         <palette>
+                          <active>
+                           <colorrole role="ButtonText">
+                            <brush brushstyle="SolidPattern">
+                             <color alpha="255">
+                              <red>255</red>
+                              <green>0</green>
+                              <blue>0</blue>
+                             </color>
+                            </brush>
+                           </colorrole>
+                          </active>
+                          <inactive>
+                           <colorrole role="ButtonText">
+                            <brush brushstyle="SolidPattern">
+                             <color alpha="255">
+                              <red>255</red>
+                              <green>0</green>
+                              <blue>0</blue>
+                             </color>
+                            </brush>
+                           </colorrole>
+                          </inactive>
+                          <disabled>
+                           <colorrole role="ButtonText">
+                            <brush brushstyle="SolidPattern">
+                             <color alpha="255">
+                              <red>120</red>
+                              <green>120</green>
+                              <blue>120</blue>
+                             </color>
+                            </brush>
+                           </colorrole>
+                          </disabled>
+                         </palette>
+                        </property>
+                        <property name="toolTip">
+                         <string>将左侧下拉选择框选中的配置删除。</string>
+                        </property>
+                        <property name="text">
+                         <string>删除</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="uiPushButton_apply_config">
+                        <property name="toolTip">
+                         <string>将左侧下拉选择框选中的配置内容应用到“程序打包”工具。</string>
+                        </property>
+                        <property name="text">
+                         <string>应用</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <spacer name="verticalSpacer_3">
@@ -1437,7 +1575,7 @@
            <widget class="QPushButton" name="pb_check_imports">
             <property name="minimumSize">
              <size>
-              <width>120</width>
+              <width>0</width>
               <height>50</height>
              </size>
             </property>
@@ -1478,6 +1616,12 @@
               </disabled>
              </palette>
             </property>
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="toolTip">
              <string>检查程序运行所需的所有模块是否在所选的 Python 环境中安装。</string>
             </property>
@@ -1490,7 +1634,7 @@
            <widget class="QPushButton" name="pb_gen_executable">
             <property name="minimumSize">
              <size>
-              <width>200</width>
+              <width>0</width>
               <height>50</height>
              </size>
             </property>
