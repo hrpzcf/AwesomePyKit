@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>indexmgr</class>
- <widget class="QMainWindow" name="indexmgr">
+ <class>index_manager</class>
+ <widget class="QMainWindow" name="index_manager">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>showdload</class>
- <widget class="QWidget" name="showdload">
+ <class>show_download</class>
+ <widget class="QWidget" name="show_download">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>

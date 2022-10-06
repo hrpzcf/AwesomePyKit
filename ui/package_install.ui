@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>pkginstall</class>
- <widget class="QWidget" name="pkginstall">
+ <class>package_install</class>
+ <widget class="QWidget" name="package_install">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>

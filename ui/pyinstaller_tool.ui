@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>pyitool</class>
- <widget class="QMainWindow" name="pyitool">
+ <class>pyinstaller_tool</class>
+ <widget class="QMainWindow" name="pyinstaller_tool">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -1092,7 +1092,7 @@
              <item>
               <widget class="QGroupBox" name="groupBox_4">
                <property name="title">
-                <string>工具配置管理</string>
+                <string>打包配置管理</string>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_32">
                 <item>
@@ -1105,7 +1105,7 @@
                     <item>
                      <widget class="QLabel" name="label_28">
                       <property name="text">
-                       <string>保存当前配置</string>
+                       <string>保存当前打包配置</string>
                       </property>
                      </widget>
                     </item>
@@ -1114,11 +1114,11 @@
                       <item>
                        <widget class="QLineEdit" name="uiLineEdit_config_remark">
                         <property name="toolTip">
-                         <string>当前配置是指“程序打包工具”所有复选框、输入框等控件的设置状态。
+                         <string>当前打包配置是指“程序打包工具”所有复选框、输入框等控件的设置状态。
 输入一个你容易记住的备注名称并点击“保存”按钮将这些设置保存下来以便在不同的打包项目之间快速切换。</string>
                         </property>
                         <property name="placeholderText">
-                         <string>输入配置的备注名称</string>
+                         <string>请输入配置的备注名称</string>
                         </property>
                        </widget>
                       </item>
@@ -1144,7 +1144,7 @@
                     <item>
                      <widget class="QLabel" name="label_29">
                       <property name="text">
-                       <string>已保存的配置</string>
+                       <string>已保存的打包配置</string>
                       </property>
                      </widget>
                     </item>

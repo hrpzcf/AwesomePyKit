@@ -1,24 +1,24 @@
 # coding: utf-8
 
 __all__ = [
-    "Ui_environch",
-    "Ui_impcheck",
-    "Ui_indexmgr",
-    "Ui_mainentry",
-    "Ui_pkgdload",
-    "Ui_pkginstall",
-    "Ui_pkgmgr",
-    "Ui_pyitool",
-    "Ui_showdload",
+    "Ui_environ_chosen",
+    "Ui_imports_check",
+    "Ui_index_manager",
+    "Ui_main_entrance",
+    "Ui_package_download",
+    "Ui_package_install",
+    "Ui_package_manager",
+    "Ui_pyinstaller_tool",
+    "Ui_show_download",
 ]
 
 
-from .environch import Ui_environch
-from .impcheck import Ui_impcheck
-from .indexmgr import Ui_indexmgr
-from .mainentry import Ui_mainentry
-from .pkgdload import Ui_pkgdload
-from .pkginstall import Ui_pkginstall
-from .pkgmgr import Ui_pkgmgr
-from .pyitool import Ui_pyitool
-from .showdload import Ui_showdload
+from .environ_chosen import Ui_environ_chosen
+from .imports_check import Ui_imports_check
+from .index_manager import Ui_index_manager
+from .main_entrance import Ui_main_entrance
+from .package_download import Ui_package_download
+from .package_install import Ui_package_install
+from .package_manager import Ui_package_manager
+from .pyinstaller_tool import Ui_pyinstaller_tool
+from .show_download import Ui_show_download

@@ -29,11 +29,11 @@ else:
     config_root = op.join(_appdata_local_folder, "Awespykit")
 config_root = op.join(config_root, "config")
 
-config_file_py_paths = op.join(config_root, "PythonPaths.json")
-config_file_index_urls = op.join(config_root, "IndexURLs.json")
-config_file_pyi_defs = op.join(config_root, "PyiDefault.json")
-config_file_install_package = op.join(config_root, "InstallPackage.json")
-config_file_dload_package = op.join(config_root, "DloadPackage.json")
+config_package_manager = op.join(config_root, "package_manager.json")
+config_indexurl_manager = op.join(config_root, "indexurls_manager.json")
+config_pyinstaller_tool = op.join(config_root, "pyinstaller_tool.json")
+config_package_install = op.join(config_root, "package_install.json")
+config_package_download = op.join(config_root, "package_download.json")
 
 
 def get_res_path(*p):
@@ -47,9 +47,7 @@ def get_res_path(*p):
 
 def _load_json(json_path, get_data):
     """
-    如果 json_path 文件不存在，则调用 get_data 获取数据创建配置并返回
-
-    如果无法读取 json_path 配置文件，则调用 get_data 函数取值并返回该值
+    如果 json_path 文件不存在或无法读取，则调用 get_data 函数取值并返回该值
     """
     if not op.exists(json_path):
         data = get_data()
@@ -66,43 +64,45 @@ def _load_json(json_path, get_data):
         return get_data()
 
 
+class Option:
+    """枚举，用于 load_config 和 save_config 函数的 option 参数"""
+
+    PKG_INSTALL = 0  # 包管理器“安装”界面设置
+    PKG_MANAGER = 1  # 包管理器的环境路径列表
+    PYINSTALLER = 2  # 程序打包工具设置
+    INDEX_MANAGER = 3  # 镜像源设置工具保存的地址
+    PKG_DOWNLOAD = 4  # 模块下载器的设置
+
+
 def load_config(option):
     if not op.exists(config_root):
         os.makedirs(config_root)
-    elif op.isfile(config_root):
-        os.remove(config_root)
-        os.makedirs(config_root)
-    # 加载包管理器安装界面设置字典
-    if option == "insp":
-        return _load_json(config_file_install_package, dict)
-    # 加载已保存的环境路径列表
-    if option == "pths":
-        return _load_json(config_file_py_paths, list)
-    # 加载程序打包工具设置字典
-    if option == "pyic":
-        return _load_json(config_file_pyi_defs, dict)
-    # 加载镜像源地址字典
-    if option == "urls":
-        return _load_json(config_file_index_urls, index_urls.copy)
-    # 加载模块下载器设置字典
-    if option == "dlpc":
-        return _load_json(config_file_dload_package, dict)
-    raise Exception(f"没有此选项：{option}")
+    if option == Option.PKG_INSTALL:
+        return _load_json(config_package_install, dict)
+    if option == Option.PKG_MANAGER:
+        return _load_json(config_package_manager, list)
+    if option == Option.PYINSTALLER:
+        return _load_json(config_pyinstaller_tool, list)
+    if option == Option.INDEX_MANAGER:
+        return _load_json(config_indexurl_manager, index_urls.copy)
+    if option == Option.PKG_DOWNLOAD:
+        return _load_json(config_package_download, dict)
+    assert False, f"选项错误：{option}"
 
 
 def save_config(sequence, option):
-    if option == "pths":
-        pth = config_file_py_paths
-    elif option == "urls":
-        pth = config_file_index_urls
-    elif option == "pyic":
-        pth = config_file_pyi_defs
-    elif option == "insp":
-        pth = config_file_install_package
-    elif option == "dlpc":
-        pth = config_file_dload_package
+    if option == Option.PKG_INSTALL:
+        pth = config_package_install
+    elif option == Option.PKG_MANAGER:
+        pth = config_package_manager
+    elif option == Option.PYINSTALLER:
+        pth = config_pyinstaller_tool
+    elif option == Option.INDEX_MANAGER:
+        pth = config_indexurl_manager
+    elif option == Option.PKG_DOWNLOAD:
+        pth = config_package_download
     else:
-        return
+        raise Exception(f"选项错误：{option}")
     try:
         with open(pth, "wt", encoding="utf-8") as f:
             json.dump(sequence, f, indent=4, ensure_ascii=False)
@@ -112,7 +112,7 @@ def save_config(sequence, option):
 
 def get_pyenv_list(paths=None):
     if not paths:
-        paths = load_config("pths")
+        paths = load_config(Option.PKG_MANAGER)
     return [PyEnv(p) for p in paths]
 
 

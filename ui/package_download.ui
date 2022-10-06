@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>pkgdload</class>
- <widget class="QWidget" name="pkgdload">
+ <class>package_download</class>
+ <widget class="QWidget" name="package_download">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
