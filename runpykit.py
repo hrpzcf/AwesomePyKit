@@ -1133,8 +1133,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pb_clear_hidden_imports.clicked.connect(self.pte_hidden_imports.clear)
         self.pb_clear_exclude_module.clicked.connect(self.pte_exclude_modules.clear)
         self.uiPushButton_save_cur_config.clicked.connect(self.save_current_config)
-        self.uiPushButton_apply_config.clicked.connect(self.apply_select_config)
-        self.uiPushButton_delete_config.clicked.connect(self.delete_select_config)
+        self.uiPushButton_apply_config.clicked.connect(self.apply_selected_config)
+        self.uiPushButton_delete_config.clicked.connect(self.delete_selected_config)
 
     def check_project_imports(self):
         self.config_widgets_to_dict()
@@ -1891,7 +1891,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiLineEdit_config_remark.clear()
         MessageBox("提示", f"配置已以此备注名保存：{text}。").exec_()
 
-    def delete_select_config(self):
+    def delete_selected_config(self):
         if not len(self.multiconfig[1]):
             return MessageBox("提示", "没有已保存的配置。").exec_()
         text = self.uiComboBox_saved_config.currentText()
@@ -1912,7 +1912,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         del self.multiconfig[1][text]
         self.update_configure_combobox()
 
-    def apply_select_config(self):
+    def apply_selected_config(self):
         if not len(self.multiconfig[1]):
             return MessageBox("提示", "没有已保存的配置。").exec_()
         text = self.uiComboBox_saved_config.currentText()
