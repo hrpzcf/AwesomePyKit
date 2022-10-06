@@ -205,7 +205,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.lw_env_list.clicked.connect(lambda: self.get_pkgs_info(0))
         self.lw_env_list.currentRowChanged.connect(self.table_widget_clear_pkgs)
         self.btn_check_for_updates.clicked.connect(self.check_cur_pkgs_for_updates)
-        self.btn_install_package.clicked.connect(window_package_install.show)
         self.btn_install_package.clicked.connect(self.set_win_install_package_envinfo)
         self.btn_uninstall_package.clicked.connect(self.uninstall_pkgs)
         self.btn_upgrade_package.clicked.connect(self.upgrade_pkgs)
@@ -220,10 +219,15 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def set_win_install_package_envinfo(self):
         if not self.env_list:
-            return
+            return MessageBox("提示", "没有可选的 Python 环境。").exec_()
+        if self.selected_env_index <= -1:
+            return MessageBox("提示", "没有选择任何 Python 环境。").exec_()
+        if self.selected_env_index >= len(self.env_list):
+            return MessageBox("错误", "异常：当前选择下标超出范围。").exec_()
         window_package_install.uiLabel_target_environment.setText(
             str(self.env_list[self.selected_env_index])
         )
+        window_package_install.show()
 
     @staticmethod
     def judging_inclusion_relationship(string_long, keyword):
@@ -748,10 +752,8 @@ class PackageInstallWindow(Ui_package_install, QWidget, AskFilePath):
     def save_package_names(self):
         data = self.pte_package_names.toPlainText()
         if not data:
-            return MessageBox(
-                "提示",
-                "要保存的内容为空！",
-            ).exec_()
+            MessageBox("提示", "要保存的内容为空！").exec_()
+            return
         last_path = self.save_as_text_file(data, self.last_path)
         if last_path:
             self.last_path = last_path
@@ -808,9 +810,6 @@ class PackageInstallWindow(Ui_package_install, QWidget, AskFilePath):
         self.pb_save_as_text.clicked.connect(self.save_package_names)
         self.pb_load_from_text.clicked.connect(self.load_package_names)
         self.cb_use_index_url.clicked.connect(self.set_le_use_index_url)
-
-    def set_target_env_info(self, env):
-        self.uiLabel_target_environment.setText(str(env))
 
     def set_le_use_index_url(self):
         self.le_use_index_url.setEnabled(self.cb_use_index_url.isChecked())
