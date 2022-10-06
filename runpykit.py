@@ -980,6 +980,11 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
 
 
 class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
+    signal_update_pyinfo = pyqtSignal(str)
+    signal_update_pyiinfo = pyqtSignal(str)
+    signal_update_pyipbtext = pyqtSignal(str)
+    pyiver_fmt = "Pyinstaller - {}"
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -996,6 +1001,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.pb_gen_executable,
             self.cb_prioritize_venv,
             self.uiPushButton_apply_config,
+            self.uiPushButton_delete_config,
+            self.uiPushButton_save_config,
         )
         self.le_vers_group = (
             self.le_file_version_0,
@@ -1039,11 +1046,6 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         super().show()
         if self.repo.is_empty():
             self.config_dict_to_widgets()
-            self.pyi_tool.initialize(
-                self.pyiconfig.get("env_path", ""),
-                self.pyiconfig.get("project_root", os.getcwd()),
-            )
-            self.set_pyinstaller_info()
 
     def resizeEvent(self, event):
         old_size = event.oldSize()
@@ -1125,16 +1127,19 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pb_select_output_dir.clicked.connect(self.set_le_output_dir)
         self.pb_select_upx_search_path.clicked.connect(self.set_le_upx_search_path)
         self.pb_gen_executable.clicked.connect(self.build_executable)
-        self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyi)
+        self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyinstaller)
         self.pb_check_imports.clicked.connect(self.check_project_imports)
         window_imports_check.pb_install_all_missing.clicked.connect(
             lambda: self.install_missings(window_imports_check.all_missing_modules)
         )
         self.pb_clear_hidden_imports.clicked.connect(self.pte_hidden_imports.clear)
         self.pb_clear_exclude_module.clicked.connect(self.pte_exclude_modules.clear)
-        self.uiPushButton_save_cur_config.clicked.connect(self.save_current_config)
+        self.uiPushButton_save_config.clicked.connect(self.save_current_config)
         self.uiPushButton_apply_config.clicked.connect(self.apply_selected_config)
         self.uiPushButton_delete_config.clicked.connect(self.delete_selected_config)
+        self.signal_update_pyinfo.connect(self.lb_py_info.setText)
+        self.signal_update_pyiinfo.connect(self.lb_pyi_info.setText)
+        self.signal_update_pyipbtext.connect(self.pb_reinstall_pyi.setText)
 
     def check_project_imports(self):
         self.config_widgets_to_dict()
@@ -1319,16 +1324,15 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 file_dir_paths.append(os.path.realpath(path))
         return file_dir_paths
 
-    def set_env_update_info(self):
-        self.toolwin_pyenv = window_environ_chosen.winch_envlist[
+    def select_env_update(self):
+        self.toolwin_pyenv = window_environ_chosen.envlist[
             window_environ_chosen.lw_env_list.currentRow()
         ]
-        self.lb_py_info.setText(self.toolwin_pyenv.py_info())
         self.pyi_tool.initialize(
             self.toolwin_pyenv.env_path,
             self.pyiconfig.get("project_root", os.getcwd()),
         )
-        self.set_pyinstaller_info()
+        self.load_version_information_lazily(refresh=False)
 
     def config_dict_to_widgets(self, config_dict=None):
         if isinstance(config_dict, dict):
@@ -1350,6 +1354,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 self.update_configure_combobox()
             elif isinstance(config_loaded, dict):  # 旧版配置文件
                 self.pyiconfig.update(config_loaded)
+        self.load_version_information_lazily(refresh=True)
         self.le_program_entry.setText(self.pyiconfig.get("program_entry", ""))
         self.le_project_root.setText(self.pyiconfig.get("project_root", ""))
         self.te_module_search_path.setText(
@@ -1384,13 +1389,6 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.te_upx_exclude_files.setText(
             "\n".join(self.pyiconfig.get("upx_exclude_files", []))
         )
-        py_path = self.pyiconfig.get("env_path", "")
-        if py_path:
-            try:
-                self.toolwin_pyenv = PyEnv(py_path)
-                self.lb_py_info.setText(self.toolwin_pyenv.py_info())
-            except Exception:
-                pass
         self.le_output_name.setText(self.pyiconfig.get("output_name", ""))
         self.cb_log_level.setCurrentText(self.pyiconfig.get("log_level", "INFO"))
         self.set_file_ver_info_text()
@@ -1515,22 +1513,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.le_legal_trademarks.setText(info.get("$LegalTrademarks$", ""))
         self.le_original_filename.setText(info.get("$OriginalFilename$", ""))
 
-    def set_pyinstaller_info(self, dont_set_enable=False):
-        # 此处不能用 self.pyi_tool，因为 self.pyi_tool 总有一个实例
-        if self.toolwin_pyenv:
-            if not dont_set_enable:
-                self.pb_reinstall_pyi.setEnabled(True)
-            pyi_info = self.pyi_tool.pyi_info()
-            if pyi_info == "0.0":
-                self.pb_reinstall_pyi.setText("安装")
-            else:
-                self.pb_reinstall_pyi.setText("重新安装")
-            self.lb_pyi_info.setText(f"Pyinstaller - {pyi_info}")
-        else:
-            self.lb_pyi_info.clear()
-            self.pb_reinstall_pyi.setEnabled(False)
-
-    def reinstall_pyi(self):
+    def reinstall_pyinstaller(self):
         if not self.toolwin_pyenv:
             return MessageBox(
                 "提示",
@@ -1549,7 +1532,6 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         def do_reinstall_pyi():
             self.toolwin_pyenv.uninstall("pyinstaller")
             self.toolwin_pyenv.install("pyinstaller", upgrade=1)
-            self.set_pyinstaller_info(dont_set_enable=True)
 
         thread_reinstall = QThreadModel(target=do_reinstall_pyi)
         thread_reinstall.at_start(
@@ -1559,6 +1541,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_reinstall.at_finish(
             self.__hide_running,
             self.__release_widgets,
+            lambda: self.load_version_information_lazily(False),
         )
         thread_reinstall.start()
         self.repo.put(thread_reinstall, 0)
@@ -1578,7 +1561,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 return
             self.le_project_root.setText(os.path.dirname(deep))
 
-    def _check_requireds(self):
+    def __check_requireds(self):
         self.config_widgets_to_dict()
         program_entry = self.pyiconfig.get("program_entry", "")
         if not program_entry:
@@ -1622,16 +1605,15 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def __release_widgets(self):
         for widget in self.widget_group:
             widget.setEnabled(True)
-        self.__hide_running()
 
-    def importance_operation_lock(self, string):
+    def importance_operation_start(self, string):
         def function():
             self.__lock_widgets()
             self.__show_running(string)
 
         return function
 
-    def importance_operation_release(self):
+    def importance_operation_finish(self):
         self.__hide_running()
         self.__release_widgets()
 
@@ -1738,8 +1720,17 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self._venv_creating_result = 1  # 虚拟环境创建不成功
 
     def build_executable(self):
-        if not self._check_requireds():
+        if not self.__check_requireds():
             return
+        if self.uiComboBox_saved_config.currentIndex() != 0:
+            result = MessageBox(
+                "提示",
+                "你选择的打包配置似乎还没有应用以使其生效，确定开始打包吗？",
+                QMessageBox.Warning,
+                (("accept", "确定"), ("reject", "取消")),
+            ).exec_()
+            if result != 0:
+                return
         self.te_pyi_out_stream.clear()
         if self.pyiconfig.get("prioritize_venv", False):
             self.toolwin_venv = VirtualEnv(self.pyiconfig.get("project_root", ""))
@@ -1922,8 +1913,39 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             return
         self.config_dict_to_widgets(self.multiconfig[1].get(text, dict()))
         self.uiComboBox_saved_config.setCurrentText(self.DEF_COMBOBOXNAME)
-        self.set_pyinstaller_info()
-        MessageBox("提示", f"已成功切换到配置：{text}").exec_()
+
+    def load_version_information_lazily(self, refresh):
+        """为显示 Python 和 Pyinstaller 版本信息这两个耗时操作提供延迟加载的方法"""
+
+        def do_load_version_information():
+            if refresh:
+                python_path = self.pyiconfig.get("env_path", "")
+                if python_path:
+                    self.toolwin_pyenv = PyEnv(python_path)
+                    self.pyi_tool.initialize(
+                        python_path, self.pyiconfig.get("project_root", os.getcwd())
+                    )
+            if self.toolwin_pyenv is None:
+                pyinfo = ""
+                pyiinfo = ""
+                pbtext = "安装"
+            else:
+                pyiinfo = self.pyi_tool.pyi_info()
+                pyinfo = self.toolwin_pyenv.py_info()
+                if pyiinfo == "0.0":
+                    pbtext = "安装"
+                else:
+                    pbtext = "重新安装"
+                pyiinfo = self.pyiver_fmt.format(pyiinfo)
+            self.signal_update_pyinfo.emit(pyinfo)
+            self.signal_update_pyiinfo.emit(pyiinfo)
+            self.signal_update_pyipbtext.emit(pbtext)
+
+        thread_load_info = QThreadModel(do_load_version_information)
+        thread_load_info.at_start(self.importance_operation_start("正在加载配置..."))
+        thread_load_info.at_finish(self.importance_operation_finish)
+        thread_load_info.start()
+        self.repo.put(thread_load_info, 1)
 
 
 class EnvironChosenWindow(Ui_environ_chosen, QWidget):
@@ -1939,7 +1961,7 @@ class EnvironChosenWindow(Ui_environ_chosen, QWidget):
     def pyenv_list_update(self):
         row_size = QSize(0, 28)
         self.lw_env_list.clear()
-        for env in self.winch_envlist:
+        for env in self.envlist:
             item = QListWidgetItem(str(env))
             item.setSizeHint(row_size)
             self.lw_env_list.addItem(item)
@@ -1955,11 +1977,11 @@ class EnvironChosenWindow(Ui_environ_chosen, QWidget):
 
     def close(self):
         super().close()
-        window_pyinstaller_tool.set_env_update_info()
+        window_pyinstaller_tool.select_env_update()
 
     def show(self):
         self.resize(self._normal_size)
-        self.winch_envlist = get_pyenv_list(load_config(Option.PKG_MANAGER))
+        self.envlist = get_pyenv_list(load_config(Option.PKG_MANAGER))
         super().show()
         self.pyenv_list_update()
 

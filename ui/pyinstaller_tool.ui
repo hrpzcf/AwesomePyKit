@@ -1123,7 +1123,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="uiPushButton_save_cur_config">
+                       <widget class="QPushButton" name="uiPushButton_save_config">
                         <property name="toolTip">
                          <string>将“程序打包工具”当前复选框、输入框等控件设置状态保存下来，以左侧输入框内容作为这个保存下来的配置的名称。</string>
                         </property>
