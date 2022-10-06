@@ -2,6 +2,7 @@
 
 __all__ = [
     "Ui_environ_chosen",
+    "Ui_generic_output",
     "Ui_imports_check",
     "Ui_index_manager",
     "Ui_main_entrance",
@@ -14,6 +15,7 @@ __all__ = [
 
 
 from .environ_chosen import Ui_environ_chosen
+from .generic_output import Ui_generic_output
 from .imports_check import Ui_imports_check
 from .index_manager import Ui_index_manager
 from .main_entrance import Ui_main_entrance

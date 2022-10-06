@@ -15,9 +15,10 @@ class Ui_show_download(object):
     def setupUi(self, show_download):
         show_download.setObjectName("show_download")
         show_download.setWindowModality(QtCore.Qt.ApplicationModal)
-        show_download.resize(320, 600)
-        show_download.setMinimumSize(QtCore.QSize(320, 600))
+        show_download.resize(260, 500)
+        show_download.setMinimumSize(QtCore.QSize(260, 300))
         self.horizontalLayout = QtWidgets.QHBoxLayout(show_download)
+        self.horizontalLayout.setContentsMargins(8, 8, 8, 8)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.tw_downloading = QtWidgets.QTableWidget(show_download)
         self.tw_downloading.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)

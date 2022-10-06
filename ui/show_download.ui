@@ -9,20 +9,32 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>600</height>
+    <width>260</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>320</width>
-    <height>600</height>
+    <width>260</width>
+    <height>300</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>下载列表</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="leftMargin">
+    <number>8</number>
+   </property>
+   <property name="topMargin">
+    <number>8</number>
+   </property>
+   <property name="rightMargin">
+    <number>8</number>
+   </property>
+   <property name="bottomMargin">
+    <number>8</number>
+   </property>
    <item>
     <widget class="QTableWidget" name="tw_downloading">
      <property name="editTriggers">

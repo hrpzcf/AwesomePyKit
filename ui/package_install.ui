@@ -9,36 +9,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>486</height>
+    <width>395</width>
+    <height>418</height>
    </rect>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>480</width>
-    <height>486</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>480</width>
-    <height>486</height>
-   </size>
   </property>
   <property name="font">
    <font>
     <family>Microsoft YaHei UI</family>
-    <pointsize>9</pointsize>
    </font>
   </property>
   <property name="windowTitle">
    <string>安装</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_7">
+  <layout class="QVBoxLayout" name="verticalLayout_5">
+   <property name="leftMargin">
+    <number>8</number>
+   </property>
+   <property name="topMargin">
+    <number>8</number>
+   </property>
+   <property name="rightMargin">
+    <number>8</number>
+   </property>
+   <property name="bottomMargin">
+    <number>8</number>
+   </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_6">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,9">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
        <item>
         <widget class="QLabel" name="label_3">
          <property name="toolTip">
@@ -50,18 +49,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="le_target_env">
-         <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
-         </property>
-         <property name="toolTip">
-          <string>当前即将安装的包的目标环境。</string>
-         </property>
-         <property name="frame">
-          <bool>false</bool>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
+        <widget class="QLabel" name="uiLabel_target_environment">
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
          </property>
         </widget>
        </item>
@@ -75,7 +65,10 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
@@ -84,41 +77,39 @@
         </widget>
        </item>
        <item>
-        <widget class="QSplitter" name="splitter">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <layout class="QHBoxLayout" name="uiHorizontalLayout_package_name" stretch="1,0">
+         <property name="spacing">
+          <number>8</number>
          </property>
-         <widget class="QPlainTextEdit" name="pte_package_names_old">
-          <property name="contextMenuPolicy">
-           <enum>Qt::NoContextMenu</enum>
-          </property>
-         </widget>
-         <widget class="QWidget" name="layoutWidget">
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QPlainTextEdit" name="pte_package_names_old">
+           <property name="contextMenuPolicy">
+            <enum>Qt::NoContextMenu</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,1">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <widget class="QCheckBox" name="cb_including_pre">
-               <property name="toolTip">
-                <string>从网络安装时是否查找包括预发行版和开发版在内的版本。
+            <widget class="QCheckBox" name="cb_including_pre">
+             <property name="toolTip">
+              <string>从网络安装时是否查找包括预发行版和开发版在内的版本。
 如果预发行版或开发版是最新版本，则安装预发行版或开发版。</string>
-               </property>
-               <property name="text">
-                <string>包括预发行版和开发版</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="cb_install_for_user">
-               <property name="toolTip">
-                <string>将包安装到系统当前登录的用户的用户目录内。</string>
-               </property>
-               <property name="text">
-                <string>仅为当前用户安装</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+             </property>
+             <property name="text">
+              <string>包括预发行版和开发版</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_install_for_user">
+             <property name="toolTip">
+              <string>将包安装到系统当前登录的用户的用户目录内。</string>
+             </property>
+             <property name="text">
+              <string>仅为当前用户安装</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="Line" name="line_2">
@@ -128,29 +119,25 @@
             </widget>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <item>
-              <widget class="QPushButton" name="pb_load_from_text">
-               <property name="toolTip">
-                <string>从文本文件载入名称及版本等内容。
+            <widget class="QPushButton" name="pb_load_from_text">
+             <property name="toolTip">
+              <string>从文本文件载入名称及版本等内容。
 例如从常见的requirements.txt文件载入。</string>
-               </property>
-               <property name="text">
-                <string>从文件加载名称</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pb_save_as_text">
-               <property name="toolTip">
-                <string>将文本框内的内容保存至文本文件。</string>
-               </property>
-               <property name="text">
-                <string>名称保存至文件</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+             </property>
+             <property name="text">
+              <string>从文件加载名称</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pb_save_as_text">
+             <property name="toolTip">
+              <string>将文本框内的内容保存至文本文件。</string>
+             </property>
+             <property name="text">
+              <string>名称保存至文件</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pb_do_install">
@@ -208,9 +195,22 @@
              </property>
             </widget>
            </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
-         </widget>
-        </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -223,6 +223,9 @@
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <item>
         <widget class="QCheckBox" name="cb_use_index_url">
          <property name="text">
@@ -261,8 +264,8 @@
 例如：fastpip&gt;=0.6.2,&lt;0.10.0
 支持将whl文件拖入文本框内以从本地文件安装该包，whl文件需为正确版本。</string>
        </property>
-       <property name="wordWrap">
-        <bool>true</bool>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
       </widget>
      </item>

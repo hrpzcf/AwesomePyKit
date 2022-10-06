@@ -20,6 +20,7 @@ class Ui_package_download(object):
         font.setFamily("Microsoft YaHei UI")
         package_download.setFont(font)
         self.verticalLayout_14 = QtWidgets.QVBoxLayout(package_download)
+        self.verticalLayout_14.setContentsMargins(8, 8, 8, 8)
         self.verticalLayout_14.setObjectName("verticalLayout_14")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")

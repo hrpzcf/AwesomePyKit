@@ -20,6 +20,7 @@ class Ui_imports_check(object):
         font.setFamily("Microsoft YaHei UI")
         imports_check.setFont(font)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(imports_check)
+        self.horizontalLayout_3.setContentsMargins(8, 8, 8, 8)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")

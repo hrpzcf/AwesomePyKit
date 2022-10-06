@@ -219,10 +219,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
 
     def set_win_install_package_envinfo(self):
-        if self.env_list:
-            window_package_install.le_target_env.setText(
-                str(self.env_list[self.selected_env_index])
-            )
+        if not self.env_list:
+            return
+        window_package_install.uiLabel_target_environment.setText(
+            str(self.env_list[self.selected_env_index])
+        )
 
     @staticmethod
     def judging_inclusion_relationship(string_long, keyword):
@@ -738,9 +739,11 @@ class PackageInstallWindow(Ui_package_install, QWidget, AskFilePath):
         self.pte_package_names = QTextEditMod(
             file_filter={".whl"},
         )
-        self.splitter.replaceWidget(0, self.pte_package_names)
-        self.pte_package_names_old.deleteLater()
+        self.uiHorizontalLayout_package_name.replaceWidget(
+            self.pte_package_names_old, self.pte_package_names
+        )
         self.pte_package_names.show()
+        self.pte_package_names_old.deleteLater()
 
     def save_package_names(self):
         data = self.pte_package_names.toPlainText()
@@ -807,7 +810,7 @@ class PackageInstallWindow(Ui_package_install, QWidget, AskFilePath):
         self.cb_use_index_url.clicked.connect(self.set_le_use_index_url)
 
     def set_target_env_info(self, env):
-        self.le_target_env.setText(str(env))
+        self.uiLabel_target_environment.setText(str(env))
 
     def set_le_use_index_url(self):
         self.le_use_index_url.setEnabled(self.cb_use_index_url.isChecked())

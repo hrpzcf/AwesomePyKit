@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>380</width>
+    <width>400</width>
     <height>200</height>
    </rect>
   </property>
@@ -22,6 +22,18 @@
    <string>选择 Python 环境</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="leftMargin">
+    <number>8</number>
+   </property>
+   <property name="topMargin">
+    <number>8</number>
+   </property>
+   <property name="rightMargin">
+    <number>8</number>
+   </property>
+   <property name="bottomMargin">
+    <number>8</number>
+   </property>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -30,7 +42,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>如果此处没有可选择的 Python 环境则需先到&lt;包管理器&gt;中添加。</string>
+        <string>如果这里没有可选择的 Python 环境则需到&lt;包管理器&gt;中添加环境。</string>
        </property>
       </widget>
      </item>

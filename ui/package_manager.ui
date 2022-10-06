@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>600</height>
+    <height>620</height>
    </rect>
   </property>
   <property name="font">
@@ -22,126 +22,133 @@
    <string>包管理器</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
+   <layout class="QVBoxLayout" name="verticalLayout_6">
     <property name="leftMargin">
      <number>8</number>
     </property>
     <property name="topMargin">
-     <number>4</number>
+     <number>8</number>
     </property>
     <property name="rightMargin">
      <number>8</number>
     </property>
     <property name="bottomMargin">
-     <number>4</number>
+     <number>8</number>
     </property>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0">
-      <property name="spacing">
-       <number>4</number>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,0">
       <item>
        <widget class="QSplitter" name="splitter">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
+        <property name="handleWidth">
+         <number>6</number>
+        </property>
         <widget class="QWidget" name="layoutWidget">
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <property name="spacing">
-           <number>2</number>
-          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0">
           <item>
-           <widget class="QLabel" name="lb_python_dir">
-            <property name="toolTip">
-             <string>显示当前搜索到的/用户添加的 Python 目录路径。</string>
+           <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+            <property name="spacing">
+             <number>2</number>
             </property>
-            <property name="text">
-             <string>Python 环境：</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QListWidget" name="lw_env_list">
-            <property name="palette">
-             <palette>
-              <active>
-               <colorrole role="Highlight">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>0</red>
-                  <green>120</green>
-                  <blue>215</blue>
-                 </color>
-                </brush>
-               </colorrole>
-               <colorrole role="HighlightedText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </active>
-              <inactive>
-               <colorrole role="Highlight">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>155</red>
-                  <green>222</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
-               <colorrole role="HighlightedText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>0</red>
-                  <green>0</green>
-                  <blue>0</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </inactive>
-              <disabled>
-               <colorrole role="Highlight">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>190</red>
-                  <green>190</green>
-                  <blue>190</blue>
-                 </color>
-                </brush>
-               </colorrole>
-               <colorrole role="HighlightedText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </disabled>
-             </palette>
-            </property>
-            <property name="contextMenuPolicy">
-             <enum>Qt::NoContextMenu</enum>
-            </property>
-            <property name="toolTip">
-             <string>使用鼠标左键点击加载选中的 Python 环境已安装的包信息列表，使用鼠标右键点击或使用上下方向键选择则不加载。</string>
-            </property>
-            <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
-            </property>
-           </widget>
+            <item>
+             <widget class="QLabel" name="lb_python_dir">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>显示当前搜索到的/用户添加的 Python 目录路径。</string>
+              </property>
+              <property name="text">
+               <string>Python 环境：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QListWidget" name="lw_env_list">
+              <property name="palette">
+               <palette>
+                <active>
+                 <colorrole role="Highlight">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>0</red>
+                    <green>120</green>
+                    <blue>215</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                 <colorrole role="HighlightedText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>255</red>
+                    <green>255</green>
+                    <blue>255</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </active>
+                <inactive>
+                 <colorrole role="Highlight">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>155</red>
+                    <green>222</green>
+                    <blue>255</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                 <colorrole role="HighlightedText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </inactive>
+                <disabled>
+                 <colorrole role="Highlight">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>190</red>
+                    <green>190</green>
+                    <blue>190</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                 <colorrole role="HighlightedText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>255</red>
+                    <green>255</green>
+                    <blue>255</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </disabled>
+               </palette>
+              </property>
+              <property name="contextMenuPolicy">
+               <enum>Qt::NoContextMenu</enum>
+              </property>
+              <property name="toolTip">
+               <string>使用鼠标左键点击加载选中的 Python 环境已安装的包信息列表，使用鼠标右键点击或使用上下方向键选择则不加载。</string>
+              </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
-            <property name="spacing">
-             <number>16</number>
-            </property>
             <item>
              <widget class="QPushButton" name="btn_autosearch">
               <property name="toolTip">
@@ -177,161 +184,176 @@
          </layout>
         </widget>
         <widget class="QWidget" name="layoutWidget">
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <property name="spacing">
-           <number>2</number>
-          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,0">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
+            <property name="spacing">
+             <number>2</number>
+            </property>
             <item>
-             <widget class="QLabel" name="lb_installed_pkgs_info">
-              <property name="toolTip">
-               <string>选中的 Python 环境中已安装的包名、当前版本、最新版本、安装状态信息。</string>
-              </property>
-              <property name="text">
-               <string>已安装的包信息：</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="lb_installed_pkgs_info">
+                <property name="toolTip">
+                 <string>选中的 Python 环境中已安装的包名、当前版本、最新版本、安装状态信息。</string>
+                </property>
+                <property name="text">
+                 <string>已安装的包信息：</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="le_search_pkgs_kwd">
+                <property name="placeholderText">
+                 <string>搜索</string>
+                </property>
+                <property name="clearButtonEnabled">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+             <widget class="QTableWidget" name="tw_installed_info">
+              <property name="palette">
+               <palette>
+                <active>
+                 <colorrole role="Highlight">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>0</red>
+                    <green>120</green>
+                    <blue>215</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                 <colorrole role="HighlightedText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>255</red>
+                    <green>255</green>
+                    <blue>255</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </active>
+                <inactive>
+                 <colorrole role="Highlight">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>155</red>
+                    <green>222</green>
+                    <blue>255</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                 <colorrole role="HighlightedText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </inactive>
+                <disabled>
+                 <colorrole role="Highlight">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>190</red>
+                    <green>190</green>
+                    <blue>190</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                 <colorrole role="HighlightedText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>255</red>
+                    <green>255</green>
+                    <blue>255</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </disabled>
+               </palette>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
+              <property name="contextMenuPolicy">
+               <enum>Qt::NoContextMenu</enum>
               </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="le_search_pkgs_kwd">
-              <property name="placeholderText">
-               <string>搜索</string>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
               </property>
-              <property name="clearButtonEnabled">
-               <bool>true</bool>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::ExtendedSelection</enum>
               </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectRows</enum>
+              </property>
+              <property name="cornerButtonEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="columnCount">
+               <number>4</number>
+              </property>
+              <attribute name="horizontalHeaderHighlightSections">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderHighlightSections">
+               <bool>false</bool>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>名称</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>当前版本</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>最新版本</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>状态</string>
+               </property>
+              </column>
              </widget>
             </item>
            </layout>
           </item>
           <item>
-           <widget class="QTableWidget" name="tw_installed_info">
-            <property name="palette">
-             <palette>
-              <active>
-               <colorrole role="Highlight">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>0</red>
-                  <green>120</green>
-                  <blue>215</blue>
-                 </color>
-                </brush>
-               </colorrole>
-               <colorrole role="HighlightedText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </active>
-              <inactive>
-               <colorrole role="Highlight">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>155</red>
-                  <green>222</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
-               <colorrole role="HighlightedText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>0</red>
-                  <green>0</green>
-                  <blue>0</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </inactive>
-              <disabled>
-               <colorrole role="Highlight">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>190</red>
-                  <green>190</green>
-                  <blue>190</blue>
-                 </color>
-                </brush>
-               </colorrole>
-               <colorrole role="HighlightedText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>255</red>
-                  <green>255</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </disabled>
-             </palette>
-            </property>
-            <property name="contextMenuPolicy">
-             <enum>Qt::NoContextMenu</enum>
-            </property>
-            <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::ExtendedSelection</enum>
-            </property>
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectRows</enum>
-            </property>
-            <property name="cornerButtonEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="columnCount">
-             <number>4</number>
-            </property>
-            <attribute name="horizontalHeaderHighlightSections">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderHighlightSections">
-             <bool>false</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>名称</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>当前版本</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>最新版本</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>状态</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-          <item>
            <layout class="QGridLayout" name="glo_table_btns">
+            <item row="1" column="2">
+             <widget class="QPushButton" name="btn_upgrade_package">
+              <property name="toolTip">
+               <string>升级表格中被选中的包。
+注意，被选中的包如果没有新版本则不升级，支持多选。</string>
+              </property>
+              <property name="text">
+               <string>升级</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="3">
              <widget class="QPushButton" name="btn_check_for_updates">
               <property name="toolTip">
@@ -353,6 +375,16 @@
               </property>
              </widget>
             </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="lb_num_selected_items">
+              <property name="font">
+               <font>
+                <family>Microsoft YaHei UI</family>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="1">
              <widget class="QPushButton" name="btn_uninstall_package">
               <property name="toolTip">
@@ -364,29 +396,7 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
-             <widget class="QPushButton" name="btn_upgrade_package">
-              <property name="toolTip">
-               <string>升级表格中被选中的包。
-注意，被选中的包如果没有新版本则不升级，支持多选。</string>
-              </property>
-              <property name="text">
-               <string>升级</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QPushButton" name="btn_upgrade_all">
-              <property name="toolTip">
-               <string>升级表格中列出的所有显示有新版本的包。
-使用此功能前请先点击&quot;检查更新&quot;按钮以检查是否有新版本，再点击此按钮升级。</string>
-              </property>
-              <property name="text">
-               <string>升级全部</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
+            <item row="0" column="1">
              <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
                <widget class="QLabel" name="label_2">
@@ -404,13 +414,21 @@
               </item>
              </layout>
             </item>
-            <item row="0" column="0" colspan="2">
-             <widget class="QLabel" name="lb_num_selected_items">
-              <property name="font">
-               <font>
-                <family>Microsoft YaHei UI</family>
-                <pointsize>8</pointsize>
-               </font>
+            <item row="0" column="2">
+             <widget class="QPushButton" name="uiPushButton_show_output">
+              <property name="text">
+               <string>输出窗口</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QPushButton" name="btn_upgrade_all">
+              <property name="toolTip">
+               <string>升级表格中列出的所有显示有新版本的包。
+使用此功能前请先点击&quot;检查更新&quot;按钮以检查是否有新版本，再点击此按钮升级。</string>
+              </property>
+              <property name="text">
+               <string>升级全部</string>
               </property>
              </widget>
             </item>
@@ -422,15 +440,34 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
         <item>
          <widget class="QLabel" name="lb_loading_gif">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="lb_loading_tip"/>
+         <widget class="QLabel" name="lb_loading_tip">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

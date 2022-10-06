@@ -22,6 +22,7 @@ class Ui_index_manager(object):
         self.centralwidget = QtWidgets.QWidget(index_manager)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_5.setContentsMargins(8, 8, 8, 8)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
