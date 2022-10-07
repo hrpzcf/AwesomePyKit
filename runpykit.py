@@ -29,24 +29,27 @@
 from fastpip import VERNUM as fastpipver
 
 # 运行前对 fastpip 的版本检查
-req_ver = (0, 14, 1)
-if fastpipver < req_ver:
-    raise Exception(f"当前环境的 fastpip 版本{fastpipver}低于{req_ver}。")
+required_fastpip_version = (1, 0, 0)
+
+if fastpipver[0] != required_fastpip_version[0]:
+    raise Exception(
+        f"当前环境的 fastpip 模块主版本号({fastpipver[0]})与"
+        f"要本程序求的主版本号({required_fastpip_version[0]})不一致。"
+    )
+if fastpipver[1] < required_fastpip_version[1]:
+    raise Exception(
+        f"当前环境的 fastpip 模块次版本号({fastpipver[1]})低于"
+        f"本程序要求的次版本号({required_fastpip_version[1]})。"
+    )
 
 import os
 import shutil
 import sys
-from platform import machine, platform
 from copy import deepcopy
+from platform import machine, platform
 
 from chardet import detect
-
-try:
-    from fastpip import parse_package_names
-except:
-    from fastpip.fastpip import parse_package_names
-
-from fastpip import all_py_paths, cur_py_path
+from fastpip import all_py_paths, cur_py_path, parse_package_names
 from PyQt5.QtCore import QRegExp, QSize, Qt, pyqtSignal
 from PyQt5.QtGui import QColor, QFont, QIcon, QMovie, QRegExpValidator
 from PyQt5.QtWidgets import (

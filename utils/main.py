@@ -11,7 +11,6 @@ import sys
 from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, SW_HIDE, Popen
 
 from fastpip import PyEnv, index_urls
-from fastpip.errors import *
 from PyQt5.QtCore import QMutex, QThread, QTimer
 
 _program_runs_in_bundle_mode = getattr(sys, "frozen", False)
