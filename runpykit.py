@@ -78,6 +78,7 @@ from PyQt5.QtWidgets import (
 from com.mapping import importable_published
 from info import VERSION
 from res.res import *
+from settings import *
 from ui import *
 from utils import *
 from utils.cip import ImportInspector
@@ -150,17 +151,18 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self._setup_other_widgets()
+        self.config = PackageManagerSettings()
         self.__output = GenericOutputWindow(self, "输出流")
         self.__ophandle = PyEnv.register(self.__output.add_line)
         self.__install_win = PackageInstallWindow(self)
         self.signal_slot_connection()
-        self.env_list = get_pyenv_list(load_config(Option.PKG_MANAGER))
+        self.env_list = get_pyenv_list(self.config.pypaths)
         self.path_list = [env.env_path for env in self.env_list]
         self.cur_pkgs_info = {}
-        self._reverseds = [True, True, True, True]
+        self.__reverseds = [True, True, True, True]
         self.selected_env_index = -1
         self.repo = ThreadRepo(500)
-        self._normal_size = self.size()
+        self.__normal_size = self.size()
 
     def _setup_other_widgets(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -187,7 +189,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.__output.hide()
 
     def show(self):
-        self.resize(self._normal_size)
+        self.resize(self.__normal_size)
         super().show()
         self.list_widget_pyenvs_update()
         self.lw_env_list.setCurrentRow(self.selected_env_index)
@@ -205,14 +207,15 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         if not self.repo.is_empty():
             if self._stop_before_close():
                 self.repo.stop_all()
-                self.table_widget_clear_pkgs()
-                save_config(self.path_list, Option.PKG_MANAGER)
                 self.__output.close()
+                self.table_widget_clear_pkgs()
                 event.accept()
             else:
                 event.ignore()
         else:
             self.__output.close()
+        self.config.pypaths = self.path_list.copy()
+        self.config.save_config()
 
     def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
@@ -221,7 +224,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             and not self.isMinimized()
             and (old_size.width(), old_size.height()) != (-1, -1)
         ):
-            self._normal_size = old_size
+            self.__normal_size = old_size
 
     def show_loading(self, text):
         self.lb_loading_tip.clear()
@@ -348,7 +351,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 sorted(
                     self.cur_pkgs_info.items(),
                     key=lambda x: x[0].lower(),
-                    reverse=self._reverseds[colind],
+                    reverse=self.__reverseds[colind],
                 )
             )
         else:
@@ -356,11 +359,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 sorted(
                     self.cur_pkgs_info.items(),
                     key=lambda x: x[1][colind - 1],
-                    reverse=self._reverseds[colind],
+                    reverse=self.__reverseds[colind],
                 )
             )
         self.table_widget_pkgs_info_update()
-        self._reverseds[colind] = not self._reverseds[colind]
+        self.__reverseds[colind] = not self.__reverseds[colind]
 
     def table_widget_clear_pkgs(self):
         self.lb_num_selected_items.clear()
@@ -430,7 +433,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.list_widget_pyenvs_update,
             self.hide_loading,
             self.release_widgets,
-            lambda: save_config(self.path_list, Option.PKG_MANAGER),
+            # lambda: save_config(self.path_list, Option.PKG_MANAGER),
         )
         thread_search_envs.start()
         self.repo.put(thread_search_envs, 0)
@@ -443,7 +446,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         del self.path_list[cur_index]
         self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
         self.table_widget_clear_pkgs()
-        save_config(self.path_list, Option.PKG_MANAGER)
+        # save_config(self.path_list, Option.PKG_MANAGER)
 
     def add_py_path_manully(self):
         input_dialog = InputDialog(
@@ -479,7 +482,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
         self.list_widget_pyenvs_update()
-        save_config(self.path_list, Option.PKG_MANAGER)
+        # save_config(self.path_list, Option.PKG_MANAGER)
 
     def check_cur_pkgs_for_updates(self):
         if self.tw_installed_info.rowCount() == 0:
@@ -549,11 +552,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         tobe_installed = self.__install_win.package_names
         if not (cur_env and tobe_installed):
             return
-        config = self.__install_win.pkgiconfig
-        install_pre = config.get("include_pre", False)
-        user = config.get("install_for_user", False)
-        use_index_url = config.get("use_index_url", False)
-        index_url = config.get("index_url", "") if use_index_url else ""
+        include_pre = self.config.include_pre
+        user = self.config.install_for_user
+        use_index_url = self.config.use_index_url
+        index_url = self.config.index_url if use_index_url else ""
 
         def do_install():
             installed = [
@@ -561,7 +563,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 for name, result in loop_install(
                     cur_env,
                     tobe_installed,
-                    pre=install_pre,
+                    pre=include_pre,
                     user=user,
                     index_url=index_url,
                 )
@@ -652,7 +654,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return
 
         def do_upgrade():
-            for pkg, res in loop_install(cur_env, names, upgrade=1):
+            for pkg, res in loop_install(cur_env, names, upgrade=True):
                 item = self.cur_pkgs_info.setdefault(pkg, ["", "", ""])
                 if res:
                     item[2] = "升级成功"
@@ -703,7 +705,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return
 
         def do_upgrade():
-            for pkg_name, code in loop_install(cur_env, upgradeable, upgrade=1):
+            for pkg_name, code in loop_install(cur_env, upgradeable, upgrade=True):
                 item = self.cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
                 if code and item[1]:
                     item[0] = item[1]
@@ -723,7 +725,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.repo.put(thread_upgrade_pkgs, 0)
 
 
-class AskFilePath:
+class AskFilePath(QWidget):
     def load_from_text(self, last_path):
         text_path, _ = QFileDialog.getOpenFileName(
             self, "选择文本文件", last_path, "文本文件 (*.txt)"
@@ -771,11 +773,11 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
         super().__init__(parent)
         self.setupUi(self)
         self._setup_other_widgets()
-        self.pkgiconfig = load_config(Option.PKG_INSTALL)
-        self.last_path = self.pkgiconfig.get("last_path", ".")
         self.current_env = None
         self.package_names = None
         self.signal_slot_connection()
+        self.__parent: PackageManagerWindow = parent
+        self.last_path = self.__parent.config.last_path
 
     def _setup_other_widgets(self):
         self.pte_package_names = QTextEditMod(
@@ -795,7 +797,7 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
         last_path = self.save_as_text_file(data, self.last_path)
         if last_path:
             self.last_path = last_path
-            self.pkgiconfig["last_path"] = last_path
+            self.__parent.config.last_path = last_path
 
     def load_package_names(self):
         text, fpath = self.load_from_text(self.last_path)
@@ -808,19 +810,20 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
                     self.package_names.append(name)
         if fpath:
             self.last_path = fpath
-            self.pkgiconfig["last_path"] = fpath
+            self.__parent.config.last_path = fpath
 
     def apply_default_conf(self):
-        self.cb_including_pre.setChecked(self.pkgiconfig.get("include_pre", False))
-        self.cb_install_for_user.setChecked(
-            self.pkgiconfig.get("install_for_user", False)
-        )
-        self.cb_use_index_url.setChecked(self.pkgiconfig.get("use_index_url", False))
-        self.le_use_index_url.setText(self.pkgiconfig.get("index_url", ""))
+        self.cb_including_pre.setChecked(self.__parent.config.include_pre)
+        self.cb_install_for_user.setChecked(self.__parent.config.install_for_user)
+        self.le_use_index_url.setText(self.__parent.config.index_url)
+        self.cb_use_index_url.setChecked(self.__parent.config.use_index_url)
         if self.cb_use_index_url.isChecked():
             self.le_use_index_url.setEnabled(True)
         else:
             self.le_use_index_url.setEnabled(False)
+        self.pte_package_names.setPlainText(
+            "\n".join(self.__parent.config.package_names)
+        )
 
     def store_default_conf(self):
         text = self.pte_package_names.toPlainText()
@@ -828,15 +831,16 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
             self.package_names = [
                 name for name in text.splitlines(keepends=False) if name
             ]
-        self.pkgiconfig["include_pre"] = self.cb_including_pre.isChecked()
-        self.pkgiconfig["install_for_user"] = self.cb_install_for_user.isChecked()
-        self.pkgiconfig["use_index_url"] = self.cb_use_index_url.isChecked()
-        self.pkgiconfig["index_url"] = self.le_use_index_url.text()
+            self.__parent.config.package_names = self.package_names.copy()
+        self.__parent.config.include_pre = self.cb_including_pre.isChecked()
+        self.__parent.config.install_for_user = self.cb_install_for_user.isChecked()
+        self.__parent.config.index_url = self.le_use_index_url.text()
+        self.__parent.config.use_index_url = self.cb_use_index_url.isChecked()
 
     def closeEvent(self, event: QCloseEvent):
         event.accept()
         self.store_default_conf()
-        save_config(self.pkgiconfig, Option.PKG_INSTALL)
+        self.__parent.config.save_config()
 
     def show(self):
         super().show()

@@ -28,7 +28,6 @@ else:
     config_root = op.join(_appdata_local_folder, "Awespykit")
 config_root = op.join(config_root, "config")
 
-config_package_manager = op.join(config_root, "package_manager.json")
 config_indexurl_manager = op.join(config_root, "indexurls_manager.json")
 config_pyinstaller_tool = op.join(config_root, "pyinstaller_tool.json")
 config_package_install = op.join(config_root, "package_install.json")
@@ -78,8 +77,6 @@ def load_config(option):
         os.makedirs(config_root)
     if option == Option.PKG_INSTALL:
         return _load_json(config_package_install, dict)
-    if option == Option.PKG_MANAGER:
-        return _load_json(config_package_manager, list)
     if option == Option.PYINSTALLER:
         return _load_json(config_pyinstaller_tool, list)
     if option == Option.INDEX_MANAGER:
@@ -92,8 +89,6 @@ def load_config(option):
 def save_config(sequence, option):
     if option == Option.PKG_INSTALL:
         pth = config_package_install
-    elif option == Option.PKG_MANAGER:
-        pth = config_package_manager
     elif option == Option.PYINSTALLER:
         pth = config_pyinstaller_tool
     elif option == Option.INDEX_MANAGER:
