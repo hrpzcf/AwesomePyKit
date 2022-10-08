@@ -14,14 +14,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_generic_output(object):
     def setupUi(self, generic_output):
         generic_output.setObjectName("generic_output")
-        generic_output.resize(700, 500)
+        generic_output.resize(600, 600)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         generic_output.setFont(font)
         self.centralwidget = QtWidgets.QWidget(generic_output)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.verticalLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout_2.setContentsMargins(4, 0, 4, 8)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSpacing(2)

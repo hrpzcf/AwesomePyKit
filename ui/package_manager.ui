@@ -417,7 +417,7 @@
             <item row="0" column="2">
              <widget class="QPushButton" name="uiPushButton_show_output">
               <property name="text">
-               <string>输出窗口</string>
+               <string>查看输出流</string>
               </property>
              </widget>
             </item>

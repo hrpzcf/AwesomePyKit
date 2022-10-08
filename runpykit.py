@@ -51,7 +51,15 @@ from platform import machine, platform
 from chardet import detect
 from fastpip import all_py_paths, cur_py_path, parse_package_names
 from PyQt5.QtCore import QRegExp, QSize, Qt, pyqtSignal
-from PyQt5.QtGui import QColor, QFont, QIcon, QMovie, QRegExpValidator
+from PyQt5.QtGui import (
+    QColor,
+    QFont,
+    QIcon,
+    QMovie,
+    QRegExpValidator,
+    QMoveEvent,
+    QResizeEvent,
+)
 from PyQt5.QtWidgets import (
     QApplication,
     QFileDialog,
@@ -135,6 +143,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self._setup_other_widgets()
+        self.__output = GenericOutputWindow(self, "输出流")
+        self.__ophandle = PyEnv.register(self.__output.add_line)
+        self.__install_win = PackageInstallWindow(self)
         self.signal_slot_connection()
         self.env_list = get_pyenv_list(load_config(Option.PKG_MANAGER))
         self.path_list = [env.env_path for env in self.env_list]
@@ -153,6 +164,20 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         horiz_head.setSectionResizeMode(3, QHeaderView.Stretch)
         self.loading_mov = QMovie(":/loading.gif")
         self.loading_mov.setScaledSize(QSize(16, 16))
+
+    def moveEvent(self, event: QMoveEvent):
+        super().moveEvent(event)
+        rect = self.geometry()
+        self.__output.set_pos(rect.right() + 1, rect.top(), rect.height())
+
+    def show_hide_output(self):
+        if self.__output.isHidden():
+            self.__output.clear_content()
+            rect = self.geometry()
+            self.__output.set_pos(rect.right() + 1, rect.top(), rect.height())
+            self.__output.show()
+        else:
+            self.__output.hide()
 
     def show(self):
         self.resize(self._normal_size)
@@ -175,9 +200,12 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 self.repo.stop_all()
                 self.table_widget_clear_pkgs()
                 save_config(self.path_list, Option.PKG_MANAGER)
+                self.__output.close()
                 event.accept()
             else:
                 event.ignore()
+        else:
+            self.__output.close()
 
     def resizeEvent(self, event):
         old_size = event.oldSize()
@@ -217,8 +245,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         )
         self.tw_installed_info.clicked.connect(self._show_tip_num_selected)
         self.cb_check_uncheck_all.clicked.connect(self._show_tip_num_selected)
-        window_package_install.pb_do_install.clicked.connect(self.install_pkgs)
+        self.__install_win.pb_do_install.clicked.connect(self.install_pkgs)
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
+        self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
 
     def set_win_install_package_envinfo(self):
         if not self.env_list:
@@ -227,10 +256,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return MessageBox("提示", "没有选择任何 Python 环境。").exec_()
         if self.selected_env_index >= len(self.env_list):
             return MessageBox("错误", "异常：当前选择下标超出范围。").exec_()
-        window_package_install.uiLabel_target_environment.setText(
-            str(self.env_list[self.selected_env_index])
-        )
-        window_package_install.show()
+        self.__install_win.show()
+        self.__install_win.set_target_env(self.env_list[self.selected_env_index])
 
     @staticmethod
     def judging_inclusion_relationship(string_long, keyword):
@@ -511,22 +538,22 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def install_pkgs(self):
         if not self.env_list:
             return
-        cur_env = self.env_list[self.lw_env_list.currentRow()]
-        pkgs_tobe_installed = window_package_install.package_names
-        if not pkgs_tobe_installed:
+        cur_env = self.__install_win.current_env
+        tobe_installed = self.__install_win.package_names
+        if not (cur_env and tobe_installed):
             return
-        conf = window_package_install.pkgiconfig
-        install_pre = conf.get("include_pre", False)
-        user = conf.get("install_for_user", False)
-        use_index_url = conf.get("use_index_url", False)
-        index_url = conf.get("index_url", "") if use_index_url else ""
+        config = self.__install_win.pkgiconfig
+        install_pre = config.get("include_pre", False)
+        user = config.get("install_for_user", False)
+        use_index_url = config.get("use_index_url", False)
+        index_url = config.get("index_url", "") if use_index_url else ""
 
         def do_install():
             installed = [
                 [name, result]
                 for name, result in loop_install(
                     cur_env,
-                    pkgs_tobe_installed,
+                    tobe_installed,
                     pre=install_pre,
                     user=user,
                     index_url=index_url,
@@ -732,13 +759,14 @@ class AskFilePath:
         return ""
 
 
-class PackageInstallWindow(Ui_package_install, QWidget, AskFilePath):
-    def __init__(self):
-        super().__init__()
+class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
         self._setup_other_widgets()
         self.pkgiconfig = load_config(Option.PKG_INSTALL)
         self.last_path = self.pkgiconfig.get("last_path", ".")
+        self.current_env = None
         self.package_names = None
         self.signal_slot_connection()
 
@@ -816,6 +844,11 @@ class PackageInstallWindow(Ui_package_install, QWidget, AskFilePath):
 
     def set_le_use_index_url(self):
         self.le_use_index_url.setEnabled(self.cb_use_index_url.isChecked())
+
+    def set_target_env(self, env):
+        assert isinstance(env, PyEnv), "传参错误"
+        self.current_env = env
+        self.uiLabel_target_environment.setText(str(env))
 
 
 class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
@@ -2480,11 +2513,44 @@ class InputDialog(QInputDialog):
         return self.textValue(), self._confirm
 
 
+class GenericOutputWindow(Ui_generic_output, QMainWindow):
+    signal_clear_content = pyqtSignal()
+    signal_append_line = pyqtSignal(str)
+
+    def __init__(self, parent, title):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.signal_slot_connection()
+        self.setWindowTitle(title)
+        self._width = self.width()
+
+    def signal_slot_connection(self):
+        self.signal_append_line.connect(
+            self.uiPlainTextEdit_generic_output.appendPlainText
+        )
+        self.uiPushButton_clear_content.clicked.connect(
+            self.uiPlainTextEdit_generic_output.clear
+        )
+        self.signal_clear_content.connect(self.uiPlainTextEdit_generic_output.clear)
+
+    def clear_content(self):
+        self.signal_clear_content.emit()
+
+    def add_line(self, string):
+        self.signal_append_line.emit(string)
+
+    def resizeEvent(self, event: QResizeEvent):
+        self._width = self.width()
+        super().resizeEvent(event)
+
+    def set_pos(self, x, y, h):
+        self.setGeometry(x, y, self._width, h)
+
+
 if __name__ == "__main__":
     awespykit = QApplication(sys.argv)
     awespykit.setWindowIcon(QIcon(":/icon.ico"))
     awespykit.setStyle("fusion")
-    window_package_install = PackageInstallWindow()
     window_package_manager = PackageManagerWindow()
     window_environ_chosen = EnvironChosenWindow()
     window_imports_check = ImportsCheckWindow()
