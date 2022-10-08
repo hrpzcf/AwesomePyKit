@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>package_download</class>
- <widget class="QWidget" name="package_download">
-  <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
-  </property>
+ <widget class="QMainWindow" name="package_download">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
-    <height>720</height>
+    <width>620</width>
+    <height>658</height>
    </rect>
   </property>
   <property name="font">
@@ -18,614 +15,619 @@
     <family>Microsoft YaHei UI</family>
    </font>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::NoContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>模块安装包下载</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_14">
-   <property name="leftMargin">
-    <number>8</number>
-   </property>
-   <property name="topMargin">
-    <number>8</number>
-   </property>
-   <property name="rightMargin">
-    <number>8</number>
-   </property>
-   <property name="bottomMargin">
-    <number>8</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_6">
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_11">
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_10">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="toolTip">
-              <string>需要下载的模块名称，每行一个名称。</string>
-             </property>
-             <property name="text">
-              <string>名称：</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPlainTextEdit" name="pte_package_names">
-             <property name="contextMenuPolicy">
-              <enum>Qt::NoContextMenu</enum>
-             </property>
-             <property name="toolTip">
-              <string>需要下载的模块名称，每行一个名称。</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,1">
-           <item>
-            <widget class="QPushButton" name="pb_clear_package_names">
-             <property name="toolTip">
-              <string>清空名称编辑区文字。</string>
-             </property>
-             <property name="text">
-              <string>清空</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pb_load_from_text">
-             <property name="toolTip">
-              <string>从文本文件加载名称到名称编辑区。</string>
-             </property>
-             <property name="text">
-              <string>从文件加载名称</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pb_save_as_text">
-             <property name="toolTip">
-              <string>将名称编辑区的文字保存到文本文件。</string>
-             </property>
-             <property name="text">
-              <string>名称保存到文件</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="Line" name="line_7">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label_8">
-           <property name="toolTip">
-            <string>下载安装包时需调用的 Python 环境。
-右侧留空的下载条件，下载时会使用从此环境派生的条件。</string>
-           </property>
-           <property name="text">
-            <string>下载条件默认派生自：</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cmb_derived_from">
-           <property name="toolTip">
-            <string>下载安装包时需调用的 Python 环境。
-右侧留空的下载条件，下载时会使用从此环境派生的条件。</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="Line" name="line_8">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="font">
-          <font>
-           <family>Consolas</family>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>名称后支持跟随以下符号限定要下载的版本：
-&quot;==&quot;、&quot;&gt;=&quot;、&quot;&lt;=&quot;、&quot;&gt;&quot;、&quot;&lt;&quot;、&quot;,&quot;
-每行一个名称，名称和限定符中不允许出现空格。
-例如：fastpip&gt;=0.6.2,&lt;0.10.0
-如果限制条件留空，则下载兼容所选环境的安装包。</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_13">
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>下载条件</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_12">
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_14">
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>8</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <property name="bottomMargin">
+     <number>8</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_11">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <property name="spacing">
+             <number>2</number>
+            </property>
             <item>
-             <widget class="QCheckBox" name="cb_download_deps">
+             <widget class="QLabel" name="label">
               <property name="toolTip">
-               <string>对于名称编辑区中的每一个需要下载的模块，是否同时下载模块的依赖库。</string>
+               <string>需要下载的模块名称，每行一个名称。</string>
               </property>
               <property name="text">
-               <string>下载需要下载的包的依赖</string>
+               <string>名称：</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_2">
-              <property name="title">
-               <string/>
+             <widget class="QPlainTextEdit" name="pte_package_names">
+              <property name="contextMenuPolicy">
+               <enum>Qt::NoContextMenu</enum>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_6">
-               <item>
-                <layout class="QVBoxLayout" name="verticalLayout_5">
-                 <item>
-                  <widget class="QRadioButton" name="rb_unlimited">
-                   <property name="toolTip">
-                    <string>不限制下载二进制包或者源代码包。</string>
-                   </property>
-                   <property name="text">
-                    <string>不限制下载的包类型</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="rb_no_binary">
-                   <property name="toolTip">
-                    <string>仅下载包的源代码安装包。</string>
-                   </property>
-                   <property name="text">
-                    <string>仅选择源代码包</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="rb_only_binary">
-                   <property name="toolTip">
-                    <string>仅下载包的二进制安装包。</string>
-                   </property>
-                   <property name="text">
-                    <string>仅选择二进制包</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="rb_prefer_binary">
-                   <property name="toolTip">
-                    <string>对于既有二进制安装包又有源代码安装包的模块，
+              <property name="toolTip">
+               <string>需要下载的模块名称，每行一个名称。</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,1">
+            <item>
+             <widget class="QPushButton" name="pb_clear_package_names">
+              <property name="toolTip">
+               <string>清空名称编辑区文字。</string>
+              </property>
+              <property name="text">
+               <string>清空</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_load_from_text">
+              <property name="toolTip">
+               <string>从文本文件加载名称到名称编辑区。</string>
+              </property>
+              <property name="text">
+               <string>从文件加载名称</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pb_save_as_text">
+              <property name="toolTip">
+               <string>将名称编辑区的文字保存到文本文件。</string>
+              </property>
+              <property name="text">
+               <string>名称保存到文件</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line_7">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="toolTip">
+             <string>下载安装包时需调用的 Python 环境。
+右侧留空的下载条件，下载时会使用从此环境派生的条件。</string>
+            </property>
+            <property name="text">
+             <string>下载条件默认派生自：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cmb_derived_from">
+            <property name="toolTip">
+             <string>下载安装包时需调用的 Python 环境。
+右侧留空的下载条件，下载时会使用从此环境派生的条件。</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <family>Consolas</family>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>名称后支持跟随以下符号限定要下载的版本：
+&quot;==&quot;、&quot;&gt;=&quot;、&quot;&lt;=&quot;、&quot;&gt;&quot;、&quot;&lt;&quot;、&quot;,&quot;
+每行一个名称，名称和限定符中不允许出现空格。
+例如：fastpip&gt;=0.6.2,&lt;0.10.0
+如果限制条件留空，则下载兼容所选环境的安装包。</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_13">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>下载条件</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_12">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QCheckBox" name="cb_download_deps">
+               <property name="toolTip">
+                <string>对于名称编辑区中的每一个需要下载的模块，是否同时下载模块的依赖库。</string>
+               </property>
+               <property name="text">
+                <string>下载需要下载的包的依赖</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox_2">
+               <property name="title">
+                <string/>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <item>
+                   <widget class="QRadioButton" name="rb_unlimited">
+                    <property name="toolTip">
+                     <string>不限制下载二进制包或者源代码包。</string>
+                    </property>
+                    <property name="text">
+                     <string>不限制下载的包类型</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="rb_no_binary">
+                    <property name="toolTip">
+                     <string>仅下载包的源代码安装包。</string>
+                    </property>
+                    <property name="text">
+                     <string>仅选择源代码包</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="rb_only_binary">
+                    <property name="toolTip">
+                     <string>仅下载包的二进制安装包。</string>
+                    </property>
+                    <property name="text">
+                     <string>仅选择二进制包</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="rb_prefer_binary">
+                    <property name="toolTip">
+                     <string>对于既有二进制安装包又有源代码安装包的模块，
 如果较新版本没有发布二进制安装包，则宁愿下载较旧版本的二进制安装包。</string>
+                    </property>
+                    <property name="text">
+                     <string>宁选择旧二进制包而非新源代码包</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="cb_include_pre">
+               <property name="toolTip">
+                <string>如果模块的最新版本是预发行版或者是开发版，
+也下载这些版本，否则只下载模块的最新稳定版本。</string>
+               </property>
+               <property name="text">
+                <string>包括预发行版和开发版</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="cb_ignore_requires_python">
+               <property name="toolTip">
+                <string>对于那些对 Python 版本有限制要求的模块，是否忽略其限制要求。</string>
+               </property>
+               <property name="text">
+                <string>忽略包的 Python 版本限制</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,0">
+                 <item>
+                  <widget class="QLabel" name="label_3">
+                   <property name="toolTip">
+                    <string>下载的模块安装包的保存路径。</string>
                    </property>
                    <property name="text">
-                    <string>宁选择旧二进制包而非新源代码包</string>
+                    <string>下载至：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pb_save_to">
+                   <property name="toolTip">
+                    <string>选择下载的模块安装包的保存路径。</string>
+                   </property>
+                   <property name="text">
+                    <string>选择目录</string>
                    </property>
                   </widget>
                  </item>
                 </layout>
                </item>
+               <item>
+                <widget class="QLineEdit" name="le_save_to">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>下载的模块安装包的保存路径。</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cb_include_pre">
-              <property name="toolTip">
-               <string>如果模块的最新版本是预发行版或者是开发版，
-也下载这些版本，否则只下载模块的最新稳定版本。</string>
-              </property>
-              <property name="text">
-               <string>包括预发行版和开发版</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="cb_ignore_requires_python">
-              <property name="toolTip">
-               <string>对于那些对 Python 版本有限制要求的模块，是否忽略其限制要求。</string>
-              </property>
-              <property name="text">
-               <string>忽略包的 Python 版本限制</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="Line" name="line">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <property name="spacing">
-               <number>2</number>
-              </property>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="9,0">
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="toolTip">
-                   <string>下载的模块安装包的保存路径。</string>
-                  </property>
+             </item>
+             <item>
+              <widget class="Line" name="line_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="toolTip">
+                  <string>是否只下载兼容此处列出的平台的模块安装包。</string>
+                 </property>
+                 <property name="text">
+                  <string>兼容平台(空格分隔)：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="le_platform">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>是否只下载兼容此处列出的平台的模块安装包。</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="Line" name="line_3">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,9">
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="toolTip">
+                  <string>是否只下载兼容此处列出的 Python 版本的模块安装包。</string>
+                 </property>
+                 <property name="text">
+                  <string>兼容 Python 版本：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="le_python_version">
+                 <property name="minimumSize">
+                  <size>
+                   <width>180</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>180</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>是否只下载兼容此处列出的 Python 版本的模块安装包。</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="Line" name="line_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,9">
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="toolTip">
+                  <string>是否只下载兼容此处列出的 Python 实现的模块安装包。</string>
+                 </property>
+                 <property name="text">
+                  <string>兼容解释器实现：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="cmb_implementation">
+                 <property name="minimumSize">
+                  <size>
+                   <width>180</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>180</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>是否只下载兼容此处列出的 Python 实现的模块安装包。</string>
+                 </property>
+                 <item>
                   <property name="text">
-                   <string>下载至：</string>
+                   <string/>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pb_save_to">
-                  <property name="toolTip">
-                   <string>选择下载的模块安装包的保存路径。</string>
-                  </property>
+                 </item>
+                 <item>
                   <property name="text">
-                   <string>选择目录</string>
+                   <string>无特定实现</string>
                   </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_save_to">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>下载的模块安装包的保存路径。</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="Line" name="line_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
-              <property name="spacing">
-               <number>2</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="label_4">
-                <property name="toolTip">
-                 <string>是否只下载兼容此处列出的平台的模块安装包。</string>
-                </property>
-                <property name="text">
-                 <string>兼容平台(空格分隔)：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_platform">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>是否只下载兼容此处列出的平台的模块安装包。</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="Line" name="line_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,9">
-              <item>
-               <widget class="QLabel" name="label_5">
-                <property name="toolTip">
-                 <string>是否只下载兼容此处列出的 Python 版本的模块安装包。</string>
-                </property>
-                <property name="text">
-                 <string>兼容 Python 版本：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_python_version">
-                <property name="minimumSize">
-                 <size>
-                  <width>180</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>180</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>是否只下载兼容此处列出的 Python 版本的模块安装包。</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="Line" name="line_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,9">
-              <item>
-               <widget class="QLabel" name="label_6">
-                <property name="toolTip">
-                 <string>是否只下载兼容此处列出的 Python 实现的模块安装包。</string>
-                </property>
-                <property name="text">
-                 <string>兼容解释器实现：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QComboBox" name="cmb_implementation">
-                <property name="minimumSize">
-                 <size>
-                  <width>180</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>180</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>是否只下载兼容此处列出的 Python 实现的模块安装包。</string>
-                </property>
-                <item>
-                 <property name="text">
-                  <string/>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CPython</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Jython</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PyPy</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>IronPython</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="Line" name="line_5">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="toolTip">
+                  <string>是否只下载兼容此处列出的 Python ABI的模块安装包。</string>
                  </property>
-                </item>
-                <item>
                  <property name="text">
-                  <string>无特定实现</string>
+                  <string>兼容ABI(空格分隔)：</string>
                  </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>CPython</string>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="le_abis">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
                  </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Jython</string>
+                 <property name="toolTip">
+                  <string>是否只下载兼容此处列出的 Python ABI的模块安装包。</string>
                  </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>PyPy</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>IronPython</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="Line" name="line_5">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <property name="spacing">
-               <number>2</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="label_7">
-                <property name="toolTip">
-                 <string>是否只下载兼容此处列出的 Python ABI的模块安装包。</string>
-                </property>
-                <property name="text">
-                 <string>兼容ABI(空格分隔)：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_abis">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>是否只下载兼容此处列出的 Python ABI的模块安装包。</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="Line" name="line_6">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <property name="spacing">
-               <number>2</number>
-              </property>
-              <item>
-               <widget class="QCheckBox" name="cb_use_index_url">
-                <property name="toolTip">
-                 <string>是否从临时镜像源下载安装包。
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="Line" name="line_6">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="cb_use_index_url">
+                 <property name="toolTip">
+                  <string>是否从临时镜像源下载安装包。
 如果不勾选此选项，则默认从系统已设置的镜像源地址下载。</string>
-                </property>
-                <property name="text">
-                 <string>使用临时镜像源：</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="le_index_url">
-                <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
-                </property>
-                <property name="toolTip">
-                 <string>临时镜像源地址。</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
+                 </property>
+                 <property name="text">
+                  <string>使用临时镜像源：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="le_index_url">
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::NoContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>临时镜像源地址。</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
+          <item>
+           <widget class="QPushButton" name="pb_show_dl_list">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>下载列表</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pb_start_download">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>255</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>120</red>
+                  <green>120</green>
+                  <blue>120</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>开始下载</string>
+            </property>
+           </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
-         <item>
-          <widget class="QPushButton" name="pb_show_dl_list">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei UI</family>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>下载列表</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pb_start_download">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="palette">
-            <palette>
-             <active>
-              <colorrole role="ButtonText">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>0</red>
-                 <green>0</green>
-                 <blue>255</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </active>
-             <inactive>
-              <colorrole role="ButtonText">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>0</red>
-                 <green>0</green>
-                 <blue>0</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </inactive>
-             <disabled>
-              <colorrole role="ButtonText">
-               <brush brushstyle="SolidPattern">
-                <color alpha="255">
-                 <red>120</red>
-                 <green>120</green>
-                 <blue>120</blue>
-                </color>
-               </brush>
-              </colorrole>
-             </disabled>
-            </palette>
-           </property>
-           <property name="font">
-            <font>
-             <family>Microsoft YaHei UI</family>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>开始下载</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-  </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections/>
