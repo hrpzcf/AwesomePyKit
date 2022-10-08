@@ -1062,6 +1062,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pyi_tool = PyiTool()
         self.set_platform_info()
         self.__chosen_win = EnvironChosenWindow(self)
+        self.__impcheck_win = ImportsCheckWindow(self)
         self.signal_slot_connection()
         self.pyi_running_mov = QMovie(":/loading.gif")
         self.pyi_running_mov.setScaledSize(QSize(16, 16))
@@ -1168,8 +1169,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pb_gen_executable.clicked.connect(self.build_executable)
         self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyinstaller)
         self.pb_check_imports.clicked.connect(self.check_project_imports)
-        window_imports_check.pb_install_all_missing.clicked.connect(
-            lambda: self.install_missings(window_imports_check.all_missing_modules)
+        self.__impcheck_win.pb_install_all_missing.clicked.connect(
+            lambda: self.install_missings(self.__impcheck_win.all_missing_modules)
         )
         self.pb_clear_hidden_imports.clicked.connect(self.pte_hidden_imports.clear)
         self.pb_clear_exclude_module.clicked.connect(self.pte_exclude_modules.clear)
@@ -1244,9 +1245,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_check_imp.at_finish(
             self.__hide_running,
             self.__release_widgets,
-            lambda: window_imports_check.set_env_info(environ),
-            lambda: window_imports_check.checkimp_table_update(missings),
-            window_imports_check.show,
+            lambda: self.__impcheck_win.set_env_info(environ),
+            lambda: self.__impcheck_win.checkimp_table_update(missings),
+            self.__impcheck_win.show,
         )
         thread_check_imp.start()
         self.repo.put(thread_check_imp, 1)
@@ -1848,7 +1849,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 "提示",
                 "没有缺失的模块，无需安装。",
             ).exec_()
-            window_imports_check.close()
+            self.__impcheck_win.close()
             return
         if MessageBox(
             "安装",
@@ -1876,7 +1877,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_install_missings.at_start(
             self.__lock_widgets,
             lambda: self.__show_running("正在安装缺失模块..."),
-            window_imports_check.close,
+            self.__impcheck_win.close,
         )
         thread_install_missings.at_finish(
             self.__hide_running,
@@ -2025,9 +2026,9 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
         self.pyenv_list_update()
 
 
-class ImportsCheckWindow(Ui_imports_check, QWidget):
-    def __init__(self):
-        super().__init__()
+class ImportsCheckWindow(Ui_imports_check, QMainWindow):
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
         self._setup_other_widgets()
         self._normal_size = self.size()
@@ -2091,7 +2092,7 @@ class ImportsCheckWindow(Ui_imports_check, QWidget):
         self.le_cip_cur_env.setText(str(env))
 
 
-class PackageDownloadWindow(Ui_package_download, QWidget, AskFilePath):
+class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
     set_download_table = pyqtSignal(list)
     download_completed = pyqtSignal(str)
     download_status = pyqtSignal(int, str)
@@ -2099,10 +2100,11 @@ class PackageDownloadWindow(Ui_package_download, QWidget, AskFilePath):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.pkgdconfig = load_config(Option.PKG_DOWNLOAD)
         self.env_paths = None
         self.environments = None
+        self.__showdl_win = ShowDownloadWindow(self)
         self.signal_slot_connection()
+        self.pkgdconfig = load_config(Option.PKG_DOWNLOAD)
         self.last_path = None
         self.repo = ThreadRepo(500)
 
@@ -2113,10 +2115,10 @@ class PackageDownloadWindow(Ui_package_download, QWidget, AskFilePath):
         self.pb_save_to.clicked.connect(self.select_saved_dir)
         self.pb_clear_package_names.clicked.connect(self.pte_package_names.clear)
         self.pb_start_download.clicked.connect(self.start_download_package)
-        self.download_status.connect(window_show_download.status_changed)
-        self.set_download_table.connect(window_show_download.setup_table)
         self.download_completed.connect(self.check_download)
-        self.pb_show_dl_list.clicked.connect(window_show_download.show)
+        self.pb_show_dl_list.clicked.connect(self.__showdl_win.show)
+        self.download_status.connect(self.__showdl_win.status_changed)
+        self.set_download_table.connect(self.__showdl_win.setup_table)
 
     def change_le_index_url(self):
         self.le_index_url.setEnabled(self.cb_use_index_url.isChecked())
@@ -2414,9 +2416,9 @@ class PackageDownloadWindow(Ui_package_download, QWidget, AskFilePath):
         return configure
 
 
-class ShowDownloadWindow(Ui_show_download, QWidget):
-    def __init__(self):
-        super().__init__()
+class ShowDownloadWindow(Ui_show_download, QMainWindow):
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
         self._setup_other_widgets()
 
@@ -2553,10 +2555,8 @@ if __name__ == "__main__":
     awespykit.setWindowIcon(QIcon(":/icon.ico"))
     awespykit.setStyle("fusion")
     window_package_manager = PackageManagerWindow()
-    window_imports_check = ImportsCheckWindow()
     window_pyinstaller_tool = PyinstallerToolWindow()
     window_index_manager = IndexUrlManagerWindow()
-    window_show_download = ShowDownloadWindow()
     window_package_download = PackageDownloadWindow()
     window_main_entrance = MainEntrance()
     window_main_entrance.show()
