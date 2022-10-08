@@ -15,7 +15,7 @@ class Ui_package_install(object):
     def setupUi(self, package_install):
         package_install.setObjectName("package_install")
         package_install.setWindowModality(QtCore.Qt.WindowModal)
-        package_install.resize(397, 375)
+        package_install.resize(395, 418)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         package_install.setFont(font)
@@ -23,6 +23,7 @@ class Ui_package_install(object):
         self.centralwidget = QtWidgets.QWidget(package_install)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_5.setContentsMargins(8, 8, 8, 8)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")

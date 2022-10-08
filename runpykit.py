@@ -1061,9 +1061,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.toolwin_pyenv = None
         self.pyi_tool = PyiTool()
         self.set_platform_info()
+        self.__chosen_win = EnvironChosenWindow(self)
+        self.signal_slot_connection()
         self.pyi_running_mov = QMovie(":/loading.gif")
         self.pyi_running_mov.setScaledSize(QSize(16, 16))
-        self.signal_slot_connection()
         self._normal_size = self.size()
         self._venv_creating_result = 1
 
@@ -1144,7 +1145,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.after_task_completed)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
-        self.pb_select_py_env.clicked.connect(window_environ_chosen.show)
+        self.pb_select_py_env.clicked.connect(self.__chosen_win.show)
         self.le_program_entry.textChanged.connect(self.set_le_project_root)
         self.pb_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
@@ -1363,8 +1364,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         return file_dir_paths
 
     def select_env_update(self):
-        self.toolwin_pyenv = window_environ_chosen.envlist[
-            window_environ_chosen.lw_env_list.currentRow()
+        self.toolwin_pyenv = self.__chosen_win.envlist[
+            self.__chosen_win.lw_env_list.currentRow()
         ]
         self.pyi_tool.initialize(
             self.toolwin_pyenv.env_path,
@@ -1986,9 +1987,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.repo.put(thread_load_info, 1)
 
 
-class EnvironChosenWindow(Ui_environ_chosen, QWidget):
-    def __init__(self):
-        super().__init__()
+class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
         self.signal_slot_connection()
         self._normal_size = self.size()
@@ -2552,7 +2553,6 @@ if __name__ == "__main__":
     awespykit.setWindowIcon(QIcon(":/icon.ico"))
     awespykit.setStyle("fusion")
     window_package_manager = PackageManagerWindow()
-    window_environ_chosen = EnvironChosenWindow()
     window_imports_check = ImportsCheckWindow()
     window_pyinstaller_tool = PyinstallerToolWindow()
     window_index_manager = IndexUrlManagerWindow()
