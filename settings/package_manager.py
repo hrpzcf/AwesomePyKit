@@ -2,6 +2,12 @@
 
 from .abstract_settings import AbstractSettings
 
+_global_saved_pypaths = None
+
+
+def get_global_pypaths():
+    return _global_saved_pypaths
+
 
 class PackageManagerSettings(AbstractSettings):
     """包管理器的设置类"""
@@ -18,6 +24,8 @@ class PackageManagerSettings(AbstractSettings):
 
     def __init__(self):
         super().__init__(self.CONFIGFILE, dict)
+        global _global_saved_pypaths
+        _global_saved_pypaths = self.pypaths
 
     @property
     def pypaths(self):
@@ -28,7 +36,8 @@ class PackageManagerSettings(AbstractSettings):
     @pypaths.setter
     def pypaths(self, value: list):
         assert isinstance(value, list)
-        self[self.key_python_paths] = value
+        self[self.key_python_paths].clear()
+        self[self.key_python_paths].extend(value)
 
     @property
     def include_pre(self):
@@ -54,7 +63,7 @@ class PackageManagerSettings(AbstractSettings):
 
     @property
     def last_path(self):
-        if self.key_last_path not in  self:
+        if self.key_last_path not in self:
             self[self.key_last_path] = "."
         return self[self.key_last_path]
 
@@ -92,6 +101,6 @@ class PackageManagerSettings(AbstractSettings):
         return self[self.key_package_names]
 
     @package_names.setter
-    def package_names(self, value:list):
+    def package_names(self, value: list):
         assert isinstance(value, list)
         self[self.key_package_names] = value

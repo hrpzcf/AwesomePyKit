@@ -866,27 +866,27 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
-        self._urls_dict = load_config(Option.INDEX_MANAGER)
+        self.__config = IndexManagerSettings()
         self.__ordered_urls = None
         self.signal_slot_connection()
-        self._normal_size = self.size()
+        self.__normal_size = self.size()
 
     def show(self):
-        self.resize(self._normal_size)
+        self.resize(self.__normal_size)
         super().show()
-        self._list_widget_urls_update()
+        self.__list_widget_urls_update()
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
             not self.isMaximized()
             and not self.isMinimized()
             and (old_size.width(), old_size.height()) != (-1, -1)
         ):
-            self._normal_size = old_size
+            self.__normal_size = old_size
 
     @staticmethod
-    def _widget_for_list_item(name, url):
+    def __widget_for_list_item(name, url):
         item_layout = QHBoxLayout()
         item_layout.addWidget(QLabel(name))
         item_layout.addWidget(QLabel(url))
@@ -896,38 +896,36 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         item_widget.setLayout(item_layout)
         return item_widget
 
-    def _list_widget_urls_update(self):
+    def __list_widget_urls_update(self):
         self.li_indexurls.clear()
-        self.__ordered_urls = tuple(self._urls_dict.items())
+        self.__ordered_urls = tuple(self.__config.index_urls.items())
         for name, url in self.__ordered_urls:
-            item_widget = self._widget_for_list_item(name, url)
+            item_widget = self.__widget_for_list_item(name, url)
             li_item = QListWidgetItem()
             li_item.setSizeHint(QSize(0, 32))
             self.li_indexurls.addItem(li_item)
             self.li_indexurls.setItemWidget(li_item, item_widget)
-        # if self.li_indexurls.count():
-        #     self.li_indexurls.setCurrentRow(0)
 
     def signal_slot_connection(self):
-        self.btn_clearle.clicked.connect(self._clear_line_edit)
-        self.btn_saveurl.clicked.connect(self._save_index_urls)
-        self.btn_delurl.clicked.connect(self._del_index_url)
-        self.li_indexurls.clicked.connect(self._set_url_line_edit)
-        self.btn_setindex.clicked.connect(self._set_global_index_url)
-        self.btn_refresh_effective.clicked.connect(self._display_effective_url)
+        self.btn_clearle.clicked.connect(self.__clear_line_edit)
+        self.btn_saveurl.clicked.connect(self.__save_index_urls)
+        self.btn_delurl.clicked.connect(self.__del_index_url)
+        self.li_indexurls.clicked.connect(self.__set_url_line_edit)
+        self.btn_setindex.clicked.connect(self.__set_global_index_url)
+        self.btn_refresh_effective.clicked.connect(self.__display_effective_url)
 
-    def _set_url_line_edit(self):
+    def __set_url_line_edit(self):
         selected = self.li_indexurls.currentRow()
         if selected == -1:
             return
         self.le_urlname.setText(self.__ordered_urls[selected][0])
         self.le_indexurl.setText(self.__ordered_urls[selected][1])
 
-    def _clear_line_edit(self):
+    def __clear_line_edit(self):
         self.le_urlname.clear()
         self.le_indexurl.clear()
 
-    def _check_name_url(self, name, url):
+    def __check_name_url(self, name, url):
         error = lambda m: MessageBox("错误", m, QMessageBox.Critical)
         if not name:
             error = error("名称不能为空！")
@@ -935,7 +933,7 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
             error = error("地址不能为空！")
         elif not check_index_url(url):
             error = error("无效的镜像源地址！")
-        elif name in self._urls_dict:
+        elif name in self.__config.index_urls:
             error = error(f"名称'{name}'已存在！")
         else:
             return True
@@ -945,23 +943,23 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         # 所以只要触发提示信息窗口，肯定返回0
         return error.exec_()
 
-    def _save_index_urls(self):
+    def __save_index_urls(self):
         name = self.le_urlname.text()
         url = self.le_indexurl.text()
-        if self._check_name_url(name, url):
-            self._urls_dict[name] = url
-        self._list_widget_urls_update()
-        save_config(self._urls_dict, Option.INDEX_MANAGER)
+        if self.__check_name_url(name, url):
+            self.__config.index_urls[name] = url
+        self.__list_widget_urls_update()
+        self.__config.save_config()
 
-    def _del_index_url(self):
+    def __del_index_url(self):
         selected = self.li_indexurls.currentRow()
         if selected == -1:
             return MessageBox(
                 "提示",
                 "没有选中列表内的任何条目。",
             ).exec_()
-        del self._urls_dict[self.__ordered_urls[selected][0]]
-        self._list_widget_urls_update()
+        del self.__config.index_urls[self.__ordered_urls[selected][0]]
+        self.__list_widget_urls_update()
         items_count = self.li_indexurls.count()
         if items_count:
             if selected == -1:
@@ -975,54 +973,54 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
                     else items_count - 1
                 )
                 self.li_indexurls.setCurrentRow(should_be_selected)
-        save_config(self._urls_dict, Option.INDEX_MANAGER)
+        self.__config.save_config()
 
-    @staticmethod
-    def _get_cur_environ():
+    def __get_cur_environ(self):
         """
         首先使用配置文件中保存的 Python 路径实例化一个 PyEnv，如果路径为空，
         则使用系统环境变量 PATH 中第一个 Python 路径，环境变量中还未找到则返回 None。
         """
-        saved_paths = load_config(Option.PKG_MANAGER)
-        warn_box = lambda m: MessageBox(
-            "提示",
-            m,
-            QMessageBox.Warning,
-        ).exec_()
-        if not saved_paths:
+        cur_pypaths = self.__config.cur_pypaths
+        if not cur_pypaths:
             return PyEnv(cur_py_path())
-        for _path in saved_paths:
-            try:
-                return PyEnv(_path)
-            except Exception:
+        for _path in cur_pypaths:
+            environ = PyEnv(_path)
+            if not environ.env_path:
                 continue
+            return environ
         else:
-            warn_box("没有找到 Python 环境，请在'包管理器'中添加 Python 目录。")
-        return
+            MessageBox(
+                "提示",
+                "没有找到 Python 环境，请在<包管理器>中添加 Python 目录。",
+                QMessageBox.Warning,
+            ).exec_()
 
-    def _set_global_index_url(self):
+    def __set_global_index_url(self):
         url = self.le_indexurl.text()
         warn_box = lambda m: MessageBox("提示", m, QMessageBox.Warning)
         if not url:
             warn_box = warn_box("要设置为全局镜像源的地址不能为空！")
         elif not check_index_url(url):
-            warn_box = warn_box("镜像源地址不符合pip镜像源地址格式。")
+            warn_box = warn_box("镜像源地址不符合 pip 镜像源地址格式。")
         else:
-            environ = self._get_cur_environ()
+            environ = self.__get_cur_environ()
             if not environ:
                 warn_box = warn_box(
-                    "没找到 Python 环境，全局镜像源设置失败。\n请在'包管理器'中添加 Python 目录。",
+                    "没找到 Python 环境，全局镜像源设置失败。\n请在<包管理器>中添加 Python 目录。",
                 )
             elif environ.set_global_index(url):
                 warn_box = MessageBox("提示", f"全局镜像源地址设置成功：\n{url}")
             else:
-                warn_box = warn_box("未知原因导致全局镜像源设置失败，请确保<包管理器>中第一个环境的 pip 可用。")
+                warn_box = warn_box(
+                    "全局镜像源设置失败，请确保<包管理器>中第一个环境的 pip 可用或系统环境变量 PATH 中有可用的 Python 路径。"
+                )
         warn_box.exec_()
 
-    def _display_effective_url(self):
-        environ = self._get_cur_environ()
+    def __display_effective_url(self):
+        environ = self.__get_cur_environ()
         if not environ:
-            return self.le_effectiveurl.setText("没找到 Python 环境，无法获取当前全局镜像源地址。")
+            self.le_effectiveurl.setText("没找到 Python 环境，无法获取镜像源地址。")
+            return
         self.le_effectiveurl.setText(
             environ.get_global_index() or "无效的 Python 环境或当前全局镜像源地址为空。"
         )
@@ -1098,7 +1096,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if self.repo.is_empty():
             self.config_dict_to_widgets()
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
             not self.isMaximized()
@@ -2018,7 +2016,7 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
             item.setSizeHint(row_size)
             self.lw_env_list.addItem(item)
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
             not self.isMaximized()
@@ -2057,7 +2055,7 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):
             2, QHeaderView.Stretch
         )
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
             not self.isMaximized()
