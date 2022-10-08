@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_index_manager(object):
     def setupUi(self, index_manager):
         index_manager.setObjectName("index_manager")
-        index_manager.setWindowModality(QtCore.Qt.ApplicationModal)
+        index_manager.setWindowModality(QtCore.Qt.WindowModal)
         index_manager.resize(480, 520)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")

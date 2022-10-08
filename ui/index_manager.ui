@@ -3,7 +3,7 @@
  <class>index_manager</class>
  <widget class="QMainWindow" name="index_manager">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::WindowModal</enum>
   </property>
   <property name="geometry">
    <rect>

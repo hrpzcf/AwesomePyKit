@@ -14,6 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_package_download(object):
     def setupUi(self, package_download):
         package_download.setObjectName("package_download")
+        package_download.setWindowModality(QtCore.Qt.WindowModal)
         package_download.resize(620, 658)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")

@@ -52,12 +52,13 @@ from chardet import detect
 from fastpip import all_py_paths, cur_py_path, parse_package_names
 from PyQt5.QtCore import QRegExp, QSize, Qt, pyqtSignal
 from PyQt5.QtGui import (
+    QCloseEvent,
     QColor,
     QFont,
     QIcon,
+    QMoveEvent,
     QMovie,
     QRegExpValidator,
-    QMoveEvent,
     QResizeEvent,
 )
 from PyQt5.QtWidgets import (
@@ -95,20 +96,25 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle(f"Awespykit")
+        self.__pkgmgr_win = PackageManagerWindow(self)
+        self.__pyitool_win = PyinstallerToolWindow(self)
+        self.__indexmgr_win = IndexUrlManagerWindow(self)
+        self.__pkgdl_win = PackageDownloadWindow(self)
         self.signal_slot_connection()
+        self.show()
 
     def signal_slot_connection(self):
-        self.action_about.triggered.connect(self._show_about)
-        self.pb_pkg_mgr.clicked.connect(window_package_manager.show)
-        self.pb_pyi_tool.clicked.connect(window_pyinstaller_tool.show)
-        self.pb_index_mgr.clicked.connect(window_index_manager.show)
-        self.pb_pkg_dload.clicked.connect(window_package_download.show)
+        self.action_about.triggered.connect(self.__show_about)
+        self.pb_pkg_mgr.clicked.connect(self.__pkgmgr_win.show)
+        self.pb_pyi_tool.clicked.connect(self.__pyitool_win.show)
+        self.pb_index_mgr.clicked.connect(self.__indexmgr_win.show)
+        self.pb_pkg_dload.clicked.connect(self.__pkgdl_win.show)
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent):
         if (
-            window_package_manager.repo.is_empty()
-            and window_pyinstaller_tool.repo.is_empty()
-            and window_package_download.repo.is_empty()
+            self.__pkgmgr_win.repo.is_empty()
+            and self.__pyitool_win.repo.is_empty()
+            and self.__pkgdl_win.repo.is_empty()
         ):
             event.accept()
         else:
@@ -119,14 +125,15 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
                 (("accept", "强制退出"), ("reject", "取消")),
             ).exec_()
             if role == 0:
-                window_package_manager.repo.kill_all()
-                window_pyinstaller_tool.repo.kill_all()
+                self.__pkgdl_win.repo.kill_all()
+                self.__pkgmgr_win.repo.kill_all()
+                self.__pyitool_win.repo.kill_all()
                 event.accept()
             else:
                 event.ignore()
 
     @staticmethod
-    def _show_about():
+    def __show_about():
         about_path = get_res_path("help", "About.html")
         try:
             with open(about_path, encoding="utf-8") as h:
@@ -139,8 +146,8 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
 
 class PackageManagerWindow(Ui_package_manager, QMainWindow):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
         self._setup_other_widgets()
         self.__output = GenericOutputWindow(self, "输出流")
@@ -194,7 +201,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             (("accept", "尝试停止并关闭"), ("reject", "取消")),
         ).exec_()
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent):
         if not self.repo.is_empty():
             if self._stop_before_close():
                 self.repo.stop_all()
@@ -207,7 +214,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         else:
             self.__output.close()
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
             not self.isMaximized()
@@ -826,7 +833,7 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
         self.pkgiconfig["use_index_url"] = self.cb_use_index_url.isChecked()
         self.pkgiconfig["index_url"] = self.le_use_index_url.text()
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent):
         event.accept()
         self.store_default_conf()
         save_config(self.pkgiconfig, Option.PKG_INSTALL)
@@ -852,8 +859,8 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
 
 
 class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
         self._urls_dict = load_config(Option.INDEX_MANAGER)
         self.__ordered_urls = None
@@ -1023,8 +1030,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     signal_update_pyipbtext = pyqtSignal(str)
     pyiver_fmt = "Pyinstaller - {}"
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
         self.widget_group = (
             self.tab_project_files,
@@ -1069,7 +1076,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self._normal_size = self.size()
         self._venv_creating_result = 1
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent):
         if not self.repo.is_empty():
             MessageBox(
                 "提醒",
@@ -1994,6 +2001,7 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
         self.setupUi(self)
         self.signal_slot_connection()
         self._normal_size = self.size()
+        self.__parent: PyinstallerToolWindow = parent
 
     def signal_slot_connection(self):
         self.lw_env_list.pressed.connect(self.close)
@@ -2017,7 +2025,7 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
 
     def close(self):
         super().close()
-        window_pyinstaller_tool.select_env_update()
+        self.__parent.select_env_update()
 
     def show(self):
         self.resize(self._normal_size)
@@ -2097,8 +2105,8 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
     download_completed = pyqtSignal(str)
     download_status = pyqtSignal(int, str)
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self.setupUi(self)
         self.env_paths = None
         self.environments = None
@@ -2142,7 +2150,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
             self.last_path = dir_path
             self.le_save_to.setText(dir_path)
 
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent):
         if self.repo.is_empty():
             self.store_config()
             save_config(self.pkgdconfig, Option.PKG_DOWNLOAD)
@@ -2552,12 +2560,7 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
 
 if __name__ == "__main__":
     awespykit = QApplication(sys.argv)
-    awespykit.setWindowIcon(QIcon(":/icon.ico"))
     awespykit.setStyle("fusion")
-    window_package_manager = PackageManagerWindow()
-    window_pyinstaller_tool = PyinstallerToolWindow()
-    window_index_manager = IndexUrlManagerWindow()
-    window_package_download = PackageDownloadWindow()
-    window_main_entrance = MainEntrance()
-    window_main_entrance.show()
+    awespykit.setWindowIcon(QIcon(":/icon.ico"))
+    main_entrance_window = MainEntrance()
     sys.exit(awespykit.exec_())

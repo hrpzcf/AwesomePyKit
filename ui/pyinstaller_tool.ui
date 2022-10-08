@@ -3,7 +3,7 @@
  <class>pyinstaller_tool</class>
  <widget class="QMainWindow" name="pyinstaller_tool">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::WindowModal</enum>
   </property>
   <property name="geometry">
    <rect>

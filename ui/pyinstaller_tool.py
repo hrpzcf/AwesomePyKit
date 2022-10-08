@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_pyinstaller_tool(object):
     def setupUi(self, pyinstaller_tool):
         pyinstaller_tool.setObjectName("pyinstaller_tool")
-        pyinstaller_tool.setWindowModality(QtCore.Qt.ApplicationModal)
+        pyinstaller_tool.setWindowModality(QtCore.Qt.WindowModal)
         pyinstaller_tool.resize(860, 722)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
