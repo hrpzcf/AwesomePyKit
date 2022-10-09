@@ -23,7 +23,9 @@ config_root = op.join(config_root, "config")
 __all__ = [
     "IndexManagerSettings",
     "PackageManagerSettings",
+    "PackageDownloadSettings",
 ]
 
 from .indexurl_manager import IndexManagerSettings
 from .package_manager import PackageManagerSettings
+from .package_download import PackageDownloadSettings

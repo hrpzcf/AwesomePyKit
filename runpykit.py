@@ -433,7 +433,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.list_widget_pyenvs_update,
             self.hide_loading,
             self.release_widgets,
-            # lambda: save_config(self.path_list, Option.PKG_MANAGER),
         )
         thread_search_envs.start()
         self.repo.put(thread_search_envs, 0)
@@ -446,7 +445,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         del self.path_list[cur_index]
         self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
         self.table_widget_clear_pkgs()
-        # save_config(self.path_list, Option.PKG_MANAGER)
 
     def add_py_path_manully(self):
         input_dialog = InputDialog(
@@ -482,7 +480,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
         self.list_widget_pyenvs_update()
-        # save_config(self.path_list, Option.PKG_MANAGER)
 
     def check_cur_pkgs_for_updates(self):
         if self.tw_installed_info.rowCount() == 0:
@@ -2031,7 +2028,7 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
 
     def show(self):
         self.resize(self._normal_size)
-        self.envlist = get_pyenv_list(load_config(Option.PKG_MANAGER))
+        self.envlist = get_pyenv_list(load_config(Option.PKG_MANAGER))  # BUG
         super().show()
         self.pyenv_list_update()
 
@@ -2112,9 +2109,9 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
         self.setupUi(self)
         self.env_paths = None
         self.environments = None
+        self.__pdconfig = PackageDownloadSettings()
         self.__showdl_win = ShowDownloadWindow(self)
         self.signal_slot_connection()
-        self.pkgdconfig = load_config(Option.PKG_DOWNLOAD)
         self.last_path = None
         self.repo = ThreadRepo(500)
 
@@ -2153,16 +2150,15 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
             self.le_save_to.setText(dir_path)
 
     def closeEvent(self, event: QCloseEvent):
-        if self.repo.is_empty():
-            self.store_config()
-            save_config(self.pkgdconfig, Option.PKG_DOWNLOAD)
-        else:
+        if not self.repo.is_empty():
             MessageBox(
                 "警告",
                 "有下载任务正在运行，关闭窗口并不会结束任务。",
                 QMessageBox.Warning,
             ).exec_()
         super().closeEvent(event)
+        self.config_widgets_to_dict()
+        self.__pdconfig.save_config()
 
     def show(self):
         super().show()
@@ -2174,9 +2170,9 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
             self.env_paths = list()
         else:
             self.env_paths.clear()
-        self.env_paths.extend(load_config(Option.PKG_MANAGER))
+        self.env_paths.extend(self.__pdconfig.cur_pypaths)
         self.environments = get_pyenv_list(self.env_paths)
-        index = self.pkgdconfig.get("derived_from", 0)
+        index = self.__pdconfig.derived_from
         text_list = [str(e) for e in self.environments]
         if index < 0 or index >= len(text_list):
             index = 0
@@ -2184,12 +2180,12 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
         self.cmb_derived_from.addItems(text_list)
         self.cmb_derived_from.setCurrentIndex(index)
 
-    def store_config(self):
-        self.pkgdconfig["package_names"] = [
+    def config_widgets_to_dict(self):
+        self.__pdconfig.package_names = [
             s for s in self.pte_package_names.toPlainText().split("\n") if s
         ]
-        self.pkgdconfig["derived_from"] = self.cmb_derived_from.currentIndex()
-        self.pkgdconfig["download_deps"] = self.cb_download_deps.isChecked()
+        self.__pdconfig.derived_from = self.cmb_derived_from.currentIndex()
+        self.__pdconfig.download_deps = self.cb_download_deps.isChecked()
         download_type = (
             "unlimited"
             if self.rb_unlimited.isChecked()
@@ -2199,26 +2195,24 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
             if self.rb_only_binary.isChecked()
             else "prefer_binary"
         )
-        self.pkgdconfig["download_type"] = download_type
-        self.pkgdconfig["include_pre"] = self.cb_include_pre.isChecked()
-        self.pkgdconfig[
-            "ignore_requires_python"
-        ] = self.cb_ignore_requires_python.isChecked()
-        self.pkgdconfig["save_to"] = self.le_save_to.text()
-        self.pkgdconfig["platform"] = [s for s in self.le_platform.text().split() if s]
-        self.pkgdconfig["python_version"] = self.le_python_version.text()
-        self.pkgdconfig["implementation"] = self.cmb_implementation.currentText()
-        self.pkgdconfig["abis"] = [s for s in self.le_abis.text().split() if s]
-        self.pkgdconfig["use_index_url"] = self.cb_use_index_url.isChecked()
-        self.pkgdconfig["index_url"] = self.le_index_url.text()
+        self.__pdconfig.download_type = download_type
+        self.__pdconfig.include_pre = self.cb_include_pre.isChecked()
+        self.__pdconfig.ignore_requires_python = (
+            self.cb_ignore_requires_python.isChecked()
+        )
+        self.__pdconfig.save_path = self.le_save_to.text()
+        self.__pdconfig.platform = [s for s in self.le_platform.text().split() if s]
+        self.__pdconfig.python_version = self.le_python_version.text()
+        self.__pdconfig.implementation = self.cmb_implementation.currentText()
+        self.__pdconfig.abis = [s for s in self.le_abis.text().split() if s]
+        self.__pdconfig.index_url = self.le_index_url.text()
+        self.__pdconfig.use_index_url = self.cb_use_index_url.isChecked()
 
     def apply_config(self):
         self.update_envpaths_and_combobox()
-        self.pte_package_names.setPlainText(
-            "\n".join(self.pkgdconfig.get("package_names", []))
-        )
-        self.cb_download_deps.setChecked(self.pkgdconfig.get("download_deps", True))
-        download_type = self.pkgdconfig.get("download_type", "unlimited")
+        self.pte_package_names.setPlainText("\n".join(self.__pdconfig.package_names))
+        self.cb_download_deps.setChecked(self.__pdconfig.download_deps)
+        download_type = self.__pdconfig.download_type
         if download_type == "unlimited":
             self.rb_unlimited.setChecked(True)
         elif download_type == "no_binary":
@@ -2229,52 +2223,45 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
             self.rb_prefer_binary.setChecked(True)
         else:
             self.rb_unlimited.setChecked(True)
-        self.cb_include_pre.setChecked(self.pkgdconfig.get("include_pre", False))
+        self.cb_include_pre.setChecked(self.__pdconfig.include_pre)
         self.cb_ignore_requires_python.setChecked(
-            self.pkgdconfig.get("ignore_requires_python", False)
+            self.__pdconfig.ignore_requires_python
         )
-        self.le_save_to.setText(self.pkgdconfig.get("save_to", ""))
-        self.le_platform.setText(" ".join(self.pkgdconfig.get("platform", [])))
-        self.le_python_version.setText(self.pkgdconfig.get("python_version", ""))
-        self.cmb_implementation.setCurrentText(
-            self.pkgdconfig.get("implementation", "")
-        )
-        self.le_abis.setText("".join(self.pkgdconfig.get("abis", [])))
-        use_index_url = self.pkgdconfig.get("use_index_url", False)
+        self.le_save_to.setText(self.__pdconfig.save_path)
+        self.le_platform.setText(" ".join(self.__pdconfig.platform))
+        self.le_python_version.setText(self.__pdconfig.python_version)
+        self.cmb_implementation.setCurrentText(self.__pdconfig.implementation)
+        self.le_abis.setText(" ".join(self.__pdconfig.abis))  # fixme 空格连接还是空字符？
+        use_index_url = self.__pdconfig.use_index_url
         self.cb_use_index_url.setChecked(use_index_url)
-        self.le_index_url.setText(self.pkgdconfig.get("index_url", ""))
         self.le_index_url.setEnabled(use_index_url)
+        self.le_index_url.setText(self.__pdconfig.index_url)
 
     @staticmethod
-    def confirm_dest(dest):
+    def confirm_dest_path(dest):
         # 保存位置未填写时
         if not dest:
             return True
         if not os.path.exists(dest):
-            # 选择'否'或关闭窗口返回1，所以需要not取非
-            create_folder = not MessageBox(
-                "提示",
-                "保存目录不存在，是否创建目录？",
-                QMessageBox.Warning,
-                (("accept", "是"), ("reject", "否")),
-            ).exec_()
-            if create_folder:
+            if (
+                MessageBox(
+                    "提示",
+                    "保存目录不存在，是否创建目录？",
+                    QMessageBox.Warning,
+                    (("accept", "是"), ("reject", "否")),
+                ).exec_()
+                == 0
+            ):
                 try:
                     os.makedirs(dest)
                     return True
                 except Exception as e:
-                    MessageBox(
-                        "提示",
-                        f"保存目录创建失败：\n{e}。",
-                    ).exec_()
+                    MessageBox("提示", f"保存目录创建失败：\n{e}。").exec_()
                     return False
             else:
                 return False
         elif os.path.isfile(dest):
-            MessageBox(
-                "提示",
-                "该位置已存在同名的文件，请修改目录路径。",
-            ).exec_()
+            MessageBox("提示", "该位置已存在同名的文件，请修改目录路径。").exec_()
             return False
         return True
 
@@ -2284,17 +2271,17 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
                 "提示",
                 "没有任何 Python 环境，请到'包管理器'中自动或手动添加 Python 环境路径。",
             ).exec_()
-        self.store_config()
-        destination = self.pkgdconfig.get("save_to", "")
-        pkg_names = self.pkgdconfig.get("package_names", [])
-        if not self.confirm_dest(destination):
+        self.config_widgets_to_dict()
+        destination = self.__pdconfig.save_path
+        pkg_names = self.__pdconfig.package_names
+        if not self.confirm_dest_path(destination):
             return
         if not pkg_names:
             return MessageBox(
                 "提示",
                 "没有需要下载的安装包。",
             ).exec_()
-        index = self.pkgdconfig.get("derived_from", 0)
+        index = self.__pdconfig.derived_from
         if index < 0 or index >= len(self.environments):
             index = 0
             self.cmb_derived_from.setCurrentIndex(0)
@@ -2338,7 +2325,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
         if not dest:
             return MessageBox(
                 "提示",
-                f"安装包全部下载失败!",
+                f"安装包下载失败!",
                 QMessageBox.Critical,
             ).exec_()
         return MessageBox(
@@ -2356,23 +2343,23 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
                 or configure.get("only_binary", False)
             )
 
-        if not self.pkgdconfig.get("download_deps", True):
+        if not self.__pdconfig.download_deps:
             configure.update(no_deps=True)
-        download_type = self.pkgdconfig.get("download_type", "unlimited")
+        download_type = self.__pdconfig.download_type
         if download_type == "no_binary":
             configure.update(no_binary=parse_package_names(names))
         elif download_type == "only_binary":
             configure.update(only_binary=parse_package_names(names))
         elif download_type == "prefer_binary":
             configure.update(prefer_binary=True)
-        if self.pkgdconfig.get("include_pre", False):
+        if self.__pdconfig.include_pre:
             configure.update(pre=True)
-        if self.pkgdconfig.get("ignore_requires_python", False):
+        if self.__pdconfig.ignore_requires_python:
             configure.update(ignore_requires_python=True)
-        saved_path = self.pkgdconfig.get("save_to", "")
+        saved_path = self.__pdconfig.save_path
         if saved_path:
             configure.update(dest=saved_path)
-        platform_name = self.pkgdconfig.get("platform", [])
+        platform_name = self.__pdconfig.platform
         if platform_name:
             if unqualified():
                 return MessageBox(
@@ -2382,7 +2369,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
                     QMessageBox.Warning,
                 ).exec_()
             configure.update(platform=platform_name)
-        python_version = self.pkgdconfig.get("python_version", "")
+        python_version = self.__pdconfig.python_version
         if python_version:
             if unqualified():
                 return MessageBox(
@@ -2392,7 +2379,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
                     QMessageBox.Warning,
                 ).exec_()
             configure.update(python_version=python_version)
-        impl_name = self.pkgdconfig.get("implementation", "")
+        impl_name = self.__pdconfig.implementation
         if impl_name == "无特定实现":
             impl_name = "py"
         if impl_name:
@@ -2404,7 +2391,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
                     QMessageBox.Warning,
                 ).exec_()
             configure.update(implementation=impl_name)
-        abis = self.pkgdconfig.get("abis", [])
+        abis = self.__pdconfig.abis
         if abis:
             if unqualified():
                 return MessageBox(
@@ -2420,8 +2407,8 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
 '兼容解释器实现'三个下载条件。",
                 ).exec_()
             configure.update(abis=abis)
-        index_url = self.pkgdconfig.get("index_url", "")
-        if self.pkgdconfig.get("use_index_url") and index_url:
+        index_url = self.__pdconfig.index_url
+        if self.__pdconfig.use_index_url and index_url:
             configure.update(index_url=index_url)
         return configure
 

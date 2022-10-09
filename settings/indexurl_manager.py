@@ -12,7 +12,7 @@ class IndexManagerSettings(AbstractSettings):
     CONFIGFILE = "indexurl_manager.json"
 
     def __init__(self):
-        super().__init__(self.CONFIGFILE, dict)
+        super().__init__(self.CONFIGFILE)
 
     @property
     def index_urls(self):

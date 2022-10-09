@@ -10,7 +10,7 @@ import subprocess
 import sys
 from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, SW_HIDE, Popen
 
-from fastpip import PyEnv, index_urls
+from fastpip import PyEnv
 from PyQt5.QtCore import QMutex, QThread, QTimer
 
 _program_runs_in_bundle_mode = getattr(sys, "frozen", False)
@@ -28,10 +28,7 @@ else:
     config_root = op.join(_appdata_local_folder, "Awespykit")
 config_root = op.join(config_root, "config")
 
-config_indexurl_manager = op.join(config_root, "indexurls_manager.json")
 config_pyinstaller_tool = op.join(config_root, "pyinstaller_tool.json")
-config_package_install = op.join(config_root, "package_install.json")
-config_package_download = op.join(config_root, "package_download.json")
 
 
 def get_res_path(*p):
@@ -75,26 +72,14 @@ class Option:
 def load_config(option):
     if not op.exists(config_root):
         os.makedirs(config_root)
-    if option == Option.PKG_INSTALL:
-        return _load_json(config_package_install, dict)
     if option == Option.PYINSTALLER:
         return _load_json(config_pyinstaller_tool, list)
-    if option == Option.INDEX_MANAGER:
-        return _load_json(config_indexurl_manager, index_urls.copy)
-    if option == Option.PKG_DOWNLOAD:
-        return _load_json(config_package_download, dict)
     assert False, f"选项错误：{option}"
 
 
 def save_config(sequence, option):
-    if option == Option.PKG_INSTALL:
-        pth = config_package_install
-    elif option == Option.PYINSTALLER:
+    if option == Option.PYINSTALLER:
         pth = config_pyinstaller_tool
-    elif option == Option.INDEX_MANAGER:
-        pth = config_indexurl_manager
-    elif option == Option.PKG_DOWNLOAD:
-        pth = config_package_download
     else:
         raise Exception(f"选项错误：{option}")
     try:

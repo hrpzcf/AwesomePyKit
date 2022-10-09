@@ -23,7 +23,7 @@ class PackageManagerSettings(AbstractSettings):
     CONFIGFILE = "package_manager.json"
 
     def __init__(self):
-        super().__init__(self.CONFIGFILE, dict)
+        super().__init__(self.CONFIGFILE)
         global _global_saved_pypaths
         _global_saved_pypaths = self.pypaths
 
