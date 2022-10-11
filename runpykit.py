@@ -1090,7 +1090,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         super().show()
         self.resize(self.__normal_size)
         if self.repo.is_empty():
-            self.config_cfg_to_widgets()
+            self.config_cfg_to_widgets(None)
 
     def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
@@ -1382,9 +1382,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         self.load_version_information_lazily(refresh=False)
 
-    def config_cfg_to_widgets(self, cfg_name=None):
+    def config_cfg_to_widgets(self, cfg_name):
         if cfg_name is not None:
             self.pyi_config.checkout_cfg(cfg_name)
+        self.update_configure_combobox_items()
         self.load_version_information_lazily(refresh=True)
         self.le_program_entry.setText(self.pyi_config.curconfig.script_path)
         self.le_project_root.setText(self.pyi_config.curconfig.project_root)
