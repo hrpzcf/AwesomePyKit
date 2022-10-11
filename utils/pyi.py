@@ -58,7 +58,7 @@ class PyiTool(QObject):
     def initialize(self, py_path, cwd):
         # 信任传入的py_path
         self._py_path = py_path
-        self._cwd = cwd
+        self._cwd = cwd if cwd else None
         self._process = None
         self._commands = [self.pyi_path]
 

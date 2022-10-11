@@ -7,17 +7,12 @@ from . import config_root
 
 
 class AbstractSettings(dict):
-    ROOT = Path(config_root)
+    root = Path(config_root)
 
     def __init__(self, fname):
         super().__init__()
-        self.__cfg = self.ROOT.joinpath(fname)
-        self.load_config()
-
-    def load_config(self):
-        if not self.ROOT.exists():
-            self.ROOT.mkdir(parents=True)
-        self.update(self._load_json())
+        self.__cfg = self.root.joinpath(fname)
+        self.__load_json()
 
     def save_config(self):
         try:
@@ -26,18 +21,22 @@ class AbstractSettings(dict):
         except Exception:
             pass
 
-    def _load_json(self):
-        """__cfg 文件无法读取则调用 __default 取值并返回"""
+    def __load_json(self):
+        """如果 __cfg 文件无法读取则返回空字典"""
+        try:
+            if not self.root.exists():
+                self.root.mkdir(parents=True)
+        except Exception:
+            return
         if not self.__cfg.exists():
-            default_data = dict()
             try:
                 with open(self.__cfg, "wt", encoding="utf-8") as f:
-                    json.dump(default_data, f, indent=4, ensure_ascii=False)
+                    json.dump(dict(), f)
             except Exception:
-                pass
-            return default_data
-        try:
-            with open(self.__cfg, "rt", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return dict()
+                return
+        else:
+            try:
+                with open(self.__cfg, "rt", encoding="utf-8") as f:
+                    self.update(json.load(f))
+            except Exception:
+                return

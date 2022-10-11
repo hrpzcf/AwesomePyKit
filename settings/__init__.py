@@ -19,13 +19,14 @@ else:
     config_root = op.join(_appdata_local_folder, "Awespykit")
 config_root = op.join(config_root, "config")
 
-
 __all__ = [
     "IndexManagerSettings",
     "PackageManagerSettings",
     "PackageDownloadSettings",
+    "PyinstallerToolSettings",
 ]
 
 from .indexurl_manager import IndexManagerSettings
 from .package_manager import PackageManagerSettings
 from .package_download import PackageDownloadSettings
+from .pyinstaller_tool import PyinstallerToolSettings

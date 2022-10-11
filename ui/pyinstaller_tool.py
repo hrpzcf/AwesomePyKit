@@ -541,6 +541,7 @@ class Ui_pyinstaller_tool(object):
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.uiComboBox_saved_config = QtWidgets.QComboBox(self.groupBox_4)
         self.uiComboBox_saved_config.setObjectName("uiComboBox_saved_config")
+        self.uiComboBox_saved_config.addItem("")
         self.horizontalLayout_7.addWidget(self.uiComboBox_saved_config)
         self.uiPushButton_delete_config = QtWidgets.QPushButton(self.groupBox_4)
         palette = QtGui.QPalette()
@@ -722,6 +723,7 @@ class Ui_pyinstaller_tool(object):
 
         self.retranslateUi(pyinstaller_tool)
         self.tabWidget.setCurrentIndex(0)
+        self.uiComboBox_saved_config.setCurrentIndex(0)
         self.cb_log_level.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(pyinstaller_tool)
 
@@ -857,6 +859,7 @@ class Ui_pyinstaller_tool(object):
         self.uiPushButton_save_config.setText(_translate("pyinstaller_tool", "保存"))
         self.label_29.setText(_translate("pyinstaller_tool", "已保存的打包配置"))
         self.uiComboBox_saved_config.setToolTip(_translate("pyinstaller_tool", "所有已保存的配置，这里显示的是你在保存配置时输入的备注名称。"))
+        self.uiComboBox_saved_config.setItemText(0, _translate("pyinstaller_tool", "当前打包配置"))
         self.uiPushButton_delete_config.setToolTip(_translate("pyinstaller_tool", "将左侧下拉选择框选中的配置删除。"))
         self.uiPushButton_delete_config.setText(_translate("pyinstaller_tool", "删除"))
         self.uiPushButton_apply_config.setToolTip(_translate("pyinstaller_tool", "将左侧下拉选择框选中的配置内容应用到“程序打包”工具。"))

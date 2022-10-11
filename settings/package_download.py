@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from .abstract_settings import AbstractSettings
-from  .package_manager import get_global_pypaths
+from  .package_manager import get_shared_pypaths
 
 
 class PackageDownloadSettings(AbstractSettings):
@@ -171,8 +171,8 @@ class PackageDownloadSettings(AbstractSettings):
 
     @property
     def cur_pypaths(self):
-        global_pypaths = get_global_pypaths()
-        if global_pypaths is None:
+        shared_pypaths = get_shared_pypaths()
+        if shared_pypaths is None:
             return list()
-        assert isinstance(global_pypaths, list)
-        return global_pypaths
+        assert isinstance(shared_pypaths, list)
+        return shared_pypaths

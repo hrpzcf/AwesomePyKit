@@ -1170,6 +1170,14 @@
                         <property name="toolTip">
                          <string>所有已保存的配置，这里显示的是你在保存配置时输入的备注名称。</string>
                         </property>
+                        <property name="currentIndex">
+                         <number>0</number>
+                        </property>
+                        <item>
+                         <property name="text">
+                          <string>当前打包配置</string>
+                         </property>
+                        </item>
                        </widget>
                       </item>
                       <item>

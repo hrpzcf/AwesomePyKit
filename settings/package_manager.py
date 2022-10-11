@@ -2,11 +2,11 @@
 
 from .abstract_settings import AbstractSettings
 
-_global_saved_pypaths = None
+_shared_saved_pypaths = None
 
 
-def get_global_pypaths():
-    return _global_saved_pypaths
+def get_shared_pypaths():
+    return _shared_saved_pypaths
 
 
 class PackageManagerSettings(AbstractSettings):
@@ -24,8 +24,8 @@ class PackageManagerSettings(AbstractSettings):
 
     def __init__(self):
         super().__init__(self.CONFIGFILE)
-        global _global_saved_pypaths
-        _global_saved_pypaths = self.pypaths
+        global _shared_saved_pypaths
+        _shared_saved_pypaths = self.pypaths
 
     @property
     def pypaths(self):
