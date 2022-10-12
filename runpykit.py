@@ -26,30 +26,13 @@
 # Formatted with black
 ################################################################################
 
-from fastpip import VERNUM as fastpipver
-
-# 运行前对 fastpip 的版本检查
-required_fastpip_version = (1, 0, 0)
-
-if fastpipver[0] != required_fastpip_version[0]:
-    raise Exception(
-        f"当前环境的 fastpip 模块主版本号({fastpipver[0]})与"
-        f"要本程序求的主版本号({required_fastpip_version[0]})不一致。"
-    )
-if fastpipver[1] < required_fastpip_version[1]:
-    raise Exception(
-        f"当前环境的 fastpip 模块次版本号({fastpipver[1]})低于"
-        f"本程序要求的次版本号({required_fastpip_version[1]})。"
-    )
-
 import os
 import shutil
 import sys
-from copy import deepcopy
 from platform import machine, platform
 
 from chardet import detect
-from fastpip import all_py_paths, cur_py_path, parse_package_names
+from fastpip import VERNUM, all_py_paths, cur_py_path, parse_package_names
 from PyQt5.QtCore import QRegExp, QSize, Qt, pyqtSignal
 from PyQt5.QtGui import (
     QCloseEvent,
@@ -82,10 +65,21 @@ from settings import *
 from ui import *
 from utils import *
 from utils.cip import ImportInspector
-from utils.main import Option, PyEnv, get_res_path, open_explorer
+from utils.main import PyEnv, get_res_path, open_explorer
 from utils.pyi import PyiTool
 from utils.qt import QLineEditMod, QTextEditMod
 from utils.venv import VirtualEnv
+
+required_fastpip_version = (1, 0, 0)
+
+if VERNUM[0] != required_fastpip_version[0]:
+    raise Exception(
+        f"当前环境的 fastpip 模块主版本号({VERNUM[0]})非本程序要求的主版本号({required_fastpip_version[0]})。"
+    )
+if VERNUM[1] < required_fastpip_version[1]:
+    raise Exception(
+        f"当前环境的 fastpip 模块次版本号({VERNUM[1]})低于本程序要求的次版本号({required_fastpip_version[1]})。"
+    )
 
 QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))
 QREV_FILE_NAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
@@ -766,14 +760,14 @@ class AskFilePath(QWidget):
 
 
 class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
-    def __init__(self, parent):
+    def __init__(self, parent: PackageManagerWindow):
         super().__init__(parent)
         self.setupUi(self)
         self._setup_other_widgets()
         self.current_env = None
         self.package_names = None
         self.signal_slot_connection()
-        self.__parent: PackageManagerWindow = parent
+        self.__parent = parent
         self.last_path = self.__parent.config.last_path
 
     def _setup_other_widgets(self):
@@ -923,22 +917,20 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         self.le_indexurl.clear()
 
     def __check_name_url(self, name, url):
-        error = lambda m: MessageBox("错误", m, QMessageBox.Critical)
+        def error(m):
+            return MessageBox("错误", m, QMessageBox.Critical)
+
         if not name:
-            error = error("名称不能为空！")
+            msgbox = error("名称不能为空！")
         elif not url:
-            error = error("地址不能为空！")
+            msgbox = error("地址不能为空！")
         elif not check_index_url(url):
-            error = error("无效的镜像源地址！")
+            msgbox = error("无效的镜像源地址！")
         elif name in self.__config.index_urls:
-            error = error(f"名称'{name}'已存在！")
+            msgbox = error(f"名称'{name}'已存在！")
         else:
             return True
-        # exec_返回信息窗口的关闭方式数字
-        # 信息提示窗口默认只有确定按钮
-        # 只有1个按钮情况下点击按钮和直接关闭窗口都返回0
-        # 所以只要触发提示信息窗口，肯定返回0
-        return error.exec_()
+        return msgbox.exec_()  # 无论如何都返回 0
 
     def __save_index_urls(self):
         name = self.le_urlname.text()
@@ -993,22 +985,24 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
             ).exec_()
 
     def __set_global_index_url(self):
+        def warning(m):
+            return MessageBox("提示", m, QMessageBox.Warning)
+
         url = self.le_indexurl.text()
-        warn_box = lambda m: MessageBox("提示", m, QMessageBox.Warning)
         if not url:
-            warn_box = warn_box("要设置为全局镜像源的地址不能为空！")
+            warn_box = warning("要设置为全局镜像源的地址不能为空！")
         elif not check_index_url(url):
-            warn_box = warn_box("镜像源地址不符合 pip 镜像源地址格式。")
+            warn_box = warning("镜像源地址不符合 pip 镜像源地址格式。")
         else:
             environ = self.__get_cur_environ()
             if not environ:
-                warn_box = warn_box(
+                warn_box = warning(
                     "没找到 Python 环境，全局镜像源设置失败。\n请在<包管理器>中添加 Python 环境。",
                 )
             elif environ.set_global_index(url):
                 warn_box = MessageBox("提示", f"全局镜像源地址设置成功：\n{url}")
             else:
-                warn_box = warn_box(
+                warn_box = warning(
                     "全局镜像源设置失败，请确保<包管理器>中第一个环境的 pip 可用或系统环境变量 PATH 中有可用的 Python 路径。"
                 )
         warn_box.exec_()
@@ -1987,12 +1981,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
 
 class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
-    def __init__(self, parent):
+    def __init__(self, parent: PyinstallerToolWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.signal_slot_connection()
         self._normal_size = self.size()
-        self.__parent: PyinstallerToolWindow = parent
+        self.__parent = parent
         self.envlist = None
 
     def signal_slot_connection(self):
@@ -2291,17 +2285,17 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
         def do_download():
             saved_path = ""
             self.set_download_table.emit(pkg_names)
-            for index, name in enumerate(pkg_names):
-                self.download_status.emit(index, "下载中...")
+            for ind, name in enumerate(pkg_names):
+                self.download_status.emit(ind, "下载中...")
                 try:
                     status = env.download(name, **config)
                     if status[0]:
-                        self.download_status.emit(index, "下载完成")
+                        self.download_status.emit(ind, "下载完成")
                     else:
-                        self.download_status.emit(index, "下载失败")
+                        self.download_status.emit(ind, "下载失败")
                 except Exception:
                     status = False, ""
-                    self.download_status.emit(index, "下载失败")
+                    self.download_status.emit(ind, "下载失败")
                 if status[1]:
                     saved_path = status[1]
             self.download_completed.emit(saved_path)
@@ -2314,7 +2308,8 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
         thread_download.start()
         self.repo.put(thread_download, 0)
 
-    def check_download(self, dest):
+    @staticmethod
+    def check_download(dest):
         if not dest:
             return MessageBox(
                 "提示",
