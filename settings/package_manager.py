@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from .abstract_settings import AbstractSettings
+from .abstract_config import AbstractConfig
 
 _shared_saved_pypaths = None
 
@@ -9,7 +9,7 @@ def get_shared_pypaths():
     return _shared_saved_pypaths
 
 
-class PackageManagerSettings(AbstractSettings):
+class PackageManagerConfig(AbstractConfig):
     """包管理器的设置类"""
 
     key_python_paths = "python_paths"

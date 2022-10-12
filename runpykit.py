@@ -32,40 +32,19 @@ import sys
 from platform import machine, platform
 
 from chardet import detect
-from fastpip import VERNUM, all_py_paths, cur_py_path, parse_package_names
-from PyQt5.QtCore import QRegExp, QSize, Qt, pyqtSignal
-from PyQt5.QtGui import (
-    QCloseEvent,
-    QColor,
-    QFont,
-    QIcon,
-    QMoveEvent,
-    QMovie,
-    QRegExpValidator,
-    QResizeEvent,
-)
-from PyQt5.QtWidgets import (
-    QApplication,
-    QFileDialog,
-    QHBoxLayout,
-    QHeaderView,
-    QInputDialog,
-    QLabel,
-    QListWidgetItem,
-    QMainWindow,
-    QMessageBox,
-    QTableWidgetItem,
-    QWidget,
-)
+from fastpip import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
-from com.mapping import importable_published
+from com.mapping import import_publishing
 from info import VERSION
 from res.res import *
 from settings import *
 from ui import *
 from utils import *
 from utils.cip import ImportInspector
-from utils.main import PyEnv, get_res_path, open_explorer
+from utils.main import PyEnv, open_explorer
 from utils.pyi import PyiTool
 from utils.qt import QLineEditMod, QTextEditMod
 from utils.venv import VirtualEnv
@@ -129,7 +108,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
     @staticmethod
     def __show_about():
-        about_path = get_res_path("help", "About.html")
+        about_path = generate_respath("help", "About.html")
         try:
             with open(about_path, encoding="utf-8") as h:
                 info = h.read().replace("0.0.0", VERSION)
@@ -144,13 +123,13 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
-        self._setup_other_widgets()
-        self.config = PackageManagerSettings()
+        self.__setup_other_widgets()
+        self.config = PackageManagerConfig()
         self.__output = GenericOutputWindow(self, "输出流")
         self.__ophandle = PyEnv.register(self.__output.add_line)
         self.__install_win = PackageInstallWindow(self)
         self.signal_slot_connection()
-        self.env_list = get_pyenv_list(self.config.pypaths)
+        self.env_list = [PyEnv(p) for p in self.config.pypaths]
         self.path_list = [env.env_path for env in self.env_list]
         self.cur_pkgs_info = {}
         self.__reverseds = [True, True, True, True]
@@ -158,7 +137,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.repo = ThreadRepo(500)
         self.__normal_size = self.size()
 
-    def _setup_other_widgets(self):
+    def __setup_other_widgets(self):
         self.tw_installed_info.setColumnWidth(0, 220)
         horiz_head = self.tw_installed_info.horizontalHeader()
         horiz_head.setSectionResizeMode(0, QHeaderView.Interactive)
@@ -857,7 +836,7 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
-        self.__config = IndexManagerSettings()
+        self.__config = IndexManagerConfig()
         self.__ordered_urls = None
         self.signal_slot_connection()
         self.__normal_size = self.size()
@@ -1018,10 +997,11 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
 
 
 class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
-    pyiver_fmt = "Pyinstaller - {}"
     signal_update_pyinfo = pyqtSignal(str)
     signal_update_pyiinfo = pyqtSignal(str)
     signal_update_pyipbtext = pyqtSignal(str)
+    PYIVER_FMT = "Pyinstaller - {}"
+    COMBOBOX_DEFITEM = "当前打包配置"
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -1054,8 +1034,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         self.__setup_other_widgets()
         self.repo = ThreadRepo(500)
-        self.COMBOBOX_NAME = "当前打包配置"
-        self.pyi_config = PyinstallerToolSettings()
+        self.pyiconfig = PyinstallerToolConfig()
         self.toolwin_venv = None
         self.toolwin_pyenv = None
         self.__handle = None
@@ -1078,7 +1057,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
         self.config_widgets_to_cfg()
-        self.pyi_config.save_config()
+        self.pyiconfig.save_config()
 
     def show(self):
         super().show()
@@ -1182,9 +1161,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def check_project_imports(self):
         self.config_widgets_to_cfg()
-        self.toolwin_venv = VirtualEnv(self.pyi_config.curconfig.project_root)
+        self.toolwin_venv = VirtualEnv(self.pyiconfig.curconfig.project_root)
         self.toolwin_venv.find_project_venv()
-        if self.pyi_config.curconfig.prioritize_venv:
+        if self.pyiconfig.curconfig.prioritize_venv:
             if not self.toolwin_venv.venv_exists:
                 return MessageBox(
                     "提示",
@@ -1201,7 +1180,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
             return
-        project_root = self.pyi_config.curconfig.project_root
+        project_root = self.pyiconfig.curconfig.project_root
         if not project_root:
             MessageBox(
                 "提示",
@@ -1216,7 +1195,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
             return
-        dist_dir = self.pyi_config.curconfig.distribution_dir
+        dist_dir = self.pyiconfig.curconfig.distribution_dir
         if not dist_dir:
             dist_dir = os.path.join(project_root, "dist")
         elif not os.path.isabs(dist_dir):
@@ -1233,7 +1212,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 [self.toolwin_venv.env_path, dist_dir],
             )
             if (
-                self.pyi_config.curconfig.encryption_key
+                self.pyiconfig.curconfig.encryption_key
                 and "tinyaes" not in inspector.importables
             ):
                 missings.append(("字节码加密功能", {}, {"tinyaes"}))
@@ -1257,7 +1236,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def set_le_program_entry(self):
         selected_file = self.__ask_file_or_dir_path(
             "选择程序启动入口",
-            self.pyi_config.curconfig.project_root,
+            self.pyiconfig.curconfig.project_root,
             file_filter="脚本文件 (*.py *.pyc *.pyw *.spec)",
         )[0]
         if not selected_file:
@@ -1267,11 +1246,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def set_le_project_root(self):
         root = os.path.dirname(self.le_program_entry.text())
         self.le_project_root.setText(root)
-        self.pyi_config.curconfig.project_root = root
+        self.pyiconfig.curconfig.project_root = root
 
     def set_te_module_search_path(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "其他模块搜索目录", self.pyi_config.curconfig.project_root, cht="dir"
+            "其他模块搜索目录", self.pyiconfig.curconfig.project_root, cht="dir"
         )[0]
         if not selected_dir:
             return
@@ -1279,7 +1258,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_te_other_data(self):
         selected_files = self.__ask_file_or_dir_path(
-            "选择非源码资源文件", self.pyi_config.curconfig.project_root, mult=True
+            "选择非源码资源文件", self.pyiconfig.curconfig.project_root, mult=True
         )
         if not selected_files:
             return
@@ -1288,7 +1267,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def set_le_file_icon_path(self):
         selected_file = self.__ask_file_or_dir_path(
             "选择可执行文件图标",
-            self.pyi_config.curconfig.project_root,
+            self.pyiconfig.curconfig.project_root,
             file_filter="图标文件 (*.ico *.icns)",
         )[0]
         if not selected_file:
@@ -1298,7 +1277,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def set_le_spec_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
             "选择SPEC文件储存目录",
-            self.pyi_config.curconfig.project_root,
+            self.pyiconfig.curconfig.project_root,
             cht="dir",
         )[0]
         if not selected_dir:
@@ -1307,7 +1286,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_temp_working_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择临时文件目录", self.pyi_config.curconfig.project_root, cht="dir"
+            "选择临时文件目录", self.pyiconfig.curconfig.project_root, cht="dir"
         )[0]
         if not selected_dir:
             return
@@ -1315,7 +1294,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_output_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择生成文件储存目录", self.pyi_config.curconfig.project_root, cht="dir"
+            "选择生成文件储存目录", self.pyiconfig.curconfig.project_root, cht="dir"
         )[0]
         if not selected_dir:
             return
@@ -1323,7 +1302,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_upx_search_path(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择UPX程序搜索目录", self.pyi_config.curconfig.project_root, cht="dir"
+            "选择UPX程序搜索目录", self.pyiconfig.curconfig.project_root, cht="dir"
         )[0]
         if not selected_dir:
             return
@@ -1372,111 +1351,111 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         ]
         self.pyi_tool.initialize(
             self.toolwin_pyenv.env_path,
-            self.pyi_config.curconfig.project_root,
+            self.pyiconfig.curconfig.project_root,
         )
         self.load_version_information_lazily(refresh=False)
 
     def config_cfg_to_widgets(self, cfg_name):
         if cfg_name is not None:
-            self.pyi_config.checkout_cfg(cfg_name)
+            self.pyiconfig.checkout_cfg(cfg_name)
         self.update_configure_combobox_items()
         self.load_version_information_lazily(refresh=True)
-        self.le_program_entry.setText(self.pyi_config.curconfig.script_path)
-        self.le_project_root.setText(self.pyi_config.curconfig.project_root)
+        self.le_program_entry.setText(self.pyiconfig.curconfig.script_path)
+        self.le_project_root.setText(self.pyiconfig.curconfig.project_root)
         self.te_module_search_path.setText(
-            "\n".join(self.pyi_config.curconfig.module_paths)
+            "\n".join(self.pyiconfig.curconfig.module_paths)
         )
         self.te_other_data.setText(
-            "\n".join(pg[0] for pg in self.pyi_config.curconfig.other_datas)
+            "\n".join(pg[0] for pg in self.pyiconfig.curconfig.other_datas)
         )
-        self.le_file_icon_path.setText(self.pyi_config.curconfig.icon_path)
-        if self.pyi_config.curconfig.onedir_bundle:
+        self.le_file_icon_path.setText(self.pyiconfig.curconfig.icon_path)
+        if self.pyiconfig.curconfig.onedir_bundle:
             self.rb_pack_to_one_dir.setChecked(True)
         else:
             self.rb_pack_to_one_file.setChecked(True)
         self.cb_execute_with_console.setChecked(
-            self.pyi_config.curconfig.provide_console
+            self.pyiconfig.curconfig.provide_console
         )
-        self.cb_without_confirm.setChecked(self.pyi_config.curconfig.no_confirm)
-        self.cb_use_upx.setChecked(not self.pyi_config.curconfig.donot_use_upx)
-        self.cb_clean_before_build.setChecked(self.pyi_config.curconfig.clean_building)
-        self.cb_write_info_to_exec.setChecked(self.pyi_config.curconfig.add_verfile)
-        self.le_temp_working_dir.setText(self.pyi_config.curconfig.working_dir)
-        self.le_output_dir.setText(self.pyi_config.curconfig.distribution_dir)
-        self.le_spec_dir.setText(self.pyi_config.curconfig.spec_dir)
-        self.le_upx_search_path.setText(self.pyi_config.curconfig.upx_dir)
+        self.cb_without_confirm.setChecked(self.pyiconfig.curconfig.no_confirm)
+        self.cb_use_upx.setChecked(not self.pyiconfig.curconfig.donot_use_upx)
+        self.cb_clean_before_build.setChecked(self.pyiconfig.curconfig.clean_building)
+        self.cb_write_info_to_exec.setChecked(self.pyiconfig.curconfig.add_verfile)
+        self.le_temp_working_dir.setText(self.pyiconfig.curconfig.working_dir)
+        self.le_output_dir.setText(self.pyiconfig.curconfig.distribution_dir)
+        self.le_spec_dir.setText(self.pyiconfig.curconfig.spec_dir)
+        self.le_upx_search_path.setText(self.pyiconfig.curconfig.upx_dir)
         self.te_upx_exclude_files.setText(
-            "\n".join(self.pyi_config.curconfig.upx_excludes)
+            "\n".join(self.pyiconfig.curconfig.upx_excludes)
         )
-        self.le_output_name.setText(self.pyi_config.curconfig.bundle_spec_name)
-        self.cb_log_level.setCurrentText(self.pyi_config.curconfig.log_level)
+        self.le_output_name.setText(self.pyiconfig.curconfig.bundle_spec_name)
+        self.cb_log_level.setCurrentText(self.pyiconfig.curconfig.log_level)
         self.set_file_ver_info_text()
         self.set_pyi_debug_options()
-        self.le_runtime_tmpdir.setText(self.pyi_config.curconfig.runtime_tmpdir)
-        self.cb_prioritize_venv.setChecked(self.pyi_config.curconfig.prioritize_venv)
+        self.le_runtime_tmpdir.setText(self.pyiconfig.curconfig.runtime_tmpdir)
+        self.cb_prioritize_venv.setChecked(self.pyiconfig.curconfig.prioritize_venv)
         self.le_bytecode_encryption_key.setText(
-            self.pyi_config.curconfig.encryption_key
+            self.pyiconfig.curconfig.encryption_key
         )
-        self.cb_explorer_show.setChecked(self.pyi_config.curconfig.open_dist_folder)
+        self.cb_explorer_show.setChecked(self.pyiconfig.curconfig.open_dist_folder)
         self.cb_delete_working_dir.setChecked(
-            self.pyi_config.curconfig.delete_working_dir
+            self.pyiconfig.curconfig.delete_working_dir
         )
-        self.cb_delete_spec_file.setChecked(self.pyi_config.curconfig.delete_spec_file)
+        self.cb_delete_spec_file.setChecked(self.pyiconfig.curconfig.delete_spec_file)
         self.pte_hidden_imports.setPlainText(
-            "\n".join(self.pyi_config.curconfig.hidden_imports)
+            "\n".join(self.pyiconfig.curconfig.hidden_imports)
         )
         self.pte_exclude_modules.setPlainText(
-            "\n".join(self.pyi_config.curconfig.exclude_modules)
+            "\n".join(self.pyiconfig.curconfig.exclude_modules)
         )
-        self.cb_uac_admin.setChecked(self.pyi_config.curconfig.uac_admin)
+        self.cb_uac_admin.setChecked(self.pyiconfig.curconfig.uac_admin)
 
     def config_widgets_to_cfg(self):
-        self.pyi_config.curconfig.script_path = self.le_program_entry.local_path
-        self.pyi_config.curconfig.bundle_spec_name = self.le_output_name.text()
+        self.pyiconfig.curconfig.script_path = self.le_program_entry.local_path
+        self.pyiconfig.curconfig.bundle_spec_name = self.le_output_name.text()
         project_root = self.le_project_root.text()
-        self.pyi_config.curconfig.project_root = project_root
-        self.pyi_config.curconfig.module_paths = self.te_module_search_path.local_paths
-        self.pyi_config.curconfig.other_datas = self.__gen_abs_rel_groups(project_root)
-        self.pyi_config.curconfig.icon_path = self.le_file_icon_path.local_path
-        self.pyi_config.curconfig.onedir_bundle = self.rb_pack_to_one_dir.isChecked()
-        self.pyi_config.curconfig.provide_console = (
+        self.pyiconfig.curconfig.project_root = project_root
+        self.pyiconfig.curconfig.module_paths = self.te_module_search_path.local_paths
+        self.pyiconfig.curconfig.other_datas = self.__gen_abs_rel_groups(project_root)
+        self.pyiconfig.curconfig.icon_path = self.le_file_icon_path.local_path
+        self.pyiconfig.curconfig.onedir_bundle = self.rb_pack_to_one_dir.isChecked()
+        self.pyiconfig.curconfig.provide_console = (
             self.cb_execute_with_console.isChecked()
         )
-        self.pyi_config.curconfig.no_confirm = self.cb_without_confirm.isChecked()
-        self.pyi_config.curconfig.donot_use_upx = not self.cb_use_upx.isChecked()
-        self.pyi_config.curconfig.clean_building = (
+        self.pyiconfig.curconfig.no_confirm = self.cb_without_confirm.isChecked()
+        self.pyiconfig.curconfig.donot_use_upx = not self.cb_use_upx.isChecked()
+        self.pyiconfig.curconfig.clean_building = (
             self.cb_clean_before_build.isChecked()
         )
-        self.pyi_config.curconfig.add_verfile = self.cb_write_info_to_exec.isChecked()
-        self.pyi_config.curconfig.working_dir = self.le_temp_working_dir.text()
-        self.pyi_config.curconfig.distribution_dir = self.le_output_dir.text()
-        self.pyi_config.curconfig.spec_dir = self.le_spec_dir.text()
-        self.pyi_config.curconfig.upx_dir = self.le_upx_search_path.text()
-        self.pyi_config.curconfig.upx_excludes = [
+        self.pyiconfig.curconfig.add_verfile = self.cb_write_info_to_exec.isChecked()
+        self.pyiconfig.curconfig.working_dir = self.le_temp_working_dir.text()
+        self.pyiconfig.curconfig.distribution_dir = self.le_output_dir.text()
+        self.pyiconfig.curconfig.spec_dir = self.le_spec_dir.text()
+        self.pyiconfig.curconfig.upx_dir = self.le_upx_search_path.text()
+        self.pyiconfig.curconfig.upx_excludes = [
             s for s in self.te_upx_exclude_files.toPlainText().split("\n") if s
         ]
         if self.toolwin_pyenv is not None:
-            self.pyi_config.curconfig.environ_path = self.toolwin_pyenv.env_path
-        self.pyi_config.curconfig.log_level = self.cb_log_level.currentText()
-        self.pyi_config.curconfig.version_info = self.file_ver_info_text()
-        self.pyi_config.curconfig.debug_options = self.get_pyi_debug_options()
-        self.pyi_config.curconfig.runtime_tmpdir = self.le_runtime_tmpdir.text()
-        self.pyi_config.curconfig.prioritize_venv = self.cb_prioritize_venv.isChecked()
-        self.pyi_config.curconfig.encryption_key = (
+            self.pyiconfig.curconfig.environ_path = self.toolwin_pyenv.env_path
+        self.pyiconfig.curconfig.log_level = self.cb_log_level.currentText()
+        self.pyiconfig.curconfig.version_info = self.file_ver_info_text()
+        self.pyiconfig.curconfig.debug_options = self.get_pyi_debug_options()
+        self.pyiconfig.curconfig.runtime_tmpdir = self.le_runtime_tmpdir.text()
+        self.pyiconfig.curconfig.prioritize_venv = self.cb_prioritize_venv.isChecked()
+        self.pyiconfig.curconfig.encryption_key = (
             self.le_bytecode_encryption_key.text()
         )
-        self.pyi_config.curconfig.open_dist_folder = self.cb_explorer_show.isChecked()
-        self.pyi_config.curconfig.delete_working_dir = (
+        self.pyiconfig.curconfig.open_dist_folder = self.cb_explorer_show.isChecked()
+        self.pyiconfig.curconfig.delete_working_dir = (
             self.cb_delete_working_dir.isChecked()
         )
-        self.pyi_config.curconfig.delete_spec_file = (
+        self.pyiconfig.curconfig.delete_spec_file = (
             self.cb_delete_spec_file.isChecked()
         )
-        self.pyi_config.curconfig.uac_admin = self.cb_uac_admin.isChecked()
-        self.pyi_config.curconfig.hidden_imports = [
+        self.pyiconfig.curconfig.uac_admin = self.cb_uac_admin.isChecked()
+        self.pyiconfig.curconfig.hidden_imports = [
             s for s in self.pte_hidden_imports.toPlainText().split("\n") if s
         ]
-        self.pyi_config.curconfig.exclude_modules = [
+        self.pyiconfig.curconfig.exclude_modules = [
             s for s in self.pte_exclude_modules.toPlainText().split("\n") if s
         ]
 
@@ -1500,7 +1479,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         }
 
     def set_pyi_debug_options(self):
-        dbo = self.pyi_config.curconfig.debug_options
+        dbo = self.pyiconfig.curconfig.debug_options
         self.cb_db_imports.setChecked(dbo.get("imports", False))
         self.cb_db_bootloader.setChecked(dbo.get("bootloader", False))
         self.cb_db_noarchive.setChecked(dbo.get("noarchive", False))
@@ -1522,7 +1501,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         }
 
     def set_file_ver_info_text(self):
-        version_info = self.pyi_config.curconfig.version_info
+        version_info = self.pyiconfig.curconfig.version_info
         self.le_file_description.setText(version_info.get("$FileDescription$", ""))
         self.le_company_name.setText(version_info.get("$CompanyName$", ""))
         for ind, val in enumerate(
@@ -1588,7 +1567,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def __check_requireds(self):
         self.config_widgets_to_cfg()
-        program_entry = self.pyi_config.curconfig.script_path
+        program_entry = self.pyiconfig.curconfig.script_path
         if not program_entry:
             MessageBox(
                 "错误",
@@ -1603,7 +1582,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Critical,
             ).exec_()
             return False
-        icon_path = self.pyi_config.curconfig.icon_path
+        icon_path = self.pyiconfig.curconfig.icon_path
         if icon_path != "" and not os.path.isfile(icon_path):
             MessageBox(
                 "错误",
@@ -1643,10 +1622,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.__release_widgets()
 
     def __get_program_name(self):
-        program_name = self.pyi_config.curconfig.bundle_spec_name
+        program_name = self.pyiconfig.curconfig.bundle_spec_name
         if not program_name:
             program_name = os.path.splitext(
-                os.path.basename(self.pyi_config.curconfig.script_path)
+                os.path.basename(self.pyiconfig.curconfig.script_path)
             )[0]
         return program_name
 
@@ -1659,12 +1638,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         final_execfn, ext = os.path.splitext(program_name)
         if ext.lower() != ".exe":
             final_execfn = program_name
-        dist_folder = self.pyi_config.curconfig.distribution_dir
+        dist_folder = self.pyiconfig.curconfig.distribution_dir
         if not dist_folder:
-            dist_folder = os.path.join(self.pyi_config.curconfig.project_root, "dist")
+            dist_folder = os.path.join(self.pyiconfig.curconfig.project_root, "dist")
         elif not os.path.isabs(dist_folder):
             dist_folder = os.path.join(
-                self.pyi_config.curconfig.project_root, dist_folder
+                self.pyiconfig.curconfig.project_root, dist_folder
             )
         explorer_selected = (
             os.path.join(dist_folder, sub_directory, final_execfn) + ".exe"
@@ -1672,12 +1651,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         open_explorer(explorer_selected, "select")
 
     def delete_spec_file(self):
-        spec_file_dir = self.pyi_config.curconfig.spec_dir
+        spec_file_dir = self.pyiconfig.curconfig.spec_dir
         if not spec_file_dir:
-            spec_file_dir = self.pyi_config.curconfig.project_root
+            spec_file_dir = self.pyiconfig.curconfig.project_root
         elif not os.path.isabs(spec_file_dir):
             spec_file_dir = os.path.join(
-                self.pyi_config.curconfig.project_root, spec_file_dir
+                self.pyiconfig.curconfig.project_root, spec_file_dir
             )
         program_name = self.__get_program_name()
         spec_file_path = os.path.join(spec_file_dir, program_name) + ".spec"
@@ -1690,14 +1669,14 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def delete_working_dir(self):
         program_name = self.__get_program_name()
-        custom_working_dir = self.pyi_config.curconfig.working_dir
+        custom_working_dir = self.pyiconfig.curconfig.working_dir
         if not custom_working_dir:
             working_dir_root = os.path.join(
-                self.pyi_config.curconfig.project_root, "build"
+                self.pyiconfig.curconfig.project_root, "build"
             )
         elif not os.path.isabs(custom_working_dir):
             working_dir_root = os.path.join(
-                self.pyi_config.curconfig.project_root, custom_working_dir
+                self.pyiconfig.curconfig.project_root, custom_working_dir
             )
         else:
             working_dir_root = os.path.join(custom_working_dir, program_name)
@@ -1725,7 +1704,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             ).exec_()
 
     def creating_virtualenv(self):
-        dist_dir = self.pyi_config.curconfig.distribution_dir
+        dist_dir = self.pyiconfig.curconfig.distribution_dir
         if not dist_dir:
             dist_dir = os.path.join(self.toolwin_venv.project, "dist")
         elif not os.path.isabs(dist_dir):
@@ -1740,7 +1719,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             for i in import_inspect.get_missing_items():
                 missings.update(i[2])
             missings.add("pyinstaller")
-            if self.pyi_config.curconfig.encryption_key:
+            if self.pyiconfig.curconfig.encryption_key:
                 missings.add("tinyaes")
             for pkg in missings:
                 self.toolwin_venv.install(pkg)
@@ -1761,8 +1740,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             if result != 0:
                 return
         self.te_pyi_out_stream.clear()
-        if self.pyi_config.curconfig.prioritize_venv:
-            self.toolwin_venv = VirtualEnv(self.pyi_config.curconfig.project_root)
+        if self.pyiconfig.curconfig.prioritize_venv:
+            self.toolwin_venv = VirtualEnv(self.pyiconfig.curconfig.project_root)
             self.__venv_creating_result = 0
             if not self.toolwin_venv.find_project_venv():
                 role = MessageBox(
@@ -1776,7 +1755,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                     ),
                 ).exec_()
                 if role == 0:
-                    using_py_path = self.pyi_config.curconfig.environ_path
+                    using_py_path = self.pyiconfig.curconfig.environ_path
                 elif role == 1:
                     if self.toolwin_pyenv is None or not self.toolwin_pyenv.env_path:
                         return MessageBox(
@@ -1804,14 +1783,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                     return MessageBox(
                         "错误", "项目目录下的虚拟环境创建失败。", QMessageBox.Critical
                     ).exec_()
-                # TODO 最好能实现在此分支下做环境中模块的检查，使用 NewTask 的 at_finish
-                # 重新执行 build_executable，但又不会因某模块安装失败而导致无限进入此分支
                 using_py_path = self.toolwin_venv.env_path
         else:
-            using_py_path = self.pyi_config.curconfig.environ_path
+            using_py_path = self.pyiconfig.curconfig.environ_path
         self.pyi_tool.initialize(
             using_py_path,
-            self.pyi_config.curconfig.project_root,
+            self.pyiconfig.curconfig.project_root,
         )
         if not self.pyi_tool.pyi_ready:
             MessageBox(
@@ -1821,7 +1798,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
             return
-        self.pyi_tool.prepare_cmd(self.pyi_config.curconfig)
+        self.pyi_tool.prepare_cmd(self.pyiconfig.curconfig)
         self.__handle = self.pyi_tool.handle()
         thread_build = QThreadModel(self.pyi_tool.execute_cmd)
         thread_build.at_start(
@@ -1847,7 +1824,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             (("accept", "确定"), ("reject", "取消")),
         ).exec_():
             return
-        if self.pyi_config.curconfig.prioritize_venv:
+        if self.pyiconfig.curconfig.prioritize_venv:
             environ = self.toolwin_venv
         else:
             environ = self.toolwin_pyenv
@@ -1855,10 +1832,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         def install_pkgs():
             names_for_install = set()
             for name in missings:
-                if name not in importable_published:
+                if name not in import_publishing:
                     names_for_install.add(name)
                 else:
-                    names_for_install.add(importable_published[name])
+                    names_for_install.add(import_publishing[name])
             for name in names_for_install:
                 environ.install(name)
 
@@ -1882,8 +1859,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def update_configure_combobox_items(self):
         self.uiComboBox_saved_config.clear()
-        self.uiComboBox_saved_config.addItem(self.COMBOBOX_NAME)
-        self.uiComboBox_saved_config.addItems(self.pyi_config.multicfg)
+        self.uiComboBox_saved_config.addItem(self.COMBOBOX_DEFITEM)
+        self.uiComboBox_saved_config.addItems(self.pyiconfig.multicfg)
 
     def store_current_config(self):
         text = self.uiLineEdit_config_remark.text()
@@ -1892,12 +1869,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 "提示",
                 "还没有输入备注名称。",
             ).exec_()
-        if text == self.COMBOBOX_NAME:
+        if text == self.COMBOBOX_DEFITEM:
             return MessageBox(
                 "提示",
                 f"不能用“{text}”作为备注名。",
             ).exec_()
-        if text in self.pyi_config.multicfg:
+        if text in self.pyiconfig.multicfg:
             result = MessageBox(
                 "提示",
                 f"当前配置列表已存在名为“{text}”的配置，是否覆盖？",
@@ -1908,19 +1885,19 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 return
         self.uiLineEdit_config_remark.clear()
         self.config_widgets_to_cfg()
-        self.pyi_config.store_curcfg(text)
+        self.pyiconfig.store_curcfg(text)
         self.update_configure_combobox_items()
         MessageBox("提示", f"配置已以此备注名保存：{text}。").exec_()
 
     def delete_selected_config(self):
-        if not len(self.pyi_config.multicfg):
+        if not len(self.pyiconfig.multicfg):
             return MessageBox("提示", "没有已保存的配置。").exec_()
         text = self.uiComboBox_saved_config.currentText()
         if not text:
             return MessageBox("提示", "没有选择任何配置。").exec_()
-        if text == self.COMBOBOX_NAME:
+        if text == self.COMBOBOX_DEFITEM:
             return
-        if text not in self.pyi_config.multicfg:
+        if text not in self.pyiconfig.multicfg:
             return
         if (
             MessageBox(
@@ -1932,30 +1909,30 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             != 0
         ):
             return
-        del self.pyi_config.multicfg[text]
+        del self.pyiconfig.multicfg[text]
         self.update_configure_combobox_items()
 
     def apply_selected_config(self):
-        if not len(self.pyi_config.multicfg):
+        if not len(self.pyiconfig.multicfg):
             return MessageBox("提示", "没有已保存的配置。").exec_()
         text = self.uiComboBox_saved_config.currentText()
         if not text:
             return MessageBox("提示", "没有选择任何配置。").exec_()
-        if text == self.COMBOBOX_NAME:
+        if text == self.COMBOBOX_DEFITEM:
             return
         self.config_cfg_to_widgets(text)
-        self.uiComboBox_saved_config.setCurrentText(self.COMBOBOX_NAME)
+        self.uiComboBox_saved_config.setCurrentText(self.COMBOBOX_DEFITEM)
 
     def load_version_information_lazily(self, refresh):
         """为显示 Python 和 Pyinstaller 版本信息这两个耗时操作提供延迟加载的方法"""
 
         def do_load_version_information():
             if refresh:
-                python_path = self.pyi_config.curconfig.environ_path
+                python_path = self.pyiconfig.curconfig.environ_path
                 if python_path:
                     self.toolwin_pyenv = PyEnv(python_path)
                     self.pyi_tool.initialize(
-                        python_path, self.pyi_config.curconfig.project_root
+                        python_path, self.pyiconfig.curconfig.project_root
                     )
             if self.toolwin_pyenv is None:
                 pyinfo = ""
@@ -1968,7 +1945,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                     pbtext = "安装"
                 else:
                     pbtext = "重新安装"
-                pyiinfo = self.pyiver_fmt.format(pyiinfo)
+                pyiinfo = self.PYIVER_FMT.format(pyiinfo)
             self.signal_update_pyinfo.emit(pyinfo)
             self.signal_update_pyiinfo.emit(pyiinfo)
             self.signal_update_pyipbtext.emit(pbtext)
@@ -2015,7 +1992,7 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
 
     def show(self):
         self.resize(self._normal_size)
-        self.envlist = get_pyenv_list(self.__parent.pyi_config.pypaths)
+        self.envlist = [PyEnv(p) for p in self.__parent.pyiconfig.pypaths]
         super().show()
         self.pyenv_list_update()
 
@@ -2062,7 +2039,7 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):
         self.tw_missing_imports.clearContents()
         self.tw_missing_imports.setRowCount(len(missing_data))
         for rowind, value in enumerate(missing_data):
-            # value[0] 即 filepath 为 None，按照 ImportInspector 类
+            # value[0] 即 filepath 为 None，按 ImportInspector 类
             # missing_items 特点，可知项目内没有可以打开的文件，直接中断
             if value[0] is None:
                 break
@@ -2096,7 +2073,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
         self.setupUi(self)
         self.env_paths = None
         self.environments = None
-        self.__pdconfig = PackageDownloadSettings()
+        self.__pdconfig = PackageDownloadConfig()
         self.__showdl_win = ShowDownloadWindow(self)
         self.signal_slot_connection()
         self.last_path = None
@@ -2158,7 +2135,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, AskFilePath):
         else:
             self.env_paths.clear()
         self.env_paths.extend(self.__pdconfig.cur_pypaths)
-        self.environments = get_pyenv_list(self.env_paths)
+        self.environments = [PyEnv(p) for p in self.env_paths]
         index = self.__pdconfig.derived_from
         text_list = [str(e) for e in self.environments]
         if index < 0 or index >= len(text_list):

@@ -1,14 +1,15 @@
 # coding: utf-8
 
-__doc__ = """包含pyinstaller相关的类或函数。"""
+__doc__ = """包含 pyinstaller 工具相关的类或函数。"""
 
 import os
-from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, STDOUT, SW_HIDE, Popen
+from subprocess import *
+
+from PyQt5.QtCore import *
 
 from info import NAME
-from PyQt5.QtCore import QObject, QTimer, pyqtSignal
-
-from utils.main import config_root, get_cmd_out
+from settings import config_root
+from utils.main import get_cmd_out
 
 
 class PyiTool(QObject):
@@ -56,7 +57,7 @@ class PyiTool(QObject):
         return bool(self.pyi_path)
 
     def initialize(self, py_path, cwd):
-        # 信任传入的py_path
+        # 信任传入的 py_path
         self._py_path = py_path
         self._cwd = cwd if cwd else None
         self._process = None

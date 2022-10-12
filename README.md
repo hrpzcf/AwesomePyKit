@@ -7,8 +7,8 @@ Python 工具箱 - Awespykit
 [![GitHub stars](https://img.shields.io/github/stars/hrpzcf/AwesomePyKit?label=Stars&logo=github)](https://github.com/hrpzcf/AwesomePyKit/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/hrpzcf/AwesomePyKit?label=Forks&logo=github)](https://github.com/hrpzcf/AwesomePyKit/network)
 [![GitHub issues](https://img.shields.io/github/issues/hrpzcf/AwesomePyKit?label=Issues&logo=github)](https://github.com/hrpzcf/AwesomePyKit/issues)
-[![GitHub license](https://img.shields.io/github/v/release/hrpzcf/AwesomePyKit?label=Release&logo=github)](https://github.com/hrpzcf/AwesomePyKit/releases)
 [![GitHub license](https://img.shields.io/github/license/hrpzcf/AwesomePyKit?color=red&label=License)](https://github.com/hrpzcf/AwesomePyKit/blob/main/LICENSE)
+[![GitHub license](https://img.shields.io/github/v/release/hrpzcf/AwesomePyKit?label=Release&logo=github)](https://github.com/hrpzcf/AwesomePyKit/releases)
 
 </div>
 

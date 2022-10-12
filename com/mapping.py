@@ -1,8 +1,8 @@
 # coding: utf-8
 
-__doc__ = "模块的 import 使用名与模块的发布名映射表"
+__doc__ = "模块的 import 使用名与模块的发布名对照表"
 
-importable_published = {
+import_publishing = {
     "PIL": "Pillow",
     "PyISAPI_loader": "pywin32",
     "adodbapi": "pywin32",
@@ -101,8 +101,3 @@ importable_published = {
     "winxpgui": "pywin32",
     "winxptheme": "pywin32",
 }
-
-# pkgs = [i for i in importable_published_map.items()]
-# pkgs.sort(key=lambda x: x[0])
-# importable_published_map = dict(pkgs)
-# print(importable_published_map)

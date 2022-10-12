@@ -1,10 +1,10 @@
 # coding: utf-8
 
-from .abstract_settings import AbstractSettings
-from  .package_manager import get_shared_pypaths
+from .abstract_config import AbstractConfig
+from .package_manager import get_shared_pypaths
 
 
-class PackageDownloadSettings(AbstractSettings):
+class PackageDownloadConfig(AbstractConfig):
     """模块安装包下载器的设置类"""
 
     key_package_names = "package_names"

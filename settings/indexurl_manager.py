@@ -2,11 +2,11 @@
 
 from fastpip import index_urls
 
-from .abstract_settings import AbstractSettings
+from .abstract_config import AbstractConfig
 from .package_manager import get_shared_pypaths
 
 
-class IndexManagerSettings(AbstractSettings):
+class IndexManagerConfig(AbstractConfig):
     key_index_urls = "index_urls"
 
     CONFIGFILE = "indexurl_manager.json"

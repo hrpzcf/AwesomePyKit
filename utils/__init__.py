@@ -7,15 +7,9 @@ __all__ = [
     "check_py_path",
     "clean_index_urls",
     "clean_py_paths",
-    "config_root",
-    "config_pyinstaller_tool",
     "get_cmd_out",
-    "get_pyenv_list",
-    "get_res_path",
-    "load_config",
     "loop_install",
     "loop_uninstall",
-    "save_config",
 ]
 
 from .main import (
@@ -25,13 +19,7 @@ from .main import (
     check_py_path,
     clean_index_urls,
     clean_py_paths,
-    config_pyinstaller_tool,
-    config_root,
     get_cmd_out,
-    get_pyenv_list,
-    get_res_path,
-    load_config,
     loop_install,
     loop_uninstall,
-    save_config,
 )

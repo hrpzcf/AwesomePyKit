@@ -102,7 +102,8 @@ class ImportInspector:
         self.importables = self.__project_importables()
         self.importables.update(PyEnv(python_dir).names_for_import())
 
-    def __modules_tobe_imported(self, string):
+    @staticmethod
+    def __modules_tobe_imported(string):
         """
         查找并返回 string 中所有需要导入的模块集合
         """

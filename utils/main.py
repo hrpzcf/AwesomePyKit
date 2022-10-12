@@ -2,97 +2,13 @@
 
 __doc__ = """包含AwesomePyKit的主要类、函数、配置文件路径等。"""
 
-import json
-import os
 import os.path as op
 import re
 import subprocess
-import sys
-from subprocess import PIPE, STARTF_USESHOWWINDOW, STARTUPINFO, SW_HIDE, Popen
+from subprocess import *
 
 from fastpip import PyEnv
-from PyQt5.QtCore import QMutex, QThread, QTimer
-
-_program_runs_in_bundle_mode = getattr(sys, "frozen", False)
-if _program_runs_in_bundle_mode:
-    _res_root = sys._MEIPASS
-else:
-    _res_root = op.dirname(op.dirname(op.abspath(__file__)))
-_appdata_local_folder = os.getenv("LOCALAPPDATA")
-if not _appdata_local_folder:
-    if _program_runs_in_bundle_mode:
-        config_root = op.dirname(sys.executable)
-    else:
-        config_root = _res_root
-else:
-    config_root = op.join(_appdata_local_folder, "Awespykit")
-config_root = op.join(config_root, "config")
-
-config_pyinstaller_tool = op.join(config_root, "pyinstaller_tool.json")
-
-
-def get_res_path(*p):
-    """
-    用于在不同运行环境之下获取正确的资源文件路径
-
-    不同的运行环境：Python 源代码运行、Pyinstaller 打包为单文件运行/打包为单目录运行
-    """
-    return op.join(_res_root, *p)
-
-
-def _load_json(json_path, get_data):
-    """
-    如果 json_path 文件不存在或无法读取，则调用 get_data 函数取值并返回该值
-    """
-    if not op.exists(json_path):
-        data = get_data()
-        try:
-            with open(json_path, "wt", encoding="utf-8") as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
-        except Exception:
-            pass
-        return data
-    try:
-        with open(json_path, "rt", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return get_data()
-
-
-class Option:
-    """枚举，用于 load_config 和 save_config 函数的 option 参数"""
-
-    PKG_INSTALL = 0  # 包管理器“安装”界面设置
-    PKG_MANAGER = 1  # 包管理器的环境路径列表
-    PYINSTALLER = 2  # 程序打包工具设置
-    INDEX_MANAGER = 3  # 镜像源设置工具保存的地址
-    PKG_DOWNLOAD = 4  # 模块下载器的设置
-
-
-def load_config(option):
-    if not op.exists(config_root):
-        os.makedirs(config_root)
-    if option == Option.PYINSTALLER:
-        return _load_json(config_pyinstaller_tool, list)
-    assert False, f"选项错误：{option}"
-
-
-def save_config(sequence, option):
-    if option == Option.PYINSTALLER:
-        pth = config_pyinstaller_tool
-    else:
-        raise Exception(f"选项错误：{option}")
-    try:
-        with open(pth, "wt", encoding="utf-8") as f:
-            json.dump(sequence, f, indent=4, ensure_ascii=False)
-    except Exception:
-        pass
-
-
-def get_pyenv_list(paths=None):
-    if not paths:
-        paths = load_config(Option.PKG_MANAGER)
-    return [PyEnv(p) for p in paths]
+from PyQt5.QtCore import *
 
 
 def loop_install(

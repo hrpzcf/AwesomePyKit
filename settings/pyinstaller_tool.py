@@ -1,11 +1,12 @@
 # coding: utf-8
 
 from copy import deepcopy
-from .abstract_settings import AbstractSettings
+
+from .abstract_config import AbstractConfig
 from .package_manager import get_shared_pypaths
 
 
-class PyiSettings(dict):
+class PyiConfigure(dict):
     _key_script_path = "script_path"
     _key_project_root = "project_root"
     _key_bundle_spec_name = "bundle_spec_name"
@@ -324,7 +325,7 @@ class PyiSettings(dict):
         self[self._key_exclude_modules] = value
 
 
-class PyinstallerToolSettings(AbstractSettings):
+class PyinstallerToolConfig(AbstractConfig):
     _key_current = "current"
     _key_multi_cfg = "multicfg"
 
@@ -363,11 +364,11 @@ class PyinstallerToolSettings(AbstractSettings):
         return self[self._key_multi_cfg]
 
     @property
-    def curconfig(self) -> PyiSettings:
+    def curconfig(self) -> PyiConfigure:
         if self._key_current not in self:
-            self[self._key_current] = PyiSettings()
-        elif not isinstance(self[self._key_current], PyiSettings):
-            new_pyi_settings = PyiSettings()
+            self[self._key_current] = PyiConfigure()
+        elif not isinstance(self[self._key_current], PyiConfigure):
+            new_pyi_settings = PyiConfigure()
             new_pyi_settings.update(self[self._key_current])
             self[self._key_current] = new_pyi_settings
         return self[self._key_current]

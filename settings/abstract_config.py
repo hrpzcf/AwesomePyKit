@@ -1,12 +1,37 @@
 # coding: utf-8
 
 import json
+import os
+import os.path as op
+import sys
 from pathlib import Path
 
-from . import config_root
+_runs_in_bundle_mode = getattr(sys, "frozen", False)
+if _runs_in_bundle_mode:
+    _res_root = sys._MEIPASS
+else:
+    _res_root = op.dirname(op.dirname(op.abspath(__file__)))
+_appdata_local_folder = os.getenv("LOCALAPPDATA")
+if not _appdata_local_folder:
+    if _runs_in_bundle_mode:
+        config_root = op.dirname(sys.executable)
+    else:
+        config_root = _res_root
+else:
+    config_root = op.join(_appdata_local_folder, "Awespykit")
+config_root = op.join(config_root, "config")
 
 
-class AbstractSettings(dict):
+def generate_respath(*p):
+    """
+    用于在不同运行环境之下获取正确的资源文件路径
+
+    不同的运行环境：Python 源代码运行、Pyinstaller 打包为单文件运行/打包为单目录运行
+    """
+    return op.join(_res_root, *p)
+
+
+class AbstractConfig(dict):
     root = Path(config_root)
 
     def __init__(self, fname):

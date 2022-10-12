@@ -1,17 +1,15 @@
 # coding: utf-8
 
-__doc__ = "项目目录下虚拟环境的创建、使用工具包"
+__doc__ = "项目目录下虚拟环境的工具包"
 
 from os import listdir, path
 from random import randint
 
-from fastpip import PyEnv
-from fastpip.core.fastpip import _execute_cmd
-from fastpip.utils.cmdutil import Command
+from fastpip import *
 
-CMD_PREFIX = ("-m", "venv")
-VENV_PREFIX = "venv_"
-VENV_CONFIG_FILE = "pyvenv.cfg"
+_CMD_PREFIX = ("-m", "venv")
+_VENVPREFIX = "venv_"
+_VENV_CFGFILE = "pyvenv.cfg"
 
 
 class VirtualEnv(PyEnv):
@@ -37,7 +35,7 @@ class VirtualEnv(PyEnv):
             return False
         for p in names:
             fullpath = path.join(self.__project, p)
-            if path.exists(path.join(fullpath, VENV_CONFIG_FILE)):
+            if path.exists(path.join(fullpath, _VENV_CFGFILE)):
                 self.path = fullpath
                 self.__venv_exist = True
                 break
@@ -50,14 +48,13 @@ class VirtualEnv(PyEnv):
     def create_project_venv(self, interpreter):
         if not self.project:
             return False
-        dir_name = "%s%d" % (VENV_PREFIX, randint(1000, 9999))
         while True:
+            dir_name = "%s%d" % (_VENVPREFIX, randint(1000, 9999))
             venv_fullpath = path.join(self.__project, dir_name)
             if not path.exists(venv_fullpath):
                 break
-            dir_name = "%s%d" % (VENV_PREFIX, randint(1000, 9999))
-        cmds = Command(interpreter, *CMD_PREFIX, venv_fullpath)
-        _, return_code = _execute_cmd(cmds, "", True, True, None)
+        cmds = Command(interpreter, *_CMD_PREFIX, venv_fullpath)
+        strings, return_code = execute_commands(cmds, False, None)
         if return_code:
             return False
         self.__venv_exist = True

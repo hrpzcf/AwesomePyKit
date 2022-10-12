@@ -9,12 +9,15 @@ from PyQt5.QtWidgets import QLineEdit, QTextEdit
 
 
 class QLineEditMod(QLineEdit):
-    def __init__(self, accept="dir", file_filter=set()):
+    def __init__(self, accept="dir", file_filter=None):
         super().__init__()
         self.setContextMenuPolicy(Qt.NoContextMenu)
-        self._accept = accept
-        self._filter = file_filter
-        self._drag_temp = ""
+        self.__accept = accept
+        if file_filter is None:
+            self.__filter = set()
+        else:
+            self.__filter = file_filter
+        self.__drag_temp = ""
 
     @property
     def local_path(self):
@@ -22,18 +25,18 @@ class QLineEditMod(QLineEdit):
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
-            if self._accept == "file":
-                self._drag_temp = os.path.realpath(
+            if self.__accept == "file":
+                self.__drag_temp = os.path.realpath(
                     event.mimeData().urls()[0].toLocalFile()
                 )
                 if (
-                    not self._filter
-                    or os.path.splitext(self._drag_temp)[1] in self._filter
+                    not self.__filter
+                    or os.path.splitext(self.__drag_temp)[1] in self.__filter
                 ):
                     event.accept()
                 else:
                     event.ignore()
-            elif self._accept == "dir":
+            elif self.__accept == "dir":
                 event.accept()
             else:
                 event.ignore()
@@ -41,59 +44,64 @@ class QLineEditMod(QLineEdit):
             event.ignore()
 
     def dropEvent(self, event):
-        if not self._drag_temp:
-            self._drag_temp = os.path.realpath(event.mimeData().urls()[0].toLocalFile())
-        if self._accept == "file" and os.path.isfile(self._drag_temp):
-            self.setText(self._drag_temp)
-        elif self._accept == "dir" and os.path.isdir(self._drag_temp):
-            self.setText(self._drag_temp)
+        if not self.__drag_temp:
+            self.__drag_temp = os.path.realpath(
+                event.mimeData().urls()[0].toLocalFile()
+            )
+        if self.__accept == "file" and os.path.isfile(self.__drag_temp):
+            self.setText(self.__drag_temp)
+        elif self.__accept == "dir" and os.path.isdir(self.__drag_temp):
+            self.setText(self.__drag_temp)
 
 
 class QTextEditMod(QTextEdit):
-    def __init__(self, accept="file", file_filter=set()):
+    def __init__(self, accept="file", file_filter=None):
         super().__init__()
         self.setLineWrapMode(QTextEdit.NoWrap)
         self.setContextMenuPolicy(Qt.NoContextMenu)
-        self._accept = accept
-        self._filter = file_filter
-        self._drag_temp = list()
+        self.__accept = accept
+        if file_filter is None:
+            self.__filter = set()
+        else:
+            self.__filter = file_filter
+        self.__drag_temp = list()
 
     @property
     def local_paths(self):
         file_dir_paths = self.toPlainText().split("\n")
-        if self._accept == "dir":
+        if self.__accept == "dir":
             return [path for path in file_dir_paths if os.path.isdir(path)]
-        if self._accept == "file":
+        if self.__accept == "file":
             return [path for path in file_dir_paths if os.path.isfile(path)]
         return []
 
-    def _stash_from_urls(self, urls):
-        self._drag_temp.clear()
+    def __stash_from_urls(self, urls):
+        self.__drag_temp.clear()
         for file_or_dir in (path.toLocalFile() for path in urls):
             file_or_dir = os.path.realpath(file_or_dir)
             if os.path.isfile(file_or_dir):
-                self._drag_temp.append(file_or_dir)
+                self.__drag_temp.append(file_or_dir)
                 continue
-            self._drag_temp.append(file_or_dir)
+            self.__drag_temp.append(file_or_dir)
             for root, _, files in os.walk(file_or_dir):
-                self._drag_temp.extend(
+                self.__drag_temp.extend(
                     os.path.join(root, filename) for filename in files
                 )
 
     def dragEnterEvent(self, event):
-        self._drag_temp.clear()
+        self.__drag_temp.clear()
         if event.mimeData().hasUrls():
-            if self._accept == "file":
-                self._stash_from_urls(event.mimeData().urls())
-                if not self._filter or set(
+            if self.__accept == "file":
+                self.__stash_from_urls(event.mimeData().urls())
+                if not self.__filter or set(
                     os.path.splitext(fp)[1]
-                    for fp in self._drag_temp
+                    for fp in self.__drag_temp
                     if os.path.isfile(fp)
-                ).issubset(self._filter):
+                ).issubset(self.__filter):
                     event.accept()
                 else:
                     event.ignore()
-            elif self._accept == "dir":
+            elif self.__accept == "dir":
                 event.accept()
             else:
                 event.ignore()
@@ -105,17 +113,17 @@ class QTextEditMod(QTextEdit):
     def dropEvent(self, event):
         cur_text = self.toPlainText()
         super().dropEvent(event)
-        if not self._drag_temp:
-            self._stash_from_urls(event.mimeData().urls())
-        if self._accept == "file":
+        if not self.__drag_temp:
+            self.__stash_from_urls(event.mimeData().urls())
+        if self.__accept == "file":
             self.setText(
                 cur_text
-                + "\n".join(path for path in self._drag_temp if os.path.isfile(path))
+                + "\n".join(path for path in self.__drag_temp if os.path.isfile(path))
             )
-        elif self._accept == "dir":
+        elif self.__accept == "dir":
             self.setText(
                 cur_text
-                + "\n".join(path for path in self._drag_temp if os.path.isdir(path))
+                + "\n".join(path for path in self.__drag_temp if os.path.isdir(path))
             )
         else:
             self.setText("")
