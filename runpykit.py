@@ -1393,9 +1393,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.set_pyi_debug_options()
         self.le_runtime_tmpdir.setText(self.pyiconfig.curconfig.runtime_tmpdir)
         self.cb_prioritize_venv.setChecked(self.pyiconfig.curconfig.prioritize_venv)
-        self.le_bytecode_encryption_key.setText(
-            self.pyiconfig.curconfig.encryption_key
-        )
+        self.le_bytecode_encryption_key.setText(self.pyiconfig.curconfig.encryption_key)
         self.cb_explorer_show.setChecked(self.pyiconfig.curconfig.open_dist_folder)
         self.cb_delete_working_dir.setChecked(
             self.pyiconfig.curconfig.delete_working_dir
@@ -1423,9 +1421,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         self.pyiconfig.curconfig.no_confirm = self.cb_without_confirm.isChecked()
         self.pyiconfig.curconfig.donot_use_upx = not self.cb_use_upx.isChecked()
-        self.pyiconfig.curconfig.clean_building = (
-            self.cb_clean_before_build.isChecked()
-        )
+        self.pyiconfig.curconfig.clean_building = self.cb_clean_before_build.isChecked()
         self.pyiconfig.curconfig.add_verfile = self.cb_write_info_to_exec.isChecked()
         self.pyiconfig.curconfig.working_dir = self.le_temp_working_dir.text()
         self.pyiconfig.curconfig.distribution_dir = self.le_output_dir.text()
@@ -1441,16 +1437,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pyiconfig.curconfig.debug_options = self.get_pyi_debug_options()
         self.pyiconfig.curconfig.runtime_tmpdir = self.le_runtime_tmpdir.text()
         self.pyiconfig.curconfig.prioritize_venv = self.cb_prioritize_venv.isChecked()
-        self.pyiconfig.curconfig.encryption_key = (
-            self.le_bytecode_encryption_key.text()
-        )
+        self.pyiconfig.curconfig.encryption_key = self.le_bytecode_encryption_key.text()
         self.pyiconfig.curconfig.open_dist_folder = self.cb_explorer_show.isChecked()
         self.pyiconfig.curconfig.delete_working_dir = (
             self.cb_delete_working_dir.isChecked()
         )
-        self.pyiconfig.curconfig.delete_spec_file = (
-            self.cb_delete_spec_file.isChecked()
-        )
+        self.pyiconfig.curconfig.delete_spec_file = self.cb_delete_spec_file.isChecked()
         self.pyiconfig.curconfig.uac_admin = self.cb_uac_admin.isChecked()
         self.pyiconfig.curconfig.hidden_imports = [
             s for s in self.pte_hidden_imports.toPlainText().split("\n") if s
