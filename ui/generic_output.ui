@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>600</height>
+    <height>200</height>
    </rect>
   </property>
   <property name="font">
@@ -70,6 +70,13 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="uiPushButton_close_window">
+          <property name="text">
+           <string>关闭窗口</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="uiPushButton_clear_content">

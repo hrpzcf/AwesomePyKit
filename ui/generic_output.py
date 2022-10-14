@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_generic_output(object):
     def setupUi(self, generic_output):
         generic_output.setObjectName("generic_output")
-        generic_output.resize(600, 600)
+        generic_output.resize(600, 200)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         generic_output.setFont(font)
@@ -40,6 +40,9 @@ class Ui_generic_output(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.uiPushButton_close_window = QtWidgets.QPushButton(self.centralwidget)
+        self.uiPushButton_close_window.setObjectName("uiPushButton_close_window")
+        self.horizontalLayout.addWidget(self.uiPushButton_close_window)
         self.uiPushButton_clear_content = QtWidgets.QPushButton(self.centralwidget)
         self.uiPushButton_clear_content.setObjectName("uiPushButton_clear_content")
         self.horizontalLayout.addWidget(self.uiPushButton_clear_content)
@@ -62,6 +65,7 @@ class Ui_generic_output(object):
     def retranslateUi(self, generic_output):
         _translate = QtCore.QCoreApplication.translate
         generic_output.setWindowTitle(_translate("generic_output", "控制台输出内容通用显示窗口"))
+        self.uiPushButton_close_window.setText(_translate("generic_output", "关闭窗口"))
         self.uiPushButton_clear_content.setText(_translate("generic_output", "清空内容"))
         self.action123.setText(_translate("generic_output", "字体颜色"))
         self.uiAction_bg_white.setText(_translate("generic_output", "白色"))
