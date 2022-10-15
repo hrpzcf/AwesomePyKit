@@ -149,21 +149,23 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def moveEvent(self, event: QMoveEvent):
         super().moveEvent(event)
+        if self.__output.isHidden():
+            return
         rect = self.geometry()
         self.__output.set_pos(rect.left(), rect.bottom(), rect.width(), None)
 
     def show(self):
         self.resize(self.__normal_size)
-        super().show()
+        super(PackageManagerWindow, self).show()
         self.list_widget_pyenvs_update()
         self.lw_env_list.setCurrentRow(self.selected_env_index)
 
     def show_hide_output(self):
         if self.__output.isHidden():
+            self.__output.show()
             self.__output.clear_content()
             rect = self.geometry()
             self.__output.set_pos(rect.left(), rect.bottom(), rect.width(), None)
-            self.__output.show()
         else:
             self.__output.hide()
 
@@ -2474,26 +2476,24 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
     signal_clear_content = pyqtSignal()
     signal_append_line = pyqtSignal(str)
 
-    def __init__(self, parent, title=None, frame=False):
+    def __init__(self, parent, title=None, titlebar=False):
         super().__init__(parent)
         self.setupUi(self)
         if title is not None:
             self.setWindowTitle(title)
-        if not frame:
-            self.setWindowFlag(Qt.FramelessWindowHint)
+        if not titlebar:
+            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.Window)
         self.signal_slot_connection()
         self.__width = self.width()
         self.__height = self.height()
 
     def signal_slot_connection(self):
-        self.uiPushButton_close_window.clicked.connect(self.close)
-        self.signal_append_line.connect(
-            self.uiPlainTextEdit_generic_output.appendPlainText
-        )
+        self.uiPushButton_close_window.clicked.connect(self.hide)
+        self.signal_append_line.connect(self.uiPlainTextEdit_output.appendPlainText)
         self.uiPushButton_clear_content.clicked.connect(
-            self.uiPlainTextEdit_generic_output.clear
+            self.uiPlainTextEdit_output.clear
         )
-        self.signal_clear_content.connect(self.uiPlainTextEdit_generic_output.clear)
+        self.signal_clear_content.connect(self.uiPlainTextEdit_output.clear)
 
     def resizeEvent(self, event: QResizeEvent):
         self.__width = self.width()
@@ -2505,7 +2505,7 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
             w = self.__width
         if h is None:
             h = self.__height
-        self.setGeometry(x, y, w, h)
+        self.setGeometry(x, y + self.geometry().y() - self.y(), w, h)
 
     def clear_content(self):
         self.signal_clear_content.emit()
