@@ -421,16 +421,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
         self.table_widget_clear_pkgs()
 
-    def add_py_path_manully(self):
-        input_dialog = InputDialog(
-            self,
-            560,
-            0,
-            "添加 Python 目录",
-            "请输入 Python 目录路径：",
-        )
-        _path, ok = input_dialog.get_text()
-        if not (ok and _path):
+    def add_path_callback(self, _path):
+        if not _path:
             return
         if not check_py_path(_path):
             return MessageBox(
@@ -455,6 +447,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
         self.list_widget_pyenvs_update()
+
+    def add_py_path_manully(self):
+        InputDialog(self, self.add_path_callback, "请输入目录路径")
 
     def check_cur_pkgs_for_updates(self):
         if self.tw_installed_info.rowCount() == 0:
@@ -2456,20 +2451,33 @@ class MessageBox(QMessageBox):
         return self.exec_()
 
 
-class InputDialog(QInputDialog):
-    def __init__(self, parent, sw=560, sh=0, title="", label=""):
+class InputDialog(Ui_input_dialog, QMainWindow):
+    def __init__(self, parent, back, title="", w=None, h=None):
         super().__init__(parent)
-        self.resize(sw, sh)
-        self.setFont(QFont("Microsoft YaHei UI"))
-        self.setWindowTitle(title)
-        self.setLabelText(label)
-        self.setWindowFlags(Qt.Dialog | Qt.WindowCloseButtonHint)
-        self.setOkButtonText("确定")
-        self.setCancelButtonText("取消")
-        self._confirm = self.exec_()
+        self.setupUi(self)
+        self.initialize()
+        self.__callback = back
+        if title:
+            self.setWindowTitle(title)
+        self.show()
+        width = self.width() if w is None else w
+        height = self.height() if h is None else h
+        self.resize(width, height)
 
-    def get_text(self):
-        return self.textValue(), self._confirm
+    def initialize(self):
+        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
+        self.uiPushButton_confirm.clicked.connect(self.text_back)
+
+    def keyPressEvent(self, event: QKeyEvent):
+        key = event.key()
+        if key == Qt.Key_Escape:
+            self.close()
+        elif key == Qt.Key_Enter or key == Qt.Key_Return:
+            self.text_back()
+
+    def text_back(self):
+        self.close()
+        self.__callback(self.uiLineEdit_input_content.text())
 
 
 class GenericOutputWindow(Ui_generic_output, QMainWindow):
