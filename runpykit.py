@@ -230,7 +230,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         )
         self.tw_installed_info.clicked.connect(self._show_tip_num_selected)
         self.cb_check_uncheck_all.clicked.connect(self._show_tip_num_selected)
-        self.__install_win.pb_do_install.clicked.connect(self.install_pkgs)
+        self.__install_win.pb_do_install.clicked.connect(self.install_pkgs) # xxxx
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
         self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
 
@@ -241,8 +241,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return MessageBox("提示", "没有选择任何 Python 环境。").exec_()
         if self.selected_env_index >= len(self.env_list):
             return MessageBox("错误", "异常：当前选择下标超出范围。").exec_()
-        self.__install_win.show()
         self.__install_win.set_target_env(self.env_list[self.selected_env_index])
+        self.__install_win.show()
 
     @staticmethod
     def judging_inclusion_relationship(string_long, keyword):
@@ -344,6 +344,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.lb_num_selected_items.clear()
         self.tw_installed_info.clearContents()
         self.tw_installed_info.setRowCount(0)
+        self.selected_env_index = self.lw_env_list.currentRow()
 
     def get_pkgs_info(self, no_connect):
         self.selected_env_index = self.lw_env_list.currentRow()
@@ -805,16 +806,16 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
         self.__parent.config.use_index_url = self.cb_use_index_url.isChecked()
 
     def closeEvent(self, event: QCloseEvent):
-        event.accept()
         self.store_default_conf()
         self.__parent.config.save_config()
+        event.accept()
 
     def show(self):
-        super().show()
+        super(PackageInstallWindow, self).show()
         self.apply_default_conf()
 
     def signal_slot_connection(self):
-        self.pb_do_install.clicked.connect(self.store_default_conf)
+        self.pb_do_install.clicked.connect(self.store_default_conf) # xxxx
         self.pb_do_install.clicked.connect(self.close)
         self.pb_save_as_text.clicked.connect(self.save_package_names)
         self.pb_load_from_text.clicked.connect(self.load_package_names)
