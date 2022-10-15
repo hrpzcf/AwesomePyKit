@@ -785,17 +785,17 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
             self.le_use_index_url.setEnabled(False)
 
     def config_widgets_to_dict(self):
-        text = self.pte_package_names.toPlainText()
-        if text:
-            self.package_names.extend(s for s in text.splitlines() if s)
-            self.__parent.config.package_names = self.package_names.copy()
+        self.package_names.extend(
+            s for s in self.pte_package_names.toPlainText().splitlines() if s
+        )
+        self.__parent.config.package_names = self.package_names.copy()
         self.__parent.config.include_pre = self.cb_including_pre.isChecked()
         self.__parent.config.install_for_user = self.cb_install_for_user.isChecked()
         self.__parent.config.index_url = self.le_use_index_url.text()
         self.__parent.config.use_index_url = self.cb_use_index_url.isChecked()
 
     def call_installpkg_back(self):
-        self.close()  # 触发 closeEvent 保存数据
+        self.close()  # 触发 closeEvent 更新配置
         self.__callback(self.environment, self.package_names)
 
     def set_target_environ(self, env):
@@ -806,8 +806,6 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
 
     def closeEvent(self, event: QCloseEvent):
         self.config_widgets_to_dict()
-        self.__parent.config.save_config()
-        event.accept()
 
     def signal_slot_connection(self):
         self.pb_do_install.clicked.connect(self.call_installpkg_back)
