@@ -127,13 +127,12 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.config = PackageManagerConfig()
         self.__output = GenericOutputWindow(self)
         self.__ophandle = PyEnv.register(self.__output.add_line)
-        self.__install_win = PackageInstallWindow(self)
         self.signal_slot_connection()
         self.env_list = [PyEnv(p) for p in self.config.pypaths]
         self.path_list = [env.env_path for env in self.env_list]
         self.cur_pkgs_info = {}
         self.__reverseds = [True, True, True, True]
-        self.selected_env_index = -1
+        self.selected_index = -1
         self.repo = ThreadRepo(500)
         self.__normal_size = self.size()
 
@@ -155,10 +154,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.__output.set_pos(rect.left(), rect.bottom(), rect.width(), None)
 
     def show(self):
+        super().show()
         self.resize(self.__normal_size)
-        super(PackageManagerWindow, self).show()
         self.list_widget_pyenvs_update()
-        self.lw_env_list.setCurrentRow(self.selected_env_index)
+        self.lw_env_list.setCurrentRow(self.selected_index)
 
     def show_hide_output(self):
         if self.__output.isHidden():
@@ -170,7 +169,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.__output.hide()
 
     @staticmethod
-    def _stop_before_close():
+    def __stop_before_close():
         return not MessageBox(
             "警告",
             "当前有任务正在运行！\n是否尝试停止所有正在运行的任务并关闭窗口？",
@@ -180,7 +179,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         if not self.repo.is_empty():
-            if self._stop_before_close():
+            if self.__stop_before_close():
                 self.repo.stop_all()
                 self.__output.close()
                 self.table_widget_clear_pkgs()
@@ -222,27 +221,27 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.lw_env_list.currentRowChanged.connect(self.table_widget_clear_pkgs)
         self.btn_check_for_updates.clicked.connect(self.check_cur_pkgs_for_updates)
         self.btn_install_package.clicked.connect(self.set_win_install_package_envinfo)
-        self.btn_uninstall_package.clicked.connect(self.uninstall_pkgs)
-        self.btn_upgrade_package.clicked.connect(self.upgrade_pkgs)
-        self.btn_upgrade_all.clicked.connect(self.upgrade_all_pkgs)
+        self.btn_uninstall_package.clicked.connect(self.uninstall_packages)
+        self.btn_upgrade_package.clicked.connect(self.upgrade_packages)
+        self.btn_upgrade_all.clicked.connect(self.upgrade_all_packages)
         self.tw_installed_info.horizontalHeader().sectionClicked[int].connect(
             self._sort_by_column
         )
-        self.tw_installed_info.clicked.connect(self._show_tip_num_selected)
-        self.cb_check_uncheck_all.clicked.connect(self._show_tip_num_selected)
-        self.__install_win.pb_do_install.clicked.connect(self.install_pkgs) # xxxx
+        self.tw_installed_info.clicked.connect(self.__show_tip_num_selected)
+        self.cb_check_uncheck_all.clicked.connect(self.__show_tip_num_selected)
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
         self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
 
     def set_win_install_package_envinfo(self):
         if not self.env_list:
             return MessageBox("提示", "没有可选的 Python 环境。").exec_()
-        if self.selected_env_index <= -1:
+        if self.selected_index <= -1:
             return MessageBox("提示", "没有选择任何 Python 环境。").exec_()
-        if self.selected_env_index >= len(self.env_list):
+        if self.selected_index >= len(self.env_list):
             return MessageBox("错误", "异常：当前选择下标超出范围。").exec_()
-        self.__install_win.set_target_env(self.env_list[self.selected_env_index])
-        self.__install_win.show()
+        PackageInstallWindow(self, self.install_packages).set_target_environ(
+            self.env_list[self.selected_index]
+        )
 
     @staticmethod
     def judging_inclusion_relationship(string_long, keyword):
@@ -274,10 +273,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         # 如果不是单字母，则判断包名是否以关键词首字母开头、包名是否包含后续单词
         # 因为不确定性能是否够用，所以暂时不实现更复杂的判断
 
-    def _show_tip_num_selected(self):
+    def __show_tip_num_selected(self):
         self.lb_num_selected_items.setText(
             f"当前选中数量：{len(self.indexs_of_selected_rows())}"
         )
+        # xxxx 筛选模式下已选择数量与实际数量不一致
 
     def list_widget_pyenvs_update(self):
         row_size = QSize(0, 28)
@@ -341,18 +341,19 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.__reverseds[colind] = not self.__reverseds[colind]
 
     def table_widget_clear_pkgs(self):
-        self.lb_num_selected_items.clear()
-        self.tw_installed_info.clearContents()
-        self.tw_installed_info.setRowCount(0)
-        self.selected_env_index = self.lw_env_list.currentRow()
+        if self.tw_installed_info.rowCount():
+            self.lb_num_selected_items.clear()
+            self.tw_installed_info.clearContents()
+            self.tw_installed_info.setRowCount(0)
+        self.selected_index = self.lw_env_list.currentRow()
 
     def get_pkgs_info(self, no_connect):
-        self.selected_env_index = self.lw_env_list.currentRow()
-        if self.selected_env_index == -1:
+        self.selected_index = self.lw_env_list.currentRow()
+        if self.selected_index == -1:
             return None
 
         def do_get_pkgs_info():
-            pkgs_info = self.env_list[self.selected_env_index].pkgs_info()
+            pkgs_info = self.env_list[self.selected_index].pkgs_info()
             self.cur_pkgs_info.clear()
             for pkg_info in pkgs_info:
                 self.cur_pkgs_info[pkg_info[0]] = [pkg_info[1], "", ""]
@@ -513,11 +514,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         ):
             widget.setEnabled(True)
 
-    def install_pkgs(self):
-        if not self.env_list:
-            return
-        cur_env = self.__install_win.current_env
-        tobe_installed = self.__install_win.package_names
+    def install_packages(self, cur_env, tobe_installed):
         if not (cur_env and tobe_installed):
             return
         include_pre = self.config.include_pre
@@ -557,7 +554,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_install_pkgs.start()
         self.repo.put(thread_install_pkgs, 0)
 
-    def uninstall_pkgs(self):
+    def uninstall_packages(self):
         pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
         pkg_indexs = self.indexs_of_selected_rows()
         pkg_names = [pkgs_info_keys[index] for index in pkg_indexs]
@@ -598,7 +595,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_uninstall_pkgs.start()
         self.repo.put(thread_uninstall_pkgs, 0)
 
-    def upgrade_pkgs(self):
+    def upgrade_packages(self):
         pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
         pkg_indexs = self.indexs_of_selected_rows()
         names = [pkgs_info_keys[index] for index in pkg_indexs]
@@ -646,7 +643,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_upgrade_pkgs.start()
         self.repo.put(thread_upgrade_pkgs, 0)
 
-    def upgrade_all_pkgs(self):
+    def upgrade_all_packages(self):
         upgradeable = [item[0] for item in self.cur_pkgs_info.items() if item[1][1]]
         if not upgradeable:
             MessageBox(
@@ -695,16 +692,16 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
 class AskFilePath(QWidget):
     def load_from_text(self, last_path):
-        text_path, _ = QFileDialog.getOpenFileName(
+        text_file_path, _ = QFileDialog.getOpenFileName(
             self, "选择文本文件", last_path, "文本文件 (*.txt)"
         )
-        if not text_path:
+        if not text_file_path:
             return "", ""
         try:
-            with open(text_path, "rb") as fobj:
-                encoding = detect(fobj.read()).get("encoding", "utf-8")
-            with open(text_path, "rt", encoding=encoding) as fobj:
-                return fobj.read(), os.path.dirname(text_path)
+            with open(text_file_path, "rb") as f:
+                encoding = detect(f.read()).get("encoding", "utf-8")
+            with open(text_file_path, "rt", encoding=encoding) as obj:
+                return obj.read(), os.path.dirname(text_file_path)
         except Exception as reason:
             MessageBox(
                 "错误",
@@ -724,8 +721,7 @@ class AskFilePath(QWidget):
                 fobj.writelines(data)
         except Exception as reason:
             return MessageBox(
-                "错误",
-                f"文件保存失败：\n{str(reason)}",
+                "错误", f"文件保存失败：\n{str(reason)}", QMessageBox.Critical
             ).exec_()
         return os.path.dirname(save_path)
 
@@ -737,17 +733,18 @@ class AskFilePath(QWidget):
 
 
 class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
-    def __init__(self, parent: PackageManagerWindow):
+    def __init__(self, parent: PackageManagerWindow, back):
         super().__init__(parent)
         self.setupUi(self)
-        self._setup_other_widgets()
-        self.current_env = None
-        self.package_names = None
+        self.__setup_other_widgets()
+        self.environment = None
+        self.package_names = list()
         self.signal_slot_connection()
         self.__parent = parent
+        self.__callback = back
         self.last_path = self.__parent.config.last_path
 
-    def _setup_other_widgets(self):
+    def __setup_other_widgets(self):
         self.pte_package_names = QTextEditMod(
             file_filter={".whl"},
         )
@@ -769,18 +766,15 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
 
     def load_package_names(self):
         text, fpath = self.load_from_text(self.last_path)
-        if text:
-            self.pte_package_names.setPlainText(text)
-            self.package_names = list()
-            names = text.splitlines(keepends=False)
-            for name in names:
-                if name and (name not in self.package_names):
-                    self.package_names.append(name)
-        if fpath:
-            self.last_path = fpath
+        if text and fpath:
             self.__parent.config.last_path = fpath
+            self.last_path = fpath
+            self.pte_package_names.setPlainText(text)
 
-    def apply_default_conf(self):
+    def config_dict_to_widgets(self):
+        self.pte_package_names.setPlainText(
+            "\n".join(self.__parent.config.package_names)
+        )
         self.cb_including_pre.setChecked(self.__parent.config.include_pre)
         self.cb_install_for_user.setChecked(self.__parent.config.install_for_user)
         self.le_use_index_url.setText(self.__parent.config.index_url)
@@ -789,45 +783,40 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, AskFilePath):
             self.le_use_index_url.setEnabled(True)
         else:
             self.le_use_index_url.setEnabled(False)
-        self.pte_package_names.setPlainText(
-            "\n".join(self.__parent.config.package_names)
-        )
 
-    def store_default_conf(self):
+    def config_widgets_to_dict(self):
         text = self.pte_package_names.toPlainText()
         if text:
-            self.package_names = [
-                name for name in text.splitlines(keepends=False) if name
-            ]
+            self.package_names.extend(s for s in text.splitlines() if s)
             self.__parent.config.package_names = self.package_names.copy()
         self.__parent.config.include_pre = self.cb_including_pre.isChecked()
         self.__parent.config.install_for_user = self.cb_install_for_user.isChecked()
         self.__parent.config.index_url = self.le_use_index_url.text()
         self.__parent.config.use_index_url = self.cb_use_index_url.isChecked()
 
+    def call_installpkg_back(self):
+        self.close()  # 触发 closeEvent 保存数据
+        self.__callback(self.environment, self.package_names)
+
+    def set_target_environ(self, env):
+        self.environment = env
+        self.config_dict_to_widgets()
+        self.uiLabel_target_environment.setText(str(env))
+        self.show()
+
     def closeEvent(self, event: QCloseEvent):
-        self.store_default_conf()
+        self.config_widgets_to_dict()
         self.__parent.config.save_config()
         event.accept()
 
-    def show(self):
-        super(PackageInstallWindow, self).show()
-        self.apply_default_conf()
-
     def signal_slot_connection(self):
-        self.pb_do_install.clicked.connect(self.store_default_conf) # xxxx
-        self.pb_do_install.clicked.connect(self.close)
+        self.pb_do_install.clicked.connect(self.call_installpkg_back)
         self.pb_save_as_text.clicked.connect(self.save_package_names)
         self.pb_load_from_text.clicked.connect(self.load_package_names)
         self.cb_use_index_url.clicked.connect(self.set_le_use_index_url)
 
     def set_le_use_index_url(self):
         self.le_use_index_url.setEnabled(self.cb_use_index_url.isChecked())
-
-    def set_target_env(self, env):
-        assert isinstance(env, PyEnv), "传参错误"
-        self.current_env = env
-        self.uiLabel_target_environment.setText(str(env))
 
 
 class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
@@ -840,8 +829,8 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         self.__normal_size = self.size()
 
     def show(self):
-        self.resize(self.__normal_size)
         super().show()
+        self.resize(self.__normal_size)
         self.__list_widget_urls_update()
 
     def resizeEvent(self, event: QResizeEvent):
@@ -1981,13 +1970,13 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
         self.__parent.select_env_update()
 
     def show(self):
+        super().show()
         self.resize(self._normal_size)
         self.envlist = [PyEnv(p) for p in self.__parent.pyiconfig.pypaths]
-        super().show()
         self.pyenv_list_update()
 
 
-class ImportsCheckWindow(Ui_imports_check, QMainWindow):
+class ImportsCheckWindow(Ui_imports_check, QMainWindow):  # xxxx 改为回调函数式
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
@@ -2016,8 +2005,8 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):
             self._normal_size = old_size
 
     def show(self):
-        self.resize(self._normal_size)
         super().show()
+        self.resize(self._normal_size)
 
     def checkimp_table_update(self, missing_data):
         # missing_data: [(filepath, {imps...}, {missings...})...]
