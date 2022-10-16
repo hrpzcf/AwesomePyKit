@@ -50,6 +50,7 @@ Python 工具箱 - Awespykit
     ```
 
 5. 找到 runpykit.py 运行。如果不想显示控制台，可以将 runpykit.py 重命名为 runpykit.pyw
+6. *注意*：由于更改了项目目录结构，使用 Pycharm 的同学，Pycharm 打开 Awespykit 目录后，请右键 source 目录，选择菜单末尾的`将目录标记为->源代码根目录`，否则影响编程体验。
 
 <br />
 
