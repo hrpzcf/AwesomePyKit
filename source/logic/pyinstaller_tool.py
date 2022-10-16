@@ -69,7 +69,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.__handle = None
         self.pyi_tool = PyiTool()
         self.set_platform_info()
-        self.__chosen_win = EnvironChosenWindow(self)
+        self.__envch_win = EnvironChosenWindow(self, self.__call_env_back)
         self.__impcheck_win = ImportsCheckWindow(self)
         self.signal_slot_connection()
         self.pyi_running_mov = QMovie(":/loading.gif")
@@ -97,9 +97,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
-                not self.isMaximized()
-                and not self.isMinimized()
-                and (old_size.width(), old_size.height()) != (-1, -1)
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
         ):
             self.__normal_size = old_size
 
@@ -153,7 +153,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.after_task_completed)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
-        self.pb_select_py_env.clicked.connect(self.__chosen_win.show)
+        self.pb_select_py_env.clicked.connect(self.__envch_win.initialize)
         self.le_program_entry.textChanged.connect(self.set_le_project_root)
         self.pb_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
@@ -241,8 +241,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 [self.toolwin_venv.env_path, dist_dir],
             )
             if (
-                    self.pyiconfig.curconfig.encryption_key
-                    and "tinyaes" not in inspector.importables
+                self.pyiconfig.curconfig.encryption_key
+                and "tinyaes" not in inspector.importables
             ):
                 missings.append(("字节码加密功能", {}, {"tinyaes"}))
             missings.extend(inspector.get_missing_items())
@@ -338,7 +338,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.le_upx_search_path.setText(selected_dir)
 
     def __ask_file_or_dir_path(
-            self, title="", start="", cht="file", mult=False, file_filter="所有文件 (*)"
+        self, title="", start="", cht="file", mult=False, file_filter="所有文件 (*)"
     ):
         file_dir_paths = []
         if cht == "file" and mult:
@@ -374,10 +374,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 file_dir_paths.append(os.path.realpath(path))
         return file_dir_paths
 
-    def select_env_update(self):
-        self.toolwin_pyenv = self.__chosen_win.envlist[
-            self.__chosen_win.lw_env_list.currentRow()
-        ]
+    def __call_env_back(self, env):
+        self.toolwin_pyenv = env
         self.pyi_tool.initialize(
             self.toolwin_pyenv.env_path,
             self.pyiconfig.curconfig.project_root,
@@ -526,12 +524,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.le_file_description.setText(version_info.get("$FileDescription$", ""))
         self.le_company_name.setText(version_info.get("$CompanyName$", ""))
         for ind, val in enumerate(
-                version_info.get("$FileVersion$", "0.0.0.0").split(".")
+            version_info.get("$FileVersion$", "0.0.0.0").split(".")
         ):
             self.le_vers_group[ind].setText(val)
         self.le_product_name.setText(version_info.get("$ProductName$", ""))
         for ind, val in enumerate(
-                version_info.get("$ProductVersion$", "0.0.0.0").split(".")
+            version_info.get("$ProductVersion$", "0.0.0.0").split(".")
         ):
             self.le_vers_group[ind + 4].setText(val)
         self.le_legal_copyright.setText(version_info.get("$LegalCopyright$", ""))
@@ -547,10 +545,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             ).exec_()
         # NewMessageBox的exec_方法返回0才是选择"确定"按钮
         if MessageBox(
-                "安装",
-                "确定安装 Pyinstaller 吗？",
-                QMessageBox.Question,
-                (("accept", "确定"), ("reject", "取消")),
+            "安装",
+            "确定安装 Pyinstaller 吗？",
+            QMessageBox.Question,
+            (("accept", "确定"), ("reject", "取消")),
         ).exec_():
             return
 
@@ -667,7 +665,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 self.pyiconfig.curconfig.project_root, dist_folder
             )
         explorer_selected = (
-                os.path.join(dist_folder, sub_directory, final_execfn) + ".exe"
+            os.path.join(dist_folder, sub_directory, final_execfn) + ".exe"
         )
         open_explorer(explorer_selected, "select")
 
@@ -839,10 +837,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.__impcheck_win.close()
             return
         if MessageBox(
-                "安装",
-                "确定将所有缺失模块安装至所选 Python 环境中吗？",
-                QMessageBox.Question,
-                (("accept", "确定"), ("reject", "取消")),
+            "安装",
+            "确定将所有缺失模块安装至所选 Python 环境中吗？",
+            QMessageBox.Question,
+            (("accept", "确定"), ("reject", "取消")),
         ).exec_():
             return
         if self.pyiconfig.curconfig.prioritize_venv:
@@ -921,13 +919,13 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if text not in self.pyiconfig.multicfg:
             return
         if (
-                MessageBox(
-                    "提示",
-                    f"确认删除当前选中的配置？",
-                    QMessageBox.Warning,
-                    (("accept", "确定"), ("reject", "取消")),
-                ).exec_()
-                != 0
+            MessageBox(
+                "提示",
+                f"确认删除当前选中的配置？",
+                QMessageBox.Warning,
+                (("accept", "确定"), ("reject", "取消")),
+            ).exec_()
+            != 0
         ):
             return
         del self.pyiconfig.multicfg[text]
@@ -978,22 +976,20 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.repo.put(thread_load_info, 1)
 
 
-class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):  # xxxx 改为使用时再实例化
-    def __init__(self, parent: PyinstallerToolWindow):
+class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
+    def __init__(self, parent: PyinstallerToolWindow, callback):
         super().__init__(parent)
         self.setupUi(self)
-        self.signal_slot_connection()
-        self._normal_size = self.size()
+        self.__normal_size = self.size()
         self.__parent = parent
-        self.envlist = None
+        self.__envlist = None
+        self.__call_back = callback
+        self.lw_env_list.clicked.connect(self.__call_environ_back)
 
-    def signal_slot_connection(self):
-        self.lw_env_list.pressed.connect(self.close)
-
-    def pyenv_list_update(self):
+    def __env_list_update(self):
         row_size = QSize(0, 28)
         self.lw_env_list.clear()
-        for env in self.envlist:
+        for env in self.__envlist:
             item = QListWidgetItem(str(env))
             item.setSizeHint(row_size)
             self.lw_env_list.addItem(item)
@@ -1001,21 +997,27 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):  # xxxx 改为使用�
     def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
-                not self.isMaximized()
-                and not self.isMinimized()
-                and (old_size.width(), old_size.height()) != (-1, -1)
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
         ):
-            self._normal_size = old_size
+            self.__normal_size = old_size
 
-    def close(self):
-        super().close()
-        self.__parent.select_env_update()
+    def closeEvent(self, event: QCloseEvent):
+        self.hide()
+        event.ignore()
 
-    def show(self):
-        super().show()
-        self.resize(self._normal_size)
-        self.envlist = [PyEnv(p) for p in self.__parent.pyiconfig.pypaths]
-        self.pyenv_list_update()
+    def __call_environ_back(self):
+        self.hide()
+        selected = self.lw_env_list.currentRow()
+        if selected != -1:
+            self.__call_back(self.__envlist[selected])
+
+    def initialize(self):
+        self.show()
+        self.resize(self.__normal_size)
+        self.__envlist = [PyEnv(p) for p in self.__parent.pyiconfig.pypaths]
+        self.__env_list_update()
 
 
 class ImportsCheckWindow(Ui_imports_check, QMainWindow):  # xxxx 改为回调函数式
@@ -1040,9 +1042,9 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):  # xxxx 改为回调函
     def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
-                not self.isMaximized()
-                and not self.isMinimized()
-                and (old_size.width(), old_size.height()) != (-1, -1)
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
         ):
             self._normal_size = old_size
 
