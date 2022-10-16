@@ -47,6 +47,11 @@ class VirtualEnv(PyEnv):
         parent_dir = path.dirname(self.project)
         if path.samefile(parent_dir, self.project):
             return False
+        if self.__find_venv_file(parent_dir):
+            return True
+        parent_dir = path.dirname(parent_dir)
+        if path.samefile(parent_dir, self.project):
+            return False
         return self.__find_venv_file(parent_dir)
 
     @property

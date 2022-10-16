@@ -27,10 +27,13 @@
 ################################################################################
 
 import sys
+from os import path
 
 from fastpip import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+sys.path.append(path.dirname(__file__))  # rpk.exe 入口点所需
 
 from logic import *
 from res.res import *
@@ -103,14 +106,14 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         MessageBox("关于", info, icon).exec_()
 
 
-def main_function():
+def run_pykit():
     awespykit = QApplication(sys.argv)
     awespykit.setStyle("fusion")
     awespykit.setWindowIcon(QIcon(":/icon.ico"))
     main_entrance_window = MainEntrance()
     main_entrance_window.show()
-    sys.exit(awespykit.exec_())
+    sys.exit(awespykit.exec_())  # TODO 编程方式运行 pykit 时关闭窗口可能不需要退出
 
 
 if __name__ == "__main__":
-    main_function()
+    run_pykit()

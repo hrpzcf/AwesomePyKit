@@ -4,6 +4,7 @@ import os
 import shutil
 from platform import machine, platform
 
+import PyQt5.sip as sip
 from com.mapping import import_publishing
 from fastpip import PyEnv
 from PyQt5.QtCore import *
@@ -20,17 +21,15 @@ from utils.venv import VirtualEnv
 
 from .messagebox import MessageBox
 
-QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))
-QREV_FILE_NAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
-QREV_FILE_PATH = QRegExpValidator(QRegExp(r'[^:*?"<>|]*'))
-
 
 class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     signal_update_pyinfo = pyqtSignal(str)
     signal_update_pyiinfo = pyqtSignal(str)
     signal_update_pyipbtext = pyqtSignal(str)
-    PYIVER_FMT = "Pyinstaller - {}"
     COMBOBOX_DEFITEM = "当前打包配置"
+    PYIVER_FMT = "Pyinstaller - {}"
+    QREV_FNAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
+    QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -143,12 +142,22 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.le_file_icon_path_old, self.le_file_icon_path
         )
         self.le_file_icon_path_old.deleteLater()
+        if sip.isdeleted(self.QREV_NUMBER) or sip.isdeleted(self.QREV_FNAME):
+            PyinstallerToolWindow.rebuild_validators()
         for line_edit in self.le_vers_group:
-            line_edit.setValidator(QREV_NUMBER)
-        self.le_output_name.setValidator(QREV_FILE_NAME)
-        self.le_runtime_tmpdir.setValidator(QREV_FILE_NAME)
+            line_edit.setValidator(self.QREV_NUMBER)
+        self.le_output_name.setValidator(self.QREV_FNAME)
+        self.le_runtime_tmpdir.setValidator(self.QREV_FNAME)
         self.splitter.setStretchFactor(0, 1)
         self.splitter.setStretchFactor(1, 2)
+
+    @classmethod
+    def rebuild_validators(cls):
+        """
+        用于解决以编程方式第二次执行 run_pykit 函数出现 x deleted 的问题
+        """
+        cls.QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))
+        cls.QREV_FNAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
 
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.after_task_completed)
