@@ -246,7 +246,7 @@ class Ui_package_manager(object):
         self.btn_uninstall_package.setToolTip(_translate("package_manager", "将表格中选中的包卸载(仅从选中的 Python 环境中卸载)。\n"
 "注意，卸载时表格中的条目支持多选。"))
         self.btn_uninstall_package.setText(_translate("package_manager", "卸载"))
-        self.cb_check_uncheck_all.setText(_translate("package_manager", "全选 / 取消"))
+        self.cb_check_uncheck_all.setText(_translate("package_manager", "全选"))
         self.uiPushButton_show_output.setText(_translate("package_manager", "输出窗口"))
         self.btn_upgrade_all.setToolTip(_translate("package_manager", "升级表格中列出的所有显示有新版本的包。\n"
 "使用此功能前请先点击\"检查更新\"按钮以检查是否有新版本，再点击此按钮升级。"))

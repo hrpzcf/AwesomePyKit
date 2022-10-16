@@ -408,7 +408,7 @@
               <item>
                <widget class="QCheckBox" name="cb_check_uncheck_all">
                 <property name="text">
-                 <string>全选 / 取消</string>
+                 <string>全选</string>
                 </property>
                </widget>
               </item>

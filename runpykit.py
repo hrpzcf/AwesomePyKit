@@ -216,7 +216,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.btn_autosearch.clicked.connect(self.auto_search_env)
         self.btn_delselected.clicked.connect(self.del_selected_py_env)
         self.btn_addmanully.clicked.connect(self.add_py_path_manully)
-        self.cb_check_uncheck_all.clicked.connect(self.select_all_or_cancel_all)
+        self.cb_check_uncheck_all.clicked.connect(self.selectall_unselectall)
         self.lw_env_list.clicked.connect(lambda: self.get_pkgs_info(0))
         self.lw_env_list.currentRowChanged.connect(self.table_widget_clear_pkgs)
         self.btn_check_for_updates.clicked.connect(self.check_cur_pkgs_for_updates)
@@ -227,8 +227,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.tw_installed_info.horizontalHeader().sectionClicked[int].connect(
             self._sort_by_column
         )
-        self.tw_installed_info.clicked.connect(self.__show_tip_num_selected)
-        self.cb_check_uncheck_all.clicked.connect(self.__show_tip_num_selected)
+        self.tw_installed_info.clicked.connect(self.__show_label_selected_num)
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
         self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
 
@@ -269,15 +268,20 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                     self.tw_installed_info.showRow(i)
                 else:
                     self.tw_installed_info.hideRow(i)
+        self.__show_label_selected_num(False)
         # 搜索功能比较简单，关键字是单独一个字母时，检索以该字母开头的模块
         # 如果不是单字母，则判断包名是否以关键词首字母开头、包名是否包含后续单词
-        # 因为不确定性能是否够用，所以暂时不实现更复杂的判断
 
-    def __show_tip_num_selected(self):
-        self.lb_num_selected_items.setText(
-            f"当前选中数量：{len(self.indexs_of_selected_rows())}"
-        )
-        # xxxx 筛选模式下已选择数量与实际数量不一致
+    def __show_label_selected_num(self, clear=True):
+        selected = len(self.indexs_of_selected_rows())
+        if selected != len(self.cur_pkgs_info):
+            self.cb_check_uncheck_all.setChecked(False)
+        else:
+            self.cb_check_uncheck_all.setChecked(True)
+        if clear and selected == 0:
+            self.lb_num_selected_items.clear()
+            return
+        self.lb_num_selected_items.setText(f"选中数量：{selected}")
 
     def list_widget_pyenvs_update(self):
         row_size = QSize(0, 28)
@@ -374,18 +378,18 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         return thread_get_pkgs_info
 
     def indexs_of_selected_rows(self):
-        row_indexs = []
-        for item in self.tw_installed_info.selectedItems():
-            row_index = item.row()
-            if row_index not in row_indexs:
-                row_indexs.append(row_index)
-        return row_indexs
+        selected_row_indexs = [
+            item.row() for item in self.tw_installed_info.selectedItems()[::4]
+        ]
+        selected_row_indexs.sort()
+        return selected_row_indexs
 
-    def select_all_or_cancel_all(self):
+    def selectall_unselectall(self):
         if self.cb_check_uncheck_all.isChecked():
             self.tw_installed_info.selectAll()
         else:
             self.tw_installed_info.clearSelection()
+        self.__show_label_selected_num()
 
     def auto_search_env(self):
         def search_env():
@@ -1934,7 +1938,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.repo.put(thread_load_info, 1)
 
 
-class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
+class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):  # xxxx 改为使用时再实例化
     def __init__(self, parent: PyinstallerToolWindow):
         super().__init__(parent)
         self.setupUi(self)
