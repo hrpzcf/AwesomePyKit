@@ -70,7 +70,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pyi_tool = PyiTool()
         self.set_platform_info()
         self.__envch_win = EnvironChosenWindow(self, self.__call_env_back)
-        self.__impcheck_win = ImportsCheckWindow(self)
+        self.__impcheck_win = ImportsCheckWindow(self, self.__install_missings)
         self.signal_slot_connection()
         self.pyi_running_mov = QMovie(":/loading.gif")
         self.pyi_running_mov.setScaledSize(QSize(16, 16))
@@ -176,9 +176,6 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pb_gen_executable.clicked.connect(self.build_executable)
         self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyinstaller)
         self.pb_check_imports.clicked.connect(self.check_project_imports)
-        self.__impcheck_win.pb_install_all_missing.clicked.connect(
-            lambda: self.install_missings(self.__impcheck_win.all_missing_modules)
-        )
         self.pb_clear_hidden_imports.clicked.connect(self.pte_hidden_imports.clear)
         self.pb_clear_exclude_module.clicked.connect(self.pte_exclude_modules.clear)
         self.uiPushButton_save_config.clicked.connect(self.store_current_config)
@@ -255,9 +252,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_check_imp.at_finish(
             self.__hide_running,
             self.__release_widgets,
-            lambda: self.__impcheck_win.set_env_info(environ),
-            lambda: self.__impcheck_win.checkimp_table_update(missings),
-            self.__impcheck_win.show,
+            lambda: self.__impcheck_win.display_result(environ, missings),
         )
         thread_check_imp.start()
         self.repo.put(thread_check_imp, 1)
@@ -828,20 +823,22 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_build.start()
         self.repo.put(thread_build, 0)
 
-    def install_missings(self, missings):
+    def __install_missings(self, missings):
         if not missings:
             MessageBox(
                 "提示",
                 "没有缺失的模块，无需安装。",
             ).exec_()
-            self.__impcheck_win.close()
-            return
-        if MessageBox(
-            "安装",
-            "确定将所有缺失模块安装至所选 Python 环境中吗？",
-            QMessageBox.Question,
-            (("accept", "确定"), ("reject", "取消")),
-        ).exec_():
+            return self.__impcheck_win.hide()
+        if (
+            MessageBox(
+                "安装",
+                "确定将所有缺失模块安装至所选 Python 环境中吗？",
+                QMessageBox.Question,
+                (("accept", "确定"), ("reject", "取消")),
+            ).exec_()
+            != 0
+        ):
             return
         if self.pyiconfig.curconfig.prioritize_venv:
             environ = self.toolwin_venv
@@ -858,11 +855,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             for name in names_for_install:
                 environ.install(name)
 
+        self.__impcheck_win.hide()
         thread_install_missings = QThreadModel(install_pkgs)
         thread_install_missings.at_start(
             self.__lock_widgets,
             lambda: self.__show_running("正在安装缺失模块..."),
-            self.__impcheck_win.close,
         )
         thread_install_missings.at_finish(
             self.__hide_running,
@@ -1020,24 +1017,30 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
         self.__env_list_update()
 
 
-class ImportsCheckWindow(Ui_imports_check, QMainWindow):  # xxxx 改为回调函数式
-    def __init__(self, parent):
+class ImportsCheckWindow(Ui_imports_check, QMainWindow):
+    def __init__(self, parent, call_install):
         super().__init__(parent)
         self.setupUi(self)
-        self._setup_other_widgets()
+        self.__setup_other_widgets()
+        self.pb_confirm.clicked.connect(self.hide)
+        self.pb_install_all_missing.clicked.connect(self.__call_install_back)
+        self.__missing_modules = None
         self._normal_size = self.size()
-        self.pb_confirm.clicked.connect(self.close)
-        self.all_missing_modules = None
+        self.__call_install = call_install
 
-    def _setup_other_widgets(self):
+    def __setup_other_widgets(self):
         self.tw_missing_imports.setColumnWidth(0, 260)
-        self.tw_missing_imports.setColumnWidth(1, 350)
+        self.tw_missing_imports.setColumnWidth(1, 360)
         self.tw_missing_imports.horizontalHeader().setSectionResizeMode(
             QHeaderView.Interactive
         )
         self.tw_missing_imports.horizontalHeader().setSectionResizeMode(
             2, QHeaderView.Stretch
         )
+
+    def __call_install_back(self):
+        self.hide()
+        self.__call_install(self.__missing_modules)
 
     def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
@@ -1048,26 +1051,28 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):  # xxxx 改为回调函
         ):
             self._normal_size = old_size
 
-    def show(self):
-        super().show()
-        self.resize(self._normal_size)
+    def closeEvent(self, event: QCloseEvent):
+        self.hide()
+        event.ignore()
 
-    def checkimp_table_update(self, missing_data):
-        # missing_data: [(filepath, {imps...}, {missings...})...]
-        if not missing_data:
-            return
-        self.all_missing_modules = set()
-        for *_, m in missing_data:
-            self.all_missing_modules.update(m)
+    def display_result(self, environ, missings_list):
+        """
+        missings_list: [(filepath, {imps...}, {missings...})...]
+        """
+        if environ:
+            self.le_cip_cur_env.setText(str(environ))
+        self.__missing_modules = set()
+        for *_, m in missings_list:
+            self.__missing_modules.update(m)
         self.tw_missing_imports.clearContents()
-        self.tw_missing_imports.setRowCount(len(missing_data))
-        for rowind, value in enumerate(missing_data):
-            # value[0] 即 filepath 为 None，按 ImportInspector 类
-            # missing_items 特点，可知项目内没有可以打开的文件，直接中断
+        self.tw_missing_imports.setRowCount(len(missings_list))
+        for index, value in enumerate(missings_list):
+            # value[0] 即 filepath 为 None，依
+            # ImportInspector.missing_items 返回值特点可知没有可以打开的文件
             if value[0] is None:
                 break
             self.tw_missing_imports.setVerticalHeaderItem(
-                rowind, QTableWidgetItem(f" {rowind + 1} ")
+                index, QTableWidgetItem(f" {index + 1} ")
             )
             item1 = QTableWidgetItem(os.path.basename(value[0]))
             item2 = QTableWidgetItem("，".join(value[1]))
@@ -1075,12 +1080,8 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):  # xxxx 改为回调函
             item1.setToolTip(value[0])
             item2.setToolTip("\n".join(value[1]))
             item3.setToolTip("\n".join(value[2]))
-            self.tw_missing_imports.setItem(rowind, 0, item1)
-            self.tw_missing_imports.setItem(rowind, 1, item2)
-            self.tw_missing_imports.setItem(rowind, 2, item3)
+            self.tw_missing_imports.setItem(index, 0, item1)
+            self.tw_missing_imports.setItem(index, 1, item2)
+            self.tw_missing_imports.setItem(index, 2, item3)
         self.show()
-
-    def set_env_info(self, env):
-        if not env:
-            return
-        self.le_cip_cur_env.setText(str(env))
+        self.resize(self._normal_size)
