@@ -8,8 +8,7 @@ from os import walk
 from os.path import basename, join
 
 from chardet.universaldetector import UniversalDetector
-
-from .main import PyEnv
+from fastpip import PyEnv
 
 
 class FindImport(ast.NodeVisitor):
