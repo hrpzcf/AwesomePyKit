@@ -32,11 +32,11 @@ from fastpip import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from info import VERSION
 from logic import *
 from res.res import *
 from settings import *
 from ui import *
+from versions import *
 
 required_fastpip_version = (1, 0, 0)
 
@@ -54,7 +54,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle(f"Awespykit")
+        self.setWindowTitle(NAME)
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)

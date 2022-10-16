@@ -5,7 +5,7 @@ __doc__ = "将 QtDesigner 生成的 ui 文件批量编译为 py 文件。"
 import os
 import sys
 
-ui_dir_path = "./ui"
+ui_dir_path = "./source/ui"
 compile_cmd = "pyuic5 {} -o {}"
 
 

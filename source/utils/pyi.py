@@ -7,7 +7,7 @@ from subprocess import *
 
 from PyQt5.QtCore import *
 
-from info import NAME
+from versions import NAME
 from settings import *
 from utils.main import get_cmd_out
 
