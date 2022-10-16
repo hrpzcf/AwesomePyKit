@@ -15,7 +15,7 @@ class Ui_imports_check(object):
     def setupUi(self, imports_check):
         imports_check.setObjectName("imports_check")
         imports_check.setWindowModality(QtCore.Qt.WindowModal)
-        imports_check.resize(800, 600)
+        imports_check.resize(900, 500)
         self.centralwidget = QtWidgets.QWidget(imports_check)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
