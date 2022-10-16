@@ -26,20 +26,28 @@ class VirtualEnv(PyEnv):
     def project(self, value):
         self.__project = value
 
-    def find_project_venv(self):
-        if not self.project:
-            return False
+    def __find_venv_file(self, dir_path):
         try:
-            names = listdir(self.__project)
+            names = listdir(dir_path)
         except:
             return False
         for p in names:
-            fullpath = path.join(self.__project, p)
+            fullpath = path.join(dir_path, p)
             if path.exists(path.join(fullpath, _VENV_CFGFILE)):
                 self.path = fullpath
                 self.__venv_exist = True
-                break
-        return self.__venv_exist
+                return self.__venv_exist
+        return False
+
+    def find_project_venv(self):
+        if not self.project:
+            return False
+        if self.__find_venv_file(self.project):
+            return True
+        parent_dir = path.dirname(self.project)
+        if path.samefile(parent_dir, self.project):
+            return False
+        return self.__find_venv_file(parent_dir)
 
     @property
     def venv_exists(self):
