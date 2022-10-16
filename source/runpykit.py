@@ -60,7 +60,6 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__indexmgr_win = IndexUrlManagerWindow(self)
         self.__pkgdl_win = PackageDownloadWindow(self)
         self.signal_slot_connection()
-        self.show()
 
     def signal_slot_connection(self):
         self.action_about.triggered.connect(self.__show_about)
@@ -71,9 +70,9 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         if (
-                self.__pkgmgr_win.repo.is_empty()
-                and self.__pyitool_win.repo.is_empty()
-                and self.__pkgdl_win.repo.is_empty()
+            self.__pkgmgr_win.repo.is_empty()
+            and self.__pyitool_win.repo.is_empty()
+            and self.__pkgdl_win.repo.is_empty()
         ):
             event.accept()
         else:
@@ -104,9 +103,14 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         MessageBox("关于", info, icon).exec_()
 
 
-if __name__ == "__main__":
+def main_function():
     awespykit = QApplication(sys.argv)
     awespykit.setStyle("fusion")
     awespykit.setWindowIcon(QIcon(":/icon.ico"))
     main_entrance_window = MainEntrance()
+    main_entrance_window.show()
     sys.exit(awespykit.exec_())
+
+
+if __name__ == "__main__":
+    main_function()
