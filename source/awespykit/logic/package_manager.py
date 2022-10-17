@@ -26,7 +26,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.signal_slot_connection()
         self.env_list = [PyEnv(p) for p in self.config.pypaths]
         self.path_list = [env.env_path for env in self.env_list]
-        self.cur_pkgs_info = {}
+        self.__cur_pkgs_info = dict()
         self.__reverseds = [True, True, True, True]
         self.selected_index = -1
         self.repo = ThreadRepo(500)
@@ -78,7 +78,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             if self.__stop_before_close():
                 self.repo.stop_all()
                 self.__output.close()
-                self.table_widget_clear_pkgs()
+                self.environ_changed_clear_pkgs()
                 event.accept()
             else:
                 event.ignore()
@@ -114,7 +114,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.btn_addmanully.clicked.connect(self.add_py_path_manully)
         self.cb_check_uncheck_all.clicked.connect(self.selectall_unselectall)
         self.lw_env_list.clicked.connect(lambda: self.get_pkgs_info(0))
-        self.lw_env_list.currentRowChanged.connect(self.table_widget_clear_pkgs)
+        self.lw_env_list.currentRowChanged.connect(self.environ_changed_clear_pkgs)
         self.btn_check_for_updates.clicked.connect(self.check_cur_pkgs_for_updates)
         self.btn_install_package.clicked.connect(self.set_win_install_package_envinfo)
         self.btn_uninstall_package.clicked.connect(self.uninstall_packages)
@@ -170,7 +170,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def __show_label_selected_num(self, clear=True):
         selected = len(self.indexs_of_selected_rows())
-        if selected != len(self.cur_pkgs_info):
+        if selected != len(self.__cur_pkgs_info):
             self.cb_check_uncheck_all.setChecked(False)
         else:
             self.cb_check_uncheck_all.setChecked(True)
@@ -193,11 +193,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def table_widget_pkgs_info_update(self):
         self.lb_num_selected_items.clear()
         self.tw_installed_info.clearContents()
-        self.tw_installed_info.setRowCount(len(self.cur_pkgs_info))
+        self.tw_installed_info.setRowCount(len(self.__cur_pkgs_info))
         color_green = QColor(0, 170, 0)
         color_red = QColor(255, 0, 0)
         color_gray = QColor(243, 243, 243)
-        for rowind, pkg_name in enumerate(self.cur_pkgs_info):
+        for rowind, pkg_name in enumerate(self.__cur_pkgs_info):
             self.tw_installed_info.setVerticalHeaderItem(
                 rowind, QTableWidgetItem(f" {rowind + 1} ")
             )
@@ -207,7 +207,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             if not even_num_row:
                 item0.setBackground(color_gray)
             for colind, item_text in enumerate(
-                    self.cur_pkgs_info.get(pkg_name, ["", "", ""])
+                    self.__cur_pkgs_info.get(pkg_name, ["", "", ""])
             ):
                 item = QTableWidgetItem(f" {item_text} ")
                 if colind == 2:
@@ -222,17 +222,17 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def _sort_by_column(self, colind):
         if colind == 0:
-            self.cur_pkgs_info = dict(
+            self.__cur_pkgs_info = dict(
                 sorted(
-                    self.cur_pkgs_info.items(),
+                    self.__cur_pkgs_info.items(),
                     key=lambda x: x[0].lower(),
                     reverse=self.__reverseds[colind],
                 )
             )
         else:
-            self.cur_pkgs_info = dict(
+            self.__cur_pkgs_info = dict(
                 sorted(
-                    self.cur_pkgs_info.items(),
+                    self.__cur_pkgs_info.items(),
                     key=lambda x: x[1][colind - 1],
                     reverse=self.__reverseds[colind],
                 )
@@ -240,11 +240,12 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.table_widget_pkgs_info_update()
         self.__reverseds[colind] = not self.__reverseds[colind]
 
-    def table_widget_clear_pkgs(self):
+    def environ_changed_clear_pkgs(self):
         if self.tw_installed_info.rowCount():
             self.lb_num_selected_items.clear()
             self.tw_installed_info.clearContents()
             self.tw_installed_info.setRowCount(0)
+        self.__cur_pkgs_info.clear()
         self.selected_index = self.lw_env_list.currentRow()
 
     def get_pkgs_info(self, no_connect):
@@ -254,9 +255,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         def do_get_pkgs_info():
             pkgs_info = self.env_list[self.selected_index].pkgs_info()
-            self.cur_pkgs_info.clear()
+            self.__cur_pkgs_info.clear()
             for pkg_info in pkgs_info:
-                self.cur_pkgs_info[pkg_info[0]] = [pkg_info[1], "", ""]
+                self.__cur_pkgs_info[pkg_info[0]] = [pkg_info[1], "", ""]
 
         thread_get_pkgs_info = QThreadModel(do_get_pkgs_info)
         if not no_connect:
@@ -306,7 +307,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             lambda: self.show_loading("正在搜索 Python 安装目录..."),
         )
         thread_search_envs.at_finish(
-            self.table_widget_clear_pkgs,
+            self.environ_changed_clear_pkgs,
             self.list_widget_pyenvs_update,
             self.hide_loading,
             self.release_widgets,
@@ -321,7 +322,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         del self.env_list[cur_index]
         del self.path_list[cur_index]
         self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
-        self.table_widget_clear_pkgs()
+        self.environ_changed_clear_pkgs()
 
     def add_path_callback(self, _path):
         if not _path:
@@ -365,7 +366,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             thread_get_info.wait()
             outdateds = self.env_list[cur_row].outdated()
             for outdated_info in outdateds:
-                self.cur_pkgs_info.setdefault(outdated_info[0], ["", "", ""])[
+                self.__cur_pkgs_info.setdefault(outdated_info[0], ["", "", ""])[
                     1
                 ] = outdated_info[2]
 
@@ -437,7 +438,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             for i, value in enumerate(installed):
                 value[0] = separated[i]
             for name, result in installed:
-                item = self.cur_pkgs_info.setdefault(name, ["", "", ""])
+                item = self.__cur_pkgs_info.setdefault(name, ["", "", ""])
                 item[0] = "N/A"
                 item[2] = "安装成功" if result else "安装失败"
 
@@ -455,7 +456,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.repo.put(thread_install_pkgs, 0)
 
     def uninstall_packages(self):
-        pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
+        pkgs_info_keys = tuple(self.__cur_pkgs_info.keys())
         pkg_indexs = self.indexs_of_selected_rows()
         pkg_names = [pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
@@ -477,7 +478,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         def do_uninstall():
             for pkg_name, code in loop_uninstall(cur_env, pkg_names):
-                item = self.cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
+                item = self.__cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
                 if code:
                     item[0] = "N/A"
                 item[2] = "卸载成功" if code else "卸载失败"
@@ -496,7 +497,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.repo.put(thread_uninstall_pkgs, 0)
 
     def upgrade_packages(self):
-        pkgs_info_keys = tuple(self.cur_pkgs_info.keys())
+        pkgs_info_keys = tuple(self.__cur_pkgs_info.keys())
         pkg_indexs = self.indexs_of_selected_rows()
         names = [pkgs_info_keys[index] for index in pkg_indexs]
         if not names:
@@ -520,7 +521,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         def do_upgrade():
             for pkg, res in loop_install(cur_env, names, upgrade=True):
-                item = self.cur_pkgs_info.setdefault(pkg, ["", "", ""])
+                item = self.__cur_pkgs_info.setdefault(pkg, ["", "", ""])
                 if res:
                     item[2] = "升级成功"
                     if item[1]:
@@ -544,7 +545,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.repo.put(thread_upgrade_pkgs, 0)
 
     def upgrade_all_packages(self):
-        upgradeable = [item[0] for item in self.cur_pkgs_info.items() if item[1][1]]
+        upgradeable = [item[0] for item in self.__cur_pkgs_info.items() if item[1][1]]
         if not upgradeable:
             MessageBox(
                 "提示",
@@ -571,7 +572,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         def do_upgrade():
             for pkg_name, code in loop_install(cur_env, upgradeable, upgrade=True):
-                item = self.cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
+                item = self.__cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
                 if code and item[1]:
                     item[0] = item[1]
                 item[2] = "升级成功" if code else "升级失败"
