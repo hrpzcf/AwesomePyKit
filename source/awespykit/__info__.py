@@ -1,9 +1,8 @@
 # coding: utf-8
 
+__all__ = ["NAME", "VERSION", "AUTHOR", "URL"]
+
 NAME = "Awespykit"
 VERSION = "0.16.0"
-AUTHOR = "hrp/hrpzcf"
-EMAIL = "pphrp@qq.com"
+AUTHOR = "hrpzcf hrp"
 URL = "https://github.com/hrpzcf/AwesomePyKit"
-
-__all__ = ["NAME", "VERSION", "AUTHOR", "EMAIL", "URL"]

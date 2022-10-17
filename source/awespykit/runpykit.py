@@ -35,22 +35,23 @@ from PyQt5.QtWidgets import *
 
 sys.path.append(path.dirname(__file__))  # rpk.exe 入口点所需
 
+from __info__ import *
 from logic import *
 from res.res import *
 from settings import *
 from ui import *
-from versions import *
 
-required_fastpip_version = (1, 0, 0)
-
-if VERNUM[0] != required_fastpip_version[0]:
+required_for_fastpip = (1, 0, 0)  # 对 fastpip 版本号的要求
+if VERNUM[0] != required_for_fastpip[0]:
     raise Exception(
-        f"当前环境的 fastpip 模块主版本号({VERNUM[0]})非本程序要求的主版本号({required_fastpip_version[0]})。"
+        f"当前环境的 fastpip 模块主版本号({VERNUM[0]})非本程序要求的主版本号({required_for_fastpip[0]})。"
     )
-if VERNUM[1] < required_fastpip_version[1]:
+if VERNUM[1] < required_for_fastpip[1]:
     raise Exception(
-        f"当前环境的 fastpip 模块次版本号({VERNUM[1]})低于本程序要求的次版本号({required_fastpip_version[1]})。"
+        f"当前环境的 fastpip 模块次版本号({VERNUM[1]})低于本程序要求的次版本号({required_for_fastpip[1]})。"
     )
+# 版本号：主版本号.次版本号.修订号
+# 主版本号必须与要求一致，次版本号必须大于等于要求的次版本号，不限制修订号
 
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
@@ -106,14 +107,14 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         MessageBox("关于", info, icon).exec_()
 
 
-def run_pykit():
+def run_pykit_sysexit_when_close():
     awespykit = QApplication(sys.argv)
     awespykit.setStyle("fusion")
     awespykit.setWindowIcon(QIcon(":/icon.ico"))
     main_entrance_window = MainEntrance()
     main_entrance_window.show()
-    sys.exit(awespykit.exec_())  # TODO 编程方式运行 pykit 时关闭窗口可能不需要退出
+    sys.exit(awespykit.exec_())
 
 
 if __name__ == "__main__":
-    run_pykit()
+    run_pykit_sysexit_when_close()

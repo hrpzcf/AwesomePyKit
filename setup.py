@@ -2,9 +2,9 @@
 
 from setuptools import *
 
-from source.awespykit.versions import *
+from source.awespykit.__info__ import *
 
-description = "一个关于 Python 的 GUI 工具箱，包管理、程序打包、切换 PyPi 镜像源、模块安装包下载..."
+description = "一个关于 Python 的 GUI 工具箱：包管理器、程序打包、切换 pip 源、模块安装包下载。"
 
 try:
     with open("README.md", "rt", encoding="utf-8") as md:
@@ -17,10 +17,9 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     name=NAME,
-    version=VERSION,
-    author=AUTHOR,
-    author_email=EMAIL,
     url=URL,
+    author=AUTHOR,
+    version=VERSION,
     license="MIT License",
     install_requires=["chardet>=4.0.0", "PyQt5>=5.15.0", "fastpip>=1.0,<2.0"],
     package_dir={"": "source"},
@@ -37,5 +36,7 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     package_data={"awespykit": ["help/About.html"]},
-    entry_points={"console_scripts": ["rpk = awespykit:run_pykit"]},
+    entry_points={
+        "console_scripts": ["rpk = awespykit.runpykit:run_pykit_sysexit_when_close"]
+    },
 )

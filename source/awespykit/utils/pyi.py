@@ -5,10 +5,10 @@ __doc__ = """包含 pyinstaller 工具相关的类或函数。"""
 import os
 from subprocess import *
 
+from __info__ import *
 from PyQt5.QtCore import *
-
-from versions import NAME
 from settings import *
+
 from utils.main import get_cmd_out
 
 
