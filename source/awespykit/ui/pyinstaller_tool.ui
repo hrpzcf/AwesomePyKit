@@ -125,14 +125,14 @@
                <item>
                 <widget class="QLabel" name="label_2">
                  <property name="text">
-                  <string>项目根目录：</string>
+                  <string>源代码根目录 / 相对路径起点：</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <widget class="QPushButton" name="pb_reset_root_level">
                  <property name="toolTip">
-                  <string>将项目根目录重置为程序启动入口所在目录。</string>
+                  <string>将源代码根目录重置为程序启动入口所在目录。</string>
                  </property>
                  <property name="text">
                   <string>重置</string>
@@ -142,7 +142,7 @@
                <item>
                 <widget class="QPushButton" name="pb_up_level_root">
                  <property name="toolTip">
-                  <string>将项目根目录向上移一级。</string>
+                  <string>将源代码根目录向上移一级。</string>
                  </property>
                  <property name="text">
                   <string>上一级</string>
@@ -157,7 +157,7 @@
                 <enum>Qt::NoContextMenu</enum>
                </property>
                <property name="toolTip">
-                <string>当前的项目根目录，选择程序启动入口文件后自动确定。</string>
+                <string>当前的源代码根目录，选择程序启动入口文件后自动确定。</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -511,7 +511,7 @@
                  </property>
                  <property name="toolTip">
                   <string>对应选项：--distpath
-此项可留空，默认储存位置：&quot;项目根目录/dist&quot;。</string>
+此项可留空，默认储存位置：&quot;源代码根目录/dist&quot;。</string>
                  </property>
                 </widget>
                </item>
@@ -547,7 +547,7 @@
                  </property>
                  <property name="toolTip">
                   <string>对应选项：--specpath
-此项可留空，默认储存位置：&quot;项目根目录&quot;。</string>
+此项可留空，默认储存位置：&quot;源代码根目录&quot;。</string>
                  </property>
                 </widget>
                </item>
@@ -583,7 +583,7 @@
                  </property>
                  <property name="toolTip">
                   <string>对应选项：--workpath
-此项可留空，默认目录：&quot;项目根目录/build&quot;。</string>
+此项可留空，默认目录：&quot;源代码根目录/build&quot;。</string>
                  </property>
                 </widget>
                </item>
@@ -1092,7 +1092,7 @@
                    <widget class="QCheckBox" name="cb_delete_working_dir">
                     <property name="toolTip">
                      <string>打包成功后删除临时工作文件夹，打包失败则不会执行删除操作。
-如果你没有自定义临时工作目录所在目录，则临时工作目录指的就是项目根目录下的 build 目录。</string>
+如果你没有自定义临时工作目录所在目录，则临时工作目录指的就是源代码根目录下的 build 目录。</string>
                     </property>
                     <property name="text">
                      <string>删除临时工作文件夹</string>

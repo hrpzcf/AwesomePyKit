@@ -737,12 +737,12 @@ class Ui_pyinstaller_tool(object):
         self.label_13.setText(_translate("pyinstaller_tool", "打包后的文件名（不含后缀）："))
         self.le_output_name.setToolTip(_translate("pyinstaller_tool", "对应选项：-n, --name\n"
 "打包完成后的 exe 可执行文件文件的名称，此项留空则使用程序启动入口文件名。"))
-        self.label_2.setText(_translate("pyinstaller_tool", "项目根目录："))
-        self.pb_reset_root_level.setToolTip(_translate("pyinstaller_tool", "将项目根目录重置为程序启动入口所在目录。"))
+        self.label_2.setText(_translate("pyinstaller_tool", "源代码根目录 / 相对路径起点："))
+        self.pb_reset_root_level.setToolTip(_translate("pyinstaller_tool", "将源代码根目录重置为程序启动入口所在目录。"))
         self.pb_reset_root_level.setText(_translate("pyinstaller_tool", "重置"))
-        self.pb_up_level_root.setToolTip(_translate("pyinstaller_tool", "将项目根目录向上移一级。"))
+        self.pb_up_level_root.setToolTip(_translate("pyinstaller_tool", "将源代码根目录向上移一级。"))
         self.pb_up_level_root.setText(_translate("pyinstaller_tool", "上一级"))
-        self.le_project_root.setToolTip(_translate("pyinstaller_tool", "当前的项目根目录，选择程序启动入口文件后自动确定。"))
+        self.le_project_root.setToolTip(_translate("pyinstaller_tool", "当前的源代码根目录，选择程序启动入口文件后自动确定。"))
         self.label_26.setText(_translate("pyinstaller_tool", "隐蔽的导入："))
         self.pb_clear_hidden_imports.setText(_translate("pyinstaller_tool", "清空"))
         self.pte_hidden_imports.setToolTip(_translate("pyinstaller_tool", "对应选项：--hidden-import, --hiddenimport\n"
@@ -794,15 +794,15 @@ class Ui_pyinstaller_tool(object):
 "用于加密 Python 字节码的密钥，此项可留空。"))
         self.label_8.setText(_translate("pyinstaller_tool", "打包后的文件储存位置："))
         self.le_output_dir.setToolTip(_translate("pyinstaller_tool", "对应选项：--distpath\n"
-"此项可留空，默认储存位置：\"项目根目录/dist\"。"))
+"此项可留空，默认储存位置：\"源代码根目录/dist\"。"))
         self.pb_select_output_dir.setText(_translate("pyinstaller_tool", "选择"))
         self.label_17.setText(_translate("pyinstaller_tool", "spec 文件储存位置："))
         self.le_spec_dir.setToolTip(_translate("pyinstaller_tool", "对应选项：--specpath\n"
-"此项可留空，默认储存位置：\"项目根目录\"。"))
+"此项可留空，默认储存位置：\"源代码根目录\"。"))
         self.pb_select_spec_dir.setText(_translate("pyinstaller_tool", "选择"))
         self.label_10.setText(_translate("pyinstaller_tool", "临时工作目录所在位置："))
         self.le_temp_working_dir.setToolTip(_translate("pyinstaller_tool", "对应选项：--workpath\n"
-"此项可留空，默认目录：\"项目根目录/build\"。"))
+"此项可留空，默认目录：\"源代码根目录/build\"。"))
         self.pb_select_temp_working_dir.setText(_translate("pyinstaller_tool", "选择"))
         self.label_9.setText(_translate("pyinstaller_tool", "upx 可执行文件所在目录："))
         self.le_upx_search_path.setToolTip(_translate("pyinstaller_tool", "对应选项：--upx-dir\n"
@@ -848,7 +848,7 @@ class Ui_pyinstaller_tool(object):
         self.cb_delete_spec_file.setToolTip(_translate("pyinstaller_tool", "打包成功后删除 Pyinstaller 生成的 .spec 文件，打包失败则不会执行删除操作。"))
         self.cb_delete_spec_file.setText(_translate("pyinstaller_tool", "删除 spec 文件"))
         self.cb_delete_working_dir.setToolTip(_translate("pyinstaller_tool", "打包成功后删除临时工作文件夹，打包失败则不会执行删除操作。\n"
-"如果你没有自定义临时工作目录所在目录，则临时工作目录指的就是项目根目录下的 build 目录。"))
+"如果你没有自定义临时工作目录所在目录，则临时工作目录指的就是源代码根目录下的 build 目录。"))
         self.cb_delete_working_dir.setText(_translate("pyinstaller_tool", "删除临时工作文件夹"))
         self.groupBox_4.setTitle(_translate("pyinstaller_tool", "打包配置管理"))
         self.label_28.setText(_translate("pyinstaller_tool", "保存当前打包配置"))

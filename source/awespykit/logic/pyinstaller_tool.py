@@ -128,7 +128,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.te_other_data = QTextEditMod("file")
         self.te_other_data.setToolTip(
             """对应选项：--add-data\n非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n"""
-            """注意：资源文件需是打包前程序真正使用的资源且在项目根目录范围内，否则打包后程序可能无法运行。可将文件\
+            """注意：资源文件需是打包前程序真正使用的资源且在源代码根目录范围内，否则打包后程序可能无法运行。可将文件\
 或者文件夹直接拖到此处。"""
         )
         self.verticalLayout_4.replaceWidget(self.te_other_data_old, self.te_other_data)
@@ -219,14 +219,14 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if not project_root:
             MessageBox(
                 "提示",
-                "项目根目录未填写！",
+                "源代码根目录未填写！",
                 QMessageBox.Warning,
             ).exec_()
             return
         if not os.path.isdir(project_root):
             MessageBox(
                 "提示",
-                "项目根目录不存在！",
+                "源代码根目录不存在！",
                 QMessageBox.Warning,
             ).exec_()
             return
@@ -483,7 +483,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         ]
 
     def __gen_abs_rel_groups(self, starting_point):
-        """获取其他要打包的文件的本地路径和与项目根目录的相对位置。"""
+        """获取其他要打包的文件的本地路径和与源代码根目录的相对位置。"""
         other_data_local_paths = self.te_other_data.local_paths
         abs_rel_path_groups = []
         for abs_path in other_data_local_paths:
