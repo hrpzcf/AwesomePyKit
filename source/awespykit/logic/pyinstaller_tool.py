@@ -65,7 +65,6 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pyiconfig = PyinstallerToolConfig()
         self.toolwin_venv = None
         self.toolwin_pyenv = None
-        self.__handle = None
         self.pyi_tool = PyiTool()
         self.set_platform_info()
         self.__envch_win = EnvironChosenWindow(self, self.__call_env_back)
@@ -821,8 +820,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
             return
-        self.pyi_tool.prepare_cmd(self.pyiconfig.curconfig)
-        self.__handle = self.pyi_tool.handle()
+        self.pyi_tool.prepare_cmds(self.pyiconfig.curconfig)
         thread_build = QThreadModel(self.pyi_tool.execute_cmd)
         thread_build.at_start(
             self.__lock_widgets,

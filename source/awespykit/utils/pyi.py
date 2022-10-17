@@ -62,19 +62,6 @@ class PyiTool(QObject):
         self.__process = None
         self.__commands = [self.pyi_path]
 
-    def handle(self):
-        if self.__process is None:
-            self.__process = Popen(
-                self.__commands,
-                stdin=PIPE,
-                stdout=PIPE,
-                stderr=STDOUT,
-                text=True,
-                cwd=self.__cwd,
-                startupinfo=self.STARTUP,
-            )
-        return self.__process
-
     def __time(self):
         if self.cumulative > 10000:
             self.cumulative = 0
@@ -122,6 +109,15 @@ class PyiTool(QObject):
 
     def execute_cmd(self):
         """执行命令并读取输出流，通过信号发射字符串、返回码更新主界面面板。"""
+        self.__process = Popen(
+            self.__commands,
+            stdin=PIPE,
+            stdout=PIPE,
+            stderr=STDOUT,
+            startupinfo=self.STARTUP,
+            text=True,
+            cwd=self.__cwd,
+        )
         if self.pyi_ready and self.__process:
             if self.__log_level == "TRACE":
                 self.__time_division_emit()
@@ -131,7 +127,7 @@ class PyiTool(QObject):
             if not self.pyi_ready:
                 self.stdout.emit("当前环境中找不到 pyinstaller.exe。")
             if self.__process is None:
-                self.stdout.emit("请先调用 handle 方法获取进程操作句柄。")
+                self.stdout.emit("创建打包进程失败，无法完成程序打包。")
             self.completed.emit(-1)
 
     @staticmethod
@@ -180,7 +176,7 @@ VarFileInfo([VarStruct("Translation", [2052, 1200])]),
             return get_cmd_out(self.pyi_path, "-v")
         return "0.0"
 
-    def prepare_cmd(self, commands: PyiConfigure):
+    def prepare_cmds(self, commands: PyiConfigure):
         """从 commands 添加 PyInstaller 命令选项。"""
         self.__log_level = commands.log_level
         if commands.onedir_bundle:
