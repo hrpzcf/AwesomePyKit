@@ -15,6 +15,7 @@ Python 工具箱 - Awespykit
 ## 快速跳转
 
 [程序概述](#程序概述) / [如何运行](#如何运行) / [程序截图](#程序截图) / [源码仓库](#源码仓库)
+/ [TODO 列表](#todo-列表)
 
 <br />
 
@@ -33,16 +34,19 @@ Python 工具箱 - Awespykit
 > 安装 Python 分发包后运行（推荐）
 
 `推荐原因：程序开发者经常与各种命令窗口打交道，如果厌烦了冗长的命令，想通过图形界面管理不同 Python 环境或者想使用 Pyinstaller 打包程序或切换 pip 源，直接在命令窗口输入 'rpk+回车'是运行 Awespykit 最方便的方式。`
- 
+
 1. 使用 pip 命令安装 Awespykit：`pip install Awespykit -U`（有多个环境的请自行选择安装环境）
 2. 安装完成后，即可在命令行窗口输入 `rpk` 启动 Awespykit。
-3. 如果输入 `pip` 命令或 `rpk` 命令出现提示：`xxx 不是内部或外部命令，也不是可运行的程序或批处理文件。`或者`无法将 xxx 项识别为 cmdlet、函数、脚本文件或可运行程序的名称。`等提示，则说明你的 Python 环境的路径尚未加入到系统环境变量的 PATH 变量中，请自行添加。
+3. 如果输入 `pip` 命令或 `rpk` 命令出现提示：`xxx 不是内部或外部命令，也不是可运行的程序或批处理文件。`
+   或者`无法将 xxx 项识别为 cmdlet、函数、脚本文件或可运行程序的名称。`等提示，则说明你的 Python
+   环境的路径尚未加入到系统环境变量的 PATH 变量中，请自行添加。
 
 <br/>
 
 > 下载可执行文件并从可执行文件运行：
 
-1. 打开 Awespykit 新版本发布页面 [GitHub](https://github.com/hrpzcf/AwesomePyKit/releases) 或 [Gitee](https://gitee.com/hrpzcf/AwesomePyKit/releases) 下载已经打包好的程序文件
+1. 打开 Awespykit 新版本发布页面 [GitHub](https://github.com/hrpzcf/AwesomePyKit/releases)
+   或 [Gitee](https://gitee.com/hrpzcf/AwesomePyKit/releases) 下载已经打包好的程序文件
 2. 下载 Awespykit-x.x.x.7z 或 .zip 或 .exe（每次发布的文件类型都可能不一样）
 3. 对于下载的 .7z、.zip 压缩包，请将压缩包解压，找到 runpykit.exe 双击运行；对于 exe 文件，请直接双击运行
 
@@ -60,7 +64,9 @@ Python 工具箱 - Awespykit
     ```
 
 5. 找到 runpykit.py 运行。如果不想显示控制台，可以将 runpykit.py 重命名为 runpykit.pyw
-6. *注意*：由于更改了项目目录结构，使用 Pycharm 的同学，Pycharm 打开 Awespykit 目录后，请右键 Awespykit -> source -> awespykit 目录，选择菜单末尾的 `将目录标记为->源代码根目录` 把 `awespykit` 目录标记为源码根目录，否则影响编程体验。
+6. *注意*：由于更改了项目目录结构，使用 Pycharm 的同学，Pycharm 打开 Awespykit 目录后，请右键 Awespykit
+   -> source -> awespykit 目录，选择菜单末尾的 `将目录标记为->源代码根目录` 把 `awespykit`
+   目录标记为源码根目录，否则影响编程体验。
 
 <br />
 
@@ -112,3 +118,11 @@ Python 工具箱 - Awespykit
 ## 源码仓库
 
 > [Gitee](https://gitee.com/hrpzcf/AwesomePyKit) / [GitHub](https://github.com/hrpzcf/AwesomePyKit)
+
+<br/>
+
+## TODO 列表
+
+[可能会添加的功能列表](./TODO.md)
+
+<br/>
