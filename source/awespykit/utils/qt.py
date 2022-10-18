@@ -3,9 +3,11 @@
 __doc__ = """包含一些继承自默认Qt控件的自定义行为控件。"""
 
 import os
+from typing import List
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLineEdit, QTextEdit
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 
 class QLineEditMod(QLineEdit):
@@ -23,7 +25,7 @@ class QLineEditMod(QLineEdit):
     def local_path(self):
         return self.text().strip()
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
             if self.__accept == "file":
                 self.__drag_temp = os.path.realpath(
@@ -43,7 +45,7 @@ class QLineEditMod(QLineEdit):
         else:
             event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent):
         if not self.__drag_temp:
             self.__drag_temp = os.path.realpath(
                 event.mimeData().urls()[0].toLocalFile()
@@ -73,9 +75,9 @@ class QTextEditMod(QTextEdit):
             return [path for path in file_dir_paths if os.path.isdir(path)]
         if self.__accept == "file":
             return [path for path in file_dir_paths if os.path.isfile(path)]
-        return []
+        return list()
 
-    def __stash_from_urls(self, urls):
+    def __stash_from_urls(self, urls: List[QUrl]):
         self.__drag_temp.clear()
         for file_or_dir in (path.toLocalFile() for path in urls):
             file_or_dir = os.path.realpath(file_or_dir)
@@ -88,7 +90,7 @@ class QTextEditMod(QTextEdit):
                     os.path.join(root, filename) for filename in files
                 )
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event: QDragEnterEvent):
         self.__drag_temp.clear()
         if event.mimeData().hasUrls():
             if self.__accept == "file":
@@ -110,7 +112,7 @@ class QTextEditMod(QTextEdit):
         else:
             event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event: QDropEvent):
         cur_text = self.toPlainText()
         super().dropEvent(event)
         if not self.__drag_temp:
