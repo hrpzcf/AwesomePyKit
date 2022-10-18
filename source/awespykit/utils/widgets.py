@@ -5,20 +5,25 @@ __doc__ = """包含一些继承自默认Qt控件的自定义行为控件。"""
 import os
 from typing import List
 
+from com.accept import Accept
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 
-class QLineEditMod(QLineEdit):
-    def __init__(self, accept="dir", file_filter=None):
+class LineEdit(QLineEdit):
+    def __init__(self, accept=None, filter=None):
         super().__init__()
         self.setContextMenuPolicy(Qt.NoContextMenu)
-        self.__accept = accept
-        if file_filter is None:
+        if accept is None:
+            self.__accept = Accept.Dir
+        else:
+            self.__accept = accept
+        if filter is None:
             self.__filter = set()
         else:
-            self.__filter = file_filter
+            self.__filter = filter
+            assert isinstance(filter, set)
         self.__drag_temp = ""
 
     @property
@@ -27,7 +32,9 @@ class QLineEditMod(QLineEdit):
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
-            if self.__accept == "file":
+            if self.__accept == Accept.Dir:
+                event.accept()
+            elif self.__accept == Accept.File:
                 self.__drag_temp = os.path.realpath(
                     event.mimeData().urls()[0].toLocalFile()
                 )
@@ -38,8 +45,6 @@ class QLineEditMod(QLineEdit):
                     event.accept()
                 else:
                     event.ignore()
-            elif self.__accept == "dir":
-                event.accept()
             else:
                 event.ignore()
         else:
@@ -50,31 +55,35 @@ class QLineEditMod(QLineEdit):
             self.__drag_temp = os.path.realpath(
                 event.mimeData().urls()[0].toLocalFile()
             )
-        if self.__accept == "file" and os.path.isfile(self.__drag_temp):
+        if self.__accept == Accept.File and os.path.isfile(self.__drag_temp):
             self.setText(self.__drag_temp)
-        elif self.__accept == "dir" and os.path.isdir(self.__drag_temp):
+        elif self.__accept == Accept.Dir and os.path.isdir(self.__drag_temp):
             self.setText(self.__drag_temp)
 
 
-class QTextEditMod(QTextEdit):
-    def __init__(self, accept="file", file_filter=None):
+class TextEdit(QTextEdit):
+    def __init__(self, accept=None, filter=None):
         super().__init__()
         self.setLineWrapMode(QTextEdit.NoWrap)
         self.setContextMenuPolicy(Qt.NoContextMenu)
-        self.__accept = accept
-        if file_filter is None:
+        if accept is None:
+            self.__accept = Accept.File
+        else:
+            self.__accept = accept
+        if filter is None:
             self.__filter = set()
         else:
-            self.__filter = file_filter
+            self.__filter = filter
+            assert isinstance(filter, set)
         self.__drag_temp = list()
 
     @property
     def local_paths(self):
         file_dir_paths = self.toPlainText().split("\n")
-        if self.__accept == "dir":
-            return [path for path in file_dir_paths if os.path.isdir(path)]
-        if self.__accept == "file":
-            return [path for path in file_dir_paths if os.path.isfile(path)]
+        if self.__accept == Accept.Dir:
+            return [p for p in file_dir_paths if os.path.isdir(p)]
+        if self.__accept == Accept.File:
+            return [p for p in file_dir_paths if os.path.isfile(p)]
         return list()
 
     def __stash_from_urls(self, urls: List[QUrl]):
@@ -93,7 +102,7 @@ class QTextEditMod(QTextEdit):
     def dragEnterEvent(self, event: QDragEnterEvent):
         self.__drag_temp.clear()
         if event.mimeData().hasUrls():
-            if self.__accept == "file":
+            if self.__accept == Accept.File:
                 self.__stash_from_urls(event.mimeData().urls())
                 if not self.__filter or set(
                     os.path.splitext(fp)[1]
@@ -103,7 +112,7 @@ class QTextEditMod(QTextEdit):
                     event.accept()
                 else:
                     event.ignore()
-            elif self.__accept == "dir":
+            elif self.__accept == Accept.Dir:
                 event.accept()
             else:
                 event.ignore()
@@ -117,15 +126,13 @@ class QTextEditMod(QTextEdit):
         super().dropEvent(event)
         if not self.__drag_temp:
             self.__stash_from_urls(event.mimeData().urls())
-        if self.__accept == "file":
+        if self.__accept == Accept.File:
             self.setText(
-                cur_text
-                + "\n".join(path for path in self.__drag_temp if os.path.isfile(path))
+                cur_text + "\n".join(p for p in self.__drag_temp if os.path.isfile(p))
             )
-        elif self.__accept == "dir":
+        elif self.__accept == Accept.Dir:
             self.setText(
-                cur_text
-                + "\n".join(path for path in self.__drag_temp if os.path.isdir(path))
+                cur_text + "\n".join(p for p in self.__drag_temp if os.path.isdir(p))
             )
         else:
             self.setText("")

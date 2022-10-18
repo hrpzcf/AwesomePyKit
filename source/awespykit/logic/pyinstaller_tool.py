@@ -5,7 +5,7 @@ import shutil
 from platform import machine, platform
 
 import PyQt5.sip as sip
-from com.mapping import import_publishing
+from com import *
 from fastpip import PyEnv
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -16,8 +16,8 @@ from utils import *
 from utils.cip import ImportInspector
 from utils.main import open_explorer
 from utils.pyi import PyiTool
-from utils.qt import QLineEditMod, QTextEditMod
 from utils.venv import VirtualEnv
+from utils.widgets import LineEdit, TextEdit
 
 from .messagebox import MessageBox
 
@@ -103,7 +103,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def __setup_other_widgets(self):
         # 替换“程序启动入口”LineEdit控件
-        self.le_program_entry = QLineEditMod("file", {".py", ".pyc", ".pyw", ".spec"})
+        self.le_program_entry = LineEdit(Accept.File, {".py", ".pyc", ".pyw", ".spec"})
         self.le_program_entry.setToolTip(
             "要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。\n"
             "如果指定了 SPEC 文件，则以下绝大部分项目文件及生成控制都将不生效。\n"
@@ -114,7 +114,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         self.le_program_entry_old.deleteLater()
         # 替换“其他模块搜索路径”TextEdit控件
-        self.te_module_search_path = QTextEditMod("dir")
+        self.te_module_search_path = TextEdit(Accept.Dir)
         self.te_module_search_path.setToolTip(
             "对应选项：-p, --paths\n程序的其他模块的搜索路径(模块的父目录)，此项可留空。\
 \n仅当 Pyinstaller 无法自动找到模块时使用，支持将文件夹直接拖放到此处。"
@@ -124,7 +124,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         self.te_module_search_path_old.deleteLater()
         # 替换“非源代码资源文件”LineEdit控件
-        self.te_other_data = QTextEditMod("file")
+        self.te_other_data = TextEdit(Accept.File)
         self.te_other_data.setToolTip(
             """对应选项：--add-data\n非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n"""
             """注意：资源文件需是打包前程序真正使用的资源且在源代码根目录范围内，否则打包后程序可能无法运行。可将文件\
@@ -133,7 +133,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.verticalLayout_4.replaceWidget(self.te_other_data_old, self.te_other_data)
         self.te_other_data_old.deleteLater()
         # 替换“文件图标路径”LineEdit控件
-        self.le_file_icon_path = QLineEditMod("file", {".ico", ".icns"})
+        self.le_file_icon_path = LineEdit(Accept.File, {".ico", ".icns"})
         self.le_file_icon_path.setToolTip(
             "对应选项：-i, --icon\n生成的 exe 可执行文件使用的图标，支持 .ico 等图标文件。\n可将格式正确的文件拖放到此处。"
         )
@@ -167,10 +167,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.set_te_module_search_path
         )
         self.pb_select_program_entry.clicked.connect(self.set_le_program_entry)
-        self.pb_up_level_root.clicked.connect(lambda: self.project_root_level("up"))
-        self.pb_reset_root_level.clicked.connect(
-            lambda: self.project_root_level("reset")
-        )
+        self.pb_up_level_root.clicked.connect(lambda: self.project_root_level(1))
+        self.pb_reset_root_level.clicked.connect(lambda: self.project_root_level(0))
         self.pb_clear_module_search_path.clicked.connect(
             self.te_module_search_path.clear
         )
@@ -269,7 +267,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         selected_file = self.__ask_file_or_dir_path(
             "选择程序启动入口",
             self.pyiconfig.curconfig.project_root,
-            file_filter="脚本文件 (*.py *.pyc *.pyw *.spec)",
+            filter="脚本文件 (*.py *.pyc *.pyw *.spec)",
         )[0]
         if not selected_file:
             return
@@ -282,7 +280,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_te_module_search_path(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "其他模块搜索目录", self.pyiconfig.curconfig.project_root, cht="dir"
+            "其他模块搜索目录", self.pyiconfig.curconfig.project_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -290,7 +288,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_te_other_data(self):
         selected_files = self.__ask_file_or_dir_path(
-            "选择非源码资源文件", self.pyiconfig.curconfig.project_root, mult=True
+            "选择非源码资源文件", self.pyiconfig.curconfig.project_root, multi=True
         )
         if not selected_files:
             return
@@ -300,7 +298,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         selected_file = self.__ask_file_or_dir_path(
             "选择可执行文件图标",
             self.pyiconfig.curconfig.project_root,
-            file_filter="图标文件 (*.ico *.icns)",
+            filter="图标文件 (*.ico *.icns)",
         )[0]
         if not selected_file:
             return
@@ -308,9 +306,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_spec_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择SPEC文件储存目录",
-            self.pyiconfig.curconfig.project_root,
-            cht="dir",
+            "选择SPEC文件储存目录", self.pyiconfig.curconfig.project_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -318,7 +314,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_temp_working_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择临时文件目录", self.pyiconfig.curconfig.project_root, cht="dir"
+            "选择临时文件目录", self.pyiconfig.curconfig.project_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -326,7 +322,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_output_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择生成文件储存目录", self.pyiconfig.curconfig.project_root, cht="dir"
+            "选择生成文件储存目录", self.pyiconfig.curconfig.project_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -334,42 +330,42 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_upx_search_path(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择UPX程序搜索目录", self.pyiconfig.curconfig.project_root, cht="dir"
+            "选择UPX程序搜索目录", self.pyiconfig.curconfig.project_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
         self.le_upx_search_path.setText(selected_dir)
 
     def __ask_file_or_dir_path(
-        self, title="", start="", cht="file", mult=False, file_filter="所有文件 (*)"
+        self, title="", start="", ch=Accept.File, multi=False, filter="所有文件 (*)"
     ):
         file_dir_paths = []
-        if cht == "file" and mult:
+        if ch == Accept.File and multi:
             if not title:
                 title = "选择多文件"
             path_getter = QFileDialog.getOpenFileNames
-        elif cht == "file" and not mult:
+        elif ch == Accept.File and not multi:
             if not title:
                 title = "选择文件"
             path_getter = QFileDialog.getOpenFileName
-        elif cht == "dir":
+        elif ch == Accept.Dir:
             if not title:
                 title = "选择文件夹"
             path_getter = QFileDialog.getExistingDirectory
         else:
             return file_dir_paths
-        if cht == "file" and not mult:
-            path = path_getter(self, title, start, file_filter)[0]
+        if ch == Accept.File and not multi:
+            path = path_getter(self, title, start, filter)[0]
             if not path:
                 file_dir_paths.append("")
             else:
                 file_dir_paths.append(os.path.realpath(path))
-        elif cht == "file" and mult:
-            paths = path_getter(self, title, start, file_filter)[0]
+        elif ch == Accept.File and multi:
+            paths = path_getter(self, title, start, filter)[0]
             file_dir_paths.extend(os.path.realpath(path) for path in paths if path)
             if not file_dir_paths:
                 file_dir_paths.append("")
-        elif cht == "dir":
+        elif ch == Accept.Dir:
             path = path_getter(self, title, start)
             if not path:
                 file_dir_paths.append("")
@@ -575,17 +571,23 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def set_platform_info(self):
         self.lb_platform_info.setText(f"{platform()}-{machine()}")
 
-    def project_root_level(self, opt):
+    def project_root_level(self, option):
+        """
+        option 为 0 表示重置路径，1 表示设为上一级目录
+        """
         root = self.le_project_root.text()
         if not root:
             return
-        if opt == "up":
-            self.le_project_root.setText(os.path.dirname(root))
-        elif opt == "reset":
+        if option == 1:
+            _path = os.path.dirname(root)
+        elif option == 0:
             deep = self.le_program_entry.text()
             if not deep:
                 return
-            self.le_project_root.setText(os.path.dirname(deep))
+            _path = os.path.dirname(deep)
+        else:
+            raise Exception("选项错误")
+        self.le_project_root.setText(_path)
 
     def __check_requireds(self):
         self.config_widgets_to_cfg()
@@ -854,13 +856,13 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
         def install_pkgs():
             names_for_install = set()
-            for name in missings:
-                if name not in import_publishing:
-                    names_for_install.add(name)
+            for imp in missings:
+                if imp not in import_name:
+                    names_for_install.add(imp)
                 else:
-                    names_for_install.add(import_publishing[name])
-            for name in names_for_install:
-                environ.install(name)
+                    names_for_install.add(import_name[imp])
+            for imp in names_for_install:
+                environ.install(imp)
 
         self.__impcheck_win.hide()
         thread_install_missings = QThreadModel(install_pkgs)

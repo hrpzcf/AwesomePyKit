@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import *
 from settings import *
 from ui import *
 from utils import *
-from utils.qt import QTextEditMod
+from utils.widgets import TextEdit
 
 from .generic_output import GenericOutputWindow
 from .input_dialog import InputDialog
@@ -90,9 +90,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def resizeEvent(self, event: QResizeEvent):
         old_size = event.oldSize()
         if (
-                not self.isMaximized()
-                and not self.isMinimized()
-                and (old_size.width(), old_size.height()) != (-1, -1)
+            not self.isMaximized()
+            and not self.isMinimized()
+            and (old_size.width(), old_size.height()) != (-1, -1)
         ):
             self.__normal_size = old_size
 
@@ -121,7 +121,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.btn_upgrade_package.clicked.connect(self.upgrade_packages)
         self.btn_upgrade_all.clicked.connect(self.upgrade_all_packages)
         self.tw_installed_info.horizontalHeader().sectionClicked[int].connect(
-            self._sort_by_column
+            self.__sort_by_column
         )
         self.tw_installed_info.clicked.connect(self.__show_label_selected_num)
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
@@ -159,7 +159,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         else:
             for i in range(self.tw_installed_info.rowCount()):
                 if self.judging_inclusion_relationship(
-                        self.tw_installed_info.item(i, 0).text(), keyword
+                    self.tw_installed_info.item(i, 0).text(), keyword
                 ):
                     self.tw_installed_info.showRow(i)
                 else:
@@ -207,7 +207,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             if not even_num_row:
                 item0.setBackground(color_gray)
             for colind, item_text in enumerate(
-                    self.__cur_pkgs_info.get(pkg_name, ["", "", ""])
+                self.__cur_pkgs_info.get(pkg_name, ["", "", ""])
             ):
                 item = QTableWidgetItem(f" {item_text} ")
                 if colind == 2:
@@ -220,7 +220,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                     item.setBackground(color_gray)
                 self.tw_installed_info.setItem(rowind, colind + 1, item)
 
-    def _sort_by_column(self, colind):
+    def __sort_by_column(self, colind):
         if colind == 0:
             self.__cur_pkgs_info = dict(
                 sorted(
@@ -385,33 +385,33 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def lock_widgets(self):
         for widget in (
-                self.btn_autosearch,
-                self.btn_addmanully,
-                self.btn_delselected,
-                self.lw_env_list,
-                self.cb_check_uncheck_all,
-                self.btn_check_for_updates,
-                self.btn_install_package,
-                self.btn_uninstall_package,
-                self.btn_upgrade_package,
-                self.btn_upgrade_all,
-                self.lb_num_selected_items,
+            self.btn_autosearch,
+            self.btn_addmanully,
+            self.btn_delselected,
+            self.lw_env_list,
+            self.cb_check_uncheck_all,
+            self.btn_check_for_updates,
+            self.btn_install_package,
+            self.btn_uninstall_package,
+            self.btn_upgrade_package,
+            self.btn_upgrade_all,
+            self.lb_num_selected_items,
         ):
             widget.setEnabled(False)
 
     def release_widgets(self):
         for widget in (
-                self.btn_autosearch,
-                self.btn_addmanully,
-                self.btn_delselected,
-                self.lw_env_list,
-                self.cb_check_uncheck_all,
-                self.btn_check_for_updates,
-                self.btn_install_package,
-                self.btn_uninstall_package,
-                self.btn_upgrade_package,
-                self.btn_upgrade_all,
-                self.lb_num_selected_items,
+            self.btn_autosearch,
+            self.btn_addmanully,
+            self.btn_delselected,
+            self.lw_env_list,
+            self.cb_check_uncheck_all,
+            self.btn_check_for_updates,
+            self.btn_install_package,
+            self.btn_uninstall_package,
+            self.btn_upgrade_package,
+            self.btn_upgrade_all,
+            self.lb_num_selected_items,
         ):
             widget.setEnabled(True)
 
@@ -509,13 +509,13 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             else "\n".join(("\n".join(names[:10]), "......"))
         )
         if (
-                MessageBox(
-                    "升级",
-                    f"确认升级？\n{names_text}",
-                    QMessageBox.Question,
-                    (("accept", "确定"), ("reject", "取消")),
-                ).exec_()
-                != 0
+            MessageBox(
+                "升级",
+                f"确认升级？\n{names_text}",
+                QMessageBox.Question,
+                (("accept", "确定"), ("reject", "取消")),
+            ).exec_()
+            != 0
         ):
             return
 
@@ -545,7 +545,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.repo.put(thread_upgrade_pkgs, 0)
 
     def upgrade_all_packages(self):
-        upgradeable = [item[0] for item in self.__cur_pkgs_info.items() if item[1][1]]
+        upgradeable = [i[0] for i in self.__cur_pkgs_info.items() if i[1][1]]
         if not upgradeable:
             MessageBox(
                 "提示",
@@ -560,13 +560,13 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             else "\n".join(("\n".join(upgradeable[:10]), "......"))
         )
         if (
-                MessageBox(
-                    "全部升级",
-                    f"确认升级？\n{names_text}",
-                    QMessageBox.Question,
-                    (("accept", "确定"), ("reject", "取消")),
-                ).exec_()
-                != 0
+            MessageBox(
+                "全部升级",
+                f"确认升级？\n{names_text}",
+                QMessageBox.Question,
+                (("accept", "确定"), ("reject", "取消")),
+            ).exec_()
+            != 0
         ):
             return
 
@@ -604,9 +604,7 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.last_path = self.__parent.config.last_path
 
     def __setup_other_widgets(self):
-        self.pte_package_names = QTextEditMod(
-            file_filter={".whl"},
-        )
+        self.pte_package_names = TextEdit(filter={".whl"})
         self.uiHorizontalLayout_package_name.replaceWidget(
             self.pte_package_names_old, self.pte_package_names
         )
