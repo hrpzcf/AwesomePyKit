@@ -33,13 +33,13 @@ Python 工具箱 - Awespykit
 
 > 安装 Python 分发包后运行（推荐）
 
-`推荐原因：程序开发者经常与各种命令窗口打交道，如果厌烦了冗长的命令，想通过图形界面管理不同 Python 环境或者想使用 Pyinstaller 打包程序或切换 pip 源，直接在命令窗口输入 'rpk+回车'是运行 Awespykit 最方便的方式。`
-
 1. 使用 pip 命令安装 Awespykit：`pip install Awespykit -U`（有多个环境的请自行选择安装环境）
 2. 安装完成后，即可在命令行窗口输入 `rpk` 启动 Awespykit。
 3. 如果输入 `pip` 命令或 `rpk` 命令出现提示：`xxx 不是内部或外部命令，也不是可运行的程序或批处理文件。`
    或者`无法将 xxx 项识别为 cmdlet、函数、脚本文件或可运行程序的名称。`等提示，则说明你的 Python
    环境的路径尚未加入到系统环境变量的 PATH 变量中，请自行添加。
+
+`推荐原因：程序开发者经常与各种命令窗口打交道，如果厌烦了冗长的命令，想通过 Awespykit 管理不同 Python 环境或者想使用 Pyinstaller 打包程序或切换 pip 源等，直接在命令窗口输入 'rpk + 回车' 是运行 Awespykit 最快捷的方式。`
 
 <br/>
 
@@ -123,6 +123,6 @@ Python 工具箱 - Awespykit
 
 ## TODO 列表
 
-[可能会添加的功能列表](./TODO.md)
+[可能会添加或删除的功能列表](./TODO.md)
 
 <br/>
