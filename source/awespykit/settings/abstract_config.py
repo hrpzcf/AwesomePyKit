@@ -42,7 +42,7 @@ class AbstractConfig(dict):
     def save_config(self):
         try:
             with open(self.__cfg, "wt", encoding="utf-8") as f:
-                json.dump(self, f, indent=4, ensure_ascii=False)
+                json.dump(self, f, ensure_ascii=False)
         except Exception:
             pass
 
