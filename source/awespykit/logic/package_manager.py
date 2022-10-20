@@ -75,13 +75,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             (("accept", "尝试停止并关闭"), ("reject", "取消")),
         ).exec_()
 
-    def resizeEvent(self, event: QResizeEvent):
+    def __save_window_size(self):
         if self.isMaximized() or self.isMinimized():
             return
-        old_size = event.oldSize()
-        if old_size.width() == -1 or old_size.height() == -1:
-            return
-        self.config.window_size = old_size.width(), old_size.height()
+        self.config.window_size = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
         if not self.repo.is_empty():
@@ -94,6 +91,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 event.ignore()
         else:
             self.__output.close()
+        self.__save_window_size()
         self.config.pypaths = self.path_list.copy()
         self.config.save_config()
 
@@ -667,15 +665,13 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.uiLabel_target_environment.setText(str(env))
         self.display()
 
-    def resizeEvent(self, event: QResizeEvent):
+    def __save_window_size(self):
         if self.isMaximized() or self.isMinimized():
             return
-        old_size = event.oldSize()
-        if old_size.width() == -1 or old_size.height() == -1:
-            return
-        self.__parent.config.install_winsize = old_size.width(), old_size.height()
+        self.__parent.config.install_winsize = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
+        self.__save_window_size()
         self.config_widgets_to_dict()
 
     def signal_slot_connection(self):
