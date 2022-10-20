@@ -32,15 +32,13 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
             self.showNormal()
         self.__list_widget_urls_update()
 
-    def resizeEvent(self, event: QResizeEvent):
+    def __store_window_size(self):
         if self.isMaximized() or self.isMinimized():
             return
-        old_size = event.oldSize()
-        if old_size.width() == -1 or old_size.height() == -1:
-            return
-        self.__config.window_size = old_size.width(), old_size.height()
+        self.__config.window_size = self.width(), self.height()
 
     def closeEvent(self, event: QResizeEvent):
+        self.__store_window_size()
         self.__config.save_config()
 
     @staticmethod
