@@ -30,6 +30,7 @@ import sys
 from os import path
 
 from fastpip import *
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
@@ -58,12 +59,18 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         self.setWindowTitle(NAME)
+        self.__config = MainEntranceConfig()
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
         self.__pkgdl_win = PackageDownloadWindow(self)
         self.signal_slot_connection()
+
+    def display_window(self):
+        self.resize(*self.__config.window_size)
+        self.showNormal()
 
     def signal_slot_connection(self):
         self.action_about.triggered.connect(self.__show_about)
@@ -71,6 +78,11 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.pb_pyi_tool.clicked.connect(self.__pyitool_win.display)
         self.pb_index_mgr.clicked.connect(self.__indexmgr_win.display)
         self.pb_pkg_dload.clicked.connect(self.__pkgdl_win.display)
+
+    def __store_window_size(self):
+        if self.isMaximized() or self.isMinimized():
+            return
+        self.__config.window_size = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
         if (
@@ -93,6 +105,8 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
                 event.accept()
             else:
                 event.ignore()
+        self.__store_window_size()
+        self.__config.save_config()
 
     @staticmethod
     def __show_about():
@@ -112,7 +126,7 @@ def run_pykit_sysexit_when_close():
     awespykit.setStyle("fusion")
     awespykit.setWindowIcon(QIcon(":/icon.ico"))
     main_entrance_window = MainEntrance()
-    main_entrance_window.show()
+    main_entrance_window.display_window()
     sys.exit(awespykit.exec_())
 
 
