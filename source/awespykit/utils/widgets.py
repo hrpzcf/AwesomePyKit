@@ -12,18 +12,18 @@ from PyQt5.QtWidgets import *
 
 
 class LineEdit(QLineEdit):
-    def __init__(self, accept=None, filter=None):
+    def __init__(self, accept=None, ext_filter=None):
         super().__init__()
         self.setContextMenuPolicy(Qt.NoContextMenu)
         if accept is None:
             self.__accept = Accept.Dir
         else:
             self.__accept = accept
-        if filter is None:
+        if ext_filter is None:
             self.__filter = set()
         else:
-            self.__filter = filter
-            assert isinstance(filter, set)
+            self.__filter = ext_filter
+            assert isinstance(ext_filter, set)
         self.__drag_temp = ""
 
     @property
@@ -62,7 +62,7 @@ class LineEdit(QLineEdit):
 
 
 class TextEdit(QTextEdit):
-    def __init__(self, accept=None, filter=None):
+    def __init__(self, accept=None, ext_filter=None):
         super().__init__()
         self.setLineWrapMode(QTextEdit.NoWrap)
         self.setContextMenuPolicy(Qt.NoContextMenu)
@@ -70,11 +70,11 @@ class TextEdit(QTextEdit):
             self.__accept = Accept.File
         else:
             self.__accept = accept
-        if filter is None:
+        if ext_filter is None:
             self.__filter = set()
         else:
-            self.__filter = filter
-            assert isinstance(filter, set)
+            self.__filter = ext_filter
+            assert isinstance(ext_filter, set)
         self.__drag_temp = list()
 
     @property

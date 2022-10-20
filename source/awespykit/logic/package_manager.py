@@ -19,18 +19,17 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
-        self.__setup_other_widgets()
         self.config = PackageManagerConfig()
         self.__output = GenericOutputWindow(self)
-        self.__ophandle = PyEnv.register(self.__output.add_line)
+        self.__handle = PyEnv.register(self.__output.add_line)
+        self.__setup_other_widgets()
         self.signal_slot_connection()
         self.env_list = [PyEnv(p) for p in self.config.pypaths]
-        self.path_list = [env.env_path for env in self.env_list]
+        self.path_list = [env.env_path for env in self.env_list]  # xxx 删除此属性
         self.__cur_pkgs_info = dict()
         self.__reverseds = [True, True, True, True]
         self.selected_index = -1
         self.repo = ThreadRepo(500)
-        self.__normal_size = self.size()
 
     def __setup_other_widgets(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -49,9 +48,12 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         rect = self.geometry()
         self.__output.set_pos(rect.left(), rect.bottom(), rect.width(), None)
 
-    def show(self):
-        super().show()
-        self.resize(self.__normal_size)
+    def display(self):
+        self.resize(*self.config.window_size)
+        if self.isMaximized():
+            self.showMaximized()
+        else:
+            self.showNormal()
         self.list_widget_pyenvs_update()
         self.lw_env_list.setCurrentRow(self.selected_index)
 
@@ -73,6 +75,14 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             (("accept", "尝试停止并关闭"), ("reject", "取消")),
         ).exec_()
 
+    def resizeEvent(self, event: QResizeEvent):
+        if self.isMaximized() or self.isMinimized():
+            return
+        old_size = event.oldSize()
+        if old_size.width() == -1 or old_size.height() == -1:
+            return
+        self.config.window_size = old_size.width(), old_size.height()
+
     def closeEvent(self, event: QCloseEvent):
         if not self.repo.is_empty():
             if self.__stop_before_close():
@@ -87,15 +97,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.config.pypaths = self.path_list.copy()
         self.config.save_config()
 
-    def resizeEvent(self, event: QResizeEvent):
-        old_size = event.oldSize()
-        if (
-            not self.isMaximized()
-            and not self.isMinimized()
-            and (old_size.width(), old_size.height()) != (-1, -1)
-        ):
-            self.__normal_size = old_size
-
     def show_loading(self, text):
         self.lb_loading_tip.clear()
         self.lb_loading_tip.setText(text)
@@ -109,8 +110,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.lb_loading_tip.clear()
 
     def signal_slot_connection(self):
-        self.btn_autosearch.clicked.connect(self.auto_search_env)
-        self.btn_delselected.clicked.connect(self.del_selected_py_env)
+        self.btn_autosearch.clicked.connect(self.auto_search_environ)
+        self.btn_delselected.clicked.connect(self.del_selected_environ)
         self.btn_addmanully.clicked.connect(self.add_py_path_manully)
         self.cb_check_uncheck_all.clicked.connect(self.selectall_unselectall)
         self.lw_env_list.clicked.connect(lambda: self.get_pkgs_info(0))
@@ -288,8 +289,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.tw_installed_info.clearSelection()
         self.__show_label_selected_num()
 
-    def auto_search_env(self):
-        def search_env():
+    def auto_search_environ(self):
+        def search_environ():
             for _path in all_py_paths():
                 if _path.lower() in path_list_lower:
                     continue
@@ -301,7 +302,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 self.path_list.append(env.env_path)
 
         path_list_lower = [p.lower() for p in self.path_list]
-        thread_search_envs = QThreadModel(search_env)
+        thread_search_envs = QThreadModel(search_environ)
         thread_search_envs.at_start(
             self.lock_widgets,
             lambda: self.show_loading("正在搜索 Python 安装目录..."),
@@ -315,7 +316,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_search_envs.start()
         self.repo.put(thread_search_envs, 0)
 
-    def del_selected_py_env(self):
+    def del_selected_environ(self):
         cur_index = self.lw_env_list.currentRow()
         if cur_index == -1:
             return
@@ -595,6 +596,7 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
     def __init__(self, parent: PackageManagerWindow, back):
         super().__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self.__setup_other_widgets()
         self.environment = None
         self.package_names = list()
@@ -604,12 +606,16 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.last_path = self.__parent.config.last_path
 
     def __setup_other_widgets(self):
-        self.pte_package_names = TextEdit(filter={".whl"})
+        self.pte_package_names = TextEdit(ext_filter={".whl"})
         self.uiHorizontalLayout_package_name.replaceWidget(
             self.pte_package_names_old, self.pte_package_names
         )
         self.pte_package_names.show()
         self.pte_package_names_old.deleteLater()
+
+    def display(self):
+        self.resize(*self.__parent.config.install_winsize)
+        self.showNormal()
 
     def save_package_names(self):
         data = self.pte_package_names.toPlainText()
@@ -659,7 +665,15 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.environment = env
         self.config_dict_to_widgets()
         self.uiLabel_target_environment.setText(str(env))
-        self.show()
+        self.display()
+
+    def resizeEvent(self, event: QResizeEvent):
+        if self.isMaximized() or self.isMinimized():
+            return
+        old_size = event.oldSize()
+        if old_size.width() == -1 or old_size.height() == -1:
+            return
+        self.__parent.config.install_winsize = old_size.width(), old_size.height()
 
     def closeEvent(self, event: QCloseEvent):
         self.config_widgets_to_dict()

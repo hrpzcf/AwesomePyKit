@@ -24,7 +24,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.setupUi(self)
         self.env_paths = None
         self.environments = None
-        self.__pdconfig = PackageDownloadConfig()
+        self.pdconfig = PackageDownloadConfig()
         self.__showdl_win = ShowDownloadWindow(self)
         self.signal_slot_connection()
         self.last_path = None
@@ -38,7 +38,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.pb_clear_package_names.clicked.connect(self.pte_package_names.clear)
         self.pb_start_download.clicked.connect(self.start_download_package)
         self.download_completed.connect(self.check_download)
-        self.pb_show_dl_list.clicked.connect(self.__showdl_win.show)
+        self.pb_show_dl_list.clicked.connect(self.__showdl_win.display)
         self.download_status.connect(self.__showdl_win.status_changed)
         self.set_download_table.connect(self.__showdl_win.setup_table)
 
@@ -64,6 +64,14 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             self.last_path = dir_path
             self.le_save_to.setText(dir_path)
 
+    def resizeEvent(self, event: QResizeEvent):
+        if self.isMaximized() or self.isMinimized():
+            return
+        old_size = event.oldSize()
+        if old_size.width() == -1 or old_size.height() == -1:
+            return
+        self.pdconfig.window_size = old_size.width(), old_size.height()
+
     def closeEvent(self, event: QCloseEvent):
         if not self.repo.is_empty():
             MessageBox(
@@ -71,12 +79,15 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
                 "有下载任务正在运行，关闭窗口并不会结束任务。",
                 QMessageBox.Warning,
             ).exec_()
-        super().closeEvent(event)
         self.config_widgets_to_dict()
-        self.__pdconfig.save_config()
+        self.pdconfig.save_config()
 
-    def show(self):
-        super().show()
+    def display(self):
+        self.resize(*self.pdconfig.window_size)
+        if self.isMaximized():
+            self.showMaximized()
+        else:
+            self.showNormal()
         if self.repo.is_empty():
             self.apply_config()
 
@@ -85,9 +96,9 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             self.env_paths = list()
         else:
             self.env_paths.clear()
-        self.env_paths.extend(self.__pdconfig.cur_pypaths)
+        self.env_paths.extend(self.pdconfig.cur_pypaths)
         self.environments = [PyEnv(p) for p in self.env_paths]
-        index = self.__pdconfig.derived_from
+        index = self.pdconfig.derived_from
         text_list = [str(e) for e in self.environments]
         if index < 0 or index >= len(text_list):
             index = 0
@@ -96,11 +107,11 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.cmb_derived_from.setCurrentIndex(index)
 
     def config_widgets_to_dict(self):
-        self.__pdconfig.package_names = [
+        self.pdconfig.package_names = [
             s for s in self.pte_package_names.toPlainText().split("\n") if s
         ]
-        self.__pdconfig.derived_from = self.cmb_derived_from.currentIndex()
-        self.__pdconfig.download_deps = self.cb_download_deps.isChecked()
+        self.pdconfig.derived_from = self.cmb_derived_from.currentIndex()
+        self.pdconfig.download_deps = self.cb_download_deps.isChecked()
         download_type = (
             "unlimited"
             if self.rb_unlimited.isChecked()
@@ -110,24 +121,24 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             if self.rb_only_binary.isChecked()
             else "prefer_binary"
         )
-        self.__pdconfig.download_type = download_type
-        self.__pdconfig.include_pre = self.cb_include_pre.isChecked()
-        self.__pdconfig.ignore_requires_python = (
+        self.pdconfig.download_type = download_type
+        self.pdconfig.include_pre = self.cb_include_pre.isChecked()
+        self.pdconfig.ignore_requires_python = (
             self.cb_ignore_requires_python.isChecked()
         )
-        self.__pdconfig.save_path = self.le_save_to.text()
-        self.__pdconfig.platform = [s for s in self.le_platform.text().split() if s]
-        self.__pdconfig.python_version = self.le_python_version.text()
-        self.__pdconfig.implementation = self.cmb_implementation.currentText()
-        self.__pdconfig.abis = [s for s in self.le_abis.text().split() if s]
-        self.__pdconfig.index_url = self.le_index_url.text()
-        self.__pdconfig.use_index_url = self.cb_use_index_url.isChecked()
+        self.pdconfig.save_path = self.le_save_to.text()
+        self.pdconfig.platform = [s for s in self.le_platform.text().split() if s]
+        self.pdconfig.python_version = self.le_python_version.text()
+        self.pdconfig.implementation = self.cmb_implementation.currentText()
+        self.pdconfig.abis = [s for s in self.le_abis.text().split() if s]
+        self.pdconfig.index_url = self.le_index_url.text()
+        self.pdconfig.use_index_url = self.cb_use_index_url.isChecked()
 
     def apply_config(self):
         self.update_envpaths_and_combobox()
-        self.pte_package_names.setPlainText("\n".join(self.__pdconfig.package_names))
-        self.cb_download_deps.setChecked(self.__pdconfig.download_deps)
-        download_type = self.__pdconfig.download_type
+        self.pte_package_names.setPlainText("\n".join(self.pdconfig.package_names))
+        self.cb_download_deps.setChecked(self.pdconfig.download_deps)
+        download_type = self.pdconfig.download_type
         if download_type == "unlimited":
             self.rb_unlimited.setChecked(True)
         elif download_type == "no_binary":
@@ -138,19 +149,17 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             self.rb_prefer_binary.setChecked(True)
         else:
             self.rb_unlimited.setChecked(True)
-        self.cb_include_pre.setChecked(self.__pdconfig.include_pre)
-        self.cb_ignore_requires_python.setChecked(
-            self.__pdconfig.ignore_requires_python
-        )
-        self.le_save_to.setText(self.__pdconfig.save_path)
-        self.le_platform.setText(" ".join(self.__pdconfig.platform))
-        self.le_python_version.setText(self.__pdconfig.python_version)
-        self.cmb_implementation.setCurrentText(self.__pdconfig.implementation)
-        self.le_abis.setText(" ".join(self.__pdconfig.abis))
-        use_index_url = self.__pdconfig.use_index_url
+        self.cb_include_pre.setChecked(self.pdconfig.include_pre)
+        self.cb_ignore_requires_python.setChecked(self.pdconfig.ignore_requires_python)
+        self.le_save_to.setText(self.pdconfig.save_path)
+        self.le_platform.setText(" ".join(self.pdconfig.platform))
+        self.le_python_version.setText(self.pdconfig.python_version)
+        self.cmb_implementation.setCurrentText(self.pdconfig.implementation)
+        self.le_abis.setText(" ".join(self.pdconfig.abis))
+        use_index_url = self.pdconfig.use_index_url
         self.cb_use_index_url.setChecked(use_index_url)
         self.le_index_url.setEnabled(use_index_url)
-        self.le_index_url.setText(self.__pdconfig.index_url)
+        self.le_index_url.setText(self.pdconfig.index_url)
 
     @staticmethod
     def confirm_dest_path(dest):
@@ -187,8 +196,8 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
                 "没有任何 Python 环境，请到'包管理器'中自动或手动添加 Python 环境路径。",
             ).exec_()
         self.config_widgets_to_dict()
-        destination = self.__pdconfig.save_path
-        pkg_names = self.__pdconfig.package_names
+        destination = self.pdconfig.save_path
+        pkg_names = self.pdconfig.package_names
         if not self.confirm_dest_path(destination):
             return
         if not pkg_names:
@@ -196,7 +205,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
                 "提示",
                 "没有需要下载的安装包。",
             ).exec_()
-        index = self.__pdconfig.derived_from
+        index = self.pdconfig.derived_from
         if index < 0 or index >= len(self.environments):
             index = 0
             self.cmb_derived_from.setCurrentIndex(0)
@@ -259,23 +268,23 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
                 or configure.get("only_binary", False)
             )
 
-        if not self.__pdconfig.download_deps:
+        if not self.pdconfig.download_deps:
             configure.update(no_deps=True)
-        download_type = self.__pdconfig.download_type
+        download_type = self.pdconfig.download_type
         if download_type == "no_binary":
             configure.update(no_binary=parse_package_names(names))
         elif download_type == "only_binary":
             configure.update(only_binary=parse_package_names(names))
         elif download_type == "prefer_binary":
             configure.update(prefer_binary=True)
-        if self.__pdconfig.include_pre:
+        if self.pdconfig.include_pre:
             configure.update(pre=True)
-        if self.__pdconfig.ignore_requires_python:
+        if self.pdconfig.ignore_requires_python:
             configure.update(ignore_requires_python=True)
-        saved_path = self.__pdconfig.save_path
+        saved_path = self.pdconfig.save_path
         if saved_path:
             configure.update(dest=saved_path)
-        platform_name = self.__pdconfig.platform
+        platform_name = self.pdconfig.platform
         if platform_name:
             if unqualified():
                 return MessageBox(
@@ -285,7 +294,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
                     QMessageBox.Warning,
                 ).exec_()
             configure.update(platform=platform_name)
-        python_version = self.__pdconfig.python_version
+        python_version = self.pdconfig.python_version
         if python_version:
             if unqualified():
                 return MessageBox(
@@ -295,7 +304,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
                     QMessageBox.Warning,
                 ).exec_()
             configure.update(python_version=python_version)
-        impl_name = self.__pdconfig.implementation
+        impl_name = self.pdconfig.implementation
         if impl_name == "无特定实现":
             impl_name = "py"
         if impl_name:
@@ -307,7 +316,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
                     QMessageBox.Warning,
                 ).exec_()
             configure.update(implementation=impl_name)
-        abis = self.__pdconfig.abis
+        abis = self.pdconfig.abis
         if abis:
             if unqualified():
                 return MessageBox(
@@ -323,16 +332,18 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
 '兼容解释器实现'三个下载条件。",
                 ).exec_()
             configure.update(abis=abis)
-        index_url = self.__pdconfig.index_url
-        if self.__pdconfig.use_index_url and index_url:
+        index_url = self.pdconfig.index_url
+        if self.pdconfig.use_index_url and index_url:
             configure.update(index_url=index_url)
         return configure
 
 
 class ShowDownloadWindow(Ui_show_download, QMainWindow):
-    def __init__(self, parent):
+    def __init__(self, parent: PackageDownloadWindow):
+        self.__parent = parent
         super().__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self._setup_other_widgets()
 
     def status_changed(self, index, status):
@@ -373,3 +384,15 @@ class ShowDownloadWindow(Ui_show_download, QMainWindow):
         horiz_head = self.tw_downloading.horizontalHeader()
         horiz_head.setSectionResizeMode(0, QHeaderView.Stretch)
         horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+
+    def resizeEvent(self, event: QResizeEvent):
+        if self.isMaximized() or self.isMinimized():
+            return
+        old_size = event.oldSize()
+        if old_size.width() == -1 or old_size.height() == -1:
+            return
+        self.__parent.pdconfig.dlstatus_winsize = old_size.width(), old_size.height()
+
+    def display(self):
+        self.resize(*self.__parent.pdconfig.dlstatus_winsize)
+        self.showNormal()

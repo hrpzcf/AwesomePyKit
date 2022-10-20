@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from copy import deepcopy
+from typing import Sequence
 
 from .abstract_config import AbstractConfig
 from .package_manager import get_shared_pypaths
@@ -326,6 +327,9 @@ class PyiConfigure(dict):
 
 
 class PyinstallerToolConfig(AbstractConfig):
+    _key_window_size = "window_size"
+    _key_impcheck_winsize = "impcheck_winsize"
+    _key_envch_winsize = "envch_winsize"
     _key_current = "current"
     _key_multi_cfg = "multicfg"
 
@@ -368,7 +372,46 @@ class PyinstallerToolConfig(AbstractConfig):
         if self._key_current not in self:
             self[self._key_current] = PyiConfigure()
         elif not isinstance(self[self._key_current], PyiConfigure):
-            new_pyi_settings = PyiConfigure()
-            new_pyi_settings.update(self[self._key_current])
-            self[self._key_current] = new_pyi_settings
+            new_pyi_configure = PyiConfigure()
+            new_pyi_configure.update(self[self._key_current])
+            self[self._key_current] = new_pyi_configure
         return self[self._key_current]
+
+    @property
+    def window_size(self):
+        if self._key_window_size not in self:
+            self[self._key_window_size] = 960, 600
+        return self[self._key_window_size]
+
+    @window_size.setter
+    def window_size(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_window_size] = value
+
+    @property
+    def envch_winsize(self):
+        if self._key_envch_winsize not in self:
+            self[self._key_envch_winsize] = 430, 200
+        return self[self._key_envch_winsize]
+
+    @envch_winsize.setter
+    def envch_winsize(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_envch_winsize] = value
+
+    @property
+    def impcheck_winsize(self):
+        if self._key_impcheck_winsize not in self:
+            self[self._key_impcheck_winsize] = 960, 600
+        return self[self._key_impcheck_winsize]
+
+    @impcheck_winsize.setter
+    def impcheck_winsize(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_impcheck_winsize] = value

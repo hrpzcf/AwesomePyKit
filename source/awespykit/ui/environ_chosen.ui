@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>420</width>
     <height>200</height>
    </rect>
   </property>
@@ -25,7 +25,7 @@
      <family>Microsoft YaHei UI</family>
     </font>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
      <number>8</number>
     </property>
@@ -39,18 +39,57 @@
      <number>8</number>
     </property>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QListWidget" name="lw_env_list"/>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>如果这里没有可选择的 Python 环境则需到&lt;包管理器&gt;中添加环境。</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QListWidget" name="lw_environ_list"/>
+    </item>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="palette">
+       <palette>
+        <active>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>91</red>
+            <green>91</green>
+            <blue>91</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </active>
+        <inactive>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>91</red>
+            <green>91</green>
+            <blue>91</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </inactive>
+        <disabled>
+         <colorrole role="WindowText">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>120</red>
+            <green>120</green>
+            <blue>120</blue>
+           </color>
+          </brush>
+         </colorrole>
+        </disabled>
+       </palette>
+      </property>
+      <property name="font">
+       <font>
+        <family>Microsoft YaHei UI</family>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>需要先在包管理器中添加环境，这里才会显示可供选择的项~</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

@@ -18,21 +18,30 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         self.__config = IndexManagerConfig()
         self.__ordered_urls = None
         self.signal_slot_connection()
-        self.__normal_size = self.size()
 
-    def show(self):
-        super().show()
-        self.resize(self.__normal_size)
+    def display(self):
+        # 首先 resize 为普通大小的窗口不可少，因为：
+        # 如果用户关闭最大化状态窗口，我们希望再次打开窗口也是最大化
+        # 但是如果再次打开窗口立即以最大化状态显示
+        # 那么将缺一个普通大小状态的窗口的尺寸记录
+        # 最大化状态窗口的还原按钮将无法把窗口还原为普通大小
+        self.resize(*self.__config.window_size)
+        if self.isMaximized():
+            self.showMaximized()
+        else:
+            self.showNormal()
         self.__list_widget_urls_update()
 
     def resizeEvent(self, event: QResizeEvent):
+        if self.isMaximized() or self.isMinimized():
+            return
         old_size = event.oldSize()
-        if (
-            not self.isMaximized()
-            and not self.isMinimized()
-            and (old_size.width(), old_size.height()) != (-1, -1)
-        ):
-            self.__normal_size = old_size
+        if old_size.width() == -1 or old_size.height() == -1:
+            return
+        self.__config.window_size = old_size.width(), old_size.height()
+
+    def closeEvent(self, event: QResizeEvent):
+        self.__config.save_config()
 
     @staticmethod
     def __widget_for_list_item(name, url):
@@ -96,7 +105,6 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         if self.__check_name_url(name, url):
             self.__config.index_urls[name] = url
         self.__list_widget_urls_update()
-        self.__config.save_config()
 
     def __del_index_url(self):
         selected = self.li_indexurls.currentRow()
@@ -120,7 +128,6 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
                     else items_count - 1
                 )
                 self.li_indexurls.setCurrentRow(should_be_selected)
-        self.__config.save_config()
 
     def __get_cur_environ(self):
         """

@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from typing import Sequence
+
 from .abstract_config import AbstractConfig
 from .package_manager import get_shared_pypaths
 
@@ -20,6 +22,8 @@ class PackageDownloadConfig(AbstractConfig):
     _key_abis = "abis"
     _key_index_url = "index_url"
     _key_use_index_url = "use_index_url"
+    _key_window_size = "window_size"
+    _key_dlstatus_winsize = "dlstatus_winsize"
 
     CONFIGFILE = "package_download.json"
 
@@ -176,3 +180,29 @@ class PackageDownloadConfig(AbstractConfig):
             return list()
         assert isinstance(shared_pypaths, list)
         return shared_pypaths
+
+    @property
+    def window_size(self):
+        if self._key_window_size not in self:
+            self[self._key_window_size] = 620, 660
+        return self[self._key_window_size]
+
+    @window_size.setter
+    def window_size(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_window_size] = value
+
+    @property
+    def dlstatus_winsize(self):
+        if self._key_dlstatus_winsize not in self:
+            self[self._key_dlstatus_winsize] = 260, 500
+        return self[self._key_dlstatus_winsize]
+
+    @dlstatus_winsize.setter
+    def dlstatus_winsize(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_dlstatus_winsize] = value
