@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from typing import Sequence
+from typing import Iterable, Sequence
 
 from .abstract_config import AbstractConfig
 
@@ -32,14 +32,15 @@ class PackageManagerConfig(AbstractConfig):
         _shared_saved_pypaths = self.pypaths
 
     @property
-    def pypaths(self):
+    def pypaths(self) -> list:
         if self._key_python_paths not in self:
             self[self._key_python_paths] = list()
         return self[self._key_python_paths]
 
     @pypaths.setter
-    def pypaths(self, value: list):
-        assert isinstance(value, list)
+    def pypaths(self, value: Iterable):
+        assert isinstance(value, Iterable)
+        assert all(isinstance(i, str) for i in value)
         self[self._key_python_paths].clear()
         self[self._key_python_paths].extend(value)
 

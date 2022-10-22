@@ -25,7 +25,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.__setup_other_widgets()
         self.signal_slot_connection()
         self.env_list = [PyEnv(p) for p in self.config.pypaths]
-        self.path_list = [env.env_path for env in self.env_list]  # xxx 删除此属性
         self.__cur_pkgs_info = dict()
         self.__reverseds = [True, True, True, True]
         self.selected_index = -1
@@ -92,7 +91,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         else:
             self.__output.close()
         self.__save_window_size()
-        self.config.pypaths = self.path_list.copy()
         self.config.save_config()
 
     def show_loading(self, text):
@@ -297,9 +295,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 except Exception:
                     continue
                 self.env_list.append(env)
-                self.path_list.append(env.env_path)
+                self.config.pypaths.append(env.env_path)
 
-        path_list_lower = [p.lower() for p in self.path_list]
+        path_list_lower = [p.lower() for p in self.config.pypaths]
         thread_search_envs = QThreadModel(search_environ)
         thread_search_envs.at_start(
             self.lock_widgets,
@@ -319,7 +317,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         if cur_index == -1:
             return
         del self.env_list[cur_index]
-        del self.path_list[cur_index]
+        del self.config.pypaths[cur_index]
         self.lw_env_list.removeItemWidget(self.lw_env_list.takeItem(cur_index))
         self.environ_changed_clear_pkgs()
 
@@ -332,7 +330,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 "无效的 Python 目录路径！",
                 QMessageBox.Warning,
             ).exec_()
-        if _path.lower() in [p.lower() for p in self.path_list]:
+        if _path.lower() in [p.lower() for p in self.config.pypaths]:
             return MessageBox(
                 "警告",
                 "要添加的 Python 目录已存在。",
@@ -341,7 +339,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         try:
             env = PyEnv(_path)
             self.env_list.append(env)
-            self.path_list.append(env.env_path)
+            self.config.pypaths.append(env.env_path)
         except Exception:
             return MessageBox(
                 "警告",
