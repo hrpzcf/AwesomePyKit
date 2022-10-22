@@ -44,7 +44,7 @@
       <property name="font">
        <font>
         <family>Microsoft YaHei UI</family>
-        <pointsize>12</pointsize>
+        <pointsize>11</pointsize>
        </font>
       </property>
       <property name="toolTip">
@@ -66,7 +66,7 @@
       <property name="font">
        <font>
         <family>Microsoft YaHei UI</family>
-        <pointsize>12</pointsize>
+        <pointsize>11</pointsize>
        </font>
       </property>
       <property name="toolTip">
@@ -88,7 +88,7 @@
       <property name="font">
        <font>
         <family>Microsoft YaHei UI</family>
-        <pointsize>12</pointsize>
+        <pointsize>11</pointsize>
        </font>
       </property>
       <property name="toolTip">
@@ -110,7 +110,7 @@
       <property name="font">
        <font>
         <family>Microsoft YaHei UI</family>
-        <pointsize>12</pointsize>
+        <pointsize>11</pointsize>
        </font>
       </property>
       <property name="toolTip">

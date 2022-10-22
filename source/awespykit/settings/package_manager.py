@@ -23,6 +23,7 @@ class PackageManagerConfig(AbstractConfig):
     _key_package_names = "package_names"
     _key_window_size = "window_size"
     _key_install_winsize = "install_winsize"
+    _key_input_winsize = "input_winsize"
 
     CONFIGFILE = "package_manager.json"
 
@@ -135,3 +136,16 @@ class PackageManagerConfig(AbstractConfig):
         assert len(value) == 2
         assert isinstance(value[0], int) and isinstance(value[1], int)
         self[self._key_install_winsize] = value
+
+    @property
+    def input_winsize(self):
+        if self._key_input_winsize not in self:
+            self[self._key_input_winsize] = 580, 0
+        return self[self._key_input_winsize]
+
+    @input_winsize.setter
+    def input_winsize(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_input_winsize] = value

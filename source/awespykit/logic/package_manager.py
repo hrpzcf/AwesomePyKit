@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from os import path
+
 from fastpip import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -10,7 +12,6 @@ from utils import *
 from utils.widgets import TextEdit
 
 from .generic_output import GenericOutputWindow
-from .input_dialog import InputDialog
 from .messagebox import MessageBox
 from .query_file_path import QueryFilePath
 
@@ -349,7 +350,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.list_widget_pyenvs_update()
 
     def add_py_path_manully(self):
-        InputDialog(self, self.add_path_callback, "请输入目录路径")
+        AddEnvironDialog(self, self.add_path_callback, "添加环境")
 
     def check_cur_pkgs_for_updates(self):
         if self.tw_installed_info.rowCount() == 0:
@@ -680,3 +681,52 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
 
     def set_le_use_index_url(self):
         self.le_use_index_url.setEnabled(self.cb_use_index_url.isChecked())
+
+
+class AddEnvironDialog(Ui_input_dialog, QMainWindow):
+    def __init__(self, parent: PackageManagerWindow, back, title=""):
+        self.__parent = parent
+        super().__init__(parent)
+        self.setupUi(self)
+        self.initialize()
+        if title:
+            self.setWindowTitle(title)
+        self.__callback = back
+        self.last_path = parent.config.last_path
+        self.display()
+
+    def display(self):
+        self.resize(*self.__parent.config.input_winsize)
+        self.showNormal()
+
+    def initialize(self):
+        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
+        self.uiPushButton_confirm.clicked.connect(self.__text_back)
+        self.uiPushButton_select_envdir.clicked.connect(self.__select_envdir)
+
+    def keyPressEvent(self, event: QKeyEvent):
+        key = event.key()
+        if key == Qt.Key_Escape:
+            self.close()
+        elif key == Qt.Key_Enter or key == Qt.Key_Return:
+            self.__text_back()
+
+    def __text_back(self):
+        self.close()
+        self.__callback(self.uiLineEdit_input_content.text())
+
+    def __save_window_size(self):
+        if self.isMaximized() or self.isMinimized():
+            return
+        self.__parent.config.input_winsize = self.width(), self.height()
+
+    def closeEvent(self, event: QCloseEvent):
+        self.__save_window_size()
+
+    def __select_envdir(self):
+        _path = QFileDialog.getExistingDirectory(self, "选择文件夹", self.last_path)
+        if not _path:
+            return
+        interpreter_directory = path.normpath(_path)
+        self.__parent.config.last_path = interpreter_directory
+        self.uiLineEdit_input_content.setText(interpreter_directory)

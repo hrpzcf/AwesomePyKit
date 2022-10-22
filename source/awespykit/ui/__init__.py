@@ -4,7 +4,7 @@ from .environ_chosen import Ui_environ_chosen
 from .generic_output import Ui_generic_output
 from .imports_check import Ui_imports_check
 from .index_manager import Ui_index_manager
-from .input_dialog import Ui_input_dialog
+from .addenv_dialog import Ui_input_dialog
 from .main_entrance import Ui_main_entrance
 from .package_download import Ui_package_download
 from .package_install import Ui_package_install
