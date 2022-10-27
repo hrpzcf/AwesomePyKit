@@ -28,7 +28,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.__showdl_win = ShowDownloadWindow(self)
         self.signal_slot_connection()
         self.last_path = None
-        self.repo = ThreadRepo(500)
+        self.thread_repo = ThreadRepo(500)
 
     def signal_slot_connection(self):
         self.cb_use_index_url.clicked.connect(self.change_le_index_url)
@@ -70,7 +70,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.config.window_size = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
-        if not self.repo.is_empty():
+        if not self.thread_repo.is_empty():
             MessageBox(
                 "警告",
                 "有下载任务正在运行，关闭窗口并不会结束任务。",
@@ -86,7 +86,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             self.showMaximized()
         else:
             self.showNormal()
-        if self.repo.is_empty():
+        if self.thread_repo.is_empty():
             self.apply_config()
 
     def update_envpaths_and_combobox(self):
@@ -241,7 +241,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             lambda: self.pb_start_download.setEnabled(True),
         )
         thread_download.start()
-        self.repo.put(thread_download, 0)
+        self.thread_repo.put(thread_download, 0)
 
     @staticmethod
     def check_download(dest):

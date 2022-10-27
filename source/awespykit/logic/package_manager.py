@@ -2,6 +2,7 @@
 
 from os import path
 
+from com import *
 from fastpip import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -29,7 +30,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.__cur_pkgs_info = dict()
         self.__reverseds = [True, True, True, True]
         self.selected_index = -1
-        self.repo = ThreadRepo(500)
+        self.thread_repo = ThreadRepo(500)
 
     def __setup_other_widgets(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -41,12 +42,32 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.loading_mov = QMovie(":/loading.gif")
         self.loading_mov.setScaledSize(QSize(16, 16))
 
-    def moveEvent(self, event: QMoveEvent):
-        super().moveEvent(event)
-        if self.__output.isHidden():
+    def __move_output(self):
+        if self.__output.isHidden() or self.__output.linkage() == Linkage.NoLink:
             return
-        rect = self.geometry()
-        self.__output.set_pos(rect.left(), rect.bottom(), rect.width(), None)
+        geo = self.geometry()
+        fgeo = self.frameGeometry()
+        if self.__output.linkage() == Linkage.Top:
+            point = fgeo.bottomLeft()
+            width = geo.width()
+            height = None
+        elif self.__output.linkage() == Linkage.Left:
+            point = fgeo.topRight()
+            width = None
+            height = geo.height()
+        elif self.__output.linkage() == Linkage.Right:
+            point = fgeo.topLeft()
+            width = None
+            height = geo.height()
+        else:
+            return
+        self.__output.set_geometry(point, width, height)
+
+    def moveEvent(self, event: QMoveEvent):
+        self.__move_output()
+
+    def resizeEvent(self, event: QResizeEvent):
+        self.__move_output()
 
     def display(self):
         self.resize(*self.config.window_size)
@@ -59,10 +80,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def show_hide_output(self):
         if self.__output.isHidden():
-            self.__output.show()
+            self.__output.showNormal()
+            self.__move_output()
             self.__output.clear_content()
-            rect = self.geometry()
-            self.__output.set_pos(rect.left(), rect.bottom(), rect.width(), None)
         else:
             self.__output.hide()
 
@@ -81,9 +101,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.config.window_size = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
-        if not self.repo.is_empty():
+        if not self.thread_repo.is_empty():
             if self.__stop_before_close():
-                self.repo.stop_all()
+                self.thread_repo.stop_all()
                 self.__output.close()
                 self.environ_changed_clear_pkgs()
                 event.accept()
@@ -269,7 +289,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 self.release_widgets,
             )
         thread_get_pkgs_info.start()
-        self.repo.put(thread_get_pkgs_info, 1)
+        self.thread_repo.put(thread_get_pkgs_info, 1)
         return thread_get_pkgs_info
 
     def indexs_of_selected_rows(self):
@@ -311,7 +331,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_search_envs.start()
-        self.repo.put(thread_search_envs, 0)
+        self.thread_repo.put(thread_search_envs, 0)
 
     def del_selected_environ(self):
         cur_index = self.lw_env_list.currentRow()
@@ -379,7 +399,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_get_outdated.start()
-        self.repo.put(thread_get_outdated, 1)
+        self.thread_repo.put(thread_get_outdated, 1)
 
     def lock_widgets(self):
         for widget in (
@@ -451,7 +471,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_install_pkgs.start()
-        self.repo.put(thread_install_pkgs, 0)
+        self.thread_repo.put(thread_install_pkgs, 0)
 
     def uninstall_packages(self):
         pkgs_info_keys = tuple(self.__cur_pkgs_info.keys())
@@ -492,7 +512,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_uninstall_pkgs.start()
-        self.repo.put(thread_uninstall_pkgs, 0)
+        self.thread_repo.put(thread_uninstall_pkgs, 0)
 
     def upgrade_packages(self):
         pkgs_info_keys = tuple(self.__cur_pkgs_info.keys())
@@ -540,7 +560,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_upgrade_pkgs.start()
-        self.repo.put(thread_upgrade_pkgs, 0)
+        self.thread_repo.put(thread_upgrade_pkgs, 0)
 
     def upgrade_all_packages(self):
         upgradeable = [i[0] for i in self.__cur_pkgs_info.items() if i[1][1]]
@@ -586,7 +606,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.release_widgets,
         )
         thread_upgrade_pkgs.start()
-        self.repo.put(thread_upgrade_pkgs, 0)
+        self.thread_repo.put(thread_upgrade_pkgs, 0)
 
 
 class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):

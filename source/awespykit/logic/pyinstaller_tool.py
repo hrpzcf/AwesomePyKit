@@ -63,7 +63,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config = PyinstallerToolConfig()
         self.__setup_other_widgets()
         self.set_platform_info()
-        self.repo = ThreadRepo(500)
+        self.thread_repo = ThreadRepo(500)
         self.toolwin_venv = None
         self.toolwin_pyenv = None
         self.pyi_tool = PyiTool()
@@ -80,7 +80,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config.window_size = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
-        if not self.repo.is_empty():
+        if not self.thread_repo.is_empty():
             MessageBox(
                 "提醒",
                 "任务正在运行中，关闭此窗口后任务将在后台运行。\n请勿对相关目录进行任\
@@ -97,7 +97,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.showMaximized()
         else:
             self.showNormal()
-        if not self.repo.is_empty():
+        if not self.thread_repo.is_empty():
             return
         self.config_cfg_to_widgets(None)
 
@@ -260,7 +260,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             lambda: self.__impcheck_win.display_result(environ, missings),
         )
         thread_check_imp.start()
-        self.repo.put(thread_check_imp, 1)
+        self.thread_repo.put(thread_check_imp, 1)
 
     def set_le_program_entry(self):
         selected_file = self.__ask_file_or_dir_path(
@@ -565,7 +565,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             lambda: self.load_version_information_lazily(False),
         )
         thread_reinstall.start()
-        self.repo.put(thread_reinstall, 0)
+        self.thread_repo.put(thread_reinstall, 0)
 
     def set_platform_info(self):
         self.lb_platform_info.setText(f"{platform()}-{machine()}")
@@ -705,7 +705,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             working_dir_root = os.path.join(custom_working_dir, program_name)
         thread_delete_working = QThreadModel(shutil.rmtree, (working_dir_root, True))
         thread_delete_working.start()
-        self.repo.put(thread_delete_working)
+        self.thread_repo.put(thread_delete_working)
 
     def after_task_completed(self, retcode):
         if retcode == 0:
@@ -797,7 +797,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                         self.build_executable,
                     )
                     thread_venv_creating.start()
-                    self.repo.put(thread_venv_creating, 0)
+                    self.thread_repo.put(thread_venv_creating, 0)
                     return
                 else:
                     return
@@ -829,7 +829,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         thread_build.at_finish(self.__hide_running, self.__release_widgets)
         thread_build.start()
-        self.repo.put(thread_build, 0)
+        self.thread_repo.put(thread_build, 0)
 
     def __install_missings(self, missings):
         if not missings:
@@ -879,7 +879,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             ).exec_(),
         )
         thread_install_missings.start()
-        self.repo.put(thread_install_missings, 0)
+        self.thread_repo.put(thread_install_missings, 0)
 
     def update_configure_combobox_items(self):
         self.uiComboBox_saved_config.clear()
@@ -978,7 +978,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_load_info.at_start(self.importance_operation_start("正在加载配置..."))
         thread_load_info.at_finish(self.importance_operation_finish)
         thread_load_info.start()
-        self.repo.put(thread_load_info, 1)
+        self.thread_repo.put(thread_load_info, 1)
 
 
 class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):

@@ -5,7 +5,7 @@ __doc__ = """包含一些继承自默认Qt控件的自定义行为控件。"""
 import os
 from typing import List
 
-from com.accept import Accept
+from com.enums import Accept
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *

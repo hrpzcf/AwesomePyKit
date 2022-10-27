@@ -86,9 +86,9 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         if (
-            self.__pkgmgr_win.repo.is_empty()
-            and self.__pyitool_win.repo.is_empty()
-            and self.__pkgdl_win.repo.is_empty()
+            self.__pkgmgr_win.thread_repo.is_empty()
+            and self.__pyitool_win.thread_repo.is_empty()
+            and self.__pkgdl_win.thread_repo.is_empty()
         ):
             event.accept()
         else:
@@ -99,9 +99,9 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
                 (("accept", "强制退出"), ("reject", "取消")),
             ).exec_()
             if role == 0:
-                self.__pkgdl_win.repo.kill_all()
-                self.__pkgmgr_win.repo.kill_all()
-                self.__pyitool_win.repo.kill_all()
+                self.__pkgdl_win.thread_repo.kill_all()
+                self.__pkgmgr_win.thread_repo.kill_all()
+                self.__pyitool_win.thread_repo.kill_all()
                 event.accept()
             else:
                 event.ignore()

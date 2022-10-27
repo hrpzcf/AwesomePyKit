@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from com import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -10,16 +11,25 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
     signal_clear_content = pyqtSignal()
     signal_append_line = pyqtSignal(str)
 
-    def __init__(self, parent, title=None, titlebar=False):
+    def __init__(self, parent: QMainWindow, title=None, titlebar=True):
+        self.__parent = parent
         super().__init__(parent)
         self.setupUi(self)
         if title is not None:
             self.setWindowTitle(title)
         if not titlebar:
-            self.setWindowFlags(Qt.CustomizeWindowHint | Qt.Window)
+            self.setWindowFlags(Qt.Window | Qt.CustomizeWindowHint)
         self.signal_slot_connection()
-        self.__width = self.width()
-        self.__height = self.height()
+        self.__pressed = False
+        self.__linkage = Linkage.NoLink
+        self.__x = self.x()
+        self.__y = self.y()
+        self.__w = self.width()
+        self.__h = self.height()
+        self.installEventFilter(self)
+
+    def linkage(self):
+        return self.__linkage
 
     def signal_slot_connection(self):
         self.uiPushButton_close_window.clicked.connect(self.hide)
@@ -29,17 +39,90 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
         )
         self.signal_clear_content.connect(self.uiPlainTextEdit_output.clear)
 
-    def resizeEvent(self, event: QResizeEvent):
-        self.__width = self.width()
-        self.__height = self.height()
-        super().resizeEvent(event)
+    def __test_geo(self):
+        cur, curf = self.geometry(), self.frameGeometry()
+        par, parf = self.__parent.geometry(), self.__parent.frameGeometry()
+        if parf.top() - 20 < curf.top() < parf.top() + 20:
+            if parf.right() - 20 <= curf.left() <= parf.right() + 20:
+                self.__x = parf.right() + 1
+                self.__y = parf.top()
+                self.__w = cur.width()
+                self.__h = par.height()
+                self.__linkage = Linkage.Left
+                return True
+            elif parf.left() - 20 <= curf.right() <= parf.left() + 20:
+                self.__x = parf.left() - curf.width()
+                self.__y = parf.top()
+                self.__w = cur.width()
+                self.__h = par.height()
+                self.__linkage = Linkage.Right
+                return True
+        elif parf.bottom() - 20 <= curf.top() <= parf.bottom() + 20:
+            if (parf.left() - 20 <= curf.left() <= parf.left() + 20) or (
+                parf.right() - 20 <= curf.right() <= parf.right() + 20
+            ):
+                self.__x = parf.left()
+                self.__y = parf.bottom() + 1
+                self.__w = par.width()
+                self.__h = cur.height()
+                self.__linkage = Linkage.Top
+                return True
+        self.__linkage = Linkage.NoLink
+        return False
 
-    def set_pos(self, x, y, w, h):
-        if w is None:
-            w = self.__width
-        if h is None:
-            h = self.__height
-        self.setGeometry(x, y + self.geometry().y() - self.y(), w, h)
+    def __move_attach(self):
+        if not self.__pressed:
+            return
+        if not self.__test_geo():
+            return
+        self.move(self.__x, self.__y)
+        self.resize(self.__w, self.__h)
+
+    def __resize_attch(self):
+        pass
+
+    def moveEvent(self, event: QMoveEvent):
+        cur_point = event.pos()
+        self.__x = cur_point.x()
+        self.__y = cur_point.y()
+
+    def resizeEvent(self, event: QResizeEvent):
+        cur_size = event.size()
+        self.__w = cur_size.width()
+        self.__h = cur_size.height()
+
+    def eventFilter(self, sender: QObject, event: QEvent) -> bool:
+        if sender == self:
+            if event.type() == QEvent.NonClientAreaMouseButtonPress:
+                self.__pressed = True
+            elif event.type() == QEvent.NonClientAreaMouseButtonRelease:
+                self.__pressed = False
+            elif event.type() == QEvent.Move or event.type() == QEvent.Resize:
+                self.__move_attach()
+        return super().eventFilter(sender, event)
+
+    def closeEvent(self, event: QCloseEvent):
+        self.hide()
+        event.ignore()
+
+    def set_geometry(self, point: QPoint, w, h):
+        if self.__linkage == Linkage.Left:
+            self.__x = point.x() + 1
+            self.__y = point.y()
+        elif self.__linkage == Linkage.Right:
+            self.__x = point.x() - self.frameGeometry().width()
+            self.__y = point.y()
+        elif self.__linkage == Linkage.Top:
+            self.__x = point.x()
+            self.__y = point.y() + 1
+        else:
+            return
+        if w is not None:
+            self.__w = w
+        if h is not None:
+            self.__h = h
+        self.move(self.__x, self.__y)
+        self.resize(self.__w, self.__h)
 
     def clear_content(self):
         self.signal_clear_content.emit()
