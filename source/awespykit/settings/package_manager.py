@@ -157,7 +157,7 @@ class PackageManagerConfig(AbstractConfig):
     @property
     def output_side(self):
         if self._key_output_side not in self:
-            self[self._key_output_side] = Linkage.Right
+            self[self._key_output_side] = Linkage.Left
         return self[self._key_output_side]
 
     @output_side.setter
