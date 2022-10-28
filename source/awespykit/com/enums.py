@@ -3,7 +3,7 @@
 from enum import Enum, IntEnum
 
 
-class Accept:
+class Accept(Enum):
     """
     供一些需要接收区分'文件'或'目录'参数的函数、方法使用
     """
