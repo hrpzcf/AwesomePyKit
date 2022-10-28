@@ -55,7 +55,15 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
     def __test_geo(self):
         cur, curf = self.geometry(), self.frameGeometry()
         par, parf = self.__parent.geometry(), self.__parent.frameGeometry()
-        if parf.top() - 20 < curf.top() < parf.top() + 20:
+        if parf.bottom() - 20 <= curf.top() <= parf.bottom() + 20:
+            if parf.left() - 20 <= curf.left() <= parf.left() + 20:
+                self.__x = parf.left()
+                self.__y = parf.bottom() + 1
+                self.__w = par.width()
+                self.__h = cur.height()
+                self.__linkage = Linkage.Top
+                return True
+        elif parf.top() - 20 < curf.top() < parf.top() + 20:
             if parf.right() - 20 <= curf.left() <= parf.right() + 20:
                 self.__x = parf.right() + 1
                 self.__y = parf.top()
@@ -69,16 +77,6 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
                 self.__w = cur.width()
                 self.__h = par.height()
                 self.__linkage = Linkage.Right
-                return True
-        elif parf.bottom() - 20 <= curf.top() <= parf.bottom() + 20:
-            if (parf.left() - 20 <= curf.left() <= parf.left() + 20) or (
-                parf.right() - 20 <= curf.right() <= parf.right() + 20
-            ):
-                self.__x = parf.left()
-                self.__y = parf.bottom() + 1
-                self.__w = par.width()
-                self.__h = cur.height()
-                self.__linkage = Linkage.Top
                 return True
         self.__linkage = Linkage.NoLink
         return False
