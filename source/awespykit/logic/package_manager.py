@@ -43,19 +43,19 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.loading_mov.setScaledSize(QSize(16, 16))
 
     def __move_output(self):
-        if self.__output.isHidden() or self.__output.linkage() == Linkage.NoLink:
+        if self.__output.isHidden() or self.__output.linkage == Linkage.NoLink:
             return
-        geo = self.geometry()
         fgeo = self.frameGeometry()
-        if self.__output.linkage() == Linkage.Top:
+        geo = self.geometry()
+        if self.__output.linkage == Linkage.Top:
             point = fgeo.bottomLeft()
             width = geo.width()
             height = None
-        elif self.__output.linkage() == Linkage.Left:
+        elif self.__output.linkage == Linkage.Left:
             point = fgeo.topRight()
             width = None
             height = geo.height()
-        elif self.__output.linkage() == Linkage.Right:
+        elif self.__output.linkage == Linkage.Right:
             point = fgeo.topLeft()
             width = None
             height = geo.height()
@@ -80,8 +80,15 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def show_hide_output(self):
         if self.__output.isHidden():
-            self.__output.showNormal()
-            self.__move_output()
+            if self.__output.not_shown_yet():
+                self.__output.resize(*self.config.output_winsize)
+                self.__output.showNormal()
+                self.__output.linkage = Linkage(self.config.output_side)
+                if self.__output.linkage != Linkage.NoLink:
+                    self.__move_output()
+            else:
+                self.__output.showNormal()
+                self.__move_output()
             self.__output.clear_content()
         else:
             self.__output.hide()
@@ -96,9 +103,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         ).exec_()
 
     def __save_window_size(self):
-        if self.isMaximized() or self.isMinimized():
-            return
-        self.config.window_size = self.width(), self.height()
+        if not (self.isMaximized() or self.isMinimized()):
+            self.config.window_size = self.width(), self.height()
+        if not (self.__output.isMaximized() or self.__output.isMinimized()):
+            self.config.output_winsize = self.__output.width(), self.__output.height()
 
     def closeEvent(self, event: QCloseEvent):
         if not self.thread_repo.is_empty():
@@ -112,6 +120,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         else:
             self.__output.close()
         self.__save_window_size()
+        self.config.output_side = self.__output.linkage
         self.config.save_config()
 
     def show_loading(self, text):

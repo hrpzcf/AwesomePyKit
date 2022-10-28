@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 class Accept:
@@ -13,7 +13,7 @@ class Accept:
     Both = "both"  # 全都接受
 
 
-class Linkage(Enum):
+class Linkage(IntEnum):
     """枚举：输出窗口的哪一侧吸附在主窗口上"""
 
     NoLink = 0  # 子窗口没有吸附在主窗口上

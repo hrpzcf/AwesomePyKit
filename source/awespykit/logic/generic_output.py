@@ -27,9 +27,19 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
         self.__w = self.width()
         self.__h = self.height()
         self.installEventFilter(self)
+        self.__not_shown_yet = True
 
+    def not_shown_yet(self):
+        return self.__not_shown_yet
+
+    @property
     def linkage(self):
         return self.__linkage
+
+    @linkage.setter
+    def linkage(self, side: Linkage):
+        assert isinstance(side, Linkage)
+        self.__linkage = side
 
     def signal_slot_connection(self):
         self.uiPushButton_close_window.clicked.connect(self.hide)
@@ -38,6 +48,9 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
             self.uiPlainTextEdit_output.clear
         )
         self.signal_clear_content.connect(self.uiPlainTextEdit_output.clear)
+
+    def showEvent(self, event: QShowEvent):
+        self.__not_shown_yet = False
 
     def __test_geo(self):
         cur, curf = self.geometry(), self.frameGeometry()
@@ -70,16 +83,13 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
         self.__linkage = Linkage.NoLink
         return False
 
-    def __move_attach(self):
+    def __make_adsorb(self):
         if not self.__pressed:
             return
         if not self.__test_geo():
             return
         self.move(self.__x, self.__y)
         self.resize(self.__w, self.__h)
-
-    def __resize_attch(self):
-        pass
 
     def moveEvent(self, event: QMoveEvent):
         cur_point = event.pos()
@@ -98,7 +108,7 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
             elif event.type() == QEvent.NonClientAreaMouseButtonRelease:
                 self.__pressed = False
             elif event.type() == QEvent.Move or event.type() == QEvent.Resize:
-                self.__move_attach()
+                self.__make_adsorb()
         return super().eventFilter(sender, event)
 
     def closeEvent(self, event: QCloseEvent):

@@ -2,6 +2,8 @@
 
 from typing import Iterable, Sequence
 
+from com import *
+
 from .abstract_config import AbstractConfig
 
 _shared_saved_pypaths = None
@@ -24,6 +26,8 @@ class PackageManagerConfig(AbstractConfig):
     _key_window_size = "window_size"
     _key_install_winsize = "install_winsize"
     _key_input_winsize = "input_winsize"
+    _key_output_side = "output_side"
+    _key_output_winsize = "output_winsize"
 
     CONFIGFILE = "package_manager.json"
 
@@ -149,3 +153,27 @@ class PackageManagerConfig(AbstractConfig):
         assert len(value) == 2
         assert isinstance(value[0], int) and isinstance(value[1], int)
         self[self._key_input_winsize] = value
+
+    @property
+    def output_side(self):
+        if self._key_output_side not in self:
+            self[self._key_output_side] = Linkage.Right
+        return self[self._key_output_side]
+
+    @output_side.setter
+    def output_side(self, value):
+        assert isinstance(value, Linkage)
+        self[self._key_output_side] = value
+
+    @property
+    def output_winsize(self):
+        if self._key_output_winsize not in self:
+            self[self._key_output_winsize] = 350, 500
+        return self[self._key_output_winsize]
+
+    @output_winsize.setter
+    def output_winsize(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_output_winsize] = value
