@@ -47,7 +47,7 @@
       <item>
        <widget class="QPushButton" name="uiPushButton_select_envdir">
         <property name="toolTip">
-         <string>打开文件选择窗口，选择 python.exe 文件。</string>
+         <string>打开目录选择窗口，选择 python.exe 文件所在的目录。</string>
         </property>
         <property name="text">
          <string>选择</string>

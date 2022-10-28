@@ -66,7 +66,7 @@ class Ui_input_dialog(object):
     def retranslateUi(self, input_dialog):
         _translate = QtCore.QCoreApplication.translate
         input_dialog.setWindowTitle(_translate("input_dialog", "输入内容"))
-        self.uiPushButton_select_envdir.setToolTip(_translate("input_dialog", "打开文件选择窗口，选择 python.exe 文件。"))
+        self.uiPushButton_select_envdir.setToolTip(_translate("input_dialog", "打开目录选择窗口，选择 python.exe 文件所在的目录。"))
         self.uiPushButton_select_envdir.setText(_translate("input_dialog", "选择"))
         self.uiPushButton_confirm.setText(_translate("input_dialog", "确定"))
         self.label.setText(_translate("input_dialog", "粘贴 “python.exe” 文件所在目录路径或点击“选择”按钮选择 “python.exe” 文件所在目录然后点击确定。"))
