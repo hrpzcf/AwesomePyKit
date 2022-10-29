@@ -31,6 +31,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.__reverseds = [True, True, True, True]
         self.selected_index = -1
         self.thread_repo = ThreadRepo(500)
+        self.__refreshing = False
 
     def __setup_other_widgets(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -152,10 +153,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         )
         self.tw_installed_info.clicked.connect(self.__show_label_selected_num)
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
-        self.lw_env_list.customContextMenuRequested[QPoint].connect(
+        self.lw_env_list.customContextMenuRequested.connect(
             self.environlist_contextmenu
         )
-        self.tw_installed_info.customContextMenuRequested[QPoint].connect(
+        self.tw_installed_info.customContextMenuRequested.connect(
             self.packagesinfo_contextmenu
         )
         self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
@@ -167,33 +168,57 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return MessageBox("提示", "所选环境目录不存在！").exec_()
         open_explorer(environ_path, "root")
 
-    def environlist_contextmenu(self, pos: QPoint):
+    def environlist_contextmenu(self):
         contextmenu = QMenu(self)
-        action = QAction(QIcon(":/openfd.png"), "打开目录", self)
+
+        action = QAction(QIcon(":/openfd.png"), "打开\t&O", self)
         action.triggered.connect(self.open_selected_envfolder)
         contextmenu.addAction(action)
 
         contextmenu.addSeparator()
 
-        action = QAction(QIcon(":/add.png"), "添加环境", self)
+        action = QAction(QIcon(":/add.png"), "添加\t&A", self)
         action.triggered.connect(self.add_environ_manully)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/search.png"), "搜索环境", self)
+        action = QAction(QIcon(":/search.png"), "搜索\t&S", self)
         action.triggered.connect(self.auto_search_environ)
         contextmenu.addAction(action)
 
         contextmenu.addSeparator()
 
-        action = QAction(QIcon(":/delete.png"), "移除环境", self)
+        action = QAction(QIcon(":/delete.png"), "移除\t&D", self)
         action.triggered.connect(self.del_selected_environ)
         contextmenu.addAction(action)
 
         contextmenu.setStyleSheet("QMenu {padding: 10px; border: 1px solid black}")
-        contextmenu.exec_(self.lw_env_list.mapToGlobal(pos))
+        contextmenu.exec_(QCursor.pos())
 
-    def packagesinfo_contextmenu(self, pos: QPoint):
-        pass
+    def packagesinfo_contextmenu(self):
+        contextmenu = QMenu(self)
+
+        action = QAction(QIcon(":/upgrade.png"), "升级\t&U", self)
+        action.triggered.connect(self.upgrade_packages)
+        contextmenu.addAction(action)
+
+        action = QAction(QIcon(":/uninstall.png"), "卸载\t&D", self)
+        action.triggered.connect(self.uninstall_packages)
+        contextmenu.addAction(action)
+
+        action = QAction(QIcon(":/query.png"), "查询\t&Q", self)
+        # TODO 连接方法
+        contextmenu.addAction(action)
+
+        action = QAction(QIcon(":/refresh.png"), "刷新\t&R", self)
+        action.triggered.connect(lambda: self.get_pkgs_info(0))
+        if self.__refreshing:
+            action.setEnabled(False)
+        else:
+            action.setEnabled(True)
+        contextmenu.addAction(action)
+
+        contextmenu.setStyleSheet("QMenu {padding: 10px; border: 1px solid black}")
+        contextmenu.exec_(QCursor.pos())
 
     def set_win_install_package_envinfo(self):
         if not self.env_list:
@@ -287,6 +312,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 if not even_num_row:
                     item.setBackground(color_gray)
                 self.tw_installed_info.setItem(rowind, colind + 1, item)
+        self.__refreshing = False
 
     def __sort_by_column(self, colind):
         if colind == 0:
@@ -317,6 +343,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.selected_index = self.lw_env_list.currentRow()
 
     def get_pkgs_info(self, no_connect):
+        if self.__refreshing:
+            return
+        self.__refreshing = True
         self.selected_index = self.lw_env_list.currentRow()
         if self.selected_index == -1:
             return None
@@ -528,7 +557,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         pkg_indexs = self.indexs_of_selected_rows()
         pkg_names = [pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
-            return
+            return MessageBox("提示", "没有选中任何项！").exec_()
         cur_env = self.env_list[self.lw_env_list.currentRow()]
         names_text = (
             "\n".join(pkg_names)
@@ -569,7 +598,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         pkg_indexs = self.indexs_of_selected_rows()
         names = [pkgs_info_keys[index] for index in pkg_indexs]
         if not names:
-            return
+            return MessageBox("提示", "没有选中任何项！").exec_()
         cur_env = self.env_list[self.lw_env_list.currentRow()]
         names_text = (
             "\n".join(names)
