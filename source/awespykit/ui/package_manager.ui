@@ -135,7 +135,7 @@
                </palette>
               </property>
               <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
+               <enum>Qt::CustomContextMenu</enum>
               </property>
               <property name="toolTip">
                <string>使用鼠标左键点击加载选中的 Python 环境已安装的包信息列表，使用鼠标右键点击或使用上下方向键选择则不加载。</string>
@@ -172,10 +172,10 @@
             <item>
              <widget class="QPushButton" name="btn_delselected">
               <property name="toolTip">
-               <string>将本 Python 环境列表中的选中项移除(仅从本 Python 环境列表中移除，不会删除本机 Python 目录)。</string>
+               <string>将 Python 环境列表中的选中项移除(不会删除本机 Python 目录)。</string>
               </property>
               <property name="text">
-               <string>删除选中项</string>
+               <string>移除选中项</string>
               </property>
              </widget>
             </item>
@@ -294,7 +294,7 @@
                </palette>
               </property>
               <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
+               <enum>Qt::CustomContextMenu</enum>
               </property>
               <property name="editTriggers">
                <set>QAbstractItemView::NoEditTriggers</set>

@@ -138,7 +138,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def signal_slot_connection(self):
         self.btn_autosearch.clicked.connect(self.auto_search_environ)
         self.btn_delselected.clicked.connect(self.del_selected_environ)
-        self.btn_addmanully.clicked.connect(self.add_py_path_manully)
+        self.btn_addmanully.clicked.connect(self.add_environ_manully)
         self.cb_check_uncheck_all.clicked.connect(self.selectall_unselectall)
         self.lw_env_list.clicked.connect(lambda: self.get_pkgs_info(0))
         self.lw_env_list.currentRowChanged.connect(self.environ_changed_clear_pkgs)
@@ -152,7 +152,48 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         )
         self.tw_installed_info.clicked.connect(self.__show_label_selected_num)
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
+        self.lw_env_list.customContextMenuRequested[QPoint].connect(
+            self.environlist_contextmenu
+        )
+        self.tw_installed_info.customContextMenuRequested[QPoint].connect(
+            self.packagesinfo_contextmenu
+        )
         self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
+
+    def open_selected_envfolder(self):
+        index = self.lw_env_list.currentRow()
+        environ_path = self.env_list[index].env_path
+        if not path.isdir(environ_path):
+            return MessageBox("提示", "所选环境目录不存在！").exec_()
+        open_explorer(environ_path, "root")
+
+    def environlist_contextmenu(self, pos: QPoint):
+        contextmenu = QMenu(self)
+        action = QAction(QIcon(":/openfd.png"), "打开目录", self)
+        action.triggered.connect(self.open_selected_envfolder)
+        contextmenu.addAction(action)
+
+        contextmenu.addSeparator()
+
+        action = QAction(QIcon(":/add.png"), "添加环境", self)
+        action.triggered.connect(self.add_environ_manully)
+        contextmenu.addAction(action)
+
+        action = QAction(QIcon(":/search.png"), "搜索环境", self)
+        action.triggered.connect(self.auto_search_environ)
+        contextmenu.addAction(action)
+
+        contextmenu.addSeparator()
+
+        action = QAction(QIcon(":/delete.png"), "移除环境", self)
+        action.triggered.connect(self.del_selected_environ)
+        contextmenu.addAction(action)
+
+        contextmenu.setStyleSheet("QMenu {padding: 10px; border: 1px solid black}")
+        contextmenu.exec_(self.lw_env_list.mapToGlobal(pos))
+
+    def packagesinfo_contextmenu(self, pos: QPoint):
+        pass
 
     def set_win_install_package_envinfo(self):
         if not self.env_list:
@@ -378,7 +419,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             ).exec_()
         self.list_widget_pyenvs_update()
 
-    def add_py_path_manully(self):
+    def add_environ_manully(self):
         AddEnvironDialog(self, self.add_path_callback, "添加环境")
 
     def check_cur_pkgs_for_updates(self):

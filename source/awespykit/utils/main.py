@@ -154,6 +154,13 @@ def get_cmd_out(*commands, regexp="", timeout=None):
 
 
 def open_explorer(fd_path, option="root"):
+    """
+    option 参数：
+
+    为 root 表示以 fd_path 为根目录打开资源管理器
+
+    为 select 表示打开 fd_path 上一级目录并选中 fd_path 所指文件或目录
+    """
     assert isinstance(fd_path, str)
     assert option in ("root", "select")
     fd_path = op.normpath(fd_path.strip())

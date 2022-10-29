@@ -10,6 +10,7 @@ from .main import (
     get_cmd_out,
     loop_install,
     loop_uninstall,
+    open_explorer,
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "get_cmd_out",
     "loop_install",
     "loop_uninstall",
+    "open_explorer",
 ]
