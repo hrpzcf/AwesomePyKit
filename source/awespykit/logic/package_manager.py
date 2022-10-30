@@ -121,7 +121,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         else:
             self.__output.close()
         self.__save_window_size()
-        self.config.output_side = self.__output.linkage
+        if not self.__output.not_shown_yet():
+            self.config.output_side = self.__output.linkage
         self.config.save_config()
 
     def show_loading(self, text):
