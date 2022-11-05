@@ -28,6 +28,10 @@ class PackageManagerConfig(AbstractConfig):
     _key_input_winsize = "input_winsize"
     _key_output_side = "output_side"
     _key_output_winsize = "output_winsize"
+    _key_query_winsize = "query_winsize"
+    _key_query_name = "query_name"
+    _key_query_mode = "query_mode"
+    _key_query_case = "query_case"
 
     CONFIGFILE = "package_manager.json"
 
@@ -177,3 +181,41 @@ class PackageManagerConfig(AbstractConfig):
         assert len(value) == 2
         assert isinstance(value[0], int) and isinstance(value[1], int)
         self[self._key_output_winsize] = value
+
+    @property
+    def query_name(self):
+        return self.setdefault(self._key_query_name, "")
+
+    @query_name.setter
+    def query_name(self, value):
+        assert isinstance(value, str)
+        self[self._key_query_name] = value
+
+    @property
+    def query_mode(self):
+        return self.setdefault(self._key_query_mode, QMode.Pkg2Imp)
+
+    @query_mode.setter
+    def query_mode(self, value):
+        assert isinstance(value, QMode)
+        self[self._key_query_mode] = value
+
+    @property
+    def query_case(self):
+        return self.setdefault(self._key_query_case, False)
+
+    @query_case.setter
+    def query_case(self, value):
+        assert isinstance(value, bool)
+        self[self._key_query_case] = value
+
+    @property
+    def query_winsize(self):
+        return self.setdefault(self._key_query_winsize, (330, 330))
+
+    @query_winsize.setter
+    def query_winsize(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_query_winsize] = value

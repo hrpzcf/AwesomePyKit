@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from os import path
+from typing import Union
 
 from com import *
 from fastpip import *
@@ -30,8 +31,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.__cur_pkgs_info = dict()
         self.__reverseds = [True, True, True, True]
         self.selected_index = -1
+        self.__is_busy = False
         self.thread_repo = ThreadRepo(500)
-        self.__refreshing = False
 
     def __setup_other_widgets(self):
         self.tw_installed_info.setColumnWidth(0, 220)
@@ -169,26 +170,43 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return MessageBox("提示", "所选环境目录不存在！").exec_()
         open_explorer(environ_path, "root")
 
+    def query_names(self):
+        if self.selected_index == -1:
+            return MessageBox("提示", "还没有选中任何环境！").exec_()
+        pkg_names = self.package_names_selected()
+        if not pkg_names:
+            pkg_name = None
+            mode = QMode.NotSPCF
+        else:
+            pkg_name = pkg_names[0]
+            mode = QMode.Pkg2Imp
+        environ = self.env_list[self.selected_index]
+        query_window = NameQueryPanel(self)
+        query_window.initialize(environ, pkg_name, mode=mode)
+        query_window.display()
+        if pkg_name is not None:
+            query_window.start_query_name()
+
     def environlist_contextmenu(self):
         contextmenu = QMenu(self)
 
-        action = QAction(QIcon(":/openfd.png"), "打开\t&O", self)
+        action = QAction(QIcon(":/openfd.png"), "打开", self)
         action.triggered.connect(self.open_selected_envfolder)
         contextmenu.addAction(action)
 
         contextmenu.addSeparator()
 
-        action = QAction(QIcon(":/add.png"), "添加\t&A", self)
+        action = QAction(QIcon(":/add.png"), "添加", self)
         action.triggered.connect(self.add_environ_manully)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/search.png"), "搜索\t&S", self)
+        action = QAction(QIcon(":/search.png"), "搜索", self)
         action.triggered.connect(self.auto_search_environ)
         contextmenu.addAction(action)
 
         contextmenu.addSeparator()
 
-        action = QAction(QIcon(":/delete.png"), "移除\t&D", self)
+        action = QAction(QIcon(":/delete.png"), "移除", self)
         action.triggered.connect(self.del_selected_environ)
         contextmenu.addAction(action)
 
@@ -197,26 +215,33 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def packagesinfo_contextmenu(self):
         contextmenu = QMenu(self)
+        action_list = list()
 
-        action = QAction(QIcon(":/upgrade.png"), "升级\t&U", self)
+        action = QAction(QIcon(":/upgrade.png"), "升级", self)
         action.triggered.connect(self.upgrade_packages)
+        action_list.append(action)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/uninstall.png"), "卸载\t&D", self)
+        action = QAction(QIcon(":/uninstall.png"), "卸载", self)
         action.triggered.connect(self.uninstall_packages)
+        action_list.append(action)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/query.png"), "查询\t&Q", self)
-        # TODO 连接方法
+        action = QAction(QIcon(":/query.png"), "查询", self)
+        action.triggered.connect(self.query_names)
+        action_list.append(action)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/refresh.png"), "刷新\t&R", self)
+        action = QAction(QIcon(":/refresh.png"), "刷新", self)
         action.triggered.connect(lambda: self.get_pkgs_info(0))
-        if self.__refreshing:
-            action.setEnabled(False)
-        else:
-            action.setEnabled(True)
+        action_list.append(action)
         contextmenu.addAction(action)
+
+        for action in action_list:
+            if self.__is_busy:
+                action.setEnabled(False)
+            else:
+                action.setEnabled(True)
 
         contextmenu.setStyleSheet("QMenu {padding: 10px; border: 1px solid black}")
         contextmenu.exec_(QCursor.pos())
@@ -313,7 +338,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 if not even_num_row:
                     item.setBackground(color_gray)
                 self.tw_installed_info.setItem(rowind, colind + 1, item)
-        self.__refreshing = False
+        self.__is_busy = False
 
     def __sort_by_column(self, colind):
         if colind == 0:
@@ -344,9 +369,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.selected_index = self.lw_env_list.currentRow()
 
     def get_pkgs_info(self, no_connect):
-        if self.__refreshing:
+        if self.__is_busy:
             return
-        self.__refreshing = True
+        self.__is_busy = True
         self.selected_index = self.lw_env_list.currentRow()
         if self.selected_index == -1:
             return None
@@ -378,6 +403,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         ]
         selected_row_indexs.sort()
         return selected_row_indexs
+
+    def package_names_selected(self):
+        pkg_keys = tuple(self.__cur_pkgs_info.keys())
+        return [pkg_keys[i] for i in self.indexs_of_selected_rows()]
 
     def selectall_unselectall(self):
         if self.cb_check_uncheck_all.isChecked():
@@ -830,3 +859,107 @@ class AddEnvironDialog(Ui_input_dialog, QMainWindow):
         interpreter_directory = path.normpath(_path)
         self.__parent.config.last_path = interpreter_directory
         self.uiLineEdit_input_content.setText(interpreter_directory)
+
+
+class NameQueryPanel(Ui_query_panel, QMainWindow):
+    signal_result = pyqtSignal(str)
+
+    def __init__(self, parent: PackageManagerWindow):
+        self.__parent = parent
+        super().__init__(parent)
+        self.setupUi(self)
+        self.__initialize_widgets()
+        self.__environ: Union[PyEnv, None] = None
+
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        if obj == self.uiLineEdit_input_name:
+            if event.type() == QEvent.FocusIn:
+                QTimer.singleShot(10, self.uiLineEdit_input_name.selectAll)
+            elif event.type() == QEvent.FocusOut:
+                self.uiLineEdit_input_name.deselect()
+        return super().eventFilter(obj, event)
+
+    def display(self):
+        self.resize(*self.__parent.config.query_winsize)
+        self.showNormal()
+
+    def __initialize_widgets(self):
+        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
+        self.uiLineEdit_input_name.installEventFilter(self)
+        self.signal_result.connect(self.uiPlainTextEdit_query_result.appendPlainText)
+        self.uiPushButton_query.clicked.connect(self.start_query_name)
+
+    def keyPressEvent(self, event: QKeyEvent):
+        key = event.key()
+        if key == Qt.Key_Escape or key == Qt.Key_Enter or key == Qt.Key_Return:
+            self.close()
+
+    def __save_query_configure(self):
+        self.__parent.config.query_name = self.uiLineEdit_input_name.text()
+        if self.uiRadioButton_pkg2import.isChecked():
+            self.__parent.config.query_mode = QMode.Pkg2Imp
+        elif self.uiRadioButton_import2pkg.isChecked():
+            self.__parent.config.query_mode = QMode.Imp2Pkg
+        self.__parent.config.query_case = self.uiCheckBox_case_sensitive.isChecked()
+        if self.isMaximized() or self.isMinimized():
+            return
+        self.__parent.config.query_winsize = self.width(), self.height()
+
+    def closeEvent(self, event: QCloseEvent):
+        self.__save_query_configure()
+
+    def __start_querying(self):
+        self.uiPushButton_query.setEnabled(False)
+        self.uiRadioButton_pkg2import.setEnabled(False)
+        self.uiRadioButton_import2pkg.setEnabled(False)
+        self.uiLabel_query_result.setText("正在查询...")
+
+    def __end_of_query(self):
+        self.uiPushButton_query.setEnabled(True)
+        self.uiRadioButton_pkg2import.setEnabled(True)
+        self.uiRadioButton_import2pkg.setEnabled(True)
+        self.uiLabel_query_result.setText("查询结果：")
+
+    def start_query_name(self):
+        name = self.uiLineEdit_input_name.text()
+        if self.__environ is None:
+            return MessageBox("提示", "没有选择任何 Python 环境。").exec_()
+        if not name:
+            return
+        self.uiPlainTextEdit_query_result.clear()
+        case = self.uiCheckBox_case_sensitive.isChecked()
+        self.__start_querying()
+
+        def do_query():
+            if self.uiRadioButton_pkg2import.isChecked():
+                result = self.__environ.query_for_import(name, case=case)
+                for res in result:
+                    self.signal_result.emit(res)
+            elif self.uiRadioButton_import2pkg.isChecked():
+                result = self.__environ.query_for_install(name, case=case)
+                self.signal_result.emit(result)
+
+        thread_query = QThreadModel(do_query)
+        thread_query.at_finish(self.__end_of_query)
+        thread_query.start()
+        self.__parent.thread_repo.put(thread_query, 1)
+
+    def initialize(self, env: PyEnv, name: str = None, mode=QMode.NotSPCF):
+        assert isinstance(env, PyEnv)
+        assert isinstance(name, str) or name is None
+        assert isinstance(mode, QMode)
+        self.__environ = env
+        self.uiLabel_query_environ.setText(str(env))
+        self.uiCheckBox_case_sensitive.setChecked(self.__parent.config.query_case)
+        if name is None:
+            name = self.__parent.config.query_name
+        self.uiLineEdit_input_name.setText(name)
+        if mode == QMode.NotSPCF:
+            if self.__parent.config == QMode.NotSPCF:
+                mode = QMode.Pkg2Imp
+            else:
+                mode = self.__parent.config.query_mode
+        if mode == QMode.Pkg2Imp:
+            self.uiRadioButton_pkg2import.setChecked(True)
+        elif mode == QMode.Imp2Pkg:
+            self.uiRadioButton_import2pkg.setChecked(True)

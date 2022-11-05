@@ -1,15 +1,16 @@
 # coding: utf-8
 
+from .addenv_dialog import Ui_input_dialog
 from .environ_chosen import Ui_environ_chosen
 from .generic_output import Ui_generic_output
 from .imports_check import Ui_imports_check
 from .index_manager import Ui_index_manager
-from .addenv_dialog import Ui_input_dialog
 from .main_entrance import Ui_main_entrance
 from .package_download import Ui_package_download
 from .package_install import Ui_package_install
 from .package_manager import Ui_package_manager
 from .pyinstaller_tool import Ui_pyinstaller_tool
+from .query_panel import Ui_query_panel
 from .show_download import Ui_show_download
 
 __all__ = [
@@ -23,5 +24,6 @@ __all__ = [
     "Ui_package_install",
     "Ui_package_manager",
     "Ui_pyinstaller_tool",
+    "Ui_query_panel",
     "Ui_show_download",
 ]
