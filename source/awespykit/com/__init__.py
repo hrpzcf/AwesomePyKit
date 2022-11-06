@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from .enums import Accept, Linkage, QMode
+from .enums import Accept, AppStyle, Linkage, QMode
 from .mapping import import_name
 
-__all__ = ["Accept", "import_name", "Linkage", "QMode"]
+__all__ = ["Accept", "AppStyle", "import_name", "Linkage", "QMode"]

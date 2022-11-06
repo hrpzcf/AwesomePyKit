@@ -132,15 +132,27 @@
      <height>25</height>
     </rect>
    </property>
-   <property name="layoutDirection">
-    <enum>Qt::RightToLeft</enum>
-   </property>
    <widget class="QMenu" name="menu_help">
     <property name="title">
      <string>关于</string>
     </property>
     <addaction name="action_about"/>
    </widget>
+   <widget class="QMenu" name="menu_settings">
+    <property name="title">
+     <string>设置</string>
+    </property>
+    <widget class="QMenu" name="menu_style">
+     <property name="title">
+      <string>界面风格</string>
+     </property>
+     <addaction name="action_default"/>
+     <addaction name="action_fusion"/>
+     <addaction name="action_windows"/>
+    </widget>
+    <addaction name="menu_style"/>
+   </widget>
+   <addaction name="menu_settings"/>
    <addaction name="menu_help"/>
   </widget>
   <action name="description">
@@ -162,6 +174,30 @@
   <action name="contribution">
    <property name="text">
     <string>参与贡献</string>
+   </property>
+  </action>
+  <action name="action_fusion">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fusion 风格</string>
+   </property>
+  </action>
+  <action name="action_windows">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>经典风格</string>
+   </property>
+  </action>
+  <action name="action_default">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>原生风格</string>
    </property>
   </action>
  </widget>

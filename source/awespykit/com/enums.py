@@ -13,6 +13,12 @@ class Accept(Enum):
     Both = "both"  # 全都接受
 
 
+class AppStyle(IntEnum):
+    Windows = 0  # XP 风格
+    WindowsVista = 1  # 原生风格
+    Fusion = 2  # Fusion 风格
+
+
 class Linkage(IntEnum):
     """枚举：输出窗口的哪一侧吸附在主窗口上"""
 

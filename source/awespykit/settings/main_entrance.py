@@ -2,16 +2,28 @@
 
 from typing import Sequence
 
+from com import *
+
 from .abstract_config import AbstractConfig
 
 
 class MainEntranceConfig(AbstractConfig):
+    _key_app_style = "app_style"
     _key_window_size = "window_size"
 
     CONFIGFILE = "main_entrance.json"
 
     def __init__(self):
         super().__init__(self.CONFIGFILE)
+
+    @property
+    def app_style(self):
+        return self.setdefault(self._key_app_style, 2)
+
+    @app_style.setter
+    def app_style(self, value):
+        assert isinstance(value, AppStyle)
+        self[self._key_app_style] = value
 
     @property
     def window_size(self):

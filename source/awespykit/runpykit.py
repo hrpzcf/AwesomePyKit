@@ -28,11 +28,14 @@
 
 import sys
 from os import path
+from typing import List
 
 from fastpip import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+from com import *
 
 sys.path.append(path.dirname(__file__))  # rpk.exe 入口点所需
 
@@ -56,19 +59,39 @@ if VERNUM[1] < required_for_fastpip[1]:
 
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
-    def __init__(self):
+    def __init__(self, config: MainEntranceConfig):
         super().__init__()
         self.setupUi(self)
         self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         self.setWindowTitle(NAME)
-        self.__config = MainEntranceConfig()
+        self.__config = config
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
         self.__pkgdl_win = PackageDownloadWindow(self)
         self.signal_slot_connection()
+        self.action_checked(config.app_style)
 
-    def display_window(self):
+    def action_checked(self, style: AppStyle):
+        if style == AppStyle.Windows:
+            self.action_windows.setChecked(True)
+            self.action_fusion.setChecked(False)
+            self.action_default.setChecked(False)
+        elif style == AppStyle.WindowsVista:
+            self.action_windows.setChecked(False)
+            self.action_fusion.setChecked(False)
+            self.action_default.setChecked(True)
+        elif style == AppStyle.Fusion:
+            self.action_windows.setChecked(False)
+            self.action_fusion.setChecked(True)
+            self.action_default.setChecked(False)
+
+    def change_appstyle(self, style: AppStyle):
+        self.__config.app_style = style
+        self.action_checked(style)
+        MessageBox("提示", "界面风格设置成功，重启程序生效！").exec_()
+
+    def display(self):
         self.resize(*self.__config.window_size)
         self.showNormal()
 
@@ -78,6 +101,15 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.pb_pyi_tool.clicked.connect(self.__pyitool_win.display)
         self.pb_index_mgr.clicked.connect(self.__indexmgr_win.display)
         self.pb_pkg_dload.clicked.connect(self.__pkgdl_win.display)
+        self.action_fusion.triggered.connect(
+            lambda: self.change_appstyle(AppStyle.Fusion)
+        )
+        self.action_windows.triggered.connect(
+            lambda: self.change_appstyle(AppStyle.Windows)
+        )
+        self.action_default.triggered.connect(
+            lambda: self.change_appstyle(AppStyle.WindowsVista)
+        )
 
     def __store_window_size(self):
         if self.isMaximized() or self.isMinimized():
@@ -123,10 +155,11 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
 def run_pykit_sysexit_when_close():
     awespykit = QApplication(sys.argv)
-    awespykit.setStyle("fusion")
+    config = MainEntranceConfig()
     awespykit.setWindowIcon(QIcon(":/icon.ico"))
-    main_entrance_window = MainEntrance()
-    main_entrance_window.display_window()
+    awespykit.setStyle(AppStyle(config.app_style).name)
+    main_entrance = MainEntrance(config)
+    main_entrance.display()
     sys.exit(awespykit.exec_())
 
 
