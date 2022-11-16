@@ -891,8 +891,10 @@ class NameQueryPanel(Ui_query_panel, QMainWindow):
 
     def keyPressEvent(self, event: QKeyEvent):
         key = event.key()
-        if key == Qt.Key_Escape or key == Qt.Key_Enter or key == Qt.Key_Return:
+        if key == Qt.Key_Escape:
             self.close()
+        elif key == Qt.Key_Enter or key == Qt.Key_Return:
+            self.start_query_name()
 
     def __save_query_configure(self):
         self.__parent.config.query_name = self.uiLineEdit_input_name.text()

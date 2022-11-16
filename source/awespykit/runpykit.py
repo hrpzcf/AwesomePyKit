@@ -28,7 +28,6 @@
 
 import sys
 from os import path
-from typing import List
 
 from fastpip import *
 from PyQt5.QtCore import *
@@ -45,17 +44,17 @@ from res.res import *
 from settings import *
 from ui import *
 
-required_for_fastpip = (1, 0, 0)  # 对 fastpip 版本号的要求
-if VERNUM[0] != required_for_fastpip[0]:
-    raise Exception(
-        f"当前环境的 fastpip 模块主版本号({VERNUM[0]})非本程序要求的主版本号({required_for_fastpip[0]})。"
-    )
-if VERNUM[1] < required_for_fastpip[1]:
-    raise Exception(
-        f"当前环境的 fastpip 模块次版本号({VERNUM[1]})低于本程序要求的次版本号({required_for_fastpip[1]})。"
-    )
-# 版本号：主版本号.次版本号.修订号
-# 主版本号必须与要求一致，次版本号必须大于等于要求的次版本号，不限制修订号
+if VERNUM[0] != REQ_FPVER[0]:
+    raise Exception(f"当前环境的 fastpip 主版本号({VERNUM[0]})非本程序要求：{REQ_FPVER[0]}")
+if VERNUM[1] < REQ_FPVER[1]:
+    raise Exception(f"当前环境的 fastpip 次版本号({VERNUM[1]})低于本程序要求：{REQ_FPVER[1]}")
+elif VERNUM[1] == REQ_FPVER[1] and VERNUM[2] < REQ_FPVER[2]:
+    raise Exception(f"当前环境的 fastpip 修订号({VERNUM[2]})低于本程序要求：{REQ_FPVER[2]}")
+################################################################
+# 版本号的定义：主版本号.次版本号.修订号，对 fastpip 的版本号要求：
+# 1. 主版本号必须与要求一致，次版本号必须大于等于要求的次版本号
+# 3. 如次版本号等于要求的次版本号，则修订号必须大于等于要求的修订号
+################################################################
 
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
