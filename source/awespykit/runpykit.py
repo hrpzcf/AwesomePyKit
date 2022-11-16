@@ -34,11 +34,10 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from com import *
-
 sys.path.append(path.dirname(__file__))  # rpk.exe 入口点所需
 
 from __info__ import *
+from com import *
 from logic import *
 from res.res import *
 from settings import *
