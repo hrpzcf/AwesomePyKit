@@ -10,5 +10,6 @@
         <file>uninstall.png</file>
         <file>query.png</file>
         <file>refresh.png</file>
+        <file>config.png</file>
     </qresource>
 </RCC>

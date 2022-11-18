@@ -26,7 +26,6 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     signal_update_pyinfo = pyqtSignal(str)
     signal_update_pyiinfo = pyqtSignal(str)
     signal_update_pyipbtext = pyqtSignal(str)
-    COMBOBOX_DEFITEM = "当前打包配置"
     PYIVER_FMT = "Pyinstaller - {}"
     QREV_FNAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
     QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))
@@ -189,6 +188,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.signal_update_pyinfo.connect(self.lb_py_info.setText)
         self.signal_update_pyiinfo.connect(self.lb_pyi_info.setText)
         self.signal_update_pyipbtext.connect(self.pb_reinstall_pyi.setText)
+        self.uiLineEdit_config_remark.textChanged.connect(
+            self.lineedit_remark_textchanged
+        )
+        self.uiListWidget_saved_config.currentRowChanged.connect(
+            self.listwidget_savedconfig_clicked
+        )
 
     def check_project_imports(self):
         self.config_widgets_to_cfg()
@@ -383,7 +388,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def config_cfg_to_widgets(self, cfg_name):
         if cfg_name is not None:
             self.config.checkout_cfg(cfg_name)
-        self.update_configure_combobox_items()
+        self.update_configure_listwidget_items()
         self.load_version_information_lazily(refresh=True)
         self.le_program_entry.setText(self.config.curconfig.script_path)
         self.le_project_root.setText(self.config.curconfig.project_root)
@@ -398,9 +403,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.rb_pack_to_one_dir.setChecked(True)
         else:
             self.rb_pack_to_one_file.setChecked(True)
-        self.cb_execute_with_console.setChecked(
-            self.config.curconfig.provide_console
-        )
+        self.cb_execute_with_console.setChecked(self.config.curconfig.provide_console)
         self.cb_without_confirm.setChecked(self.config.curconfig.no_confirm)
         self.cb_use_upx.setChecked(not self.config.curconfig.donot_use_upx)
         self.cb_clean_before_build.setChecked(self.config.curconfig.clean_building)
@@ -409,9 +412,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.le_output_dir.setText(self.config.curconfig.distribution_dir)
         self.le_spec_dir.setText(self.config.curconfig.spec_dir)
         self.le_upx_search_path.setText(self.config.curconfig.upx_dir)
-        self.te_upx_exclude_files.setText(
-            "\n".join(self.config.curconfig.upx_excludes)
-        )
+        self.te_upx_exclude_files.setText("\n".join(self.config.curconfig.upx_excludes))
         self.le_output_name.setText(self.config.curconfig.bundle_spec_name)
         self.cb_log_level.setCurrentText(self.config.curconfig.log_level)
         self.set_file_ver_info_text()
@@ -420,9 +421,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.cb_prioritize_venv.setChecked(self.config.curconfig.prioritize_venv)
         self.le_bytecode_encryption_key.setText(self.config.curconfig.encryption_key)
         self.cb_explorer_show.setChecked(self.config.curconfig.open_dist_folder)
-        self.cb_delete_working_dir.setChecked(
-            self.config.curconfig.delete_working_dir
-        )
+        self.cb_delete_working_dir.setChecked(self.config.curconfig.delete_working_dir)
         self.cb_delete_spec_file.setChecked(self.config.curconfig.delete_spec_file)
         self.pte_hidden_imports.setPlainText(
             "\n".join(self.config.curconfig.hidden_imports)
@@ -441,9 +440,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config.curconfig.other_datas = self.__gen_abs_rel_groups(project_root)
         self.config.curconfig.icon_path = self.le_file_icon_path.local_path
         self.config.curconfig.onedir_bundle = self.rb_pack_to_one_dir.isChecked()
-        self.config.curconfig.provide_console = (
-            self.cb_execute_with_console.isChecked()
-        )
+        self.config.curconfig.provide_console = self.cb_execute_with_console.isChecked()
         self.config.curconfig.no_confirm = self.cb_without_confirm.isChecked()
         self.config.curconfig.donot_use_upx = not self.cb_use_upx.isChecked()
         self.config.curconfig.clean_building = self.cb_clean_before_build.isChecked()
@@ -665,10 +662,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if not dist_folder:
             dist_folder = os.path.join(self.config.curconfig.project_root, "dist")
         elif not os.path.isabs(dist_folder):
-            dist_folder = os.path.join(
-                self.config.curconfig.project_root, dist_folder
-            )
-        launch_explorer(os.path.join(dist_folder, sub_directory), [final_execfn + ".exe"])
+            dist_folder = os.path.join(self.config.curconfig.project_root, dist_folder)
+        launch_explorer(
+            os.path.join(dist_folder, sub_directory), [final_execfn + ".exe"]
+        )
 
     def delete_spec_file(self):
         spec_file_dir = self.config.curconfig.spec_dir
@@ -691,9 +688,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         program_name = self.__get_program_name()
         custom_working_dir = self.config.curconfig.working_dir
         if not custom_working_dir:
-            working_dir_root = os.path.join(
-                self.config.curconfig.project_root, "build"
-            )
+            working_dir_root = os.path.join(self.config.curconfig.project_root, "build")
         elif not os.path.isabs(custom_working_dir):
             working_dir_root = os.path.join(
                 self.config.curconfig.project_root, custom_working_dir
@@ -750,7 +745,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def build_executable(self):
         if not self.__check_requireds():
             return
-        if self.uiComboBox_saved_config.currentIndex() != 0:
+        if self.uiListWidget_saved_config.currentRow() != -1:
             result = MessageBox(
                 "提示",
                 "你选择的打包配置似乎还没有应用以使其生效，确定开始打包吗？",
@@ -759,6 +754,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             ).exec_()
             if result != 0:
                 return
+        self.uiListWidget_saved_config.setCurrentRow(-1)
         self.te_pyi_out_stream.clear()
         if self.config.curconfig.prioritize_venv:
             self.toolwin_venv = VirtualEnv(self.config.curconfig.project_root)
@@ -878,10 +874,28 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         thread_install_missings.start()
         self.thread_repo.put(thread_install_missings, 0)
 
-    def update_configure_combobox_items(self):
-        self.uiComboBox_saved_config.clear()
-        self.uiComboBox_saved_config.addItem(self.COMBOBOX_DEFITEM)
-        self.uiComboBox_saved_config.addItems(self.config.multicfg)
+    def listwidget_savedconfig_clicked(self):
+        index = self.uiListWidget_saved_config.currentRow()
+        if index == -1:
+            return
+        self.uiLineEdit_config_remark.textChanged.disconnect(
+            self.lineedit_remark_textchanged
+        )
+        self.uiLineEdit_config_remark.setText(
+            self.uiListWidget_saved_config.item(index).text()
+        )
+        self.uiLineEdit_config_remark.textChanged.connect(
+            self.lineedit_remark_textchanged
+        )
+
+    def update_configure_listwidget_items(self):
+        self.uiListWidget_saved_config.clear()
+        for item_title in self.config.multicfg.keys():
+            item = QListWidgetItem(QIcon(":/config.png"), item_title)
+            self.uiListWidget_saved_config.addItem(item)
+
+    def lineedit_remark_textchanged(self):
+        self.uiListWidget_saved_config.setCurrentRow(-1)
 
     def store_current_config(self):
         text = self.uiLineEdit_config_remark.text()
@@ -889,11 +903,6 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             return MessageBox(
                 "提示",
                 "还没有输入备注名称。",
-            ).exec_()
-        if text == self.COMBOBOX_DEFITEM:
-            return MessageBox(
-                "提示",
-                f"不能用“{text}”作为备注名。",
             ).exec_()
         if text in self.config.multicfg:
             result = MessageBox(
@@ -907,17 +916,16 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiLineEdit_config_remark.clear()
         self.config_widgets_to_cfg()
         self.config.store_curcfg(text)
-        self.update_configure_combobox_items()
+        self.update_configure_listwidget_items()
         MessageBox("提示", f"配置已以此备注名保存：{text}。").exec_()
 
     def delete_selected_config(self):
         if not len(self.config.multicfg):
             return MessageBox("提示", "没有已保存的配置。").exec_()
-        text = self.uiComboBox_saved_config.currentText()
-        if not text:
+        cur_item = self.uiListWidget_saved_config.currentItem()
+        if not cur_item:
             return MessageBox("提示", "没有选择任何配置。").exec_()
-        if text == self.COMBOBOX_DEFITEM:
-            return
+        text = cur_item.text()
         if text not in self.config.multicfg:
             return
         if (
@@ -931,18 +939,16 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         ):
             return
         del self.config.multicfg[text]
-        self.update_configure_combobox_items()
+        self.update_configure_listwidget_items()
 
     def apply_selected_config(self):
         if not len(self.config.multicfg):
             return MessageBox("提示", "没有已保存的配置。").exec_()
-        text = self.uiComboBox_saved_config.currentText()
-        if not text:
+        cur_item = self.uiListWidget_saved_config.currentItem()
+        if not cur_item:
             return MessageBox("提示", "没有选择任何配置。").exec_()
-        if text == self.COMBOBOX_DEFITEM:
-            return
-        self.config_cfg_to_widgets(text)
-        self.uiComboBox_saved_config.setCurrentText(self.COMBOBOX_DEFITEM)
+        self.config_cfg_to_widgets(cur_item.text())
+        self.uiListWidget_saved_config.setCurrentRow(-1)
 
     def load_version_information_lazily(self, refresh):
         """为显示 Python 和 Pyinstaller 版本信息这两个耗时操作提供延迟加载的方法"""
