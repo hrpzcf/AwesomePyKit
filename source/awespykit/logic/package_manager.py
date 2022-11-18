@@ -168,7 +168,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         environ_path = self.env_list[index].env_path
         if not path.isdir(environ_path):
             return MessageBox("提示", "所选环境目录不存在！").exec_()
-        open_explorer(environ_path, "root")
+        launch_explorer(environ_path)
 
     def query_names(self):
         if self.selected_index == -1:

@@ -8,9 +8,9 @@ from .main import (
     clean_index_urls,
     clean_py_paths,
     get_cmd_out,
+    launch_explorer,
     loop_install,
     loop_uninstall,
-    open_explorer,
 )
 
 __all__ = [
@@ -21,7 +21,7 @@ __all__ = [
     "clean_index_urls",
     "clean_py_paths",
     "get_cmd_out",
+    "launch_explorer",
     "loop_install",
     "loop_uninstall",
-    "open_explorer",
 ]

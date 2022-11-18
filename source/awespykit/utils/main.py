@@ -2,13 +2,15 @@
 
 __doc__ = """包含AwesomePyKit的主要类、函数、配置文件路径等。"""
 
-import os.path as op
+import os.path as osp
 import re
-import subprocess
 from subprocess import *
+from typing import *
 
+import win32api
 from fastpip import PyEnv
 from PyQt5.QtCore import *
+from win32com.shell import shell
 
 
 def loop_install(
@@ -40,7 +42,7 @@ def clean_py_paths(paths):
 
 
 def check_index_url(url):
-    return bool(re.match(r"^https://.+/simple[/]?$", url.lower()))
+    return bool(re.match(r"^https://.+/simple/?$", url.lower()))
 
 
 def clean_index_urls(urls):
@@ -153,21 +155,25 @@ def get_cmd_out(*commands, regexp="", timeout=None):
     return re.search(regexp, strings)
 
 
-def open_explorer(fd_path, option="root"):
-    """
-    option 参数：
-
-    为 root 表示以 fd_path 为根目录打开资源管理器
-
-    为 select 表示打开 fd_path 上一级目录并选中 fd_path 所指文件或目录
-    """
-    assert isinstance(fd_path, str)
-    assert option in ("root", "select")
-    fd_path = op.normpath(fd_path.strip())
-    if op.isfile(fd_path):
-        commands = f"explorer /select,{fd_path}"
-    elif op.isdir(fd_path):
-        commands = f"explorer /{option},{fd_path}"
-    else:
+def launch_explorer(folder_path: str, file_names: List[str] = None):
+    """使用资源管理器打开文件夹并选择文件名列表中的文件"""
+    assert isinstance(folder_path, str)
+    assert osp.isdir(folder_path)
+    assert file_names is None or all(isinstance(s, str) for s in file_names)
+    if file_names is None:
+        win32api.ShellExecute(0, "open", folder_path, None, None, 1)
         return
-    subprocess.run(commands)
+    folder_pidl = shell.SHILCreateFromPath(folder_path, 0)[0]
+    files_tobe_selected = list()
+    for file_name in file_names:
+        file_fullpath = osp.join(folder_path, file_name)
+        if not osp.isfile(file_fullpath):
+            continue
+        try:
+            file_id = shell.SHParseDisplayName(file_fullpath, 0)[0]
+            files_tobe_selected.append(file_id)
+        except Exception:
+            continue
+    if not files_tobe_selected:
+        return
+    shell.SHOpenFolderAndSelectItems(folder_pidl, files_tobe_selected, 0)

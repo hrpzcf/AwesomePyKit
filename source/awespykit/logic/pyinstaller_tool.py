@@ -14,7 +14,7 @@ from settings import *
 from ui import *
 from utils import *
 from utils.cip import ImportInspector
-from utils.main import open_explorer
+from utils.main import launch_explorer
 from utils.pyi import PyiTool
 from utils.venv import VirtualEnv
 from utils.widgets import LineEdit, TextEdit
@@ -668,10 +668,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             dist_folder = os.path.join(
                 self.config.curconfig.project_root, dist_folder
             )
-        explorer_selected = (
-            os.path.join(dist_folder, sub_directory, final_execfn) + ".exe"
-        )
-        open_explorer(explorer_selected, "select")
+        launch_explorer(os.path.join(dist_folder, sub_directory), [final_execfn + ".exe"])
 
     def delete_spec_file(self):
         spec_file_dir = self.config.curconfig.spec_dir
