@@ -11,5 +11,9 @@
         <file>query.png</file>
         <file>refresh.png</file>
         <file>config.png</file>
+        <file>bundle.png</file>
+        <file>download.png</file>
+        <file>manage.png</file>
+        <file>website.png</file>
     </qresource>
 </RCC>

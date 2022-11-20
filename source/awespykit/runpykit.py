@@ -95,9 +95,13 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
     def signal_slot_connection(self):
         self.action_about.triggered.connect(self.__show_about)
+        self.pb_pkg_mgr.setIcon(QIcon(":/manage.png"))
         self.pb_pkg_mgr.clicked.connect(self.__pkgmgr_win.display)
+        self.pb_pyi_tool.setIcon(QIcon(":/bundle.png"))
         self.pb_pyi_tool.clicked.connect(self.__pyitool_win.display)
+        self.pb_index_mgr.setIcon(QIcon(":/website.png"))
         self.pb_index_mgr.clicked.connect(self.__indexmgr_win.display)
+        self.pb_pkg_dload.setIcon(QIcon(":/download.png"))
         self.pb_pkg_dload.clicked.connect(self.__pkgdl_win.display)
         self.action_fusion.triggered.connect(
             lambda: self.change_appstyle(AppStyle.Fusion)
