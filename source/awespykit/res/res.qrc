@@ -17,5 +17,6 @@
         <file>website.png</file>
         <file>python.png</file>
         <file>default.png</file>
+        <file>export.png</file>
     </qresource>
 </RCC>

@@ -163,12 +163,35 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         )
         self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
 
-    def open_selected_envfolder(self):
+    def selected_envfolder(self):
         index = self.lw_env_list.currentRow()
         environ_path = self.env_list[index].env_path
         if not path.isdir(environ_path):
             return MessageBox("提示", "所选环境目录不存在！").exec_()
         launch_explorer(environ_path)
+
+    def export_packages_info(self):
+        index = self.lw_env_list.currentRow()
+        if index == -1:
+            return
+        environ = self.env_list[index]
+        if not environ.pip_ready:
+            return MessageBox("提示", "所选环境不是有效环境！").exec_()
+        fullpath = QFileDialog.getSaveFileName(
+            self,
+            "选择文件夹",
+            path.join(self.config.last_path, "requirements.txt"),
+            "文本文件 (*.txt)",
+        )[0]
+        if not fullpath:
+            return
+        dir_path, name = path.split(fullpath)
+        self.config.last_path = dir_path
+        self.setCursor(Qt.WaitCursor)
+        thread_export = QThreadModel(environ.freeze, dir_path, name, no_path=True)
+        thread_export.at_finish(lambda: self.setCursor(Qt.ArrowCursor))
+        thread_export.start()
+        self.thread_repo.put(thread_export, 1)
 
     def query_names(self):
         if self.selected_index == -1:
@@ -190,23 +213,25 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def environlist_contextmenu(self):
         contextmenu = QMenu(self)
 
-        action = QAction(QIcon(":/openfd.png"), "打开", self)
-        action.triggered.connect(self.open_selected_envfolder)
+        action = QAction(QIcon(":/openfd.png"), "打开目录", self)
+        action.triggered.connect(self.selected_envfolder)
+        contextmenu.addAction(action)
+
+        action = QAction(QIcon(":/export.png"), "导出包列表", self)
+        action.triggered.connect(self.export_packages_info)
         contextmenu.addAction(action)
 
         contextmenu.addSeparator()
 
-        action = QAction(QIcon(":/add.png"), "添加", self)
-        action.triggered.connect(self.add_environ_manully)
-        contextmenu.addAction(action)
-
-        action = QAction(QIcon(":/search.png"), "搜索", self)
+        action = QAction(QIcon(":/search.png"), "自动搜索", self)
         action.triggered.connect(self.auto_search_environ)
         contextmenu.addAction(action)
 
-        contextmenu.addSeparator()
+        action = QAction(QIcon(":/add.png"), "手动添加", self)
+        action.triggered.connect(self.add_environ_manully)
+        contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/delete.png"), "移除", self)
+        action = QAction(QIcon(":/delete.png"), "移除环境", self)
         action.triggered.connect(self.del_selected_environ)
         contextmenu.addAction(action)
 

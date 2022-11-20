@@ -50,35 +50,36 @@ def clean_index_urls(urls):
 
 
 class QThreadModel(QThread):
-    def __init__(self, target, args=tuple()):
+    def __init__(self, target, *args, **kwargs):
         super().__init__()
-        self._args = args
-        self._target = target
-        self._at_start = list()
-        self._at_finish = list()
+        self.__target = target
+        self.__args = args
+        self.__kwargs = kwargs
+        self.__at_start = list()
+        self.__at_finish = list()
 
     def run(self):
-        self._target(*self._args)
+        self.__target(*self.__args, **self.__kwargs)
 
     def __repr__(self):
-        return f"{self._target} with args:{self._args}"
+        return f"{self.__target} with args: {self.__args}, kwargs: {self.__kwargs}"
 
     __str__ = __repr__
 
     def at_start(self, *callable_objs):
         for cab in callable_objs:
             self.started.connect(cab)
-        self._at_start.extend(callable_objs)
+        self.__at_start.extend(callable_objs)
 
     def at_finish(self, *callable_objs):
         for cab in callable_objs:
             self.finished.connect(cab)
-        self._at_finish.extend(callable_objs)
+        self.__at_finish.extend(callable_objs)
 
     def broken_signal(self):
-        for cab in self._at_start:
+        for cab in self.__at_start:
             self.started.disconnect(cab)
-        for cab in self._at_finish:
+        for cab in self.__at_finish:
             self.finished.disconnect(cab)
 
 
