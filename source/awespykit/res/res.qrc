@@ -15,5 +15,6 @@
         <file>download.png</file>
         <file>manage.png</file>
         <file>website.png</file>
+        <file>python.png</file>
     </qresource>
 </RCC>

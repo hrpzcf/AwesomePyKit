@@ -303,7 +303,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         cur_py_env_index = self.lw_env_list.currentRow()
         self.lw_env_list.clear()
         for env in self.env_list:
-            item = QListWidgetItem(str(env))
+            item = QListWidgetItem(QIcon(":/python.png"), str(env))
             item.setSizeHint(row_size)
             self.lw_env_list.addItem(item)
         if cur_py_env_index != -1:
