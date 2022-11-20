@@ -1005,7 +1005,7 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
         self.lw_environ_list.clear()
         row_size = QSize(0, 28)
         for env in self.__envlist:
-            item = QListWidgetItem(str(env))
+            item = QListWidgetItem(QIcon(":/python.png"), str(env))
             item.setSizeHint(row_size)
             self.lw_environ_list.addItem(item)
 
