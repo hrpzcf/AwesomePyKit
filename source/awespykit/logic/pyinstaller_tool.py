@@ -891,14 +891,21 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def update_configure_listwidget_items(self):
         self.uiListWidget_saved_config.clear()
         for item_title in self.config.multicfg.keys():
-            item = QListWidgetItem(QIcon(":/config.png"), item_title)
+            if item_title != self.uiLineEdit_config_remark.placeholderText():
+                item_icon = QIcon(":/config.png")
+            else:
+                item_icon = QIcon(":/default.png")
+            item = QListWidgetItem(item_icon, item_title)
             self.uiListWidget_saved_config.addItem(item)
 
     def lineedit_remark_textchanged(self):
         self.uiListWidget_saved_config.setCurrentRow(-1)
 
     def store_current_config(self):
-        text = self.uiLineEdit_config_remark.text()
+        text = (
+            self.uiLineEdit_config_remark.text()
+            or self.uiLineEdit_config_remark.placeholderText()
+        )
         if not text:
             return MessageBox(
                 "提示",
@@ -907,7 +914,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if text in self.config.multicfg:
             result = MessageBox(
                 "提示",
-                f"当前配置列表已存在名为“{text}”的配置，是否覆盖？",
+                f"配置列表已存在名称：{text}，是否覆盖？",
                 QMessageBox.Warning,
                 (("accept", "确定"), ("reject", "取消")),
             ).exec_()
@@ -917,7 +924,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config_widgets_to_cfg()
         self.config.store_curcfg(text)
         self.update_configure_listwidget_items()
-        MessageBox("提示", f"配置已以此备注名保存：{text}。").exec_()
+        MessageBox("提示", f"配置已保存：{text}。").exec_()
 
     def delete_selected_config(self):
         if not len(self.config.multicfg):
@@ -931,7 +938,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if (
             MessageBox(
                 "提示",
-                f"确认删除当前选中的配置？",
+                f"即将被删除的配置：{text}",
                 QMessageBox.Warning,
                 (("accept", "确定"), ("reject", "取消")),
             ).exec_()

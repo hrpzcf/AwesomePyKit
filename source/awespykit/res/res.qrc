@@ -16,5 +16,6 @@
         <file>manage.png</file>
         <file>website.png</file>
         <file>python.png</file>
+        <file>default.png</file>
     </qresource>
 </RCC>

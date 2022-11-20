@@ -1138,18 +1138,19 @@
                    <enum>Qt::CustomContextMenu</enum>
                   </property>
                   <property name="toolTip">
-                   <string>当前打包配置是指“程序打包工具”所有复选框、输入框等控件的设置状态。
-输入一个你容易记住的备注名称并点击“保存”按钮将这些设置保存下来以便在不同的打包项目之间快速切换。</string>
+                   <string>当前打包配置是指程序打包工具所有复选框、输入框等控件的状态、内容。
+输入备注名称并点击“保存”按钮将这些设置保存下来以便在打包不同项目时快速切换。</string>
                   </property>
                   <property name="placeholderText">
-                   <string>请输入配置的备注名称</string>
+                   <string>默认备注名称</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="uiPushButton_save_config">
                   <property name="toolTip">
-                   <string>将“程序打包工具”当前复选框、输入框等控件设置状态保存下来，以左侧输入框内容作为这个保存下来的配置的名称。</string>
+                   <string>以左侧输入框内容作为名称，将打包工具的复选框、输入框等控件的状态、内容保存下来。
+如果左侧输入框不输入任何内容，则使用默认名称来保存配置。</string>
                   </property>
                   <property name="text">
                    <string>保存</string>
@@ -1189,7 +1190,7 @@
                   <item>
                    <widget class="QPushButton" name="uiPushButton_apply_config">
                     <property name="toolTip">
-                     <string>复制一份打包配置列表中被选中的配置，将它作为当前配置并更新到界面上。</string>
+                     <string>复制一份打包配置列表中被选中的配置，将它作为当前配置并更新到打包工具的界面上。</string>
                     </property>
                     <property name="text">
                      <string>应用</string>
@@ -1236,7 +1237,7 @@
                      </palette>
                     </property>
                     <property name="toolTip">
-                     <string>将左侧下拉选择框选中的配置删除。</string>
+                     <string>将左侧配置列表中已被选中的配置删除。</string>
                     </property>
                     <property name="text">
                      <string>删除</string>

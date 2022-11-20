@@ -848,16 +848,17 @@ class Ui_pyinstaller_tool(object):
         self.cb_delete_working_dir.setText(_translate("pyinstaller_tool", "删除临时工作文件夹"))
         self.groupBox_4.setTitle(_translate("pyinstaller_tool", "打包配置管理"))
         self.label_28.setText(_translate("pyinstaller_tool", "保存当前打包配置（点击下方列表中的条目可快速填充名称）"))
-        self.uiLineEdit_config_remark.setToolTip(_translate("pyinstaller_tool", "当前打包配置是指“程序打包工具”所有复选框、输入框等控件的设置状态。\n"
-"输入一个你容易记住的备注名称并点击“保存”按钮将这些设置保存下来以便在不同的打包项目之间快速切换。"))
-        self.uiLineEdit_config_remark.setPlaceholderText(_translate("pyinstaller_tool", "请输入配置的备注名称"))
-        self.uiPushButton_save_config.setToolTip(_translate("pyinstaller_tool", "将“程序打包工具”当前复选框、输入框等控件设置状态保存下来，以左侧输入框内容作为这个保存下来的配置的名称。"))
+        self.uiLineEdit_config_remark.setToolTip(_translate("pyinstaller_tool", "当前打包配置是指程序打包工具所有复选框、输入框等控件的状态、内容。\n"
+"输入备注名称并点击“保存”按钮将这些设置保存下来以便在打包不同项目时快速切换。"))
+        self.uiLineEdit_config_remark.setPlaceholderText(_translate("pyinstaller_tool", "默认备注名称"))
+        self.uiPushButton_save_config.setToolTip(_translate("pyinstaller_tool", "以左侧输入框内容作为名称，将打包工具的复选框、输入框等控件的状态、内容保存下来。\n"
+"如果左侧输入框不输入任何内容，则使用默认名称来保存配置。"))
         self.uiPushButton_save_config.setText(_translate("pyinstaller_tool", "保存"))
         self.label_29.setText(_translate("pyinstaller_tool", "已保存的打包配置"))
         self.uiListWidget_saved_config.setToolTip(_translate("pyinstaller_tool", "所有已保存的配置，这里显示的是你在保存配置时输入的备注名称。"))
-        self.uiPushButton_apply_config.setToolTip(_translate("pyinstaller_tool", "复制一份打包配置列表中被选中的配置，将它作为当前配置并更新到界面上。"))
+        self.uiPushButton_apply_config.setToolTip(_translate("pyinstaller_tool", "复制一份打包配置列表中被选中的配置，将它作为当前配置并更新到打包工具的界面上。"))
         self.uiPushButton_apply_config.setText(_translate("pyinstaller_tool", "应用"))
-        self.uiPushButton_delete_config.setToolTip(_translate("pyinstaller_tool", "将左侧下拉选择框选中的配置删除。"))
+        self.uiPushButton_delete_config.setToolTip(_translate("pyinstaller_tool", "将左侧配置列表中已被选中的配置删除。"))
         self.uiPushButton_delete_config.setText(_translate("pyinstaller_tool", "删除"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_pyitool_settings), _translate("pyinstaller_tool", "工具设置"))
         self.lb_platform_info.setToolTip(_translate("pyinstaller_tool", "操作系统的版本信息。"))
