@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>224</width>
-    <height>241</height>
+    <width>238</width>
+    <height>105</height>
    </rect>
   </property>
   <property name="font">
@@ -31,6 +31,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="toolTip">
          <string>管理不同 Python 环境中的第三方包/库/模块</string>
         </property>
@@ -39,8 +45,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>64</width>
-          <height>64</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -56,6 +62,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="toolTip">
          <string>使用 Pyinstaller 将 Python 程序打包成 exe 文件</string>
         </property>
@@ -64,8 +76,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>64</width>
-          <height>64</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -81,6 +93,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="toolTip">
          <string>设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度</string>
         </property>
@@ -89,8 +107,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>64</width>
-          <height>64</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -106,6 +124,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="toolTip">
          <string>可用于下载 Python 各种第三方包/库/模块的离线安装包，可批量下载</string>
         </property>
@@ -114,8 +138,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>64</width>
-          <height>64</height>
+          <width>48</width>
+          <height>48</height>
          </size>
         </property>
         <property name="toolButtonStyle">
@@ -145,7 +169,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>224</width>
+     <width>238</width>
      <height>23</height>
     </rect>
    </property>
