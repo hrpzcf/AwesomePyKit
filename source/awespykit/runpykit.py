@@ -158,7 +158,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 def run_pykit_sysexit_when_close():
     awespykit = QApplication(sys.argv)
     config = MainEntranceConfig()
-    awespykit.setWindowIcon(QIcon(":/icon.ico"))
+    awespykit.setWindowIcon(QIcon(":/icon.png"))
     awespykit.setStyle(AppStyle(config.app_style).name)
     main_entrance = MainEntrance(config)
     main_entrance.display()

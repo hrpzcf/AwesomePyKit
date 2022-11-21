@@ -154,7 +154,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.__sort_by_column
         )
         self.tw_installed_info.clicked.connect(self.__show_label_selected_num)
-        self.le_search_pkgs_kwd.textChanged.connect(self.search_pkg_name_by_kwd)
+        self.le_search_pkgs_kwd.textChanged.connect(self.search_pkgname_using_keyword)
         self.lw_env_list.customContextMenuRequested.connect(
             self.environlist_contextmenu
         )
@@ -295,7 +295,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 return keyword in string_long
             return letters_following in string_long[1:]
 
-    def search_pkg_name_by_kwd(self):
+    def search_pkgname_using_keyword(self):
         keyword = self.le_search_pkgs_kwd.text()
         if not keyword:
             for i in range(self.tw_installed_info.rowCount()):
