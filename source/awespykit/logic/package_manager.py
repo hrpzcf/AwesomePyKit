@@ -155,10 +155,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         )
         self.tw_installed_info.clicked.connect(self.__show_label_selected_num)
         self.le_search_pkgs_kwd.textChanged.connect(self.search_pkgname_using_keyword)
-        self.lw_env_list.customContextMenuRequested.connect(
+        self.lw_env_list.customContextMenuRequested[QPoint].connect(
             self.environlist_contextmenu
         )
-        self.tw_installed_info.customContextMenuRequested.connect(
+        self.tw_installed_info.customContextMenuRequested[QPoint].connect(
             self.packagesinfo_contextmenu
         )
         self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
@@ -210,7 +210,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         if pkg_name is not None:
             query_window.start_query_name()
 
-    def environlist_contextmenu(self):
+    def environlist_contextmenu(self, point: QPoint):
+        if not self.lw_env_list.itemAt(point):
+            return
+
         contextmenu = QMenu(self)
 
         action = QAction(QIcon(":/openfd.png"), "打开目录", self)
@@ -238,7 +241,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         contextmenu.setStyleSheet("QMenu {padding: 10px; border: 1px solid black}")
         contextmenu.exec_(QCursor.pos())
 
-    def packagesinfo_contextmenu(self):
+    def packagesinfo_contextmenu(self, point: QPoint):
+        if not self.tw_installed_info.itemAt(point):
+            return
+
         contextmenu = QMenu(self)
         action_list = list()
 
