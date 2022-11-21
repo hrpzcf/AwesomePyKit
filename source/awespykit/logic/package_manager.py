@@ -193,6 +193,16 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         thread_export.start()
         self.thread_repo.put(thread_export, 1)
 
+    def copy_environment_path(self):
+        index = self.lw_env_list.currentRow()
+        if index == -1:
+            return
+        environment = self.env_list[index]
+        if not environment.env_path:
+            return MessageBox("提示", "无效的 Python 环境！").exec_()
+        clipboard = QApplication.clipboard()
+        clipboard.setText(environment.env_path)
+
     def query_names(self):
         if self.selected_index == -1:
             return MessageBox("提示", "还没有选中任何环境！").exec_()
@@ -218,6 +228,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         action = QAction(QIcon(":/openfd.png"), "打开目录", self)
         action.triggered.connect(self.selected_envfolder)
+        contextmenu.addAction(action)
+
+        action = QAction(QIcon(":/copy.png"), "复制路径", self)
+        action.triggered.connect(self.copy_environment_path)
         contextmenu.addAction(action)
 
         action = QAction(QIcon(":/export.png"), "导出包列表", self)

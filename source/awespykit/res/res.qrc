@@ -18,6 +18,7 @@
         <file>python.png</file>
         <file>default.png</file>
         <file>export.png</file>
+        <file>copy.png</file>
     </qresource>
     <qresource prefix="trans">
         <file>widgets_zh-CN.qm</file>
