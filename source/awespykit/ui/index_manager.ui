@@ -118,11 +118,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="le_urlname">
-            <property name="contextMenuPolicy">
-             <enum>Qt::NoContextMenu</enum>
-            </property>
-           </widget>
+           <widget class="QLineEdit" name="le_urlname"/>
           </item>
          </layout>
         </item>
@@ -136,11 +132,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="le_indexurl">
-            <property name="contextMenuPolicy">
-             <enum>Qt::NoContextMenu</enum>
-            </property>
-           </widget>
+           <widget class="QLineEdit" name="le_indexurl"/>
           </item>
          </layout>
         </item>
@@ -256,9 +248,6 @@
         </item>
         <item>
          <widget class="QLineEdit" name="le_effectiveurl">
-          <property name="contextMenuPolicy">
-           <enum>Qt::NoContextMenu</enum>
-          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>

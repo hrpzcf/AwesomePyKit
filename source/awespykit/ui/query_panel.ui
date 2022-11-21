@@ -38,11 +38,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLineEdit" name="uiLineEdit_input_name">
-        <property name="contextMenuPolicy">
-         <enum>Qt::CustomContextMenu</enum>
-        </property>
-       </widget>
+       <widget class="QLineEdit" name="uiLineEdit_input_name"/>
       </item>
       <item>
        <widget class="QPushButton" name="uiPushButton_query">
@@ -125,11 +121,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPlainTextEdit" name="uiPlainTextEdit_query_result">
-        <property name="contextMenuPolicy">
-         <enum>Qt::CustomContextMenu</enum>
-        </property>
-       </widget>
+       <widget class="QPlainTextEdit" name="uiPlainTextEdit_query_result"/>
       </item>
      </layout>
     </item>

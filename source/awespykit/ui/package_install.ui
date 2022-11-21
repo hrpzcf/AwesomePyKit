@@ -84,11 +84,7 @@
          <number>8</number>
         </property>
         <item>
-         <widget class="QPlainTextEdit" name="pte_package_names_old">
-          <property name="contextMenuPolicy">
-           <enum>Qt::NoContextMenu</enum>
-          </property>
-         </widget>
+         <widget class="QPlainTextEdit" name="pte_package_names_old"/>
         </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,1">
@@ -236,11 +232,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="le_use_index_url">
-        <property name="contextMenuPolicy">
-         <enum>Qt::NoContextMenu</enum>
-        </property>
-       </widget>
+       <widget class="QLineEdit" name="le_use_index_url"/>
       </item>
      </layout>
     </item>

@@ -14,7 +14,6 @@ from PyQt5.QtWidgets import *
 class LineEdit(QLineEdit):
     def __init__(self, accept=None, ext_filter=None):
         super().__init__()
-        self.setContextMenuPolicy(Qt.NoContextMenu)
         if accept is None:
             self.__accept = Accept.Dir
         else:
@@ -65,7 +64,6 @@ class TextEdit(QTextEdit):
     def __init__(self, accept=None, ext_filter=None):
         super().__init__()
         self.setLineWrapMode(QTextEdit.NoWrap)
-        self.setContextMenuPolicy(Qt.NoContextMenu)
         if accept is None:
             self.__accept = Accept.File
         else:

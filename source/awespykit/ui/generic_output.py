@@ -29,7 +29,6 @@ class Ui_generic_output(object):
         font.setFamily("Consolas")
         font.setPointSize(10)
         self.uiPlainTextEdit_output.setFont(font)
-        self.uiPlainTextEdit_output.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
         self.uiPlainTextEdit_output.setReadOnly(True)
         self.uiPlainTextEdit_output.setPlainText("")
         self.uiPlainTextEdit_output.setObjectName("uiPlainTextEdit_output")

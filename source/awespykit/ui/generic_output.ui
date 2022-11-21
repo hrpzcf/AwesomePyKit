@@ -43,9 +43,6 @@
         <pointsize>10</pointsize>
        </font>
       </property>
-      <property name="contextMenuPolicy">
-       <enum>Qt::NoContextMenu</enum>
-      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>

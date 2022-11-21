@@ -157,6 +157,9 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
 def run_pykit_sysexit_when_close():
     awespykit = QApplication(sys.argv)
+    translator = QTranslator()
+    translator.load(":/trans/widgets_zh-CN.qm")
+    awespykit.installTranslator(translator)
     config = MainEntranceConfig()
     awespykit.setWindowIcon(QIcon(":/icon.png"))
     awespykit.setStyle(AppStyle(config.app_style).name)

@@ -38,11 +38,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLineEdit" name="uiLineEdit_input_content">
-        <property name="contextMenuPolicy">
-         <enum>Qt::CustomContextMenu</enum>
-        </property>
-       </widget>
+       <widget class="QLineEdit" name="uiLineEdit_input_content"/>
       </item>
       <item>
        <widget class="QPushButton" name="uiPushButton_select_envdir">

@@ -61,9 +61,6 @@
             </item>
             <item>
              <widget class="QPlainTextEdit" name="pte_package_names">
-              <property name="contextMenuPolicy">
-               <enum>Qt::NoContextMenu</enum>
-              </property>
               <property name="toolTip">
                <string>需要下载的模块名称，每行一个名称。</string>
               </property>
@@ -302,9 +299,6 @@
                </item>
                <item>
                 <widget class="QLineEdit" name="le_save_to">
-                 <property name="contextMenuPolicy">
-                  <enum>Qt::NoContextMenu</enum>
-                 </property>
                  <property name="toolTip">
                   <string>下载的模块安装包的保存路径。</string>
                  </property>
@@ -336,9 +330,6 @@
                </item>
                <item>
                 <widget class="QLineEdit" name="le_platform">
-                 <property name="contextMenuPolicy">
-                  <enum>Qt::NoContextMenu</enum>
-                 </property>
                  <property name="toolTip">
                   <string>是否只下载兼容此处列出的平台的模块安装包。</string>
                  </property>
@@ -378,9 +369,6 @@
                    <width>180</width>
                    <height>16777215</height>
                   </size>
-                 </property>
-                 <property name="contextMenuPolicy">
-                  <enum>Qt::NoContextMenu</enum>
                  </property>
                  <property name="toolTip">
                   <string>是否只下载兼容此处列出的 Python 版本的模块安装包。</string>
@@ -483,9 +471,6 @@
                </item>
                <item>
                 <widget class="QLineEdit" name="le_abis">
-                 <property name="contextMenuPolicy">
-                  <enum>Qt::NoContextMenu</enum>
-                 </property>
                  <property name="toolTip">
                   <string>是否只下载兼容此处列出的 Python ABI的模块安装包。</string>
                  </property>
@@ -518,9 +503,6 @@
                </item>
                <item>
                 <widget class="QLineEdit" name="le_index_url">
-                 <property name="contextMenuPolicy">
-                  <enum>Qt::NoContextMenu</enum>
-                 </property>
                  <property name="toolTip">
                   <string>临时镜像源地址。</string>
                  </property>

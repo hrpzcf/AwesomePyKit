@@ -27,7 +27,6 @@ class Ui_input_dialog(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.uiLineEdit_input_content = QtWidgets.QLineEdit(self.centralwidget)
-        self.uiLineEdit_input_content.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.uiLineEdit_input_content.setObjectName("uiLineEdit_input_content")
         self.horizontalLayout.addWidget(self.uiLineEdit_input_content)
         self.uiPushButton_select_envdir = QtWidgets.QPushButton(self.centralwidget)
