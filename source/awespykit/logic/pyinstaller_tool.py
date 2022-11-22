@@ -551,7 +551,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.toolwin_pyenv.uninstall("pyinstaller")
             self.toolwin_pyenv.install("pyinstaller", upgrade=1)
 
-        thread_reinstall = QThreadModel(target=do_reinstall_pyi)
+        thread_reinstall = QThreadModel(do_reinstall_pyi)
         thread_reinstall.at_start(
             self.__lock_widgets,
             lambda: self.__show_running("正在安装 Pyinstaller..."),
@@ -695,7 +695,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             )
         else:
             working_dir_root = os.path.join(custom_working_dir, program_name)
-        thread_delete_working = QThreadModel(shutil.rmtree, (working_dir_root, True))
+        thread_delete_working = QThreadModel(shutil.rmtree, working_dir_root, True)
         thread_delete_working.start()
         self.thread_repo.put(thread_delete_working)
 
