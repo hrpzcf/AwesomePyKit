@@ -132,9 +132,14 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.verticalLayout_4.replaceWidget(self.te_other_data_old, self.te_other_data)
         self.te_other_data_old.deleteLater()
         # 替换“文件图标路径”LineEdit控件
-        self.le_file_icon_path = LineEdit(Accept.File, {".ico", ".icns"})
+        self.le_file_icon_path = LineEdit(
+            Accept.File, {".ico", ".png", ".jpg", ".jpeg", ".icns", ".exe"}
+        )
         self.le_file_icon_path.setToolTip(
-            "对应选项：-i, --icon\n生成的 exe 可执行文件使用的图标，支持 .ico 等图标文件。\n可将格式正确的文件拖放到此处。"
+            "对应选项：-i, --icon\n生成的 exe 可执行文件使用的图标，支持 .ico 等格式。\n"
+            "注意：如果选择 .png、.jpg、.jpeg 格式的图片，则需在打包环境中安装 Pillow 用于转换格式，否则打包失败。\n"
+            "如果选择的是 .exe 文件，选择后需要在文件路径后加上[英文逗号和图标ID]，例如 'F:\\executable.exe,123'，不含引号\n"
+            "除了 .ico 格式，其他格式图标的支持因 Pyinstaller 版本而异，可以将格式正确的文件直接拖放到此处。"
         )
         self.horizontalLayout_11.replaceWidget(
             self.le_file_icon_path_old, self.le_file_icon_path
@@ -302,7 +307,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         selected_file = self.__ask_file_or_dir_path(
             "选择可执行文件图标",
             self.config.curconfig.project_root,
-            ext_filter="图标文件 (*.ico *.icns)",
+            ext_filter="图标文件 (*.ico *.icns);;常规图片 (*.png *.jpg *.jpeg);;可执行文件 (*.exe)",
         )[0]
         if not selected_file:
             return
