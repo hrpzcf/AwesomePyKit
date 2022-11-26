@@ -150,6 +150,10 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__store_window_size()
         self.__config.save_config()
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
     @staticmethod
     def _show_about():
         about_path = generate_respath("help", "About.html")

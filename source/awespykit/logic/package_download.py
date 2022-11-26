@@ -80,6 +80,10 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.config_widgets_to_dict()
         self.config.save_config()
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
     def display(self):
         self.resize(*self.config.window_size)
         if self.isMaximized():
@@ -121,9 +125,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         )
         self.config.download_type = download_type
         self.config.include_pre = self.cb_include_pre.isChecked()
-        self.config.ignore_requires_python = (
-            self.cb_ignore_requires_python.isChecked()
-        )
+        self.config.ignore_requires_python = self.cb_ignore_requires_python.isChecked()
         self.config.save_path = self.le_save_to.text()
         self.config.platform = [s for s in self.le_platform.text().split() if s]
         self.config.python_version = self.le_python_version.text()
@@ -390,6 +392,10 @@ class ShowDownloadWindow(Ui_show_download, QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         self.__store_window_size()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
 
     def display(self):
         self.resize(*self.__parent.config.dlstatus_winsize)

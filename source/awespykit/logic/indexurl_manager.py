@@ -41,6 +41,10 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         self.__store_window_size()
         self.__config.save_config()
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
     @staticmethod
     def __widget_for_list_item(name, url):
         item_layout = QHBoxLayout()

@@ -126,6 +126,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.config.output_side = self.__output.linkage
         self.config.save_config()
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
     def show_loading(self, text):
         self.lb_loading_tip.clear()
         self.lb_loading_tip.setText(text)
@@ -847,6 +851,10 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.__save_window_size()
         self.config_widgets_to_dict()
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
     def signal_slot_connection(self):
         self.pb_do_install.clicked.connect(self.call_installpkg_back)
         self.pb_save_as_text.clicked.connect(self.save_package_names)
@@ -878,13 +886,6 @@ class AddEnvironDialog(Ui_input_dialog, QMainWindow):
         self.uiPushButton_confirm.clicked.connect(self.__text_back)
         self.uiPushButton_select_envdir.clicked.connect(self.__select_envdir)
 
-    def keyPressEvent(self, event: QKeyEvent):
-        key = event.key()
-        if key == Qt.Key_Escape:
-            self.close()
-        elif key == Qt.Key_Enter or key == Qt.Key_Return:
-            self.__text_back()
-
     def __text_back(self):
         self.close()
         self.__callback(self.uiLineEdit_input_content.text())
@@ -896,6 +897,13 @@ class AddEnvironDialog(Ui_input_dialog, QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         self.__save_window_size()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        key = event.key()
+        if key == Qt.Key_Escape:
+            self.close()
+        elif key == Qt.Key_Enter or key == Qt.Key_Return:
+            self.__text_back()
 
     def __select_envdir(self):
         _path = QFileDialog.getExistingDirectory(self, "选择文件夹", self.last_path)
@@ -934,13 +942,6 @@ class NameQueryPanel(Ui_query_panel, QMainWindow):
         self.signal_result.connect(self.uiPlainTextEdit_query_result.appendPlainText)
         self.uiPushButton_query.clicked.connect(self.start_query_name)
 
-    def keyPressEvent(self, event: QKeyEvent):
-        key = event.key()
-        if key == Qt.Key_Escape:
-            self.close()
-        elif key == Qt.Key_Enter or key == Qt.Key_Return:
-            self.start_query_name()
-
     def __save_query_configure(self):
         self.__parent.config.query_name = self.uiLineEdit_input_name.text()
         if self.uiRadioButton_pkg2import.isChecked():
@@ -954,6 +955,13 @@ class NameQueryPanel(Ui_query_panel, QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         self.__save_query_configure()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        key = event.key()
+        if key == Qt.Key_Escape:
+            self.close()
+        elif key == Qt.Key_Enter or key == Qt.Key_Return:
+            self.start_query_name()
 
     def __start_querying(self):
         self.uiPushButton_query.setEnabled(False)

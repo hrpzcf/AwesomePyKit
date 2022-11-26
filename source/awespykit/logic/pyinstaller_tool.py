@@ -90,6 +90,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config_widgets_to_cfg()
         self.config.save_config()
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
     def display(self):
         self.resize(*self.config.window_size)
         if self.isMaximized():
@@ -1033,6 +1037,10 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
     def closeEvent(self, event: QCloseEvent):
         self.__save_window_size()
 
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
     def __call_environ_back(self):
         self.close()
         selected = self.lw_environ_list.currentRow()
@@ -1079,6 +1087,12 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):
 
     def closeEvent(self, event: QCloseEvent):
         self.__save_window_size()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+        elif event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            self.__call_install_back()
 
     def display_window(self):
         self.resize(*self.__parent.config.impcheck_winsize)

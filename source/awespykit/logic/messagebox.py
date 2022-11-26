@@ -16,9 +16,7 @@ class MessageBox(QMessageBox):
     有'destructive'按钮，无'reject'按钮，窗口不可关闭
     """
 
-    def __init__(
-        self, title, message, icon=None, buttons=(("accept", "确定"),)
-    ):
+    def __init__(self, title, message, icon=None, buttons=(("accept", "确定"),)):
         if icon is None:
             icon = QMessageBox.Information
         super().__init__(icon, title, message)
