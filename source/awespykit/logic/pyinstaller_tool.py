@@ -64,7 +64,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.set_platform_info()
         self.thread_repo = ThreadRepo(500)
         self.toolwin_venv = None
-        self.toolwin_pyenv = None
+        self.toolwin_env = None
         self.pyi_tool = PyiTool()
         self.__envch_win = EnvironChosenWindow(self, self.__call_env_back)
         self.__impcheck_win = ImportsCheckWindow(self, self.__install_missings)
@@ -165,7 +165,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pyi_tool.completed.connect(self.after_task_completed)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
         self.pb_select_py_env.clicked.connect(self.__envch_win.initialize)
-        self.le_program_entry.textChanged.connect(self.set_le_project_root)
+        self.le_program_entry.textChanged.connect(self.set_uilineedit_roots)
         self.pb_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
         )
@@ -208,12 +208,13 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             if not self.toolwin_venv.venv_exists:
                 return MessageBox(
                     "提示",
-                    "项目目录下不存在虚拟环境，请直接点击生成可执行文件，程序会引导创建虚拟环境。",
+                    f"项目根目录下不存在虚拟环境，如果你确定你设置的“项目根目录”"
+                    f"正确无误，那么请直接点击“开始打包”，程序会引导创建虚拟环境。",
                     QMessageBox.Warning,
                 ).exec_()
             environ = self.toolwin_venv
         else:
-            environ = self.toolwin_pyenv
+            environ = self.toolwin_env
         if not environ:
             MessageBox(
                 "提示",
@@ -221,15 +222,15 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
             return
-        project_root = self.config.curconfig.project_root
-        if not project_root:
+        program_root = self.config.curconfig.program_root
+        if not program_root:
             MessageBox(
                 "提示",
                 "源代码根目录未填写！",
                 QMessageBox.Warning,
             ).exec_()
             return
-        if not os.path.isdir(project_root):
+        if not os.path.isdir(program_root):
             MessageBox(
                 "提示",
                 "源代码根目录不存在！",
@@ -238,18 +239,18 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             return
         dist_dir = self.config.curconfig.distribution_dir
         if not dist_dir:
-            dist_dir = os.path.join(project_root, "dist")
+            dist_dir = os.path.join(program_root, "dist")
         elif not os.path.isabs(dist_dir):
-            dist_dir = os.path.join(project_root, dist_dir)
+            dist_dir = os.path.join(program_root, dist_dir)
         missings = list()
-        self.pyi_tool.initialize(environ.env_path, project_root)
+        self.pyi_tool.initialize(environ.env_path, program_root)
         if not self.pyi_tool.pyi_ready:
             missings.append(("打包功能核心模块", {}, {"pyinstaller"}))
 
         def get_missing_imps():
             inspector = ImportInspector(
                 environ.env_path,
-                project_root,
+                program_root,
                 [self.toolwin_venv.env_path, dist_dir],
             )
             if (
@@ -275,21 +276,21 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def set_le_program_entry(self):
         selected_file = self.__ask_file_or_dir_path(
             "选择程序启动入口",
-            self.config.curconfig.project_root,
+            self.config.curconfig.program_root,
             ext_filter="脚本文件 (*.py *.pyc *.pyw *.spec)",
         )[0]
         if not selected_file:
             return
         self.le_program_entry.setText(selected_file)
 
-    def set_le_project_root(self):
+    def set_uilineedit_roots(self):
         root = os.path.dirname(self.le_program_entry.text())
         self.le_project_root.setText(root)
-        self.config.curconfig.project_root = root
+        self.uiLineEdit_program_root.setText(root)
 
     def set_te_module_search_path(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "其他模块搜索目录", self.config.curconfig.project_root, ch=Accept.Dir
+            "其他模块搜索目录", self.config.curconfig.program_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -297,7 +298,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_te_other_data(self):
         selected_files = self.__ask_file_or_dir_path(
-            "选择非源码资源文件", self.config.curconfig.project_root, multi=True
+            "选择非源码资源文件", self.config.curconfig.program_root, multi=True
         )
         if not selected_files:
             return
@@ -306,7 +307,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def set_le_file_icon_path(self):
         selected_file = self.__ask_file_or_dir_path(
             "选择可执行文件图标",
-            self.config.curconfig.project_root,
+            self.config.curconfig.program_root,
             ext_filter="图标文件 (*.ico *.icns);;常规图片 (*.png *.jpg *.jpeg);;可执行文件 (*.exe)",
         )[0]
         if not selected_file:
@@ -315,7 +316,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_spec_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择SPEC文件储存目录", self.config.curconfig.project_root, ch=Accept.Dir
+            "选择SPEC文件储存目录", self.config.curconfig.program_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -323,7 +324,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_temp_working_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择临时文件目录", self.config.curconfig.project_root, ch=Accept.Dir
+            "选择临时文件目录", self.config.curconfig.program_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -331,7 +332,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_output_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择生成文件储存目录", self.config.curconfig.project_root, ch=Accept.Dir
+            "选择生成文件储存目录", self.config.curconfig.program_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -339,7 +340,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def set_le_upx_search_path(self):
         selected_dir = self.__ask_file_or_dir_path(
-            "选择UPX程序搜索目录", self.config.curconfig.project_root, ch=Accept.Dir
+            "选择UPX程序搜索目录", self.config.curconfig.program_root, ch=Accept.Dir
         )[0]
         if not selected_dir:
             return
@@ -383,10 +384,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         return file_dir_paths
 
     def __call_env_back(self, env):
-        self.toolwin_pyenv = env
+        self.toolwin_env = env
         self.pyi_tool.initialize(
-            self.toolwin_pyenv.env_path,
-            self.config.curconfig.project_root,
+            self.toolwin_env.env_path,
+            self.config.curconfig.program_root,
         )
         self.load_version_information_lazily(refresh=False)
 
@@ -396,6 +397,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.update_configure_listwidget_items()
         self.load_version_information_lazily(refresh=True)
         self.le_program_entry.setText(self.config.curconfig.script_path)
+        self.uiLineEdit_program_root.setText(self.config.curconfig.program_root)
         self.le_project_root.setText(self.config.curconfig.project_root)
         self.te_module_search_path.setText(
             "\n".join(self.config.curconfig.module_paths)
@@ -439,10 +441,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def config_widgets_to_cfg(self):
         self.config.curconfig.script_path = self.le_program_entry.local_path
         self.config.curconfig.bundle_spec_name = self.le_output_name.text()
-        project_root = self.le_project_root.text()
-        self.config.curconfig.project_root = project_root
+        program_root = self.uiLineEdit_program_root.text()
+        self.config.curconfig.program_root = program_root
+        self.config.curconfig.project_root = self.le_project_root.text()
         self.config.curconfig.module_paths = self.te_module_search_path.local_paths
-        self.config.curconfig.other_datas = self.__gen_abs_rel_groups(project_root)
+        self.config.curconfig.other_datas = self.__gen_absrel_groups(program_root)
         self.config.curconfig.icon_path = self.le_file_icon_path.local_path
         self.config.curconfig.onedir_bundle = self.rb_pack_to_one_dir.isChecked()
         self.config.curconfig.provide_console = self.cb_execute_with_console.isChecked()
@@ -457,8 +460,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config.curconfig.upx_excludes = [
             s for s in self.te_upx_exclude_files.toPlainText().split("\n") if s
         ]
-        if self.toolwin_pyenv is not None:
-            self.config.curconfig.environ_path = self.toolwin_pyenv.env_path
+        if self.toolwin_env is not None:
+            self.config.curconfig.environ_path = self.toolwin_env.env_path
         self.config.curconfig.log_level = self.cb_log_level.currentText()
         self.config.curconfig.version_info = self.file_ver_info_text()
         self.config.curconfig.debug_options = self.get_pyi_debug_options()
@@ -478,7 +481,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             s for s in self.pte_exclude_modules.toPlainText().split("\n") if s
         ]
 
-    def __gen_abs_rel_groups(self, starting_point):
+    def __gen_absrel_groups(self, starting_point):
         """获取其他要打包的文件的本地路径和与源代码根目录的相对位置。"""
         other_data_local_paths = self.te_other_data.local_paths
         abs_rel_path_groups = []
@@ -537,7 +540,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.le_original_filename.setText(version_info.get("$OriginalFilename$", ""))
 
     def reinstall_pyinstaller(self):
-        if not self.toolwin_pyenv:
+        if not self.toolwin_env:
             return MessageBox(
                 "提示",
                 "当前未选择任何 Python 环境。",
@@ -553,8 +556,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             return
 
         def do_reinstall_pyi():
-            self.toolwin_pyenv.uninstall("pyinstaller")
-            self.toolwin_pyenv.install("pyinstaller", upgrade=1)
+            self.toolwin_env.uninstall("pyinstaller")
+            self.toolwin_env.install("pyinstaller", upgrade=1)
 
         thread_reinstall = QThreadModel(do_reinstall_pyi)
         thread_reinstall.at_start(
@@ -573,21 +576,18 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.lb_platform_info.setText(f"{platform()}-{machine()}")
 
     def project_root_level(self, option):
-        """
-        option 为 0 表示重置路径，1 表示设为上一级目录
-        """
+        """option: 0 表示重置为初始路径，1 表示设为上一级"""
+        assert option in (0, 1)
         root = self.le_project_root.text()
         if not root:
             return
         if option == 1:
             _path = os.path.dirname(root)
-        elif option == 0:
-            deep = self.le_program_entry.text()
-            if not deep:
-                return
-            _path = os.path.dirname(deep)
         else:
-            raise Exception("选项错误")
+            origin = self.le_program_entry.text()
+            if not origin:
+                return
+            _path = os.path.dirname(origin)
         self.le_project_root.setText(_path)
 
     def __check_requireds(self):
@@ -604,6 +604,20 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             MessageBox(
                 "错误",
                 "程序启动入口文件不存在！",
+                QMessageBox.Critical,
+            ).exec_()
+            return False
+        if not os.path.isdir(self.config.curconfig.program_root):
+            MessageBox(
+                "错误",
+                "程序根目录未填写或目录不存在！",
+                QMessageBox.Critical,
+            ).exec_()
+            return False
+        if not os.path.isdir(self.config.curconfig.project_root):
+            MessageBox(
+                "错误",
+                "项目根目录未填写或目录不存在！",
                 QMessageBox.Critical,
             ).exec_()
             return False
@@ -642,7 +656,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
         return function
 
-    def importance_operation_finish(self):
+    def importance_operation_finished(self):
         self.__hide_running()
         self.__release_widgets()
 
@@ -665,9 +679,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             final_execfn = program_name
         dist_folder = self.config.curconfig.distribution_dir
         if not dist_folder:
-            dist_folder = os.path.join(self.config.curconfig.project_root, "dist")
+            dist_folder = os.path.join(self.config.curconfig.program_root, "dist")
         elif not os.path.isabs(dist_folder):
-            dist_folder = os.path.join(self.config.curconfig.project_root, dist_folder)
+            dist_folder = os.path.join(self.config.curconfig.program_root, dist_folder)
         launch_explorer(
             os.path.join(dist_folder, sub_directory), [final_execfn + ".exe"]
         )
@@ -675,10 +689,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def delete_spec_file(self):
         spec_file_dir = self.config.curconfig.spec_dir
         if not spec_file_dir:
-            spec_file_dir = self.config.curconfig.project_root
+            spec_file_dir = self.config.curconfig.program_root
         elif not os.path.isabs(spec_file_dir):
             spec_file_dir = os.path.join(
-                self.config.curconfig.project_root, spec_file_dir
+                self.config.curconfig.program_root, spec_file_dir
             )
         program_name = self.__get_program_name()
         spec_file_path = os.path.join(spec_file_dir, program_name) + ".spec"
@@ -693,10 +707,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         program_name = self.__get_program_name()
         custom_working_dir = self.config.curconfig.working_dir
         if not custom_working_dir:
-            working_dir_root = os.path.join(self.config.curconfig.project_root, "build")
+            working_dir_root = os.path.join(self.config.curconfig.program_root, "build")
         elif not os.path.isabs(custom_working_dir):
             working_dir_root = os.path.join(
-                self.config.curconfig.project_root, custom_working_dir
+                self.config.curconfig.program_root, custom_working_dir
             )
         else:
             working_dir_root = os.path.join(custom_working_dir, program_name)
@@ -726,13 +740,13 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def creating_virtualenv(self):
         dist_dir = self.config.curconfig.distribution_dir
         if not dist_dir:
-            dist_dir = os.path.join(self.toolwin_venv.project, "dist")
+            dist_dir = os.path.join(self.config.curconfig.program_root, "dist")
         elif not os.path.isabs(dist_dir):
-            dist_dir = os.path.join(self.toolwin_venv.project, dist_dir)
-        if self.toolwin_venv.create_project_venv(self.toolwin_pyenv.interpreter):
+            dist_dir = os.path.join(self.config.curconfig.program_root, dist_dir)
+        if self.toolwin_venv.create_project_venv(self.toolwin_env.interpreter):
             import_inspect = ImportInspector(
                 self.toolwin_venv.env_path,
-                self.toolwin_venv.project,
+                self.config.curconfig.program_root,
                 [self.toolwin_venv.env_path, dist_dir],
             )
             missings = set()
@@ -767,7 +781,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             if not self.toolwin_venv.find_project_venv():
                 role = MessageBox(
                     "提示",
-                    "项目目录下不存在虚拟环境，请选择合适选项。",
+                    "项目根目录下不存在虚拟环境，请选择合适选项。",
                     QMessageBox.Warning,
                     (
                         ("accept", "使用主环境"),
@@ -778,7 +792,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 if role == 0:
                     using_py_path = self.config.curconfig.environ_path
                 elif role == 1:
-                    if self.toolwin_pyenv is None or not self.toolwin_pyenv.env_path:
+                    if self.toolwin_env is None or not self.toolwin_env.env_path:
                         return MessageBox(
                             "提示",
                             "没有选择主 Python 环境或者主 Python 环境不可用。",
@@ -809,7 +823,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             using_py_path = self.config.curconfig.environ_path
         self.pyi_tool.initialize(
             using_py_path,
-            self.config.curconfig.project_root,
+            self.config.curconfig.program_root,
         )
         if not self.pyi_tool.pyi_ready:
             MessageBox(
@@ -849,15 +863,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if self.config.curconfig.prioritize_venv:
             environ = self.toolwin_venv
         else:
-            environ = self.toolwin_pyenv
+            environ = self.toolwin_env
 
         def install_pkgs():
             names_for_install = set()
             for imp in missings:
-                if imp not in import_name:
-                    names_for_install.add(imp)
-                else:
-                    names_for_install.add(import_name[imp])
+                names_for_install.add(import_install.get(imp, imp))
             for imp in names_for_install:
                 environ.install(imp)
 
@@ -969,17 +980,17 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             if refresh:
                 python_path = self.config.curconfig.environ_path
                 if python_path:
-                    self.toolwin_pyenv = PyEnv(python_path)
+                    self.toolwin_env = PyEnv(python_path)
                     self.pyi_tool.initialize(
-                        python_path, self.config.curconfig.project_root
+                        python_path, self.config.curconfig.program_root
                     )
-            if self.toolwin_pyenv is None:
+            if self.toolwin_env is None:
                 pyinfo = ""
                 pyiinfo = ""
                 pbtext = "安装"
             else:
                 pyiinfo = self.pyi_tool.pyi_info()
-                pyinfo = self.toolwin_pyenv.py_info()
+                pyinfo = self.toolwin_env.py_info()
                 if pyiinfo == "0.0":
                     pbtext = "安装"
                 else:
@@ -991,7 +1002,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
         thread_load_info = QThreadModel(do_load_version_information)
         thread_load_info.at_start(self.importance_operation_start("正在加载配置..."))
-        thread_load_info.at_finish(self.importance_operation_finish)
+        thread_load_info.at_finish(self.importance_operation_finished)
         thread_load_info.start()
         self.thread_repo.put(thread_load_info, 1)
 

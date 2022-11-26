@@ -9,6 +9,7 @@ from .package_manager import get_shared_pypaths
 
 class PyiConfigure(dict):
     _key_script_path = "script_path"
+    _key_program_root = "program_root"
     _key_project_root = "project_root"
     _key_bundle_spec_name = "bundle_spec_name"
     _key_module_paths = "module_paths"
@@ -50,6 +51,15 @@ class PyiConfigure(dict):
     def script_path(self, value):
         assert isinstance(value, str)
         self[self._key_script_path] = value
+
+    @property
+    def program_root(self):
+        return self.setdefault(self._key_program_root, "")
+
+    @program_root.setter
+    def program_root(self, value):
+        assert isinstance(value, str)
+        self[self._key_program_root] = value
 
     @property
     def project_root(self):

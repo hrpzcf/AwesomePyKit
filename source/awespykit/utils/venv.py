@@ -16,23 +16,25 @@ class VirtualEnv(PyEnv):
     def __init__(self, project_root=""):
         super().__init__("")
         self.__venv_exist = False
-        self.__project = project_root
+        self.__project_root = project_root
 
     @property
-    def project(self):
-        return self.__project if path.isdir(self.__project) else ""
+    def project_root(self):
+        return self.__project_root if path.isdir(self.__project_root) else ""
 
-    @project.setter
-    def project(self, value):
-        self.__project = value
+    @project_root.setter
+    def project_root(self, value):
+        assert isinstance(value, str)
+        self.__project_root = value
 
     def __find_venv_file(self, dir_path):
+        self.__venv_exist = False
         try:
             names = listdir(dir_path)
         except:
             return False
-        for p in names:
-            fullpath = path.join(dir_path, p)
+        for name in names:
+            fullpath = path.join(dir_path, name)
             if path.exists(path.join(fullpath, _VENV_CFGFILE)):
                 self.path = fullpath
                 self.__venv_exist = True
@@ -40,30 +42,21 @@ class VirtualEnv(PyEnv):
         return False
 
     def find_project_venv(self):
-        if not self.project:
-            return False
-        if self.__find_venv_file(self.project):
-            return True
-        parent_dir = path.dirname(self.project)
-        if path.samefile(parent_dir, self.project):
-            return False
-        if self.__find_venv_file(parent_dir):
-            return True
-        parent_dir = path.dirname(parent_dir)
-        if path.samefile(parent_dir, self.project):
-            return False
-        return self.__find_venv_file(parent_dir)
+        if not self.project_root:
+            self.__venv_exist = False
+            return self.__venv_exist
+        return self.__find_venv_file(self.project_root)
 
     @property
     def venv_exists(self):
         return self.__venv_exist
 
     def create_project_venv(self, interpreter):
-        if not self.project:
+        if not self.project_root:
             return False
         while True:
             dir_name = "%s%d" % (_VENVPREFIX, randint(1000, 9999))
-            venv_fullpath = path.join(self.__project, dir_name)
+            venv_fullpath = path.join(self.__project_root, dir_name)
             if not path.exists(venv_fullpath):
                 break
         cmds = Command(interpreter, *_CMD_PREFIX, venv_fullpath)

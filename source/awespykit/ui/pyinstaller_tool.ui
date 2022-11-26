@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>860</width>
-    <height>722</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="font">
@@ -51,288 +51,318 @@
         <attribute name="title">
          <string>项目文件</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_29">
+        <layout class="QVBoxLayout" name="verticalLayout_28">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_28">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>2</number>
+           </property>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <property name="spacing">
-              <number>2</number>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>程序启动入口：</string>
              </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
              <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>程序启动入口：</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
-               <item>
-                <widget class="QLineEdit" name="le_program_entry_old">
-                 <property name="toolTip">
-                  <string>要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。
+              <widget class="QLineEdit" name="le_program_entry_old">
+               <property name="toolTip">
+                <string>要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。
 如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_select_program_entry">
-                 <property name="text">
-                  <string>选择</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+               </property>
+              </widget>
              </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_19">
-             <property name="spacing">
-              <number>2</number>
-             </property>
              <item>
-              <widget class="QLabel" name="label_13">
+              <widget class="QPushButton" name="pb_select_program_entry">
                <property name="text">
-                <string>打包后的文件名（不含后缀）：</string>
+                <string>选择</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_19">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>打包后的文件名（不含后缀）：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_output_name">
+             <property name="toolTip">
+              <string>对应选项：-n, --name
+打包完成后的 exe 可执行文件文件的名称，此项留空则使用程序启动入口文件名。</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="1,0,0">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>项目根目录：</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_output_name">
+              <widget class="QPushButton" name="pb_reset_root_level">
                <property name="toolTip">
-                <string>对应选项：-n, --name
-打包完成后的 exe 可执行文件文件的名称，此项留空则使用程序启动入口文件名。</string>
+                <string>将项目根目录重置为程序启动入口所在目录。</string>
+               </property>
+               <property name="text">
+                <string>重置</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_up_level_root">
+               <property name="toolTip">
+                <string>将项目根目录向上移一级。</string>
+               </property>
+               <property name="text">
+                <string>上一级</string>
                </property>
               </widget>
              </item>
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout">
+            <widget class="QLineEdit" name="le_project_root">
+             <property name="toolTip">
+              <string>是指当前程序项目的起始目录，主要用于确定虚拟环境的创建位置。</string>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_29">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="1">
+             <item>
+              <widget class="QLabel" name="label_31">
+               <property name="text">
+                <string>程序根目录：</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="uiLineEdit_program_root">
+             <property name="toolTip">
+              <string>程序运行所需文件目录结构的起始目录，选择程序启动入口文件后自动确定。
+较完善的项目通常会在项目目录里单独用一个目录来存放程序源代码，以免项目其他文件与程序运行相关文件混淆，而源代码的起始目录即为“程序根目录”。
+程序根目录是“项目根目录”的一部分，但也可以和项目根目录相同，视你的项目结构而定。
+请将你的程序设计为“程序启动入口文件”是“程序根目录”的直接子文件以便适应 Pyinstaller。</string>
+             </property>
+             <property name="toolTipDuration">
+              <number>60000</number>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_31">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
              <property name="spacing">
               <number>2</number>
              </property>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="1,0,0">
+              <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,0">
                <item>
-                <widget class="QLabel" name="label_2">
+                <widget class="QLabel" name="label_26">
                  <property name="text">
-                  <string>源代码根目录 / 相对路径起点：</string>
+                  <string>隐蔽的导入：</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pb_reset_root_level">
-                 <property name="toolTip">
-                  <string>将源代码根目录重置为程序启动入口所在目录。</string>
-                 </property>
+                <widget class="QPushButton" name="pb_clear_hidden_imports">
                  <property name="text">
-                  <string>重置</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_up_level_root">
-                 <property name="toolTip">
-                  <string>将源代码根目录向上移一级。</string>
-                 </property>
-                 <property name="text">
-                  <string>上一级</string>
+                  <string>清空</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_project_root">
+              <widget class="QPlainTextEdit" name="pte_hidden_imports">
                <property name="toolTip">
-                <string>当前的源代码根目录，选择程序启动入口文件后自动确定。</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_31">
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,0">
-                 <item>
-                  <widget class="QLabel" name="label_26">
-                   <property name="text">
-                    <string>隐蔽的导入：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pb_clear_hidden_imports">
-                   <property name="text">
-                    <string>清空</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QPlainTextEdit" name="pte_hidden_imports">
-                 <property name="toolTip">
-                  <string>对应选项：--hidden-import, --hiddenimport
+                <string>对应选项：--hidden-import, --hiddenimport
 某些模块可能会被通过隐蔽的方式导入导致 Pyinstaller 没有发现它，将没有被发现的模块名填入此处以使 Pyinstaller 主动包含这些模块。
 每行一个模块名称，&quot;名称&quot;是指 Python 代码中 import 语句所使用的模块名称，区分大小写。</string>
+               </property>
+               <property name="lineWrapMode">
+                <enum>QPlainTextEdit::NoWrap</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0">
+               <item>
+                <widget class="QLabel" name="label_27">
+                 <property name="text">
+                  <string>排除的模块：</string>
                  </property>
-                 <property name="lineWrapMode">
-                  <enum>QPlainTextEdit::NoWrap</enum>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pb_clear_exclude_module">
+                 <property name="text">
+                  <string>清空</string>
                  </property>
                 </widget>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_17">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0">
-                 <item>
-                  <widget class="QLabel" name="label_27">
-                   <property name="text">
-                    <string>排除的模块：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pb_clear_exclude_module">
-                   <property name="text">
-                    <string>清空</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QPlainTextEdit" name="pte_exclude_modules">
-                 <property name="toolTip">
-                  <string>对应选项：--exclude-module
+              <widget class="QPlainTextEdit" name="pte_exclude_modules">
+               <property name="toolTip">
+                <string>对应选项：--exclude-module
 如果您不想让 Pyinstaller 打包某些模块，则请把模块名称填入此处，每行一个。
 以上&quot;名称&quot;是指 Python 代码中 import 语句所使用的模块名称，区分大小写。</string>
-                 </property>
-                 <property name="lineWrapMode">
-                  <enum>QPlainTextEdit::NoWrap</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+               </property>
+               <property name="lineWrapMode">
+                <enum>QPlainTextEdit::NoWrap</enum>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <property name="spacing">
+            <number>2</number>
+           </property>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <property name="spacing">
-              <number>2</number>
-             </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0,0">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0,0">
-               <item>
-                <widget class="QLabel" name="label_3">
-                 <property name="text">
-                  <string>其他模块搜索目录：</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_clear_module_search_path">
-                 <property name="toolTip">
-                  <string>清空其他模块搜索目录文本框。</string>
-                 </property>
-                 <property name="text">
-                  <string>清空</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_select_module_search_path">
-                 <property name="text">
-                  <string>选择</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QTextEdit" name="te_module_search_path_old"/>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0,0">
-               <item>
-                <widget class="QLabel" name="label_4">
-                 <property name="text">
-                  <string>非源代码资源文件：</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_clear_other_data">
-                 <property name="text">
-                  <string>清空</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_select_other_data">
-                 <property name="text">
-                  <string>选择</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QTextEdit" name="te_other_data_old"/>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_8">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>可执行文件的图标路径：</string>
+                <string>其他模块搜索目录：</string>
                </property>
               </widget>
              </item>
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,0">
-               <item>
-                <widget class="QLineEdit" name="le_file_icon_path_old"/>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pb_select_file_icon">
-                 <property name="text">
-                  <string>选择</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <widget class="QPushButton" name="pb_clear_module_search_path">
+               <property name="toolTip">
+                <string>清空其他模块搜索目录文本框。</string>
+               </property>
+               <property name="text">
+                <string>清空</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_select_module_search_path">
+               <property name="text">
+                <string>选择</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="te_module_search_path_old"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0,0">
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>非源代码资源文件：</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_clear_other_data">
+               <property name="text">
+                <string>清空</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_select_other_data">
+               <property name="text">
+                <string>选择</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="te_other_data_old"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>可执行文件的图标路径：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,0">
+             <item>
+              <widget class="QLineEdit" name="le_file_icon_path_old"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_select_file_icon">
+               <property name="text">
+                <string>选择</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>

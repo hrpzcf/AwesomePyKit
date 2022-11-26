@@ -62,10 +62,10 @@ def to_be_excluded(_dirpath: str, exclude_dirs):
     return False
 
 
-def file_codings(project_root, exclude_dirs):
-    pattern = re.compile(r"^.+\.py[w]?$")
+def file_codings(program_root, exclude_dirs):
+    pattern = re.compile(r"^.+\.pyw?$")
     path_coding_groups = []
-    for root, _, files in walk(project_root):
+    for root, _, files in walk(program_root):
         if to_be_excluded(root, exclude_dirs):
             continue
         for name in files:
@@ -93,8 +93,8 @@ def file_codings(project_root, exclude_dirs):
 
 
 class ImportInspector:
-    def __init__(self, python_dir, project_root, excludes=None):
-        self._root = project_root
+    def __init__(self, python_dir, program_root, excludes=None):
+        self._root = program_root
         self._excludes = list()
         if isinstance(excludes, (list, tuple)):
             self._excludes.extend(excludes)
@@ -103,9 +103,7 @@ class ImportInspector:
 
     @staticmethod
     def __modules_tobe_imported(string):
-        """
-        查找并返回 string 中所有需要导入的模块集合
-        """
+        """查找并返回 string 中所有需要导入的模块集合"""
         try:
             node = ast.parse(string, "<string>", "exec")
         except:
