@@ -72,6 +72,12 @@ Python 工具箱 - Awespykit
 
 ## 程序截图
 
+> ### 工具箱启动窗口
+
+![启动窗口](./images/MainEntrance.png)
+
+<br/>
+
 > ### 包管理器：封装了 pip 命令
 
 - 提供多 Python 环境的包管理，免于用命令行管理的混乱
