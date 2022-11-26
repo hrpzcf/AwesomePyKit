@@ -14,9 +14,9 @@ class Accept(Enum):
 
 
 class AppStyle(IntEnum):
-    Windows = 0  # XP 风格
-    WindowsVista = 1  # 原生风格
-    Fusion = 2  # Fusion 风格
+    Native = 0  # 原生风格
+    Fusion = 1  # Fusion 风格
+    Windows = 2  # 经典风格
 
 
 class Linkage(IntEnum):

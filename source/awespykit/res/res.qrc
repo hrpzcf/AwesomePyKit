@@ -14,11 +14,13 @@
         <file>bundle.png</file>
         <file>download.png</file>
         <file>manage.png</file>
-        <file>website.png</file>
+        <file>indexurl.png</file>
+        <file>indexurl2.png</file>
         <file>python.png</file>
         <file>default.png</file>
         <file>export.png</file>
         <file>copy.png</file>
+        <file>settings.png</file>
     </qresource>
     <qresource prefix="trans">
         <file>widgets_zh-CN.qm</file>

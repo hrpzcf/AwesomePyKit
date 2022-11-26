@@ -6,207 +6,158 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>238</width>
-    <height>105</height>
+    <width>202</width>
+    <height>41</height>
    </rect>
-  </property>
-  <property name="font">
-   <font>
-    <family>Microsoft YaHei UI</family>
-    <pointsize>9</pointsize>
-   </font>
   </property>
   <property name="windowTitle">
    <string>Awespykit</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QToolButton" name="pb_pkg_mgr">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <family>Microsoft YaHei UI</family>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>管理不同 Python 环境中的第三方包/库/模块</string>
-        </property>
-        <property name="text">
-         <string>环境包管理器</string>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QToolButton" name="pb_pyi_tool">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <family>Microsoft YaHei UI</family>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>使用 Pyinstaller 将 Python 程序打包成 exe 文件</string>
-        </property>
-        <property name="text">
-         <string>程序打包工具</string>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QToolButton" name="pb_index_mgr">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <family>Microsoft YaHei UI</family>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度</string>
-        </property>
-        <property name="text">
-         <string>全局镜像源设置</string>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QToolButton" name="pb_pkg_dload">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <family>Microsoft YaHei UI</family>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="toolTip">
-         <string>可用于下载 Python 各种第三方包/库/模块的离线安装包，可批量下载</string>
-        </property>
-        <property name="text">
-         <string>模块安装包下载</string>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextUnderIcon</enum>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+     <widget class="QPushButton" name="pb_pkg_mgr">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <property name="sizeHint" stdset="0">
+      <property name="toolTip">
+       <string>包管理器，用于管理不同 Python 环境中的包/库/模块</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
+QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
+QPushButton::menu-indicator{image:none}</string>
+      </property>
+      <property name="iconSize">
        <size>
-        <width>20</width>
-        <height>3</height>
+        <width>32</width>
+        <height>32</height>
        </size>
       </property>
-     </spacer>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pb_pyi_tool">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>程序打包工具，使用 Pyinstaller 将 Python 程序打包成 exe 文件</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
+QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
+QPushButton::menu-indicator{image:none}</string>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pb_index_mgr">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>Pip 源设置工具，设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
+QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
+QPushButton::menu-indicator{image:none}</string>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pb_pkg_dload">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>模块安装包下载器，用于下载 Python 各种第三方包/库/模块的离线安装包</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
+QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
+QPushButton::menu-indicator{image:none}</string>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="uiPushButton_settings">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>此工具箱的设置菜单，包含界面风格设置、关于菜单</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
+QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
+QPushButton::menu-indicator{image:none}</string>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>238</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu_help">
-    <property name="title">
-     <string>关于</string>
-    </property>
-    <addaction name="action_about"/>
-   </widget>
-   <widget class="QMenu" name="menu_settings">
-    <property name="title">
-     <string>设置</string>
-    </property>
-    <widget class="QMenu" name="menu_style">
-     <property name="title">
-      <string>界面风格</string>
-     </property>
-     <addaction name="action_default"/>
-     <addaction name="action_fusion"/>
-     <addaction name="action_windows"/>
-    </widget>
-    <addaction name="menu_style"/>
-   </widget>
-   <addaction name="menu_settings"/>
-   <addaction name="menu_help"/>
-  </widget>
-  <action name="action_about">
-   <property name="text">
-    <string>关于软件</string>
-   </property>
-  </action>
   <action name="action_fusion">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Fusion 风格</string>
+    <string>Fusion</string>
    </property>
   </action>
   <action name="action_windows">
@@ -217,7 +168,7 @@
     <string>经典风格</string>
    </property>
   </action>
-  <action name="action_default">
+  <action name="action_native">
    <property name="checkable">
     <bool>true</bool>
    </property>

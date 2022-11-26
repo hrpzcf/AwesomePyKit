@@ -67,51 +67,59 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
         self.__pkgdl_win = PackageDownloadWindow(self)
-        self.signal_slot_connection()
-        self.action_checked(config.app_style)
+        self.__setup_other_widgets()
+        self.make_action_checked(config.app_style)
 
-    def action_checked(self, style: AppStyle):
+    def make_action_checked(self, style: AppStyle):
         if style == AppStyle.Windows:
+            self.action_fusion.setChecked(False)
+            self.action_native.setChecked(False)
             self.action_windows.setChecked(True)
+        elif style == AppStyle.Native:
             self.action_fusion.setChecked(False)
-            self.action_default.setChecked(False)
-        elif style == AppStyle.WindowsVista:
+            self.action_native.setChecked(True)
             self.action_windows.setChecked(False)
-            self.action_fusion.setChecked(False)
-            self.action_default.setChecked(True)
         elif style == AppStyle.Fusion:
-            self.action_windows.setChecked(False)
             self.action_fusion.setChecked(True)
-            self.action_default.setChecked(False)
+            self.action_native.setChecked(False)
+            self.action_windows.setChecked(False)
 
     def change_appstyle(self, style: AppStyle):
         self.__config.app_style = style
-        self.action_checked(style)
+        self.make_action_checked(style)
         MessageBox("提示", "界面风格设置成功，重启程序生效！").exec_()
 
     def display(self):
         self.resize(*self.__config.window_size)
         self.showNormal()
 
-    def signal_slot_connection(self):
-        self.action_about.triggered.connect(self.__show_about)
+    def __setup_other_widgets(self):
         self.pb_pkg_mgr.setIcon(QIcon(":/manage.png"))
         self.pb_pkg_mgr.clicked.connect(self.__pkgmgr_win.display)
         self.pb_pyi_tool.setIcon(QIcon(":/bundle.png"))
         self.pb_pyi_tool.clicked.connect(self.__pyitool_win.display)
-        self.pb_index_mgr.setIcon(QIcon(":/website.png"))
+        self.pb_index_mgr.setIcon(QIcon(":/indexurl2.png"))
         self.pb_index_mgr.clicked.connect(self.__indexmgr_win.display)
         self.pb_pkg_dload.setIcon(QIcon(":/download.png"))
         self.pb_pkg_dload.clicked.connect(self.__pkgdl_win.display)
+        self.uiPushButton_settings.setIcon(QIcon(":/settings.png"))
+        menu_setstyle = QMenu("风格", self)
+        self.action_native.triggered.connect(
+            lambda: self.change_appstyle(AppStyle.Native)
+        )
+        menu_setstyle.addAction(self.action_native)
         self.action_fusion.triggered.connect(
             lambda: self.change_appstyle(AppStyle.Fusion)
         )
+        menu_setstyle.addAction(self.action_fusion)
         self.action_windows.triggered.connect(
             lambda: self.change_appstyle(AppStyle.Windows)
         )
-        self.action_default.triggered.connect(
-            lambda: self.change_appstyle(AppStyle.WindowsVista)
-        )
+        menu_setstyle.addAction(self.action_windows)
+        menu_main_settings = QMenu(self)
+        menu_main_settings.addMenu(menu_setstyle)
+        menu_main_settings.addAction("关于", self._show_about)
+        self.uiPushButton_settings.setMenu(menu_main_settings)
 
     def __store_window_size(self):
         if self.isMaximized() or self.isMinimized():
@@ -143,7 +151,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__config.save_config()
 
     @staticmethod
-    def __show_about():
+    def _show_about():
         about_path = generate_respath("help", "About.html")
         try:
             with open(about_path, encoding="utf-8") as h:
