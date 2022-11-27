@@ -173,7 +173,7 @@ def run_pykit_sysexit_when_close():
     translator.load(":/trans/widgets_zh-CN.qm")
     awespykit.installTranslator(translator)
     config = MainEntranceConfig()
-    awespykit.setWindowIcon(QIcon(":/icon.png"))
+    awespykit.setWindowIcon(QIcon(":/icon2_64.png"))
     awespykit.setStyle(AppStyle(config.app_style).name)
     main_entrance = MainEntrance(config)
     main_entrance.display()

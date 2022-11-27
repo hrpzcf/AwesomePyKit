@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>icon.png</file>
+        <file>icon2_64.png</file>
         <file>loading.gif</file>
         <file>openfd.png</file>
         <file>delete.png</file>
