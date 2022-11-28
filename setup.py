@@ -21,7 +21,7 @@ setup(
     author=AUTHOR,
     version=VERSION,
     license="MIT License",
-    install_requires=["chardet>=4.0.0", "PyQt5>=5.15.0", "fastpip>=1.4,<2.0"],
+    install_requires=["chardet>=4.0.0", "PyQt5>=5.15.0", "fastpip>=1.4.1,<2.0"],
     package_dir={"": "source"},
     packages=find_packages("source"),
     python_requires=">=3.7",
