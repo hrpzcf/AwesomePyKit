@@ -238,8 +238,8 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             self.download_completed.emit(saved_path)
 
         thread_download = QThreadModel(do_download)
-        thread_download.at_start(lambda: self.pb_start_download.setEnabled(False))
-        thread_download.at_finish(
+        thread_download.before_starting(lambda: self.pb_start_download.setEnabled(False))
+        thread_download.after_completion(
             lambda: self.pb_start_download.setEnabled(True),
         )
         thread_download.start()

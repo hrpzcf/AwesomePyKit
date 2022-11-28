@@ -174,7 +174,7 @@ VarFileInfo([VarStruct("Translation", [2052, 1200])]),
     def pyi_info(self):
         if self.pyi_ready:
             return get_cmd_out(self.pyi_path, "-v")
-        return "0.0"
+        return "0.0.0"
 
     def prepare_cmds(self, commands: PyiConfigure):
         """从 commands 添加 PyInstaller 命令选项。"""

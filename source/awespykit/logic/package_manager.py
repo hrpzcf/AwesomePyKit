@@ -193,7 +193,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.config.last_path = dir_path
         self.setCursor(Qt.WaitCursor)
         thread_export = QThreadModel(environ.freeze, dir_path, name, no_path=True)
-        thread_export.at_finish(lambda: self.setCursor(Qt.ArrowCursor))
+        thread_export.after_completion(lambda: self.setCursor(Qt.ArrowCursor))
         thread_export.start()
         self.thread_repo.put(thread_export, 1)
 
@@ -433,11 +433,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         thread_get_pkgs_info = QThreadModel(do_get_pkgs_info)
         if not no_connect:
-            thread_get_pkgs_info.at_start(
+            thread_get_pkgs_info.before_starting(
                 self.lock_widgets,
                 lambda: self.show_loading("正在加载包信息..."),
             )
-            thread_get_pkgs_info.at_finish(
+            thread_get_pkgs_info.after_completion(
                 self.table_widget_pkgs_info_update,
                 self.hide_loading,
                 self.release_widgets,
@@ -478,11 +478,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         path_list_lower = [p.lower() for p in self.config.pypaths]
         thread_search_envs = QThreadModel(search_environ)
-        thread_search_envs.at_start(
+        thread_search_envs.before_starting(
             self.lock_widgets,
             lambda: self.show_loading("正在搜索 Python 安装目录..."),
         )
-        thread_search_envs.at_finish(
+        thread_search_envs.after_completion(
             self.environ_changed_clear_pkgs,
             self.list_widget_pyenvs_update,
             self.hide_loading,
@@ -547,11 +547,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 ] = outdated_info[2]
 
         thread_get_outdated = QThreadModel(do_get_outdated)
-        thread_get_outdated.at_start(
+        thread_get_outdated.before_starting(
             self.lock_widgets,
             lambda: self.show_loading("正在检查更新..."),
         )
-        thread_get_outdated.at_finish(
+        thread_get_outdated.after_completion(
             self.table_widget_pkgs_info_update,
             self.hide_loading,
             self.release_widgets,
@@ -619,11 +619,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 item[2] = "安装成功" if result else "安装失败"
 
         thread_install_pkgs = QThreadModel(do_install)
-        thread_install_pkgs.at_start(
+        thread_install_pkgs.before_starting(
             self.lock_widgets,
             lambda: self.show_loading("正在安装..."),
         )
-        thread_install_pkgs.at_finish(
+        thread_install_pkgs.after_completion(
             self.table_widget_pkgs_info_update,
             self.hide_loading,
             self.release_widgets,
@@ -660,11 +660,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 item[2] = "卸载成功" if code else "卸载失败"
 
         thread_uninstall_pkgs = QThreadModel(do_uninstall)
-        thread_uninstall_pkgs.at_start(
+        thread_uninstall_pkgs.before_starting(
             self.lock_widgets,
             lambda: self.show_loading("正在卸载..."),
         )
-        thread_uninstall_pkgs.at_finish(
+        thread_uninstall_pkgs.after_completion(
             self.table_widget_pkgs_info_update,
             self.hide_loading,
             self.release_widgets,
@@ -708,11 +708,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                     item[2] = "升级失败"
 
         thread_upgrade_pkgs = QThreadModel(do_upgrade)
-        thread_upgrade_pkgs.at_start(
+        thread_upgrade_pkgs.before_starting(
             self.lock_widgets,
             lambda: self.show_loading("正在升级..."),
         )
-        thread_upgrade_pkgs.at_finish(
+        thread_upgrade_pkgs.after_completion(
             self.table_widget_pkgs_info_update,
             self.hide_loading,
             self.release_widgets,
@@ -754,11 +754,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 item[2] = "升级成功" if code else "升级失败"
 
         thread_upgrade_pkgs = QThreadModel(do_upgrade)
-        thread_upgrade_pkgs.at_start(
+        thread_upgrade_pkgs.before_starting(
             self.lock_widgets,
             lambda: self.show_loading("正在升级..."),
         )
-        thread_upgrade_pkgs.at_finish(
+        thread_upgrade_pkgs.after_completion(
             self.table_widget_pkgs_info_update,
             self.hide_loading,
             self.release_widgets,
@@ -995,7 +995,7 @@ class NameQueryPanel(Ui_query_panel, QMainWindow):
                 self.signal_result.emit(result)
 
         thread_query = QThreadModel(do_query)
-        thread_query.at_finish(self.__end_of_query)
+        thread_query.after_completion(self.__end_of_query)
         thread_query.start()
         self.__parent.thread_repo.put(thread_query, 1)
 

@@ -24,7 +24,8 @@
        </sizepolicy>
       </property>
       <property name="toolTip">
-       <string>包管理器，用于管理不同 Python 环境中的包/库/模块</string>
+       <string>包管理器
+用于管理不同 Python 环境中的包/库/模块</string>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
@@ -51,7 +52,8 @@ QPushButton::menu-indicator{image:none}</string>
        </sizepolicy>
       </property>
       <property name="toolTip">
-       <string>程序打包工具，使用 Pyinstaller 将 Python 程序打包成 exe 文件</string>
+       <string>程序打包工具
+使用 Pyinstaller 将 Python 程序打包成 exe 文件</string>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
@@ -78,7 +80,8 @@ QPushButton::menu-indicator{image:none}</string>
        </sizepolicy>
       </property>
       <property name="toolTip">
-       <string>Pip 源设置工具，设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度</string>
+       <string>Pip 源设置工具
+设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度</string>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
@@ -105,7 +108,8 @@ QPushButton::menu-indicator{image:none}</string>
        </sizepolicy>
       </property>
       <property name="toolTip">
-       <string>模块安装包下载器，用于下载 Python 各种第三方包/库/模块的离线安装包</string>
+       <string>模块安装包下载器
+用于下载 Python 各种第三方包/库/模块的离线安装包</string>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
@@ -132,7 +136,8 @@ QPushButton::menu-indicator{image:none}</string>
        </sizepolicy>
       </property>
       <property name="toolTip">
-       <string>此工具箱的设置菜单，包含界面风格设置、关于菜单</string>
+       <string>工具箱的设置菜单
+包含界面风格设置、关于菜单</string>
       </property>
       <property name="styleSheet">
        <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}

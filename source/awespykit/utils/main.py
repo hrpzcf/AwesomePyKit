@@ -66,12 +66,12 @@ class QThreadModel(QThread):
 
     __str__ = __repr__
 
-    def at_start(self, *callable_objs):
+    def before_starting(self, *callable_objs):
         for cab in callable_objs:
             self.started.connect(cab)
         self.__at_start.extend(callable_objs)
 
-    def at_finish(self, *callable_objs):
+    def after_completion(self, *callable_objs):
         for cab in callable_objs:
             self.finished.connect(cab)
         self.__at_finish.extend(callable_objs)

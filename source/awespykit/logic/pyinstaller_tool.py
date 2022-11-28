@@ -3,6 +3,7 @@
 import os
 import shutil
 from platform import machine, platform
+from typing import *
 
 import PyQt5.sip as sip
 from com import *
@@ -24,8 +25,9 @@ from .messagebox import MessageBox
 
 class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     signal_update_pyinfo = pyqtSignal(str)
-    signal_update_pyiinfo = pyqtSignal(str)
-    signal_update_pyipbtext = pyqtSignal(str)
+    signal_update_packtoolinfo = pyqtSignal(str)
+    signal_update_ptpbtext = pyqtSignal(str)
+    signal_update_venv_pyinfo = pyqtSignal(str)
     PYIVER_FMT = "Pyinstaller - {}"
     QREV_FNAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
     QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))
@@ -33,7 +35,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
-        self.widget_group = (
+        # 执行耗时操作完毕恢复控件可用时的例外情况
+        self.__enabled_exception = dict()
+        self.widgets_group_Enabled = (
             self.tab_project_files,
             self.tab_build_control,
             self.tab_file_ver_info,
@@ -48,6 +52,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.uiPushButton_apply_config,
             self.uiPushButton_delete_config,
             self.uiPushButton_save_config,
+            self.uiPushButton_create_venv,
         )
         self.le_vers_group = (
             self.le_file_version_0,
@@ -63,15 +68,15 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.__setup_other_widgets()
         self.set_platform_info()
         self.thread_repo = ThreadRepo(500)
-        self.toolwin_venv = None
-        self.toolwin_env = None
+        self.main_environ = None
+        self.virtual_environ = None
         self.pyi_tool = PyiTool()
-        self.__envch_win = EnvironChosenWindow(self, self.__call_env_back)
+        self.__envch_win = EnvironChosenWindow(self, self.__environ_call_back)
         self.__impcheck_win = ImportsCheckWindow(self, self.__install_missings)
         self.signal_slot_connection()
         self.pyi_running_mov = QMovie(":/loading.gif")
         self.pyi_running_mov.setScaledSize(QSize(16, 16))
-        self.__venv_creating_result = 1
+        self.__creating_venv_result = 1
 
     def __save_window_size(self):
         if self.isMaximized() or self.isMinimized():
@@ -119,8 +124,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         # 替换“其他模块搜索路径”TextEdit控件
         self.te_module_search_path = TextEdit(Accept.Dir)
         self.te_module_search_path.setToolTip(
-            "对应选项：-p, --paths\n程序的其他模块的搜索路径(模块的父目录)，此项可留空。\
-\n仅当 Pyinstaller 无法自动找到模块时使用，支持将文件夹直接拖放到此处。"
+            "对应选项：-p, --paths\n程序的其他模块的搜索路径(模块的父目录)，此项可留空。\n"
+            "仅当 Pyinstaller 无法自动找到模块时使用，支持将文件夹直接拖放到此处。"
         )
         self.verticalLayout_3.replaceWidget(
             self.te_module_search_path_old, self.te_module_search_path
@@ -129,9 +134,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         # 替换“非源代码资源文件”LineEdit控件
         self.te_other_data = TextEdit(Accept.File)
         self.te_other_data.setToolTip(
-            """对应选项：--add-data\n非源代码性质的其他资源文件，例如一些图片、配置文件等，此项可留空。\n"""
-            """注意：资源文件需是打包前程序真正使用的资源且在源代码根目录范围内，否则打包后程序可能无法运行。可将文件\
-或者文件夹直接拖到此处。"""
+            "对应选项：--add-data\n非源代码性质的其他资源文件，例如一些图片、配置文件等，"
+            "此项可留空。\n注意：资源文件需是打包前程序真正使用的资源且在源代码根目录范围内，"
+            "否则打包后程序可能无法运行。可将文件或者文件夹直接拖到此处。"
         )
         self.verticalLayout_4.replaceWidget(self.te_other_data_old, self.te_other_data)
         self.te_other_data_old.deleteLater()
@@ -141,9 +146,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         self.le_file_icon_path.setToolTip(
             "对应选项：-i, --icon\n生成的 exe 可执行文件使用的图标，支持 .ico 等格式。\n"
-            "注意：如果选择 .png、.jpg、.jpeg 格式的图片，则需在打包环境中安装 Pillow 用于转换格式，否则打包失败。\n"
-            "如果选择的是 .exe 文件，选择后需要在文件路径后加上[英文逗号和图标ID]，例如 'F:\\executable.exe,123'，不含引号\n"
-            "除了 .ico 格式，其他格式图标的支持因 Pyinstaller 版本而异，可以将格式正确的文件直接拖放到此处。"
+            "注意：如果选择 .png、.jpg、.jpeg 格式的图片，则需在打包环境中安装 Pillow 用于转换格式，"
+            "否则打包失败。\n如果选择的是 .exe 文件，选择后需要在文件路径后加上[英文逗号和图标ID]，"
+            "例如 'F:\\executable.exe,123'，不含引号\n除了 .ico 格式，"
+            "其他格式图标的支持因 Pyinstaller 版本而异，可以将格式正确的文件直接拖放到此处。"
         )
         self.horizontalLayout_11.replaceWidget(
             self.le_file_icon_path_old, self.le_file_icon_path
@@ -169,6 +175,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.pyi_tool.completed.connect(self.after_task_completed)
         self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
         self.pb_select_py_env.clicked.connect(self.__envch_win.initialize)
+        self.uiPushButton_create_venv.clicked.connect(lambda :self.check_createvenv())
         self.le_program_entry.textChanged.connect(self.set_uilineedit_roots)
         self.pb_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
@@ -195,30 +202,35 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiPushButton_apply_config.clicked.connect(self.apply_selected_config)
         self.uiPushButton_delete_config.clicked.connect(self.delete_selected_config)
         self.signal_update_pyinfo.connect(self.lb_py_info.setText)
-        self.signal_update_pyiinfo.connect(self.lb_pyi_info.setText)
-        self.signal_update_pyipbtext.connect(self.pb_reinstall_pyi.setText)
+        self.signal_update_packtoolinfo.connect(self.lb_pyi_info.setText)
+        self.signal_update_ptpbtext.connect(self.pb_reinstall_pyi.setText)
+        self.signal_update_venv_pyinfo.connect(self.uiLabel_venv_info.setText)
         self.uiLineEdit_config_remark.textChanged.connect(
             self.lineedit_remark_textchanged
         )
         self.uiListWidget_saved_config.currentRowChanged.connect(
             self.listwidget_savedconfig_clicked
         )
+        self.cb_prioritize_venv.clicked.connect(self.usingvenv_checkboxclicked)
+
+    def usingvenv_checkboxclicked(self):
+        self.load_version_information_lazily(False, True)
 
     def check_project_imports(self):
         self.config_widgets_to_cfg()
-        self.toolwin_venv = VirtualEnv(self.config.curconfig.project_root)
-        self.toolwin_venv.find_project_venv()
+        self.virtual_environ = VirtualEnv(self.config.curconfig.project_root)
+        self.virtual_environ.find_project_venv()
         if self.config.curconfig.prioritize_venv:
-            if not self.toolwin_venv.venv_exists:
+            if not self.virtual_environ.venv_exists:
                 return MessageBox(
                     "提示",
                     f"项目根目录下不存在虚拟环境，如果你确定你设置的“项目根目录”"
                     f"正确无误，那么请直接点击“开始打包”，程序会引导创建虚拟环境。",
                     QMessageBox.Warning,
                 ).exec_()
-            environ = self.toolwin_venv
+            environ = self.virtual_environ
         else:
-            environ = self.toolwin_env
+            environ = self.main_environ
         if not environ:
             MessageBox(
                 "提示",
@@ -255,7 +267,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             inspector = ImportInspector(
                 environ.env_path,
                 program_root,
-                [self.toolwin_venv.env_path, dist_dir],
+                [self.virtual_environ.env_path, dist_dir],
             )
             if (
                 self.config.curconfig.encryption_key
@@ -265,11 +277,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             missings.extend(inspector.get_missing_items())
 
         thread_check_imp = QThreadModel(get_missing_imps)
-        thread_check_imp.at_start(
+        thread_check_imp.before_starting(
             self.__lock_widgets,
             lambda: self.__show_running("正在分析项目依赖在环境中的安装情况..."),
         )
-        thread_check_imp.at_finish(
+        thread_check_imp.after_completion(
             self.__hide_running,
             self.__release_widgets,
             lambda: self.__impcheck_win.display_result(environ, missings),
@@ -387,19 +399,19 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 file_dir_paths.append(os.path.realpath(path))
         return file_dir_paths
 
-    def __call_env_back(self, env):
-        self.toolwin_env = env
+    def __environ_call_back(self, env):
+        """供环境选择窗口类使用的回调函数，在窗口选择环境后调用此方法"""
+        self.main_environ = env
         self.pyi_tool.initialize(
-            self.toolwin_env.env_path,
-            self.config.curconfig.program_root,
+            self.main_environ.env_path, self.config.curconfig.program_root
         )
-        self.load_version_information_lazily(refresh=False)
+        self.load_version_information_lazily(False, False)
 
     def config_cfg_to_widgets(self, cfg_name):
         if cfg_name is not None:
             self.config.checkout_cfg(cfg_name)
         self.update_configure_listwidget_items()
-        self.load_version_information_lazily(refresh=True)
+        self.load_version_information_lazily(True, True)
         self.le_program_entry.setText(self.config.curconfig.script_path)
         self.uiLineEdit_program_root.setText(self.config.curconfig.program_root)
         self.le_project_root.setText(self.config.curconfig.project_root)
@@ -464,8 +476,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config.curconfig.upx_excludes = [
             s for s in self.te_upx_exclude_files.toPlainText().split("\n") if s
         ]
-        if self.toolwin_env is not None:
-            self.config.curconfig.environ_path = self.toolwin_env.env_path
+        if self.main_environ is not None:
+            self.config.curconfig.environ_path = self.main_environ.env_path
         self.config.curconfig.log_level = self.cb_log_level.currentText()
         self.config.curconfig.version_info = self.file_ver_info_text()
         self.config.curconfig.debug_options = self.get_pyi_debug_options()
@@ -544,34 +556,40 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.le_original_filename.setText(version_info.get("$OriginalFilename$", ""))
 
     def reinstall_pyinstaller(self):
-        if not self.toolwin_env:
+        if self.cb_prioritize_venv.isChecked():
+            message = "虚拟环境"
+            operating_environment = self.virtual_environ
+        else:
+            message = "主要环境"
+            operating_environment = self.main_environ
+        if operating_environment is None:
             return MessageBox(
                 "提示",
-                "当前未选择任何 Python 环境。",
+                "当前未选择任何主要 Python 环境或没有选择虚拟环境。",
                 QMessageBox.Warning,
             ).exec_()
         # NewMessageBox的exec_方法返回0才是选择"确定"按钮
         if MessageBox(
             "安装",
-            "确定安装 Pyinstaller 吗？",
+            f"确定安装 Pyinstaller {message}吗？",
             QMessageBox.Question,
             (("accept", "确定"), ("reject", "取消")),
         ).exec_():
             return
 
         def do_reinstall_pyi():
-            self.toolwin_env.uninstall("pyinstaller")
-            self.toolwin_env.install("pyinstaller", upgrade=1)
+            operating_environment.uninstall("pyinstaller")
+            operating_environment.install("pyinstaller", upgrade=1)
 
         thread_reinstall = QThreadModel(do_reinstall_pyi)
-        thread_reinstall.at_start(
+        thread_reinstall.before_starting(
             self.__lock_widgets,
             lambda: self.__show_running("正在安装 Pyinstaller..."),
         )
-        thread_reinstall.at_finish(
+        thread_reinstall.after_completion(
             self.__hide_running,
             self.__release_widgets,
-            lambda: self.load_version_information_lazily(False),
+            lambda: self.load_version_information_lazily(False, False),
         )
         thread_reinstall.start()
         self.thread_repo.put(thread_reinstall, 0)
@@ -646,12 +664,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.lb_running_tip.clear()
 
     def __lock_widgets(self):
-        for widget in self.widget_group:
+        for widget in self.widgets_group_Enabled:
             widget.setEnabled(False)
 
     def __release_widgets(self):
-        for widget in self.widget_group:
-            widget.setEnabled(True)
+        for widget in self.widgets_group_Enabled:
+            widget.setEnabled(self.__enabled_exception.get(widget, True))
 
     def importance_operation_start(self, string):
         def function():
@@ -741,17 +759,17 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 QMessageBox.Critical,
             ).exec_()
 
-    def creating_virtualenv(self):
+    def __creating_venv(self):
         dist_dir = self.config.curconfig.distribution_dir
         if not dist_dir:
             dist_dir = os.path.join(self.config.curconfig.program_root, "dist")
         elif not os.path.isabs(dist_dir):
             dist_dir = os.path.join(self.config.curconfig.program_root, dist_dir)
-        if self.toolwin_venv.create_project_venv(self.toolwin_env.interpreter):
+        if self.virtual_environ.create_project_venv(self.main_environ.interpreter):
             import_inspect = ImportInspector(
-                self.toolwin_venv.env_path,
+                self.virtual_environ.env_path,
                 self.config.curconfig.program_root,
-                [self.toolwin_venv.env_path, dist_dir],
+                [self.virtual_environ.env_path, dist_dir],
             )
             missings = set()
             for i in import_inspect.get_missing_items():
@@ -760,10 +778,32 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             if self.config.curconfig.encryption_key:
                 missings.add("tinyaes")
             for pkg in missings:
-                self.toolwin_venv.install(pkg)
-            self.__venv_creating_result = 0  # 虚拟环境创建成功
+                self.virtual_environ.install(pkg)
+            self.__creating_venv_result = 0  # 虚拟环境创建成功
         else:
-            self.__venv_creating_result = 1  # 虚拟环境创建不成功
+            self.__creating_venv_result = 1  # 虚拟环境创建不成功
+
+    def check_createvenv(self, finished: Callable[[], Any] = None):
+        if self.main_environ is None or not self.main_environ.env_path:
+            MessageBox(
+                "提示",
+                "没有选择主 Python 环境或者主 Python 环境不可用。",
+                QMessageBox.Warning,
+            ).exec_()
+            return
+        thread_venv_creating = QThreadModel(self.__creating_venv)
+        thread_venv_creating.before_starting(
+            self.__lock_widgets,
+            lambda: self.__show_running("正在创建虚拟环境并安装模块..."),
+        )
+        thread_venv_creating.after_completion(
+            self.__hide_running,
+            self.__release_widgets,
+        )
+        if finished is not None:
+            thread_venv_creating.after_completion(finished)
+        thread_venv_creating.start()
+        self.thread_repo.put(thread_venv_creating, 0)
 
     def build_executable(self):
         if not self.__check_requireds():
@@ -780,9 +820,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiListWidget_saved_config.setCurrentRow(-1)
         self.te_pyi_out_stream.clear()
         if self.config.curconfig.prioritize_venv:
-            self.toolwin_venv = VirtualEnv(self.config.curconfig.project_root)
-            self.__venv_creating_result = 0
-            if not self.toolwin_venv.find_project_venv():
+            self.virtual_environ = VirtualEnv(self.config.curconfig.project_root)
+            self.__creating_venv_result = 0
+            if not self.virtual_environ.find_project_venv():
                 role = MessageBox(
                     "提示",
                     "项目根目录下不存在虚拟环境，请选择合适选项。",
@@ -796,33 +836,19 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 if role == 0:
                     using_py_path = self.config.curconfig.environ_path
                 elif role == 1:
-                    if self.toolwin_env is None or not self.toolwin_env.env_path:
-                        return MessageBox(
-                            "提示",
-                            "没有选择主 Python 环境或者主 Python 环境不可用。",
-                            QMessageBox.Warning,
-                        ).exec_()
-                    thread_venv_creating = QThreadModel(self.creating_virtualenv)
-                    thread_venv_creating.at_start(
-                        self.__lock_widgets,
-                        lambda: self.__show_running("正在创建虚拟环境并安装模块..."),
-                    )
-                    thread_venv_creating.at_finish(
-                        self.__hide_running,
-                        self.__release_widgets,
-                        self.build_executable,
-                    )
-                    thread_venv_creating.start()
-                    self.thread_repo.put(thread_venv_creating, 0)
+                    self.check_createvenv(self.build_executable)
                     return
                 else:
                     return
             else:
-                if self.__venv_creating_result != 0:
-                    return MessageBox(
-                        "错误", "项目目录下的虚拟环境创建失败。", QMessageBox.Critical
+                if self.__creating_venv_result != 0:
+                    MessageBox(
+                        "错误",
+                        "项目目录下的虚拟环境创建失败。",
+                        QMessageBox.Critical,
                     ).exec_()
-                using_py_path = self.toolwin_venv.env_path
+                    return
+                using_py_path = self.virtual_environ.env_path
         else:
             using_py_path = self.config.curconfig.environ_path
         self.pyi_tool.initialize(
@@ -832,18 +858,19 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if not self.pyi_tool.pyi_ready:
             MessageBox(
                 "Pyinstaller 不可用",
-                "请点击右上角'选择环境'按钮选择打包环境，再点击'安装'按钮将 Pyinstaller 安装到所选的打包环境。\n"
-                "如果勾选了'使用项目目录下的虚拟环境而不是以上环境'，请点击'环境检查'按钮检查环境中缺失的模块并'一键安装'。",
+                "请点击右上角'选择环境'按钮选择打包环境，再点击'安装'按钮将 Pyinstaller "
+                "安装到所选的打包环境。\n如果勾选了'使用项目目录下的虚拟环境而不是以上环境'，"
+                "请点击'环境检查'按钮检查环境中缺失的模块并'一键安装'。",
                 QMessageBox.Warning,
             ).exec_()
             return
         self.pyi_tool.prepare_cmds(self.config.curconfig)
         thread_build = QThreadModel(self.pyi_tool.execute_cmd)
-        thread_build.at_start(
+        thread_build.before_starting(
             self.__lock_widgets,
             lambda: self.__show_running("正在生成可执行文件..."),
         )
-        thread_build.at_finish(self.__hide_running, self.__release_widgets)
+        thread_build.after_completion(self.__hide_running, self.__release_widgets)
         thread_build.start()
         self.thread_repo.put(thread_build, 0)
 
@@ -865,9 +892,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         ):
             return
         if self.config.curconfig.prioritize_venv:
-            environ = self.toolwin_venv
+            environ = self.virtual_environ
         else:
-            environ = self.toolwin_env
+            environ = self.main_environ
 
         def install_pkgs():
             names_for_install = set()
@@ -878,11 +905,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
         self.__impcheck_win.close()
         thread_install_missings = QThreadModel(install_pkgs)
-        thread_install_missings.at_start(
+        thread_install_missings.before_starting(
             self.__lock_widgets,
             lambda: self.__show_running("正在安装缺失模块..."),
         )
-        thread_install_missings.at_finish(
+        thread_install_missings.after_completion(
             self.__hide_running,
             self.__release_widgets,
             lambda: MessageBox(
@@ -977,36 +1004,65 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config_cfg_to_widgets(cur_item.text())
         self.uiListWidget_saved_config.setCurrentRow(-1)
 
-    def load_version_information_lazily(self, refresh):
-        """为显示 Python 和 Pyinstaller 版本信息这两个耗时操作提供延迟加载的方法"""
+    def load_version_information_lazily(self, refresh_pyenv, refresh_venv):
+        """延迟执行显示 Python 和 Pyinstaller 版本信息这两个耗时操"""
 
         def do_load_version_information():
-            if refresh:
-                python_path = self.config.curconfig.environ_path
-                if python_path:
-                    self.toolwin_env = PyEnv(python_path)
-                    self.pyi_tool.initialize(
-                        python_path, self.config.curconfig.program_root
-                    )
-            if self.toolwin_env is None:
-                pyinfo = ""
-                pyiinfo = ""
-                pbtext = "安装"
-            else:
-                pyiinfo = self.pyi_tool.pyi_info()
-                pyinfo = self.toolwin_env.py_info()
-                if pyiinfo == "0.0":
-                    pbtext = "安装"
+            if refresh_pyenv:
+                self.main_environ = PyEnv(self.config.curconfig.environ_path)
+            if refresh_venv:
+                self.virtual_environ = VirtualEnv(self.config.curconfig.project_root)
+                self.virtual_environ.find_project_venv()
+            if self.cb_prioritize_venv.isChecked():
+                ptool_env = self.virtual_environ
+                if self.virtual_environ is not None:
+                    environ_path = self.virtual_environ.env_path
+                    if not environ_path:
+                        btn_create = True
+                    else:
+                        btn_create = False
                 else:
-                    pbtext = "重新安装"
-                pyiinfo = self.PYIVER_FMT.format(pyiinfo)
-            self.signal_update_pyinfo.emit(pyinfo)
-            self.signal_update_pyiinfo.emit(pyiinfo)
-            self.signal_update_pyipbtext.emit(pbtext)
+                    environ_path = ""
+                    btn_create = False
+                self.__enabled_exception[self.uiPushButton_create_venv] = btn_create
+            else:
+                ptool_env = self.main_environ
+                if self.main_environ is not None:
+                    environ_path = self.main_environ.env_path
+                else:
+                    environ_path = ""
+            self.pyi_tool.initialize(environ_path, self.config.curconfig.program_root)
+            packtool_info = self.pyi_tool.pyi_info()
+            if ptool_env is None or not ptool_env.env_path:
+                btn_install = False
+                button_text = "安装"
+            else:
+                btn_install = True
+                if packtool_info == "0.0.0":
+                    button_text = "安装"
+                else:
+                    button_text = "重新安装"
+            self.__enabled_exception[self.pb_reinstall_pyi] = btn_install
+            packtool_info = self.PYIVER_FMT.format(packtool_info)
+            if self.main_environ is None:
+                python_info = ""
+            else:
+                python_info = self.main_environ.py_info()
+            if (
+                self.virtual_environ is None
+                or not self.virtual_environ.find_project_venv()
+            ):
+                venv_pyinfo = ""
+            else:
+                venv_pyinfo = self.virtual_environ.py_info()
+            self.signal_update_venv_pyinfo.emit(venv_pyinfo)
+            self.signal_update_pyinfo.emit(python_info)
+            self.signal_update_packtoolinfo.emit(packtool_info)
+            self.signal_update_ptpbtext.emit(button_text)
 
         thread_load_info = QThreadModel(do_load_version_information)
-        thread_load_info.at_start(self.importance_operation_start("正在加载配置..."))
-        thread_load_info.at_finish(self.importance_operation_finished)
+        thread_load_info.before_starting(self.importance_operation_start("正在读取环境信息..."))
+        thread_load_info.after_completion(self.importance_operation_finished)
         thread_load_info.start()
         self.thread_repo.put(thread_load_info, 1)
 

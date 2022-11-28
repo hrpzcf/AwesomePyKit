@@ -101,11 +101,16 @@ class Ui_main_entrance(object):
     def retranslateUi(self, main_entrance):
         _translate = QtCore.QCoreApplication.translate
         main_entrance.setWindowTitle(_translate("main_entrance", "Awespykit"))
-        self.pb_pkg_mgr.setToolTip(_translate("main_entrance", "包管理器，用于管理不同 Python 环境中的包/库/模块"))
-        self.pb_pyi_tool.setToolTip(_translate("main_entrance", "程序打包工具，使用 Pyinstaller 将 Python 程序打包成 exe 文件"))
-        self.pb_index_mgr.setToolTip(_translate("main_entrance", "Pip 源设置工具，设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度"))
-        self.pb_pkg_dload.setToolTip(_translate("main_entrance", "模块安装包下载器，用于下载 Python 各种第三方包/库/模块的离线安装包"))
-        self.uiPushButton_settings.setToolTip(_translate("main_entrance", "此工具箱的设置菜单，包含界面风格设置、关于菜单"))
+        self.pb_pkg_mgr.setToolTip(_translate("main_entrance", "包管理器\n"
+"用于管理不同 Python 环境中的包/库/模块"))
+        self.pb_pyi_tool.setToolTip(_translate("main_entrance", "程序打包工具\n"
+"使用 Pyinstaller 将 Python 程序打包成 exe 文件"))
+        self.pb_index_mgr.setToolTip(_translate("main_entrance", "Pip 源设置工具\n"
+"设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度"))
+        self.pb_pkg_dload.setToolTip(_translate("main_entrance", "模块安装包下载器\n"
+"用于下载 Python 各种第三方包/库/模块的离线安装包"))
+        self.uiPushButton_settings.setToolTip(_translate("main_entrance", "工具箱的设置菜单\n"
+"包含界面风格设置、关于菜单"))
         self.action_fusion.setText(_translate("main_entrance", "Fusion"))
         self.action_windows.setText(_translate("main_entrance", "经典风格"))
         self.action_native.setText(_translate("main_entrance", "原生风格"))
