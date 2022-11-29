@@ -12,7 +12,7 @@ _VENVPREFIX = "venv_"
 _VENV_CFGFILE = "pyvenv.cfg"
 
 
-class VirtualEnv(PyEnv):
+class VtEnv(PyEnv):
     def __init__(self, project_root=""):
         super().__init__("")
         self.__venv_exist = False
@@ -41,7 +41,7 @@ class VirtualEnv(PyEnv):
                 return self.__venv_exist
         return False
 
-    def find_project_venv(self):
+    def find_venv(self):
         if not self.project_root:
             self.__venv_exist = False
             return self.__venv_exist

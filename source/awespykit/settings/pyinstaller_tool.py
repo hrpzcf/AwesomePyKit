@@ -351,15 +351,15 @@ class PyinstallerToolConfig(AbstractConfig):
     def checkout_cfg(self, name: str) -> bool:
         if name not in self.multicfg:
             return False
-        self.curconfig.clear()
-        self.curconfig.update(self.multicfg[name])
+        self.current.clear()
+        self.current.update(self.multicfg[name])
         return True
 
     def store_curcfg(self, name: str) -> bool:
         if not name or not isinstance(name, str):
             return False
         new_settings_dict = dict()
-        new_settings_dict.update(self.curconfig)
+        new_settings_dict.update(self.current)
         self.multicfg[name] = deepcopy(new_settings_dict)
         return True
 
@@ -378,7 +378,7 @@ class PyinstallerToolConfig(AbstractConfig):
         return self[self._key_multi_cfg]
 
     @property
-    def curconfig(self) -> PyiConfigure:
+    def current(self) -> PyiConfigure:
         if self._key_current not in self:
             self[self._key_current] = PyiConfigure()
         elif not isinstance(self[self._key_current], PyiConfigure):

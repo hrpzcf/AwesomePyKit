@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>712</width>
+    <width>710</width>
     <height>762</height>
    </rect>
   </property>
@@ -22,7 +22,19 @@
    <string>程序打包工具</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_35">
+   <layout class="QHBoxLayout" name="horizontalLayout_36">
+    <property name="leftMargin">
+     <number>8</number>
+    </property>
+    <property name="topMargin">
+     <number>8</number>
+    </property>
+    <property name="rightMargin">
+     <number>8</number>
+    </property>
+    <property name="bottomMargin">
+     <number>8</number>
+    </property>
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -1202,7 +1214,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout" stretch="9,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_33" stretch="1,0">
             <item>
              <widget class="QLabel" name="lb_py_info">
               <property name="toolTip">
@@ -1238,7 +1250,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_33" stretch="1,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
             <item>
              <widget class="QLabel" name="uiLabel_venv_info">
               <property name="toolTip">
@@ -1253,14 +1265,28 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="uiPushButton_create_venv">
-              <property name="toolTip">
-               <string>在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。</string>
-              </property>
-              <property name="text">
-               <string>创建环境</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QPushButton" name="uiPushButton_create_venv">
+                <property name="toolTip">
+                 <string>在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。</string>
+                </property>
+                <property name="text">
+                 <string>创建</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="uiPushButton_refresh_venv">
+                <property name="toolTip">
+                 <string>在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。</string>
+                </property>
+                <property name="text">
+                 <string>刷新</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -1286,7 +1312,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="9,0">
+           <layout class="QHBoxLayout" name="horizontalLayout_35" stretch="1,0">
             <item>
              <widget class="QLabel" name="lb_pyi_info">
               <property name="toolTip">
@@ -1450,7 +1476,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,2">
+         <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="3,0,5">
           <property name="spacing">
            <number>4</number>
           </property>
@@ -1510,6 +1536,65 @@
             </property>
             <property name="text">
              <string>环境检查</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="uiPushButton_clear_data">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>170</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="ButtonText">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>120</red>
+                  <green>120</green>
+                  <blue>120</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>清空或恢复打包工具中所有已输入、改变的打包选项（已保存的打包配置不会被清空）</string>
+            </property>
+            <property name="text">
+             <string>清空数据</string>
             </property>
            </widget>
           </item>
