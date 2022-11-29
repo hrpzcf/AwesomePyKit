@@ -1060,13 +1060,13 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 button_text = "安装"
             else:
                 btn_install = True
-                if packtool_info == "0.0.0":
+                if packtool_info.is_null():
                     button_text = "安装"
                 else:
                     button_text = "重新安装"
             self.__enabled_exception[self.pb_reinstall_pyi] = btn_install
             packtool_info = self.PYIVER_FMT.format(packtool_info, ptool_side)
-            if self.main_environ is None:
+            if self.main_environ is None or not self.main_environ.env_path:
                 python_info = ""
             else:
                 python_info = self.main_environ.py_info()

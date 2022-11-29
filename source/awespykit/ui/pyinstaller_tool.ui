@@ -1297,7 +1297,7 @@
 如果项目目录下没有虚拟环境，则弹出菜单询问：使用主环境、创建虚拟环境、取消。</string>
             </property>
             <property name="text">
-             <string>优先使用项目目录下的虚拟环境而非主要环境</string>
+             <string>使用项目目录下的虚拟环境而非主要环境</string>
             </property>
            </widget>
           </item>

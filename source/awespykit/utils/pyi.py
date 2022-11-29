@@ -6,6 +6,7 @@ import os
 from subprocess import *
 
 from __info__ import *
+from com import *
 from PyQt5.QtCore import *
 from settings import *
 
@@ -172,9 +173,10 @@ VarFileInfo([VarStruct("Translation", [2052, 1200])]),
         return file_path
 
     def pyi_info(self):
+        version_info = VerInfo()
         if self.pyi_ready:
-            return get_cmd_out(self.pyi_path, "-v")
-        return "0.0.0"
+            version_info.set(get_cmd_out(self.pyi_path, "-v"))
+        return version_info
 
     def prepare_cmds(self, commands: PyiConfigure):
         """从 commands 添加 PyInstaller 命令选项。"""

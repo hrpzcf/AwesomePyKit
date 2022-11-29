@@ -899,7 +899,7 @@ class Ui_pyinstaller_tool(object):
         self.uiPushButton_refresh_venv.setText(_translate("pyinstaller_tool", "刷新"))
         self.cb_prioritize_venv.setToolTip(_translate("pyinstaller_tool", "选中此项后，将使用项目目录下的虚拟环境来打包程序。\n"
 "如果项目目录下没有虚拟环境，则弹出菜单询问：使用主环境、创建虚拟环境、取消。"))
-        self.cb_prioritize_venv.setText(_translate("pyinstaller_tool", "优先使用项目目录下的虚拟环境而非主要环境"))
+        self.cb_prioritize_venv.setText(_translate("pyinstaller_tool", "使用项目目录下的虚拟环境而非主要环境"))
         self.label_16.setText(_translate("pyinstaller_tool", "打包工具"))
         self.lb_pyi_info.setToolTip(_translate("pyinstaller_tool", "所选 Python 环境或项目虚拟环境下的 Pyinstaller 的版本信息。"))
         self.pb_reinstall_pyi.setToolTip(_translate("pyinstaller_tool", "在当前选择的 Python 环境或虚拟环境中安装/重新安装 Pyinstaller 。"))
