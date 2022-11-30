@@ -12,6 +12,8 @@ from settings import *
 
 from utils.main import get_cmd_out
 
+PYI_P = r"(\d+\.\d+(\.\d+)?)"
+
 
 class PyiTool(QObject):
     STARTUP = STARTUPINFO()
@@ -175,7 +177,9 @@ VarFileInfo([VarStruct("Translation", [2052, 1200])]),
     def pyi_info(self):
         version_info = VerInfo()
         if self.pyi_ready:
-            version_info.set(get_cmd_out(self.pyi_path, "-v"))
+            result = get_cmd_out(self.pyi_path, "-v", re_search=PYI_P)
+            if result:
+                version_info.set(result.group(1))
         return version_info
 
     def prepare_cmds(self, commands: PyiConfigure):

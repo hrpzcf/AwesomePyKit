@@ -20,4 +20,8 @@ class VerInfo:
 
     def set(self, ver: str):
         assert isinstance(ver, str)
-        self.__ver = ver
+        if ver:
+            self.__ver = ver
+        else:
+            self.__ver = self.defver
+        return self.__ver

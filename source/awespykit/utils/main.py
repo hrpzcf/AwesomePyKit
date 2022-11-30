@@ -6,6 +6,7 @@ import os.path as osp
 import re
 from subprocess import *
 from typing import *
+from typing import Match
 
 import win32api
 from fastpip import PyEnv
@@ -141,7 +142,9 @@ class ThreadRepo:
         return not self._thread_repo
 
 
-def get_cmd_out(*commands, regexp="", timeout=None):
+def get_cmd_out(
+    *commands, re_search=None, timeout=None
+) -> Union[str, Match[str], None]:
     """用于从cmd命令执行输出的字符匹配想要的信息。"""
     info = STARTUPINFO()
     info.dwFlags = STARTF_USESHOWWINDOW
@@ -151,9 +154,9 @@ def get_cmd_out(*commands, regexp="", timeout=None):
         strings, _ = proc.communicate(timeout=timeout)
     except Exception:
         return ""
-    if not regexp:
+    if not re_search:
         return strings.strip()
-    return re.search(regexp, strings)
+    return re.search(re_search, strings)
 
 
 def launch_explorer(folder_path: str, file_names: List[str] = None):
