@@ -8,7 +8,7 @@ from random import randint
 from fastpip import *
 
 _CMD_PREFIX = ("-m", "venv")
-_VENVPREFIX = "venv_"
+_VENVPREFIX = "venv"
 _VENV_CFGFILE = "pyvenv.cfg"
 
 
@@ -55,7 +55,7 @@ class VtEnv(PyEnv):
         if not self.project_root:
             return False
         while True:
-            dir_name = "%s%d" % (_VENVPREFIX, randint(1000, 9999))
+            dir_name = ".%s_%d" % (_VENVPREFIX, randint(100, 999))
             venv_fullpath = path.join(self.__project_root, dir_name)
             if not path.exists(venv_fullpath):
                 break
