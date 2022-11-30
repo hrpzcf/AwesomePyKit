@@ -1254,7 +1254,8 @@
             <item>
              <widget class="QLabel" name="uiLabel_venv_info">
               <property name="toolTip">
-               <string>此处的“虚拟环境”仅指在你的项目目录下创建的 Python 环境，而非所有广义上的虚拟环境。</string>
+               <string>此处的“虚拟环境”仅指在你的项目目录下创建的 Python 环境，而非所有广义上的虚拟环境。
+注意：创建环境后请勿对环境目录进行重命名等操作，否则可能会造成该环境 Scripts 目录下的命令无法执行。</string>
               </property>
               <property name="frameShape">
                <enum>QFrame::Box</enum>
@@ -1269,7 +1270,8 @@
               <item>
                <widget class="QPushButton" name="uiPushButton_create_venv">
                 <property name="toolTip">
-                 <string>在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。</string>
+                 <string>在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。
+注意：创建环境后请勿对环境目录进行重命名等操作，否则可能会造成该环境 Scripts 目录下的命令无法执行。</string>
                 </property>
                 <property name="text">
                  <string>创建</string>
@@ -1279,7 +1281,7 @@
               <item>
                <widget class="QPushButton" name="uiPushButton_refresh_venv">
                 <property name="toolTip">
-                 <string>在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。</string>
+                 <string>重新在项目根目录下查找虚拟环境并刷新版本信息。</string>
                 </property>
                 <property name="text">
                  <string>刷新</string>

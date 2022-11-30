@@ -892,10 +892,12 @@ class Ui_pyinstaller_tool(object):
 "选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。"))
         self.pb_select_py_env.setText(_translate("pyinstaller_tool", "选择环境"))
         self.label_30.setText(_translate("pyinstaller_tool", "虚拟环境"))
-        self.uiLabel_venv_info.setToolTip(_translate("pyinstaller_tool", "此处的“虚拟环境”仅指在你的项目目录下创建的 Python 环境，而非所有广义上的虚拟环境。"))
-        self.uiPushButton_create_venv.setToolTip(_translate("pyinstaller_tool", "在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。"))
+        self.uiLabel_venv_info.setToolTip(_translate("pyinstaller_tool", "此处的“虚拟环境”仅指在你的项目目录下创建的 Python 环境，而非所有广义上的虚拟环境。\n"
+"注意：创建环境后请勿对环境目录进行重命名等操作，否则可能会造成该环境 Scripts 目录下的命令无法执行。"))
+        self.uiPushButton_create_venv.setToolTip(_translate("pyinstaller_tool", "在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。\n"
+"注意：创建环境后请勿对环境目录进行重命名等操作，否则可能会造成该环境 Scripts 目录下的命令无法执行。"))
         self.uiPushButton_create_venv.setText(_translate("pyinstaller_tool", "创建"))
-        self.uiPushButton_refresh_venv.setToolTip(_translate("pyinstaller_tool", "在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。"))
+        self.uiPushButton_refresh_venv.setToolTip(_translate("pyinstaller_tool", "重新在项目根目录下查找虚拟环境并刷新版本信息。"))
         self.uiPushButton_refresh_venv.setText(_translate("pyinstaller_tool", "刷新"))
         self.cb_prioritize_venv.setToolTip(_translate("pyinstaller_tool", "选中此项后，将使用项目目录下的虚拟环境来打包程序。\n"
 "如果项目目录下没有虚拟环境，则弹出菜单询问：使用主环境、创建虚拟环境、取消。"))
