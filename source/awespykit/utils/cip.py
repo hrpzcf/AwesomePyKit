@@ -6,6 +6,7 @@ import ast
 import re
 from os import walk
 from os.path import basename, join
+from typing import *
 
 from chardet.universaldetector import UniversalDetector
 from fastpip import PyEnv
@@ -140,7 +141,7 @@ class ImportInspector:
         查找指定目录内源码所有需要导入的模块，并计算哪些模块未在指定环境中安装
         返回值类型：[(源码文件路径, {源码导入的模块}, {环境中未安装的模块})...]
         """
-        results = list()
+        results: List[Tuple[Union[str, None], Set, Set]] = list()
         for p, c in file_codings(self._root, self._excludes):
             if c is None:
                 continue
