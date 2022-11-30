@@ -777,17 +777,18 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 self.config.current.program_root,
                 [self.virt_environ.env_path, dist_dir],
             )
-            missings = set()
-            for i in import_inspect.get_missing_items():
-                missings.update(i[2])
-            missings.add("pyinstaller")
+            missings: Set[str] = {"pyinstaller"}
+            for ms in import_inspect.get_missing_items():
+                for m in ms[2]:
+                    missings.add(import_install.get(m, m))
             if self.config.current.encryption_key:
                 missings.add("tinyaes")
+            self.virt_environ.install("wheel")
             for pkg in missings:
                 self.virt_environ.install(pkg)
             self.__creating_venv_result = 0  # 虚拟环境创建成功
         else:
-            self.__creating_venv_result = 1  # 虚拟环境创建不成功
+            self.__creating_venv_result = 1  # 虚拟环境创建失败
 
     def check_createvenv(self, finished: Callable[[], Any] = None):
         self.config_widgets_to_cfg()
