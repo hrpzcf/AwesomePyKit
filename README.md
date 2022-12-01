@@ -14,59 +14,66 @@ Python 工具箱 - Awespykit
 
 ## 快速跳转
 
-[程序概述](#程序概述) / [如何运行](#如何运行) / [程序截图](#程序截图) / [源码仓库](#源码仓库)
-/ [TODO 列表](#todo-列表)
+[程序简介](#程序简介) **·** [如何运行](#如何运行) **·** [程序截图](#程序截图) **·** [源码仓库](#源码仓库) **·** [TODO 列表](#todo-列表)
 
 <br />
 
-## 程序概述
+## 程序简介
 
-`仅支持在windows系统上运行`
+这是一个关于 Python 的工具箱，有包管理器、程序打包工具、镜像源设置工具、模块安装包下载器可用。
 
-这是一个关于 Python 的工具箱，提供包管理器、程序打包工具、镜像源设置工具、模块安装包下载器。
-
-界面简陋，但不影响使用。
+`注：仅支持在 Windows 系统上运行`
 
 <br />
 
 ## 如何运行
 
-> 安装 Python 分发包后运行（推荐）
+> #### 安装 Python 分发包后运行（推荐）
 
-1. 使用 pip 命令安装 Awespykit：`pip install Awespykit -U`（有多个环境的请自行选择安装环境）
-2. 安装完成后，即可在命令行窗口输入 `rpk` 启动 Awespykit。
-3. 如果输入 `pip` 命令或 `rpk` 命令出现提示：`xxx 不是内部或外部命令，也不是可运行的程序或批处理文件。`
+1. 假设你的计算机已经安装了 Python 环境，且版本 >=3.7（如果不符合要求则不能使用这个方法安装 Awespykit）。
+2. 使用 pip 命令安装 Awespykit：`pip install Awespykit -U`（有多个环境的请自行选择安装环境）。
+3. 安装完成后，即可在命令行窗口输入 `rpk` 启动 Awespykit。
+4. 如果输入 `pip` 命令或 `rpk` 命令出现提示：`xxx 不是内部或外部命令，也不是可运行的程序或批处理文件。`
    或者`无法将 xxx 项识别为 cmdlet、函数、脚本文件或可运行程序的名称。`等提示，则说明你的 Python
    环境的路径尚未加入到系统环境变量的 PATH 变量中，请自行添加。
 
-`推荐原因：程序开发者经常与各种命令窗口打交道，如果厌烦了冗长的命令，想通过 Awespykit 管理不同 Python 环境或者想使用 Pyinstaller 打包程序或切换 pip 源等，直接在命令窗口输入 'rpk + 回车' 是运行 Awespykit 最快捷的方式。`
+`推荐原因：程序开发者经常与各种命令窗口打交道，直接在命令窗口输入 'rpk + 回车' 是运行 Awespykit 最快捷的方式。`
 
 <br/>
 
-> 下载可执行文件并从可执行文件运行：
+> #### 下载打包好的文件并从可执行文件运行：
 
 1. 打开 Awespykit 新版本发布页面 [GitHub](https://github.com/hrpzcf/AwesomePyKit/releases)
-   或 [Gitee](https://gitee.com/hrpzcf/AwesomePyKit/releases) 下载已经打包好的程序文件
-2. 下载 Awespykit-x.x.x.7z 或 .zip 或 .exe（每次发布的文件类型都可能不一样）
-3. 对于下载的 .7z、.zip 压缩包，请将压缩包解压，找到 runpykit.exe 双击运行；对于 exe 文件，请直接双击运行
+   或 [Gitee](https://gitee.com/hrpzcf/AwesomePyKit/releases) 。
+2. 下载 Awespykit-x.x.x.7z 或 .zip 或 .exe（每次发布的文件类型都可能不一样）。
+3. 对于下载的 .7z、.zip 压缩包，请将压缩包解压，找到 runpykit.exe 双击运行；对于 exe 文件，请直接双击运行。
 
 <br />
 
-> 下载源代码并从源代码运行：
+> #### 下载源代码并从源代码运行：
 
-1. 本机安装 Python 3.7 或更新版本的 Python 运行环境
-2. `git clone` 克隆源代码或下载源代码包 Source code.zip 解压
-3. 在 Awespykit 目录内打开 PowerShell 或 Cmd
-4. 安装 Awespykit 的依赖，有多个 Python 环境的请自行选择环境
-
-    ```cmd
-    python -m pip install -r requirements.txt
-    ```
-
-5. 找到 runpykit.py 运行。如果不想显示控制台，可以将 runpykit.py 重命名为 runpykit.pyw
+1. 假设你的计算机已经安装了 Python 环境，且版本 >=3.7。
+2. `git clone` 克隆源代码到你的计算机或下载源代码包 Source code.zip 解压。
+3. 在 Awespykit 目录内打开 PowerShell 或 Cmd。
+4. 使用以下命令安装 Awespykit 的依赖，有多个 Python 环境的请自行选择环境：
+   ```cmd
+   pip install -r requirements.txt
+   ```
+5. 找到 runpykit.py 运行。如果不想显示控制台，可以将 runpykit.py 重命名为 runpykit.pyw。
 6. *注意*：由于更改了项目目录结构，使用 Pycharm 的同学，Pycharm 打开 Awespykit 目录后，请右键 Awespykit
    -> source -> awespykit 目录，选择菜单末尾的 `将目录标记为->源代码根目录` 把 `awespykit`
    目录标记为源码根目录，否则影响编程体验。
+
+<br />
+
+> #### 使用 pip 命令从 GitHub 安装开发版
+
+1. 假设你的计算机已经安装了 Python 环境，且版本 >=3.7（如果不符合要求则不能使用这个方法）。
+2. 使用以下命令安装开发版：
+   ```cmd
+   pip install https://github.com/hrpzcf/AwesomePyKit/tarball/main
+   ```
+注意：开发版可能含有许多 BUG，无法保证程序一定能正常运行，也无法保证所有功能都正常。
 
 <br />
 
