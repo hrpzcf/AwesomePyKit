@@ -32,6 +32,7 @@ class PackageManagerConfig(AbstractConfig):
     _key_query_name = "query_name"
     _key_query_mode = "query_mode"
     _key_query_case = "query_case"
+    _key_force_reinsall = "force_reinsall"
 
     CONFIGFILE = "package_manager.json"
 
@@ -219,3 +220,12 @@ class PackageManagerConfig(AbstractConfig):
         assert len(value) == 2
         assert isinstance(value[0], int) and isinstance(value[1], int)
         self[self._key_query_winsize] = value
+
+    @property
+    def force_reinstall(self):
+        return self.setdefault(self._key_force_reinsall, False)
+
+    @force_reinstall.setter
+    def force_reinstall(self, value):
+        assert isinstance(value, bool)
+        self[self._key_force_reinsall] = value
