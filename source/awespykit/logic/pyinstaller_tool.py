@@ -283,7 +283,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 self.config.current.encryption_key
                 and "tinyaes" not in inspector.importables
             ):
-                missings.append(("字节码加密功能", {}, {"tinyaes"}))
+                missings.append(("字节码加密功能", {}, {"tinyaes>=1.0.0"}))
             missings.extend(inspector.get_missing_items())
 
         thread_check_imp = QThreadModel(get_missing_imps)
@@ -782,7 +782,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 for m in ms[2]:
                     missings.add(import_install.get(m, m))
             if self.config.current.encryption_key:
-                missings.add("tinyaes")
+                missings.add("tinyaes>=1.0.0")
             self.virt_environ.install("wheel")
             for pkg in missings:
                 self.virt_environ.install(pkg)
