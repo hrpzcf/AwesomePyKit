@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from os import path
-from typing import Union
+from typing import *
 
 from com import *
 from fastpip import *
@@ -591,29 +591,30 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         ):
             widget.setEnabled(True)
 
-    def install_packages(self, cur_env, tobe_installed):
-        if not (cur_env and tobe_installed):
+    def install_packages(self, cur_env: PyEnv, package_names: List[str]):
+        if not (cur_env and package_names):
             return
         include_pre = self.config.include_pre
         user = self.config.install_for_user
+        force_reinstall = self.config.force_reinstall
         use_index_url = self.config.use_index_url
         index_url = self.config.index_url if use_index_url else ""
 
         def do_install():
-            installed = [
-                [name, result]
-                for name, result in loop_install(
-                    cur_env,
-                    tobe_installed,
+            installed_pkgs = list()
+            for package_name in package_names:
+                ins, res = cur_env.install(
+                    package_name,
                     pre=include_pre,
                     user=user,
+                    force_reinstall=force_reinstall,
                     index_url=index_url,
                 )
-            ]
-            separated = parse_package_names(i[0] for i in installed)
-            for i, value in enumerate(installed):
+                installed_pkgs.append([ins[0], res])
+            separated = parse_package_names(i[0] for i in installed_pkgs)
+            for i, value in enumerate(installed_pkgs):
                 value[0] = separated[i]
-            for name, result in installed:
+            for name, result in installed_pkgs:
                 item = self.__cur_pkgs_info.setdefault(name, ["", "", ""])
                 item[0] = "N/A"
                 item[2] = "安装成功" if result else "安装失败"
@@ -821,6 +822,7 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
             self.le_use_index_url.setEnabled(True)
         else:
             self.le_use_index_url.setEnabled(False)
+        self.uiCheckBox_force_reinstall.setChecked(self.__parent.config.force_reinstall)
 
     def config_widgets_to_dict(self):
         self.package_names.extend(
@@ -831,6 +833,9 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.__parent.config.install_for_user = self.cb_install_for_user.isChecked()
         self.__parent.config.index_url = self.le_use_index_url.text()
         self.__parent.config.use_index_url = self.cb_use_index_url.isChecked()
+        self.__parent.config.force_reinstall = (
+            self.uiCheckBox_force_reinstall.isChecked()
+        )
 
     def call_installpkg_back(self):
         self.close()  # 触发 closeEvent 更新配置

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>393</width>
-    <height>416</height>
+    <width>395</width>
+    <height>438</height>
    </rect>
   </property>
   <property name="font">
@@ -25,19 +25,7 @@
    <string>安装</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_4">
-    <property name="leftMargin">
-     <number>8</number>
-    </property>
-    <property name="topMargin">
-     <number>8</number>
-    </property>
-    <property name="rightMargin">
-     <number>8</number>
-    </property>
-    <property name="bottomMargin">
-     <number>8</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
       <item>
@@ -67,157 +55,150 @@
      </widget>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
-      <property name="spacing">
-       <number>2</number>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>要安装的包名称（每行一个）：</string>
       </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="uiHorizontalLayout_package_name">
       <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>要安装的包名称（每行一个）：</string>
-        </property>
-       </widget>
+       <widget class="QPlainTextEdit" name="pte_package_names_old"/>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="uiHorizontalLayout_package_name" stretch="1,0">
-        <property name="spacing">
-         <number>8</number>
-        </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QPlainTextEdit" name="pte_package_names_old"/>
+         <widget class="QCheckBox" name="cb_including_pre">
+          <property name="toolTip">
+           <string>从网络安装时是否查找包括预发行版和开发版在内的版本。
+如果预发行版或开发版是最新版本，则安装预发行版或开发版。</string>
+          </property>
+          <property name="text">
+           <string>包括预发行版和开发版</string>
+          </property>
+         </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,1">
-          <item>
-           <widget class="QCheckBox" name="cb_including_pre">
-            <property name="toolTip">
-             <string>从网络安装时是否查找包括预发行版和开发版在内的版本。
-如果预发行版或开发版是最新版本，则安装预发行版或开发版。</string>
-            </property>
-            <property name="text">
-             <string>包括预发行版和开发版</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cb_install_for_user">
-            <property name="toolTip">
-             <string>将包安装到系统当前登录的用户的用户目录内。</string>
-            </property>
-            <property name="text">
-             <string>仅为系统当前用户安装</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="line_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pb_load_from_text">
-            <property name="toolTip">
-             <string>从文本文件载入名称及版本等内容。
+         <widget class="QCheckBox" name="cb_install_for_user">
+          <property name="toolTip">
+           <string>将包安装到系统当前登录的用户的用户目录内。</string>
+          </property>
+          <property name="text">
+           <string>仅为系统当前用户安装</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="uiCheckBox_force_reinstall">
+          <property name="toolTip">
+           <string>强制重新安装指定的包，包括它的依赖包，依赖包将被重新安装为符合要求的最新版本。</string>
+          </property>
+          <property name="text">
+           <string>强制重新安装(包括依赖)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_load_from_text">
+          <property name="toolTip">
+           <string>从文本文件载入名称及版本等内容。
 例如从常见的requirements.txt文件载入。</string>
-            </property>
-            <property name="text">
-             <string>从文件加载名称</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pb_save_as_text">
-            <property name="toolTip">
-             <string>将文本框内的内容保存至文本文件。</string>
-            </property>
-            <property name="text">
-             <string>名称保存至文件</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pb_do_install">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="palette">
-             <palette>
-              <active>
-               <colorrole role="ButtonText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>0</red>
-                  <green>0</green>
-                  <blue>255</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </active>
-              <inactive>
-               <colorrole role="ButtonText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>0</red>
-                  <green>0</green>
-                  <blue>0</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </inactive>
-              <disabled>
-               <colorrole role="ButtonText">
-                <brush brushstyle="SolidPattern">
-                 <color alpha="255">
-                  <red>120</red>
-                  <green>120</green>
-                  <blue>120</blue>
-                 </color>
-                </brush>
-               </colorrole>
-              </disabled>
-             </palette>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>12</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>开始安装</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+          </property>
+          <property name="text">
+           <string>从文件加载名称</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_save_as_text">
+          <property name="toolTip">
+           <string>将文本框内的内容保存至文本文件。</string>
+          </property>
+          <property name="text">
+           <string>名称保存至文件</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pb_do_install">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="palette">
+           <palette>
+            <active>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>0</red>
+                <green>0</green>
+                <blue>255</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </active>
+            <inactive>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>0</red>
+                <green>0</green>
+                <blue>0</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </inactive>
+            <disabled>
+             <colorrole role="ButtonText">
+              <brush brushstyle="SolidPattern">
+               <color alpha="255">
+                <red>120</red>
+                <green>120</green>
+                <blue>120</blue>
+               </color>
+              </brush>
+             </colorrole>
+            </disabled>
+           </palette>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>开始安装</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
      </layout>
-    </item>
-    <item>
-     <widget class="Line" name="line_4">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">

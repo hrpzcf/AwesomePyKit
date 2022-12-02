@@ -8,6 +8,7 @@ from pathlib import Path
 
 _runs_in_bundle_mode = getattr(sys, "frozen", False)
 if _runs_in_bundle_mode:
+    # noinspection PyUnresolvedReferences
     _res_root = sys._MEIPASS
 else:
     _res_root = op.dirname(op.dirname(op.abspath(__file__)))
