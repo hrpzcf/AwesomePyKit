@@ -22,6 +22,7 @@
         <file>export.png</file>
         <file>copy.png</file>
         <file>settings.png</file>
+        <file>reinstall.png</file>
     </qresource>
     <qresource prefix="trans">
         <file>widgets_zh-CN.qm</file>

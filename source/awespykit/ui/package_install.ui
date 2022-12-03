@@ -92,7 +92,7 @@
         <item>
          <widget class="QCheckBox" name="uiCheckBox_force_reinstall">
           <property name="toolTip">
-           <string>强制重新安装指定的包，包括它的依赖包，依赖包将被重新安装为符合要求的最新版本。</string>
+           <string>强制重新安装指定的包，包括它的依赖包，依赖包将被重新安装为符合要求的版本。</string>
           </property>
           <property name="text">
            <string>强制重新安装(包括依赖)</string>

@@ -276,6 +276,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         action_list.append(action)
         contextmenu.addAction(action)
 
+        action = QAction(QIcon(":/reinstall.png"), "强制重装", self)
+        action.triggered.connect(self.force_reinstall)
+        action_list.append(action)
+        contextmenu.addAction(action)
+
         action = QAction(QIcon(":/query.png"), "查询", self)
         action.triggered.connect(self.query_names)
         action_list.append(action)
@@ -631,6 +636,47 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         )
         thread_install_pkgs.start()
         self.thread_repo.put(thread_install_pkgs, 0)
+
+    def force_reinstall(self):
+        packages_names = self.package_names_selected()
+        if not packages_names:
+            if not packages_names:
+                MessageBox("提示", "没有选中任何项！").exec_()
+            return
+        cur_env = self.env_list[self.lw_env_list.currentRow()]
+        force_reinstall = QMessageBox(
+            QMessageBox.Question,
+            "重装",
+            "所选包的依赖包也会被重新安装为符合要求的版本，确定强制重装？",
+        )
+        force_reinstall.addButton("确定", QMessageBox.AcceptRole)
+        reject = force_reinstall.addButton("取消", QMessageBox.RejectRole)
+        force_reinstall.setDefaultButton(reject)
+        if force_reinstall.exec_() != 0:
+            return
+
+        def do_force_reinstall():
+            for package_name in packages_names:
+                item = self.__cur_pkgs_info.setdefault(package_name, ["", "", ""])
+                if item[0]:  # 当前版本号
+                    package_name = f"{package_name}=={item[0]}"
+                pkgnames, result = cur_env.install(package_name, force_reinstall=True)
+                if not result:
+                    item[0] = "N/A"
+                item[2] = "安装成功" if result else "安装失败"
+
+        thread_force_reinstall = QThreadModel(do_force_reinstall)
+        thread_force_reinstall.before_starting(
+            self.lock_widgets,
+            lambda: self.show_loading("正在重新安装..."),
+        )
+        thread_force_reinstall.after_completion(
+            self.table_widget_pkgs_info_update,
+            self.hide_loading,
+            self.release_widgets,
+        )
+        thread_force_reinstall.start()
+        self.thread_repo.put(thread_force_reinstall, 0)
 
     def uninstall_packages(self):
         pkgs_info_keys = tuple(self.__cur_pkgs_info.keys())

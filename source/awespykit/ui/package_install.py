@@ -132,7 +132,7 @@ class Ui_package_install(object):
         self.cb_including_pre.setText(_translate("package_install", "包括预发行版和开发版"))
         self.cb_install_for_user.setToolTip(_translate("package_install", "将包安装到系统当前登录的用户的用户目录内。"))
         self.cb_install_for_user.setText(_translate("package_install", "仅为系统当前用户安装"))
-        self.uiCheckBox_force_reinstall.setToolTip(_translate("package_install", "强制重新安装指定的包，包括它的依赖包，依赖包将被重新安装为符合要求的最新版本。"))
+        self.uiCheckBox_force_reinstall.setToolTip(_translate("package_install", "强制重新安装指定的包，包括它的依赖包，依赖包将被重新安装为符合要求的版本。"))
         self.uiCheckBox_force_reinstall.setText(_translate("package_install", "强制重新安装(包括依赖)"))
         self.pb_load_from_text.setToolTip(_translate("package_install", "从文本文件载入名称及版本等内容。\n"
 "例如从常见的requirements.txt文件载入。"))
