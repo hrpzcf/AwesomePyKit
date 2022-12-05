@@ -269,8 +269,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         elif not os.path.isabs(dist_dir):
             dist_dir = os.path.join(program_root, dist_dir)
         missings = list()
-        self.pyi_tool.initialize(environ.env_path, program_root)
-        if not self.pyi_tool.pyi_ready:
+        self.pyi_tool.initialize(environ, program_root)
+        if not self.pyi_tool.pyi_is_ready:
             missings.append(("打包功能核心模块", {}, {"pyinstaller"}))
 
         def get_missing_imps():
@@ -412,9 +412,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def __environ_call_back(self, env):
         """供环境选择窗口类使用的回调函数，在窗口选择环境后调用此方法"""
         self.main_environ = env
-        self.pyi_tool.initialize(
-            self.main_environ.env_path, self.config.current.program_root
-        )
+        self.pyi_tool.initialize(self.main_environ, self.config.current.program_root)
         self.load_version_information_lazily(False, False)
 
     def config_cfg_to_widgets(self, cfg_name):
@@ -852,7 +850,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                     ),
                 ).exec_()
                 if role == 0:
-                    using_py_path = self.config.current.environ_path
+                    environ_using = self.main_environ
                 elif role == 1:
                     self.check_createvenv(self.build_executable)
                     return
@@ -866,14 +864,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                         QMessageBox.Critical,
                     ).exec_()
                     return
-                using_py_path = self.virt_environ.env_path
+                environ_using = self.virt_environ
         else:
-            using_py_path = self.config.current.environ_path
-        self.pyi_tool.initialize(
-            using_py_path,
-            self.config.current.program_root,
-        )
-        if not self.pyi_tool.pyi_ready:
+            environ_using = self.main_environ
+        self.pyi_tool.initialize(environ_using, self.config.current.program_root)
+        if not self.pyi_tool.pyi_is_ready:
             MessageBox(
                 "Pyinstaller 不可用",
                 "请点击右上角'选择环境'按钮选择打包环境，再点击'安装'按钮将 Pyinstaller "
@@ -1032,19 +1027,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 self.virt_environ = VtEnv(self.config.current.project_root)
                 self.virt_environ.find_venv()
             if self.cb_prioritize_venv.isChecked():
-                ptool_env = self.virt_environ
                 ptool_side = "虚拟环境"
-                if self.virt_environ is not None:
-                    environ_path = self.virt_environ.env_path
-                else:
-                    environ_path = ""
+                ptool_env = self.virt_environ
             else:
-                ptool_env = self.main_environ
                 ptool_side = "主要环境"
-                if self.main_environ is not None:
-                    environ_path = self.main_environ.env_path
-                else:
-                    environ_path = ""
+                ptool_env = self.main_environ
             btn_create = False
             if (
                 self.virt_environ is not None
@@ -1054,14 +1041,14 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             ):
                 btn_create = True
             self.__enabled_exception[self.uiPushButton_create_venv] = btn_create
-            self.pyi_tool.initialize(environ_path, self.config.current.program_root)
+            self.pyi_tool.initialize(ptool_env, self.config.current.program_root)
             packtool_info = self.pyi_tool.pyi_info()
-            if ptool_env is None or not ptool_env.env_path:
+            if ptool_env is None or not ptool_env.env_is_valid:
                 btn_install = False
                 button_text = "安装"
             else:
                 btn_install = True
-                if not self.pyi_tool.pyi_ready:
+                if not self.pyi_tool.pyi_is_ready:
                     button_text = "安装"
                 else:
                     button_text = "重新安装"

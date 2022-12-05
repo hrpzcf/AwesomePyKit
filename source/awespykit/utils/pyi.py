@@ -4,9 +4,11 @@ __doc__ = """包含 pyinstaller 工具相关的类或函数。"""
 
 import os
 from subprocess import *
+from typing import *
 
 from __info__ import *
 from com import *
+from fastpip import PyEnv
 from PyQt5.QtCore import *
 from settings import *
 
@@ -22,14 +24,17 @@ class PyiTool(QObject):
     stdout = pyqtSignal(str)
     run_time = pyqtSignal(int)
     completed = pyqtSignal(int)
+    pyi_init = os.path.join("PyInstaller", "__init__.py")
+    using_pyi = "-m", "PyInstaller"
+    read_pyi_ver = "-m", "PyInstaller", "-v"
 
-    def __init__(self, py_path="", cwd=os.getcwd()):
+    def __init__(self, pyenv: PyEnv = None, cwd=os.getcwd()):
         super().__init__()
-        self.__pypath = None
+        self.__pyenv: Union[PyEnv, None] = None
         self.__cwd = None
         self.__process = None
         self.__commands = None
-        self.initialize(py_path, cwd)
+        self.initialize(pyenv, cwd)
         self.cumulative = -200
         self.__qtimer = QTimer()
         self.__qtimer.timeout.connect(self.__time)
@@ -46,24 +51,25 @@ class PyiTool(QObject):
             self.__cwd = path
 
     @property
-    def pyi_path(self):
-        """返回给出的 Python 路径中的 Pyinstaller 可执行文件路径。"""
-        pyi_exec_path = os.path.join(self.__pypath, "Scripts", "pyinstaller.exe")
-        if not os.path.isfile(pyi_exec_path):
-            return ""
-        return pyi_exec_path
-
-    @property
-    def pyi_ready(self):
+    def pyi_is_ready(self):
         """给出的 Python 环境中安装了 Pyinstaller 返回 True，否则返回 False。"""
-        return bool(self.pyi_path)
+        if not self.__pyenv or not self.__pyenv.env_is_valid:
+            return False
+        return os.path.isfile(
+            os.path.join(self.__pyenv.site_packages_home(), self.pyi_init)
+        ) or os.path.isfile(
+            os.path.join(self.__pyenv.user_site_packages_home(), self.pyi_init)
+        )
 
-    def initialize(self, py_path, cwd):
-        # 信任传入的 py_path
-        self.__pypath = py_path
+    def initialize(self, pyenv: PyEnv, cwd):
+        assert pyenv is None or isinstance(pyenv, PyEnv)
+        self.__pyenv = pyenv
         self.__cwd = cwd if cwd else None
         self.__process = None
-        self.__commands = [self.pyi_path]
+        if not self.__pyenv or not self.__pyenv.env_is_valid:
+            self.__commands = None
+            return
+        self.__commands = [self.__pyenv.interpreter, *self.using_pyi]
 
     def __time(self):
         if self.cumulative > 10000:
@@ -121,14 +127,14 @@ class PyiTool(QObject):
             text=True,
             cwd=self.__cwd,
         )
-        if self.pyi_ready and self.__process:
+        if self.__commands and self.__process:
             if self.__log_level == "TRACE":
                 self.__time_division_emit()
             else:
                 self.__line_division_emit()
         else:
-            if not self.pyi_ready:
-                self.stdout.emit("当前环境中找不到 pyinstaller.exe。")
+            if not self.__commands:
+                self.stdout.emit("当前环境中找不到 PyInstaller 模块。")
             if self.__process is None:
                 self.stdout.emit("创建打包进程失败，无法完成程序打包。")
             self.completed.emit(-1)
@@ -176,8 +182,10 @@ VarFileInfo([VarStruct("Translation", [2052, 1200])]),
 
     def pyi_info(self):
         version_info = VerInfo()
-        if self.pyi_ready:
-            result = get_cmd_out(self.pyi_path, "-v", re_search=PYI_P)
+        if self.pyi_is_ready:
+            result = get_cmd_out(
+                self.__pyenv.interpreter, *self.read_pyi_ver, re_search=PYI_P
+            )
             if result:
                 version_info.set(result.group(1))
         return version_info
