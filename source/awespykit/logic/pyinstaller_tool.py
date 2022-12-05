@@ -216,6 +216,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         self.uiPushButton_clear_data.clicked.connect(self.clear_packing_data)
         self.cb_prioritize_venv.clicked.connect(self.refresh_virtualenv_info)
+        self.uiPushButton_clear_log.clicked.connect(self.te_pyi_out_stream.clear)
 
     def refresh_virtualenv_info(self):
         self.config_widgets_to_cfg()
