@@ -633,7 +633,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 value[0] = separated[i]
             for name, result in installed_pkgs:
                 item = self.__cur_pkgs_info.setdefault(name, ["", "", ""])
-                item[0] = "N/A"
+                item[0] = EMPTY_STR
                 item[2] = "安装成功" if result else "安装失败"
 
         thread_install_pkgs = QThreadModel(do_install)
@@ -674,7 +674,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                     package_name = f"{package_name}=={item[0]}"
                 pkgnames, result = cur_env.install(package_name, force_reinstall=True)
                 if not result:
-                    item[0] = "N/A"
+                    item[0] = EMPTY_STR
                 item[2] = "安装成功" if result else "安装失败"
 
         thread_force_reinstall = QThreadModel(do_force_reinstall)
@@ -715,7 +715,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             for pkg_name, code in loop_uninstall(cur_env, pkg_names):
                 item = self.__cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
                 if code:
-                    item[0] = "N/A"
+                    item[0] = EMPTY_STR
                 item[2] = "卸载成功" if code else "卸载失败"
 
         thread_uninstall_pkgs = QThreadModel(do_uninstall)
@@ -762,7 +762,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                     if item[1]:
                         item[0] = item[1]
                     else:
-                        item[0] = "N/A"
+                        item[0] = EMPTY_STR
                 else:
                     item[2] = "升级失败"
 

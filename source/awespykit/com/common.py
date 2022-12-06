@@ -1,7 +1,10 @@
 # coding: utf-8
 
+EMPTY_STR = ""
+
 
 class VerInfo:
+    """包装 PyInstaller 版本号的类"""
     defver = "0.0.0"
 
     def __init__(self, ver=defver):
