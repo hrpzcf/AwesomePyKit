@@ -31,7 +31,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.__cur_pkgs_info = dict()
         self.__reverseds = [True, True, True, True]
         self.selected_index = -1
-        self.__is_busy = False
+        self.__exclusive_mode = False
         self.thread_repo = ThreadRepo(500)
 
     def __setup_other_widgets(self):
@@ -301,10 +301,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         contextmenu.addAction(action)
 
         for action in action_list:
-            if self.__is_busy:
-                action.setEnabled(False)
-            else:
-                action.setEnabled(True)
+            action.setEnabled(not self.__exclusive_mode)
 
         contextmenu.setStyleSheet("QMenu {padding: 10px; border: 1px solid black}")
         contextmenu.exec_(QCursor.pos())
@@ -401,7 +398,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 if not even_num_row:
                     item.setBackground(color_gray)
                 self.uiTableWidget_installed_info.setItem(rowind, colind + 1, item)
-        self.__is_busy = False
 
     def __sort_by_column(self, colind):
         if colind == 0:
@@ -432,9 +428,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.selected_index = self.uiListWidget_env_list.currentRow()
 
     def get_pkgs_info(self, no_connect):
-        if self.__is_busy:
-            return
-        self.__is_busy = True
         self.selected_index = self.uiListWidget_env_list.currentRow()
         if self.selected_index == -1:
             return None
@@ -577,6 +570,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.thread_repo.put(thread_get_outdated, 1)
 
     def lock_widgets(self):
+        self.__exclusive_mode = True
         for widget in (
             self.uiPushButton_autosearch,
             self.uiPushButton_addmanully,
@@ -607,6 +601,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.uiLabel_num_selected_items,
         ):
             widget.setEnabled(True)
+        self.__exclusive_mode = False
 
     def install_packages(self, cur_env: PyEnv, package_names: List[str]):
         if not (cur_env and package_names):
