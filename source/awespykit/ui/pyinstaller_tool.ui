@@ -64,7 +64,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
              <item>
-              <widget class="QLineEdit" name="le_program_entry_old">
+              <widget class="QLineEdit" name="uiLineEdit_program_entry_old">
                <property name="toolTip">
                 <string>要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。
 如果指定了SPEC文件，则以下绝大部分项目文件及生成控制都将不生效。</string>
@@ -72,7 +72,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pb_select_program_entry">
+              <widget class="QPushButton" name="uiPushButton_select_program_entry">
                <property name="text">
                 <string>选择</string>
                </property>
@@ -95,7 +95,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="le_output_name">
+            <widget class="QLineEdit" name="uiLineEdit_output_name">
              <property name="toolTip">
               <string>对应选项：-n, --name
 打包完成后的 exe 可执行文件文件的名称，此项留空则使用程序启动入口文件名。</string>
@@ -119,7 +119,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pb_reset_root_level">
+              <widget class="QPushButton" name="uiPushButton_reset_root_level">
                <property name="toolTip">
                 <string>将项目根目录重置为程序启动入口所在目录。</string>
                </property>
@@ -129,7 +129,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pb_up_level_root">
+              <widget class="QPushButton" name="uiPushButton_up_level_root">
                <property name="toolTip">
                 <string>将项目根目录向上移一级。</string>
                </property>
@@ -141,7 +141,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QLineEdit" name="le_project_root">
+            <widget class="QLineEdit" name="uiLineEdit_project_root">
              <property name="toolTip">
               <string>是指当前程序项目的起始目录，主要用于确定虚拟环境的创建位置。</string>
              </property>
@@ -203,7 +203,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pb_clear_hidden_imports">
+                <widget class="QPushButton" name="uiPushButton_clear_hidden_imports">
                  <property name="text">
                   <string>清空</string>
                  </property>
@@ -212,7 +212,7 @@
               </layout>
              </item>
              <item>
-              <widget class="QPlainTextEdit" name="pte_hidden_imports">
+              <widget class="QPlainTextEdit" name="uiPlainTextEdit_hidden_imports">
                <property name="toolTip">
                 <string>对应选项：--hidden-import, --hiddenimport
 某些模块可能会被通过隐蔽的方式导入导致 Pyinstaller 没有发现它，将没有被发现的模块名填入此处以使 Pyinstaller 主动包含这些模块。
@@ -240,7 +240,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pb_clear_exclude_module">
+                <widget class="QPushButton" name="uiPushButton_clear_exclude_module">
                  <property name="text">
                   <string>清空</string>
                  </property>
@@ -249,7 +249,7 @@
               </layout>
              </item>
              <item>
-              <widget class="QPlainTextEdit" name="pte_exclude_modules">
+              <widget class="QPlainTextEdit" name="uiPlainTextEdit_exclude_modules">
                <property name="toolTip">
                 <string>对应选项：--exclude-module
 如果您不想让 Pyinstaller 打包某些模块，则请把模块名称填入此处，每行一个。
@@ -279,7 +279,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pb_clear_module_search_path">
+              <widget class="QPushButton" name="uiPushButton_clear_module_search_path">
                <property name="toolTip">
                 <string>清空其他模块搜索目录文本框。</string>
                </property>
@@ -289,7 +289,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pb_select_module_search_path">
+              <widget class="QPushButton" name="uiPushButton_select_module_search_path">
                <property name="text">
                 <string>选择</string>
                </property>
@@ -298,7 +298,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QTextEdit" name="te_module_search_path_old"/>
+            <widget class="QTextEdit" name="uiTextEdit_module_search_path_old"/>
            </item>
           </layout>
          </item>
@@ -317,14 +317,14 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pb_clear_other_data">
+              <widget class="QPushButton" name="uiPushButton_clear_other_data">
                <property name="text">
                 <string>清空</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pb_select_other_data">
+              <widget class="QPushButton" name="uiPushButton_select_other_data">
                <property name="text">
                 <string>选择</string>
                </property>
@@ -333,7 +333,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QTextEdit" name="te_other_data_old"/>
+            <widget class="QTextEdit" name="uiTextEdit_other_data_old"/>
            </item>
           </layout>
          </item>
@@ -352,10 +352,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,0">
              <item>
-              <widget class="QLineEdit" name="le_file_icon_path_old"/>
+              <widget class="QLineEdit" name="uiLineEdit_file_icon_path_old"/>
              </item>
              <item>
-              <widget class="QPushButton" name="pb_select_file_icon">
+              <widget class="QPushButton" name="uiPushButton_select_file_icon">
                <property name="text">
                 <string>选择</string>
                </property>
@@ -377,7 +377,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_9">
              <item>
-              <widget class="QRadioButton" name="rb_pack_to_one_dir">
+              <widget class="QRadioButton" name="uiRadioButton_pack_to_one_dir">
                <property name="toolTip">
                 <string>对应选项：-D, --onedir
 将程序打包成单文件夹形式，exe 可执行程序在文件夹的首层目录内。</string>
@@ -388,7 +388,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="rb_pack_to_one_file">
+              <widget class="QRadioButton" name="uiRadioButton_pack_to_one_file">
                <property name="toolTip">
                 <string>对应选项；-F, --onefile
 将程序以及添加的其他资源文件打包成单一文件的形式，启动速度稍慢。</string>
@@ -401,7 +401,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QCheckBox" name="cb_execute_with_console">
+            <widget class="QCheckBox" name="uiCheckBox_execute_with_console">
              <property name="toolTip">
               <string>勾选时对应选项：-c, --console, --nowindowed
 不勾选时对应选项：-w, --windowed, --noconsole
@@ -413,7 +413,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="cb_without_confirm">
+            <widget class="QCheckBox" name="uiCheckBox_without_confirm">
              <property name="toolTip">
               <string>对应选项：-y, --noconfirm
 打包时如果预定的 exe 文件储存目录不为空，是清空该目录还是中断打包过程。</string>
@@ -424,7 +424,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="cb_use_upx">
+            <widget class="QCheckBox" name="uiCheckBox_use_upx">
              <property name="toolTip">
               <string>不勾选时对应选项：--noupx
 打包过程中是否使用 upx 对文件进行压缩。注意，某些二进制文件在经过 upx 压缩后可能无法正常运行。
@@ -436,7 +436,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="cb_clean_before_build">
+            <widget class="QCheckBox" name="uiCheckBox_clean_before_build">
              <property name="toolTip">
               <string>对应选项：--clean
 打包前是否清空 Pyinstaller 生成的临时文件夹（临时文件可使下次打包加速）。</string>
@@ -447,7 +447,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="cb_write_info_to_exec">
+            <widget class="QCheckBox" name="uiCheckBox_write_info_to_exec">
              <property name="toolTip">
               <string>对应选项：--version-file
 勾选此选项则将&quot;附加信息&quot;标签页中的内容写入生成的 exe 文件，这些信息可以在查看 exe 文件属性时看见。</string>
@@ -458,7 +458,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="cb_uac_admin">
+            <widget class="QCheckBox" name="uiCheckBox_uac_admin">
              <property name="toolTip">
               <string>对应选项：--uac-admin
 使打包的 exe 程序启动时请求提升权限，打包需要管理员权限才能正常工作的程序时，请勾选此选项。</string>
@@ -478,7 +478,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_bytecode_encryption_key">
+              <widget class="QLineEdit" name="uiLineEdit_bytecode_encryption_key">
                <property name="toolTip">
                 <string>对应选项：--key
 用于加密 Python 字节码的密钥，此项可留空。</string>
@@ -502,7 +502,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_12">
                <item>
-                <widget class="QLineEdit" name="le_output_dir">
+                <widget class="QLineEdit" name="uiLineEdit_output_dir">
                  <property name="toolTip">
                   <string>对应选项：--distpath
 此项可留空，默认储存位置：&quot;源代码根目录/dist&quot;。</string>
@@ -510,7 +510,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pb_select_output_dir">
+                <widget class="QPushButton" name="uiPushButton_select_output_dir">
                  <property name="text">
                   <string>选择</string>
                  </property>
@@ -535,7 +535,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_16">
                <item>
-                <widget class="QLineEdit" name="le_spec_dir">
+                <widget class="QLineEdit" name="uiLineEdit_spec_dir">
                  <property name="toolTip">
                   <string>对应选项：--specpath
 此项可留空，默认储存位置：&quot;源代码根目录&quot;。</string>
@@ -543,7 +543,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pb_select_spec_dir">
+                <widget class="QPushButton" name="uiPushButton_select_spec_dir">
                  <property name="text">
                   <string>选择</string>
                  </property>
@@ -568,7 +568,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_14">
                <item>
-                <widget class="QLineEdit" name="le_temp_working_dir">
+                <widget class="QLineEdit" name="uiLineEdit_temp_working_dir">
                  <property name="toolTip">
                   <string>对应选项：--workpath
 此项可留空，默认目录：&quot;源代码根目录/build&quot;。</string>
@@ -576,7 +576,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pb_select_temp_working_dir">
+                <widget class="QPushButton" name="uiPushButton_select_temp_working_dir">
                  <property name="text">
                   <string>选择</string>
                  </property>
@@ -601,7 +601,7 @@
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
-                <widget class="QLineEdit" name="le_upx_search_path">
+                <widget class="QLineEdit" name="uiLineEdit_upx_search_path">
                  <property name="toolTip">
                   <string>对应选项：--upx-dir
 此项可留空，找不到 upx 时将不进行压缩。当系统环境变量 PATH 中有 upx 路径时，不需要指定此选项也可使用 upx。</string>
@@ -609,7 +609,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pb_select_upx_search_path">
+                <widget class="QPushButton" name="uiPushButton_select_upx_search_path">
                  <property name="text">
                   <string>选择</string>
                  </property>
@@ -632,7 +632,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QTextEdit" name="te_upx_exclude_files">
+              <widget class="QTextEdit" name="uiTextEdit_upx_exclude_files">
                <property name="acceptDrops">
                 <bool>false</bool>
                </property>
@@ -677,7 +677,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="le_file_description"/>
+            <widget class="QLineEdit" name="uiLineEdit_file_description"/>
            </item>
           </layout>
          </item>
@@ -700,7 +700,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="le_company_name"/>
+            <widget class="QLineEdit" name="uiLineEdit_company_name"/>
            </item>
           </layout>
          </item>
@@ -725,16 +725,16 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
              <item>
-              <widget class="QLineEdit" name="le_file_version_0"/>
+              <widget class="QLineEdit" name="uiLineEdit_file_version_0"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_file_version_1"/>
+              <widget class="QLineEdit" name="uiLineEdit_file_version_1"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_file_version_2"/>
+              <widget class="QLineEdit" name="uiLineEdit_file_version_2"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_file_version_3"/>
+              <widget class="QLineEdit" name="uiLineEdit_file_version_3"/>
              </item>
             </layout>
            </item>
@@ -759,7 +759,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="le_product_name"/>
+            <widget class="QLineEdit" name="uiLineEdit_product_name"/>
            </item>
           </layout>
          </item>
@@ -784,16 +784,16 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_22">
              <item>
-              <widget class="QLineEdit" name="le_product_version_0"/>
+              <widget class="QLineEdit" name="uiLineEdit_product_version_0"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_product_version_1"/>
+              <widget class="QLineEdit" name="uiLineEdit_product_version_1"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_product_version_2"/>
+              <widget class="QLineEdit" name="uiLineEdit_product_version_2"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="le_product_version_3"/>
+              <widget class="QLineEdit" name="uiLineEdit_product_version_3"/>
              </item>
             </layout>
            </item>
@@ -818,7 +818,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="le_legal_copyright"/>
+            <widget class="QLineEdit" name="uiLineEdit_legal_copyright"/>
            </item>
           </layout>
          </item>
@@ -841,7 +841,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="le_legal_trademarks"/>
+            <widget class="QLineEdit" name="uiLineEdit_legal_trademarks"/>
            </item>
           </layout>
          </item>
@@ -864,7 +864,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="le_original_filename"/>
+            <widget class="QLineEdit" name="uiLineEdit_original_filename"/>
            </item>
           </layout>
          </item>
@@ -899,7 +899,7 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_21">
                 <item>
-                 <widget class="QCheckBox" name="cb_db_imports">
+                 <widget class="QCheckBox" name="uiCheckBox_db_imports">
                   <property name="toolTip">
                    <string>对应选项：-d {imports}, --debug {imports}
 每次初始化模块时，打印一条消息，显示加载该模块的位置(文件名或内置模块)。
@@ -911,7 +911,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="cb_db_bootloader">
+                 <widget class="QCheckBox" name="uiCheckBox_db_bootloader">
                   <property name="toolTip">
                    <string>对应选项：-d {bootloader}, --debug {bootloader}
 使引导程序在初始化和启动捆绑的应用程序时发出进度消息，用于诊断导入丢失的问题。
@@ -923,7 +923,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="cb_db_noarchive">
+                 <widget class="QCheckBox" name="uiCheckBox_db_noarchive">
                   <property name="toolTip">
                    <string>对应选项：-d {noarchive}, --debug {noarchive}
 不将所有冻结的源代码文件存档在生成的可执行文件中，而是将它们作为单独的文件存储在生成的输出目录中。</string>
@@ -945,7 +945,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_23">
               <item>
-               <widget class="QLineEdit" name="le_runtime_tmpdir">
+               <widget class="QLineEdit" name="uiLineEdit_runtime_tmpdir">
                 <property name="toolTip">
                  <string>对应选项：--runtime-tmpdir
 以&quot;单文件&quot;模式打包的程序运行时提取的库和支持文件的临时储存位置。
@@ -988,7 +988,7 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_20">
               <item>
-               <widget class="QCheckBox" name="cb_explorer_show">
+               <widget class="QCheckBox" name="uiCheckBox_explorer_show">
                 <property name="toolTip">
                  <string>打包成功后打开资源管理器并选中打包好的 .exe 文件，如果打包失败则不会打开资源管理器。</string>
                 </property>
@@ -998,7 +998,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="cb_delete_spec_file">
+               <widget class="QCheckBox" name="uiCheckBox_delete_spec_file">
                 <property name="toolTip">
                  <string>打包成功后删除 Pyinstaller 生成的 .spec 文件，打包失败则不会执行删除操作。</string>
                 </property>
@@ -1008,7 +1008,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="cb_delete_working_dir">
+               <widget class="QCheckBox" name="uiCheckBox_delete_working_dir">
                 <property name="toolTip">
                  <string>打包成功后删除临时工作文件夹，打包失败则不会执行删除操作。
 如果你没有自定义临时工作目录所在目录，则临时工作目录指的就是源代码根目录下的 build 目录。</string>
@@ -1219,7 +1219,7 @@
           <item row="0" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_33" stretch="1,0">
             <item>
-             <widget class="QLabel" name="lb_py_info">
+             <widget class="QLabel" name="uiLabel_python_info">
               <property name="toolTip">
                <string>当前选择的 Python 环境的版本信息。
 选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。</string>
@@ -1230,7 +1230,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pb_select_py_env">
+             <widget class="QPushButton" name="uiPushButton_select_pyenv">
               <property name="toolTip">
                <string>选择在不同 Python 环境中将程序打包成可执行文件。
 选择不同 Python 环境时，在该环境中也应安装运行项目所需的所有模块。</string>
@@ -1296,7 +1296,7 @@
            </layout>
           </item>
           <item row="2" column="1">
-           <widget class="QCheckBox" name="cb_prioritize_venv">
+           <widget class="QCheckBox" name="uiCheckBox_prioritize_venv">
             <property name="toolTip">
              <string>选中此项后，将使用项目目录下的虚拟环境来打包程序。
 如果项目目录下没有虚拟环境，则弹出菜单询问：使用主环境、创建虚拟环境、取消。</string>
@@ -1319,7 +1319,7 @@
           <item row="3" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_35" stretch="1,0">
             <item>
-             <widget class="QLabel" name="lb_pyi_info">
+             <widget class="QLabel" name="uiLabel_packtool_info">
               <property name="toolTip">
                <string>所选 Python 环境或项目虚拟环境下的 Pyinstaller 的版本信息。</string>
               </property>
@@ -1329,7 +1329,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pb_reinstall_pyi">
+             <widget class="QPushButton" name="uiPushButton_reinstall_packtool">
               <property name="toolTip">
                <string>在当前选择的 Python 环境或虚拟环境中安装/重新安装 Pyinstaller 。</string>
               </property>
@@ -1351,7 +1351,7 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLabel" name="lb_platform_info">
+           <widget class="QLabel" name="uiLabel_platform_info">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1402,7 +1402,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="cb_log_level">
+               <widget class="QComboBox" name="uiComboBox_log_level">
                 <property name="toolTip">
                  <string>对应选项：--log-level
 打包程序时输出的信息量，选择越靠前的选项输出的信息量越大，默认INFO。</string>
@@ -1447,7 +1447,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QTextEdit" name="te_pyi_out_stream">
+           <widget class="QTextEdit" name="uiTextEdit_packtool_logging">
             <property name="font">
              <font>
               <family>Consolas</family>
@@ -1469,10 +1469,10 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
             <item>
-             <widget class="QLabel" name="lb_running_gif"/>
+             <widget class="QLabel" name="uiLabel_running_gif"/>
             </item>
             <item>
-             <widget class="QLabel" name="lb_running_tip"/>
+             <widget class="QLabel" name="uiLabel_running_tip"/>
             </item>
            </layout>
           </item>
@@ -1494,7 +1494,7 @@
            <number>4</number>
           </property>
           <item>
-           <widget class="QPushButton" name="pb_check_imports">
+           <widget class="QPushButton" name="uiPushButton_check_imports">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1612,7 +1612,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pb_gen_executable">
+           <widget class="QPushButton" name="uiPushButton_start_packing">
             <property name="minimumSize">
              <size>
               <width>0</width>

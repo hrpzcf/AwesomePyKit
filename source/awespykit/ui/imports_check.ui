@@ -50,7 +50,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="le_cip_cur_env">
+         <widget class="QLineEdit" name="uiLineEdit_current_env">
           <property name="frame">
            <bool>false</bool>
           </property>
@@ -64,7 +64,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QTableWidget" name="tw_missing_imports">
+         <widget class="QTableWidget" name="uiTableWidget_missing_imports">
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -110,7 +110,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="pb_install_all_missing">
+           <widget class="QPushButton" name="uiPushButton_install_missings">
             <property name="toolTip">
              <string>一键安装该环境所有缺失的项目导入项。
 注意，当缺失的导入项无法在该环境安装时，不会有错误提示。</string>
@@ -121,7 +121,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pb_confirm">
+           <widget class="QPushButton" name="uiPushButton_confirm">
             <property name="toolTip">
              <string>什么都不做，关闭窗口并返回。</string>
             </property>

@@ -53,7 +53,7 @@
              <number>2</number>
             </property>
             <item>
-             <widget class="QLabel" name="lb_python_dir">
+             <widget class="QLabel" name="uiLabel_python_dir">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -69,7 +69,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="lw_env_list">
+             <widget class="QListWidget" name="uiListWidget_env_list">
               <property name="palette">
                <palette>
                 <active>
@@ -150,7 +150,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QPushButton" name="btn_autosearch">
+             <widget class="QPushButton" name="uiPushButton_autosearch">
               <property name="toolTip">
                <string>自动搜索常用安装位置中的 Python 目录并将路径添加到 Python 环境列表保存。</string>
               </property>
@@ -160,7 +160,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="btn_addmanully">
+             <widget class="QPushButton" name="uiPushButton_addmanully">
               <property name="toolTip">
                <string>手动将 Python 目录路径添加到本 Python 环境列表以便下次使用。</string>
               </property>
@@ -170,7 +170,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="btn_delselected">
+             <widget class="QPushButton" name="uiPushButton_delselected">
               <property name="toolTip">
                <string>将 Python 环境列表中的选中项移除(不会删除本机 Python 目录)。</string>
               </property>
@@ -183,7 +183,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="layoutWidget">
+        <widget class="QWidget" name="layoutWidget_1">
          <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,0">
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
@@ -216,7 +216,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QLineEdit" name="le_search_pkgs_kwd">
+               <widget class="QLineEdit" name="uiLineEdit_search_pkgs_kwd">
                 <property name="placeholderText">
                  <string>搜索</string>
                 </property>
@@ -228,7 +228,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableWidget" name="tw_installed_info">
+             <widget class="QTableWidget" name="uiTableWidget_installed_info">
               <property name="palette">
                <palette>
                 <active>
@@ -344,7 +344,7 @@
           <item>
            <layout class="QGridLayout" name="glo_table_btns">
             <item row="1" column="2">
-             <widget class="QPushButton" name="btn_upgrade_package">
+             <widget class="QPushButton" name="uiPushButton_upgrade_package">
               <property name="toolTip">
                <string>升级表格中被选中的包。
 注意，被选中的包如果没有新版本则不升级，支持多选。</string>
@@ -355,7 +355,7 @@
              </widget>
             </item>
             <item row="0" column="3">
-             <widget class="QPushButton" name="btn_check_for_updates">
+             <widget class="QPushButton" name="uiPushButton_check_for_updates">
               <property name="toolTip">
                <string>检查选中的 Python 环境中的所有模块的最新版本，有新版本则在&quot;最新版本&quot;列中显示版本号。</string>
               </property>
@@ -365,7 +365,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QPushButton" name="btn_install_package">
+             <widget class="QPushButton" name="uiPushButton_install_package">
               <property name="toolTip">
                <string>将输入的包名安装到选中的 Python 环境中。
 多个包名请用空格隔开，支持输入与 pip 命令 install 选项相同的参数。</string>
@@ -376,7 +376,7 @@
              </widget>
             </item>
             <item row="0" column="0">
-             <widget class="QLabel" name="lb_num_selected_items">
+             <widget class="QLabel" name="uiLabel_num_selected_items">
               <property name="font">
                <font>
                 <family>Microsoft YaHei UI</family>
@@ -386,7 +386,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QPushButton" name="btn_uninstall_package">
+             <widget class="QPushButton" name="uiPushButton_uninstall_package">
               <property name="toolTip">
                <string>将表格中选中的包卸载(仅从选中的 Python 环境中卸载)。
 注意，卸载时表格中的条目支持多选。</string>
@@ -406,7 +406,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="cb_check_uncheck_all">
+               <widget class="QCheckBox" name="uiCheckBox_check_uncheck_all">
                 <property name="text">
                  <string>全选</string>
                 </property>
@@ -422,7 +422,7 @@
              </widget>
             </item>
             <item row="1" column="3">
-             <widget class="QPushButton" name="btn_upgrade_all">
+             <widget class="QPushButton" name="uiPushButton_upgrade_all">
               <property name="toolTip">
                <string>升级表格中列出的所有显示有新版本的包。
 使用此功能前请先点击&quot;检查更新&quot;按钮以检查是否有新版本，再点击此按钮升级。</string>
@@ -444,7 +444,7 @@
          <number>4</number>
         </property>
         <item>
-         <widget class="QLabel" name="lb_loading_gif">
+         <widget class="QLabel" name="uiLabel_loading_gif">
           <property name="font">
            <font>
             <family>Microsoft YaHei UI</family>
@@ -457,7 +457,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="lb_loading_tip">
+         <widget class="QLabel" name="uiLabel_loading_tip">
           <property name="font">
            <font>
             <family>Microsoft YaHei UI</family>

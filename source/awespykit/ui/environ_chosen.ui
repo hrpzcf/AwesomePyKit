@@ -39,7 +39,7 @@
      <number>8</number>
     </property>
     <item>
-     <widget class="QListWidget" name="lw_environ_list"/>
+     <widget class="QListWidget" name="uiListWidget_environ_list"/>
     </item>
     <item>
      <widget class="QLabel" name="label">

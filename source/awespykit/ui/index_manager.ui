@@ -38,7 +38,7 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="9,1,1,1,1,1,1">
       <item>
-       <widget class="QListWidget" name="li_indexurls">
+       <widget class="QListWidget" name="uiListWidget_indexurls">
         <property name="palette">
          <palette>
           <active>
@@ -88,7 +88,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btn_delurl">
+         <widget class="QPushButton" name="uiPushButton_delete_url">
           <property name="toolTip">
            <string>删除列表中选中的镜像源地址。</string>
           </property>
@@ -118,7 +118,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="le_urlname"/>
+           <widget class="QLineEdit" name="uiLineEdit_url_name"/>
           </item>
          </layout>
         </item>
@@ -132,7 +132,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="le_indexurl"/>
+           <widget class="QLineEdit" name="uiLineEdit_index_url"/>
           </item>
          </layout>
         </item>
@@ -148,7 +148,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btn_clearle">
+         <widget class="QPushButton" name="uiPushButton_clear_edit">
           <property name="toolTip">
            <string>清空正在编辑的名称和地址输入框。</string>
           </property>
@@ -158,7 +158,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btn_saveurl">
+         <widget class="QPushButton" name="uiPushButton_save_url">
           <property name="toolTip">
            <string>将输入框内的名称和地址保存到列表。</string>
           </property>
@@ -168,7 +168,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btn_setindex">
+         <widget class="QPushButton" name="uiPushButton_set_index">
           <property name="palette">
            <palette>
             <active>
@@ -235,7 +235,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="btn_refresh_effective">
+           <widget class="QPushButton" name="uiPushButton_refresh_effective">
             <property name="toolTip">
              <string>获取当前生效的全局镜像源地址并显示。</string>
             </property>
@@ -247,7 +247,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QLineEdit" name="le_effectiveurl">
+         <widget class="QLineEdit" name="uiLineEdit_effective_url">
           <property name="readOnly">
            <bool>true</bool>
           </property>

@@ -41,13 +41,13 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.tab_build_control,
             self.tab_file_ver_info,
             self.tab_advanced_setup,
-            self.pb_select_py_env,
-            self.pb_reinstall_pyi,
-            self.cb_log_level,
-            self.le_output_name,
-            self.pb_check_imports,
-            self.pb_gen_executable,
-            self.cb_prioritize_venv,
+            self.uiPushButton_select_pyenv,
+            self.uiPushButton_reinstall_packtool,
+            self.uiComboBox_log_level,
+            self.uiLineEdit_output_name,
+            self.uiPushButton_check_imports,
+            self.uiPushButton_start_packing,
+            self.uiCheckBox_prioritize_venv,
             self.uiPushButton_apply_config,
             self.uiPushButton_delete_config,
             self.uiPushButton_save_config,
@@ -55,15 +55,15 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.uiPushButton_clear_data,
             self.uiPushButton_refresh_venv,
         )
-        self.le_vers_group = (
-            self.le_file_version_0,
-            self.le_file_version_1,
-            self.le_file_version_2,
-            self.le_file_version_3,
-            self.le_product_version_0,
-            self.le_product_version_1,
-            self.le_product_version_2,
-            self.le_product_version_3,
+        self.uiLineEdit_vers_group = (
+            self.uiLineEdit_file_version_0,
+            self.uiLineEdit_file_version_1,
+            self.uiLineEdit_file_version_2,
+            self.uiLineEdit_file_version_3,
+            self.uiLineEdit_product_version_0,
+            self.uiLineEdit_product_version_1,
+            self.uiLineEdit_product_version_2,
+            self.uiLineEdit_product_version_3,
         )
         self.config = PyinstallerToolConfig()
         self.__setup_other_widgets()
@@ -112,40 +112,44 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def __setup_other_widgets(self):
         # 替换“程序启动入口”LineEdit控件
-        self.le_program_entry = LineEdit(Accept.File, {".py", ".pyc", ".pyw", ".spec"})
-        self.le_program_entry.setToolTip(
+        self.uiLineEdit_program_entry = LineEdit(
+            Accept.File, {".py", ".pyc", ".pyw", ".spec"}
+        )
+        self.uiLineEdit_program_entry.setToolTip(
             "要打包的程序的启动入口(*.py *.pyw *.pyc *.spec)，此项必填。\n"
             "如果指定了 SPEC 文件，则以下绝大部分项目文件及生成控制都将不生效。\n"
             "可将格式正确的文件拖放到此处。"
         )
         self.horizontalLayout_3.replaceWidget(
-            self.le_program_entry_old, self.le_program_entry
+            self.uiLineEdit_program_entry_old, self.uiLineEdit_program_entry
         )
-        self.le_program_entry_old.deleteLater()
+        self.uiLineEdit_program_entry_old.deleteLater()
         # 替换“其他模块搜索路径”TextEdit控件
-        self.te_module_search_path = TextEdit(Accept.Dir)
-        self.te_module_search_path.setToolTip(
+        self.uiTextEdit_module_search_path = TextEdit(Accept.Dir)
+        self.uiTextEdit_module_search_path.setToolTip(
             "对应选项：-p, --paths\n程序的其他模块的搜索路径(模块的父目录)，此项可留空。\n"
             "仅当 Pyinstaller 无法自动找到模块时使用，支持将文件夹直接拖放到此处。"
         )
         self.verticalLayout_3.replaceWidget(
-            self.te_module_search_path_old, self.te_module_search_path
+            self.uiTextEdit_module_search_path_old, self.uiTextEdit_module_search_path
         )
-        self.te_module_search_path_old.deleteLater()
+        self.uiTextEdit_module_search_path_old.deleteLater()
         # 替换“非源代码资源文件”LineEdit控件
-        self.te_other_data = TextEdit(Accept.File)
-        self.te_other_data.setToolTip(
+        self.uiTextEdit_other_data = TextEdit(Accept.File)
+        self.uiTextEdit_other_data.setToolTip(
             "对应选项：--add-data\n非源代码性质的其他资源文件，例如一些图片、配置文件等，"
             "此项可留空。\n注意：资源文件需是打包前程序真正使用的资源且在源代码根目录范围内，"
             "否则打包后程序可能无法运行。可将文件或者文件夹直接拖到此处。"
         )
-        self.verticalLayout_4.replaceWidget(self.te_other_data_old, self.te_other_data)
-        self.te_other_data_old.deleteLater()
+        self.verticalLayout_4.replaceWidget(
+            self.uiTextEdit_other_data_old, self.uiTextEdit_other_data
+        )
+        self.uiTextEdit_other_data_old.deleteLater()
         # 替换“文件图标路径”LineEdit控件
-        self.le_file_icon_path = LineEdit(
+        self.uiLineEdit_file_icon_path = LineEdit(
             Accept.File, {".ico", ".png", ".jpg", ".jpeg", ".icns", ".exe"}
         )
-        self.le_file_icon_path.setToolTip(
+        self.uiLineEdit_file_icon_path.setToolTip(
             "对应选项：-i, --icon\n生成的 exe 可执行文件使用的图标，支持 .ico 等格式。\n"
             "注意：如果选择 .png、.jpg、.jpeg 格式的图片，则需在打包环境中安装 Pillow 用于转换格式，"
             "否则打包失败。\n如果选择的是 .exe 文件，选择后需要在文件路径后加上[英文逗号和图标ID]，"
@@ -153,49 +157,67 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             "其他格式图标的支持因 Pyinstaller 版本而异，可以将格式正确的文件直接拖放到此处。"
         )
         self.horizontalLayout_11.replaceWidget(
-            self.le_file_icon_path_old, self.le_file_icon_path
+            self.uiLineEdit_file_icon_path_old, self.uiLineEdit_file_icon_path
         )
-        self.le_file_icon_path_old.deleteLater()
-        for line_edit in self.le_vers_group:
+        self.uiLineEdit_file_icon_path_old.deleteLater()
+        for line_edit in self.uiLineEdit_vers_group:
             line_edit.setValidator(self.QREV_NUMBER)
-        self.le_output_name.setValidator(self.QREV_FNAME)
-        self.le_runtime_tmpdir.setValidator(self.QREV_FNAME)
+        self.uiLineEdit_output_name.setValidator(self.QREV_FNAME)
+        self.uiLineEdit_runtime_tmpdir.setValidator(self.QREV_FNAME)
         self.splitter.setSizes((10000, 10000))
 
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.after_task_completed)
-        self.pyi_tool.stdout.connect(self.te_pyi_out_stream.append)
-        self.pb_select_py_env.clicked.connect(self.__envch_win.initialize)
+        self.pyi_tool.stdout.connect(self.uiTextEdit_packtool_logging.append)
+        self.uiPushButton_select_pyenv.clicked.connect(self.__envch_win.initialize)
         self.uiPushButton_create_venv.clicked.connect(lambda: self.check_createvenv())
         self.uiPushButton_refresh_venv.clicked.connect(self.refresh_virtualenv_info)
-        self.le_program_entry.textChanged.connect(self.set_uilineedit_roots)
-        self.pb_select_module_search_path.clicked.connect(
+        self.uiLineEdit_program_entry.textChanged.connect(self.set_uilineedit_roots)
+        self.uiPushButton_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
         )
-        self.pb_select_program_entry.clicked.connect(self.set_le_program_entry)
-        self.pb_up_level_root.clicked.connect(lambda: self.project_root_level(1))
-        self.pb_reset_root_level.clicked.connect(lambda: self.project_root_level(0))
-        self.pb_clear_module_search_path.clicked.connect(
-            self.te_module_search_path.clear
+        self.uiPushButton_select_program_entry.clicked.connect(
+            self.set_le_program_entry
         )
-        self.pb_select_other_data.clicked.connect(self.set_te_other_data)
-        self.pb_clear_other_data.clicked.connect(self.te_other_data.clear)
-        self.pb_select_file_icon.clicked.connect(self.set_le_file_icon_path)
-        self.pb_select_spec_dir.clicked.connect(self.set_le_spec_dir)
-        self.pb_select_temp_working_dir.clicked.connect(self.set_le_temp_working_dir)
-        self.pb_select_output_dir.clicked.connect(self.set_le_output_dir)
-        self.pb_select_upx_search_path.clicked.connect(self.set_le_upx_search_path)
-        self.pb_gen_executable.clicked.connect(self.build_executable)
-        self.pb_reinstall_pyi.clicked.connect(self.reinstall_pyinstaller)
-        self.pb_check_imports.clicked.connect(self.check_project_imports)
-        self.pb_clear_hidden_imports.clicked.connect(self.pte_hidden_imports.clear)
-        self.pb_clear_exclude_module.clicked.connect(self.pte_exclude_modules.clear)
+        self.uiPushButton_up_level_root.clicked.connect(
+            lambda: self.project_root_level(1)
+        )
+        self.uiPushButton_reset_root_level.clicked.connect(
+            lambda: self.project_root_level(0)
+        )
+        self.uiPushButton_clear_module_search_path.clicked.connect(
+            self.uiTextEdit_module_search_path.clear
+        )
+        self.uiPushButton_select_other_data.clicked.connect(self.set_te_other_data)
+        self.uiPushButton_clear_other_data.clicked.connect(
+            self.uiTextEdit_other_data.clear
+        )
+        self.uiPushButton_select_file_icon.clicked.connect(self.set_le_file_icon_path)
+        self.uiPushButton_select_spec_dir.clicked.connect(self.set_le_spec_dir)
+        self.uiPushButton_select_temp_working_dir.clicked.connect(
+            self.set_le_temp_working_dir
+        )
+        self.uiPushButton_select_output_dir.clicked.connect(self.set_le_output_dir)
+        self.uiPushButton_select_upx_search_path.clicked.connect(
+            self.set_le_upx_search_path
+        )
+        self.uiPushButton_start_packing.clicked.connect(self.build_executable)
+        self.uiPushButton_reinstall_packtool.clicked.connect(self.reinstall_pyinstaller)
+        self.uiPushButton_check_imports.clicked.connect(self.check_project_imports)
+        self.uiPushButton_clear_hidden_imports.clicked.connect(
+            self.uiPlainTextEdit_hidden_imports.clear
+        )
+        self.uiPushButton_clear_exclude_module.clicked.connect(
+            self.uiPlainTextEdit_exclude_modules.clear
+        )
         self.uiPushButton_save_config.clicked.connect(self.store_current_config)
         self.uiPushButton_apply_config.clicked.connect(self.apply_selected_config)
         self.uiPushButton_delete_config.clicked.connect(self.delete_selected_config)
-        self.signal_update_pyinfo.connect(self.lb_py_info.setText)
-        self.signal_update_packtoolinfo.connect(self.lb_pyi_info.setText)
-        self.signal_update_ptpbtext.connect(self.pb_reinstall_pyi.setText)
+        self.signal_update_pyinfo.connect(self.uiLabel_python_info.setText)
+        self.signal_update_packtoolinfo.connect(self.uiLabel_packtool_info.setText)
+        self.signal_update_ptpbtext.connect(
+            self.uiPushButton_reinstall_packtool.setText
+        )
         self.signal_update_venv_pyinfo.connect(self.uiLabel_venv_info.setText)
         self.uiLineEdit_config_remark.textChanged.connect(
             self.lineedit_remark_textchanged
@@ -204,8 +226,10 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.listwidget_savedconfig_clicked
         )
         self.uiPushButton_clear_data.clicked.connect(self.clear_packing_data)
-        self.cb_prioritize_venv.clicked.connect(self.refresh_virtualenv_info)
-        self.uiPushButton_clear_log.clicked.connect(self.te_pyi_out_stream.clear)
+        self.uiCheckBox_prioritize_venv.clicked.connect(self.refresh_virtualenv_info)
+        self.uiPushButton_clear_log.clicked.connect(
+            self.uiTextEdit_packtool_logging.clear
+        )
 
     def refresh_virtualenv_info(self):
         self.config_widgets_to_cfg()
@@ -297,11 +321,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )[0]
         if not selected_file:
             return
-        self.le_program_entry.setText(selected_file)
+        self.uiLineEdit_program_entry.setText(selected_file)
 
     def set_uilineedit_roots(self):
-        root = os.path.dirname(self.le_program_entry.text())
-        self.le_project_root.setText(root)
+        root = os.path.dirname(self.uiLineEdit_program_entry.text())
+        self.uiLineEdit_project_root.setText(root)
         self.uiLineEdit_program_root.setText(root)
 
     def set_te_module_search_path(self):
@@ -310,7 +334,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )[0]
         if not selected_dir:
             return
-        self.te_module_search_path.append(selected_dir)
+        self.uiTextEdit_module_search_path.append(selected_dir)
 
     def set_te_other_data(self):
         selected_files = self.__ask_file_or_dir_path(
@@ -318,7 +342,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )
         if not selected_files:
             return
-        self.te_other_data.append("\n".join(selected_files))
+        self.uiTextEdit_other_data.append("\n".join(selected_files))
 
     def set_le_file_icon_path(self):
         selected_file = self.__ask_file_or_dir_path(
@@ -328,7 +352,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )[0]
         if not selected_file:
             return
-        self.le_file_icon_path.setText(selected_file)
+        self.uiLineEdit_file_icon_path.setText(selected_file)
 
     def set_le_spec_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
@@ -336,7 +360,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )[0]
         if not selected_dir:
             return
-        self.le_spec_dir.setText(selected_dir)
+        self.uiLineEdit_spec_dir.setText(selected_dir)
 
     def set_le_temp_working_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
@@ -344,7 +368,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )[0]
         if not selected_dir:
             return
-        self.le_temp_working_dir.setText(selected_dir)
+        self.uiLineEdit_temp_working_dir.setText(selected_dir)
 
     def set_le_output_dir(self):
         selected_dir = self.__ask_file_or_dir_path(
@@ -352,7 +376,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )[0]
         if not selected_dir:
             return
-        self.le_output_dir.setText(selected_dir)
+        self.uiLineEdit_output_dir.setText(selected_dir)
 
     def set_le_upx_search_path(self):
         selected_dir = self.__ask_file_or_dir_path(
@@ -360,7 +384,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         )[0]
         if not selected_dir:
             return
-        self.le_upx_search_path.setText(selected_dir)
+        self.uiLineEdit_upx_search_path.setText(selected_dir)
 
     def __ask_file_or_dir_path(
         self, title="", start="", ch=Accept.File, multi=False, ext_filter="所有文件 (*)"
@@ -410,90 +434,124 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if cfg_name is not None:
             self.config.checkout_cfg(cfg_name)
         self.load_version_information_lazily(True, True)
-        self.le_program_entry.setText(self.config.current.script_path)
+        self.uiLineEdit_program_entry.setText(self.config.current.script_path)
         self.uiLineEdit_program_root.setText(self.config.current.program_root)
-        self.le_project_root.setText(self.config.current.project_root)
-        self.te_module_search_path.setText("\n".join(self.config.current.module_paths))
-        self.te_other_data.setText(
+        self.uiLineEdit_project_root.setText(self.config.current.project_root)
+        self.uiTextEdit_module_search_path.setText(
+            "\n".join(self.config.current.module_paths)
+        )
+        self.uiTextEdit_other_data.setText(
             "\n".join(pg[0] for pg in self.config.current.other_datas)
         )
-        self.le_file_icon_path.setText(self.config.current.icon_path)
+        self.uiLineEdit_file_icon_path.setText(self.config.current.icon_path)
         if self.config.current.onedir_bundle:
-            self.rb_pack_to_one_dir.setChecked(True)
+            self.uiRadioButton_pack_to_one_dir.setChecked(True)
         else:
-            self.rb_pack_to_one_file.setChecked(True)
-        self.cb_execute_with_console.setChecked(self.config.current.provide_console)
-        self.cb_without_confirm.setChecked(self.config.current.no_confirm)
-        self.cb_use_upx.setChecked(not self.config.current.donot_use_upx)
-        self.cb_clean_before_build.setChecked(self.config.current.clean_building)
-        self.cb_write_info_to_exec.setChecked(self.config.current.add_verfile)
-        self.le_temp_working_dir.setText(self.config.current.working_dir)
-        self.le_output_dir.setText(self.config.current.distribution_dir)
-        self.le_spec_dir.setText(self.config.current.spec_dir)
-        self.le_upx_search_path.setText(self.config.current.upx_dir)
-        self.te_upx_exclude_files.setText("\n".join(self.config.current.upx_excludes))
-        self.le_output_name.setText(self.config.current.bundle_spec_name)
-        self.cb_log_level.setCurrentText(self.config.current.log_level)
+            self.uiRadioButton_pack_to_one_file.setChecked(True)
+        self.uiCheckBox_execute_with_console.setChecked(
+            self.config.current.provide_console
+        )
+        self.uiCheckBox_without_confirm.setChecked(self.config.current.no_confirm)
+        self.uiCheckBox_use_upx.setChecked(not self.config.current.donot_use_upx)
+        self.uiCheckBox_clean_before_build.setChecked(
+            self.config.current.clean_building
+        )
+        self.uiCheckBox_write_info_to_exec.setChecked(self.config.current.add_verfile)
+        self.uiLineEdit_temp_working_dir.setText(self.config.current.working_dir)
+        self.uiLineEdit_output_dir.setText(self.config.current.distribution_dir)
+        self.uiLineEdit_spec_dir.setText(self.config.current.spec_dir)
+        self.uiLineEdit_upx_search_path.setText(self.config.current.upx_dir)
+        self.uiTextEdit_upx_exclude_files.setText(
+            "\n".join(self.config.current.upx_excludes)
+        )
+        self.uiLineEdit_output_name.setText(self.config.current.bundle_spec_name)
+        self.uiComboBox_log_level.setCurrentText(self.config.current.log_level)
         self.set_file_ver_info_text()
         self.set_pyi_debug_options()
-        self.le_runtime_tmpdir.setText(self.config.current.runtime_tmpdir)
-        self.cb_prioritize_venv.setChecked(self.config.current.prioritize_venv)
-        self.le_bytecode_encryption_key.setText(self.config.current.encryption_key)
-        self.cb_explorer_show.setChecked(self.config.current.open_dist_folder)
-        self.cb_delete_working_dir.setChecked(self.config.current.delete_working_dir)
-        self.cb_delete_spec_file.setChecked(self.config.current.delete_spec_file)
-        self.pte_hidden_imports.setPlainText(
+        self.uiLineEdit_runtime_tmpdir.setText(self.config.current.runtime_tmpdir)
+        self.uiCheckBox_prioritize_venv.setChecked(self.config.current.prioritize_venv)
+        self.uiLineEdit_bytecode_encryption_key.setText(
+            self.config.current.encryption_key
+        )
+        self.uiCheckBox_explorer_show.setChecked(self.config.current.open_dist_folder)
+        self.uiCheckBox_delete_working_dir.setChecked(
+            self.config.current.delete_working_dir
+        )
+        self.uiCheckBox_delete_spec_file.setChecked(
+            self.config.current.delete_spec_file
+        )
+        self.uiPlainTextEdit_hidden_imports.setPlainText(
             "\n".join(self.config.current.hidden_imports)
         )
-        self.pte_exclude_modules.setPlainText(
+        self.uiPlainTextEdit_exclude_modules.setPlainText(
             "\n".join(self.config.current.exclude_modules)
         )
-        self.cb_uac_admin.setChecked(self.config.current.uac_admin)
+        self.uiCheckBox_uac_admin.setChecked(self.config.current.uac_admin)
 
     def config_widgets_to_cfg(self):
-        self.config.current.script_path = self.le_program_entry.local_path
-        self.config.current.bundle_spec_name = self.le_output_name.text()
+        self.config.current.script_path = self.uiLineEdit_program_entry.local_path
+        self.config.current.bundle_spec_name = self.uiLineEdit_output_name.text()
         program_root = self.uiLineEdit_program_root.text()
         self.config.current.program_root = program_root
-        self.config.current.project_root = self.le_project_root.text()
-        self.config.current.module_paths = self.te_module_search_path.local_paths
+        self.config.current.project_root = self.uiLineEdit_project_root.text()
+        self.config.current.module_paths = (
+            self.uiTextEdit_module_search_path.local_paths
+        )
         self.config.current.other_datas = self.__gen_absrel_groups(program_root)
-        self.config.current.icon_path = self.le_file_icon_path.local_path
-        self.config.current.onedir_bundle = self.rb_pack_to_one_dir.isChecked()
-        self.config.current.provide_console = self.cb_execute_with_console.isChecked()
-        self.config.current.no_confirm = self.cb_without_confirm.isChecked()
-        self.config.current.donot_use_upx = not self.cb_use_upx.isChecked()
-        self.config.current.clean_building = self.cb_clean_before_build.isChecked()
-        self.config.current.add_verfile = self.cb_write_info_to_exec.isChecked()
-        self.config.current.working_dir = self.le_temp_working_dir.text()
-        self.config.current.distribution_dir = self.le_output_dir.text()
-        self.config.current.spec_dir = self.le_spec_dir.text()
-        self.config.current.upx_dir = self.le_upx_search_path.text()
+        self.config.current.icon_path = self.uiLineEdit_file_icon_path.local_path
+        self.config.current.onedir_bundle = (
+            self.uiRadioButton_pack_to_one_dir.isChecked()
+        )
+        self.config.current.provide_console = (
+            self.uiCheckBox_execute_with_console.isChecked()
+        )
+        self.config.current.no_confirm = self.uiCheckBox_without_confirm.isChecked()
+        self.config.current.donot_use_upx = not self.uiCheckBox_use_upx.isChecked()
+        self.config.current.clean_building = (
+            self.uiCheckBox_clean_before_build.isChecked()
+        )
+        self.config.current.add_verfile = self.uiCheckBox_write_info_to_exec.isChecked()
+        self.config.current.working_dir = self.uiLineEdit_temp_working_dir.text()
+        self.config.current.distribution_dir = self.uiLineEdit_output_dir.text()
+        self.config.current.spec_dir = self.uiLineEdit_spec_dir.text()
+        self.config.current.upx_dir = self.uiLineEdit_upx_search_path.text()
         self.config.current.upx_excludes = [
-            s for s in self.te_upx_exclude_files.toPlainText().split("\n") if s
+            s for s in self.uiTextEdit_upx_exclude_files.toPlainText().split("\n") if s
         ]
         if self.main_environ is not None:
             self.config.current.environ_path = self.main_environ.env_path
-        self.config.current.log_level = self.cb_log_level.currentText()
+        self.config.current.log_level = self.uiComboBox_log_level.currentText()
         self.config.current.version_info = self.file_ver_info_text()
         self.config.current.debug_options = self.get_pyi_debug_options()
-        self.config.current.runtime_tmpdir = self.le_runtime_tmpdir.text()
-        self.config.current.prioritize_venv = self.cb_prioritize_venv.isChecked()
-        self.config.current.encryption_key = self.le_bytecode_encryption_key.text()
-        self.config.current.open_dist_folder = self.cb_explorer_show.isChecked()
-        self.config.current.delete_working_dir = self.cb_delete_working_dir.isChecked()
-        self.config.current.delete_spec_file = self.cb_delete_spec_file.isChecked()
-        self.config.current.uac_admin = self.cb_uac_admin.isChecked()
+        self.config.current.runtime_tmpdir = self.uiLineEdit_runtime_tmpdir.text()
+        self.config.current.prioritize_venv = (
+            self.uiCheckBox_prioritize_venv.isChecked()
+        )
+        self.config.current.encryption_key = (
+            self.uiLineEdit_bytecode_encryption_key.text()
+        )
+        self.config.current.open_dist_folder = self.uiCheckBox_explorer_show.isChecked()
+        self.config.current.delete_working_dir = (
+            self.uiCheckBox_delete_working_dir.isChecked()
+        )
+        self.config.current.delete_spec_file = (
+            self.uiCheckBox_delete_spec_file.isChecked()
+        )
+        self.config.current.uac_admin = self.uiCheckBox_uac_admin.isChecked()
         self.config.current.hidden_imports = [
-            s for s in self.pte_hidden_imports.toPlainText().split("\n") if s
+            s
+            for s in self.uiPlainTextEdit_hidden_imports.toPlainText().split("\n")
+            if s
         ]
         self.config.current.exclude_modules = [
-            s for s in self.pte_exclude_modules.toPlainText().split("\n") if s
+            s
+            for s in self.uiPlainTextEdit_exclude_modules.toPlainText().split("\n")
+            if s
         ]
 
     def __gen_absrel_groups(self, starting_point):
         """获取其他要打包的文件的本地路径和与源代码根目录的相对位置。"""
-        other_data_local_paths = self.te_other_data.local_paths
+        other_data_local_paths = self.uiTextEdit_other_data.local_paths
         abs_rel_path_groups = []
         for abs_path in other_data_local_paths:
             try:
@@ -505,52 +563,60 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def get_pyi_debug_options(self):
         return {
-            "imports": self.cb_db_imports.isChecked(),
-            "bootloader": self.cb_db_bootloader.isChecked(),
-            "noarchive": self.cb_db_noarchive.isChecked(),
+            "imports": self.uiCheckBox_db_imports.isChecked(),
+            "bootloader": self.uiCheckBox_db_bootloader.isChecked(),
+            "noarchive": self.uiCheckBox_db_noarchive.isChecked(),
         }
 
     def set_pyi_debug_options(self):
         dbo = self.config.current.debug_options
-        self.cb_db_imports.setChecked(dbo.get("imports", False))
-        self.cb_db_bootloader.setChecked(dbo.get("bootloader", False))
-        self.cb_db_noarchive.setChecked(dbo.get("noarchive", False))
+        self.uiCheckBox_db_imports.setChecked(dbo.get("imports", False))
+        self.uiCheckBox_db_bootloader.setChecked(dbo.get("bootloader", False))
+        self.uiCheckBox_db_noarchive.setChecked(dbo.get("noarchive", False))
 
     def file_ver_info_text(self):
-        file_vers = tuple(int(x.text() or 0) for x in self.le_vers_group[:4])
-        prod_vers = tuple(int(x.text() or 0) for x in self.le_vers_group[4:])
+        file_vers = tuple(int(x.text() or 0) for x in self.uiLineEdit_vers_group[:4])
+        prod_vers = tuple(int(x.text() or 0) for x in self.uiLineEdit_vers_group[4:])
         return {
             "$filevers$": str(file_vers),
             "$prodvers$": str(prod_vers),
-            "$CompanyName$": self.le_company_name.text(),
-            "$FileDescription$": self.le_file_description.text(),
+            "$CompanyName$": self.uiLineEdit_company_name.text(),
+            "$FileDescription$": self.uiLineEdit_file_description.text(),
             "$FileVersion$": ".".join(map(str, file_vers)),
-            "$LegalCopyright$": self.le_legal_copyright.text(),
-            "$OriginalFilename$": self.le_original_filename.text(),
-            "$ProductName$": self.le_product_name.text(),
+            "$LegalCopyright$": self.uiLineEdit_legal_copyright.text(),
+            "$OriginalFilename$": self.uiLineEdit_original_filename.text(),
+            "$ProductName$": self.uiLineEdit_product_name.text(),
             "$ProductVersion$": ".".join(map(str, prod_vers)),
-            "$LegalTrademarks$": self.le_legal_trademarks.text(),
+            "$LegalTrademarks$": self.uiLineEdit_legal_trademarks.text(),
         }
 
     def set_file_ver_info_text(self):
         version_info = self.config.current.version_info
-        self.le_file_description.setText(version_info.get("$FileDescription$", ""))
-        self.le_company_name.setText(version_info.get("$CompanyName$", ""))
+        self.uiLineEdit_file_description.setText(
+            version_info.get("$FileDescription$", "")
+        )
+        self.uiLineEdit_company_name.setText(version_info.get("$CompanyName$", ""))
         for ind, val in enumerate(
             version_info.get("$FileVersion$", "0.0.0.0").split(".")
         ):
-            self.le_vers_group[ind].setText(val)
-        self.le_product_name.setText(version_info.get("$ProductName$", ""))
+            self.uiLineEdit_vers_group[ind].setText(val)
+        self.uiLineEdit_product_name.setText(version_info.get("$ProductName$", ""))
         for ind, val in enumerate(
             version_info.get("$ProductVersion$", "0.0.0.0").split(".")
         ):
-            self.le_vers_group[ind + 4].setText(val)
-        self.le_legal_copyright.setText(version_info.get("$LegalCopyright$", ""))
-        self.le_legal_trademarks.setText(version_info.get("$LegalTrademarks$", ""))
-        self.le_original_filename.setText(version_info.get("$OriginalFilename$", ""))
+            self.uiLineEdit_vers_group[ind + 4].setText(val)
+        self.uiLineEdit_legal_copyright.setText(
+            version_info.get("$LegalCopyright$", "")
+        )
+        self.uiLineEdit_legal_trademarks.setText(
+            version_info.get("$LegalTrademarks$", "")
+        )
+        self.uiLineEdit_original_filename.setText(
+            version_info.get("$OriginalFilename$", "")
+        )
 
     def reinstall_pyinstaller(self):
-        if self.cb_prioritize_venv.isChecked():
+        if self.uiCheckBox_prioritize_venv.isChecked():
             message = "虚拟环境"
             operating_environment = self.virt_environ
         else:
@@ -589,22 +655,22 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.thread_repo.put(thread_reinstall, 0)
 
     def set_platform_info(self):
-        self.lb_platform_info.setText(f"{platform()}-{machine()}")
+        self.uiLabel_platform_info.setText(f"{platform()}-{machine()}")
 
     def project_root_level(self, option):
         """option: 0 表示重置为初始路径，1 表示设为上一级"""
         assert option in (0, 1)
-        root = self.le_project_root.text()
+        root = self.uiLineEdit_project_root.text()
         if not root:
             return
         if option == 1:
             _path = os.path.dirname(root)
         else:
-            origin = self.le_program_entry.text()
+            origin = self.uiLineEdit_program_entry.text()
             if not origin:
                 return
             _path = os.path.dirname(origin)
-        self.le_project_root.setText(_path)
+        self.uiLineEdit_project_root.setText(_path)
 
     def __check_requireds(self):
         self.config_widgets_to_cfg()
@@ -648,14 +714,14 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         return True
 
     def __show_running(self, msg):
-        self.lb_running_tip.setText(msg)
-        self.lb_running_gif.setMovie(self.pyi_running_mov)
+        self.uiLabel_running_tip.setText(msg)
+        self.uiLabel_running_gif.setMovie(self.pyi_running_mov)
         self.pyi_running_mov.start()
 
     def __hide_running(self):
         self.pyi_running_mov.stop()
-        self.lb_running_gif.clear()
-        self.lb_running_tip.clear()
+        self.uiLabel_running_gif.clear()
+        self.uiLabel_running_tip.clear()
 
     def __lock_widgets(self):
         for widget in self.widgets_group_Enabled:
@@ -686,7 +752,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def open_explorer_select_file(self):
         program_name = self.__get_program_name()
-        if self.rb_pack_to_one_file.isChecked():
+        if self.uiRadioButton_pack_to_one_file.isChecked():
             sub_directory = ""
         else:
             sub_directory = program_name
@@ -736,11 +802,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
 
     def after_task_completed(self, retcode):
         if retcode == 0:
-            if self.cb_explorer_show.isChecked():
+            if self.uiCheckBox_explorer_show.isChecked():
                 self.open_explorer_select_file()
-            if self.cb_delete_spec_file.isChecked():
+            if self.uiCheckBox_delete_spec_file.isChecked():
                 self.delete_spec_file()
-            if self.cb_delete_working_dir.isChecked():
+            if self.uiCheckBox_delete_working_dir.isChecked():
                 self.delete_working_dir()
             MessageBox(
                 "任务结束",
@@ -824,7 +890,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             if result != 0:
                 return
         self.uiListWidget_saved_config.setCurrentRow(-1)
-        self.te_pyi_out_stream.clear()
+        self.uiTextEdit_packtool_logging.clear()
         if self.config.current.prioritize_venv:
             self.virt_environ = VtEnv(self.config.current.project_root)
             self.__creating_venv_result = 0
@@ -1016,7 +1082,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             if refresh_venv:
                 self.virt_environ = VtEnv(self.config.current.project_root)
                 self.virt_environ.find_venv()
-            if self.cb_prioritize_venv.isChecked():
+            if self.uiCheckBox_prioritize_venv.isChecked():
                 ptool_side = "虚拟环境"
                 ptool_env = self.virt_environ
             else:
@@ -1042,7 +1108,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                     button_text = "安装"
                 else:
                     button_text = "重新安装"
-            self.__enabled_exception[self.pb_reinstall_pyi] = btn_install
+            self.__enabled_exception[self.uiPushButton_reinstall_packtool] = btn_install
             packtool_info = self.PYIVER_FMT.format(packtool_info, ptool_side)
             if self.main_environ is None or not self.main_environ.env_path:
                 python_info = ""
@@ -1072,15 +1138,15 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self.__envlist = None
         self.__call_back = callback
-        self.lw_environ_list.clicked.connect(self.__call_environ_back)
+        self.uiListWidget_environ_list.clicked.connect(self.__call_environ_back)
 
     def __env_list_update(self):
-        self.lw_environ_list.clear()
+        self.uiListWidget_environ_list.clear()
         row_size = QSize(0, 28)
         for env in self.__envlist:
             item = QListWidgetItem(QIcon(":/python.png"), str(env))
             item.setSizeHint(row_size)
-            self.lw_environ_list.addItem(item)
+            self.uiListWidget_environ_list.addItem(item)
 
     def __save_window_size(self):
         if self.isMaximized() or self.isMinimized():
@@ -1096,7 +1162,7 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
 
     def __call_environ_back(self):
         self.close()
-        selected = self.lw_environ_list.currentRow()
+        selected = self.uiListWidget_environ_list.currentRow()
         if selected != -1:
             self.__call_back(self.__envlist[selected])
 
@@ -1114,18 +1180,18 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):
         self.setupUi(self)
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self.__setup_other_widgets()
-        self.pb_confirm.clicked.connect(self.close)
-        self.pb_install_all_missing.clicked.connect(self.__call_install_back)
+        self.uiPushButton_confirm.clicked.connect(self.close)
+        self.uiPushButton_install_missings.clicked.connect(self.__call_install_back)
         self.__missing_modules = None
         self.__call_install = call_install
 
     def __setup_other_widgets(self):
-        self.tw_missing_imports.setColumnWidth(0, 260)
-        self.tw_missing_imports.setColumnWidth(1, 360)
-        self.tw_missing_imports.horizontalHeader().setSectionResizeMode(
+        self.uiTableWidget_missing_imports.setColumnWidth(0, 260)
+        self.uiTableWidget_missing_imports.setColumnWidth(1, 360)
+        self.uiTableWidget_missing_imports.horizontalHeader().setSectionResizeMode(
             QHeaderView.Interactive
         )
-        self.tw_missing_imports.horizontalHeader().setSectionResizeMode(
+        self.uiTableWidget_missing_imports.horizontalHeader().setSectionResizeMode(
             2, QHeaderView.Stretch
         )
 
@@ -1156,18 +1222,18 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):
         missings_list: [(filepath, {imps...}, {missings...})...]
         """
         if environ:
-            self.le_cip_cur_env.setText(str(environ))
+            self.uiLineEdit_current_env.setText(str(environ))
         self.__missing_modules = set()
         for *_, m in missings_list:
             self.__missing_modules.update(m)
-        self.tw_missing_imports.clearContents()
-        self.tw_missing_imports.setRowCount(len(missings_list))
+        self.uiTableWidget_missing_imports.clearContents()
+        self.uiTableWidget_missing_imports.setRowCount(len(missings_list))
         for index, value in enumerate(missings_list):
             # value[0] 即 filepath 为 None，依
             # ImportInspector.missing_items 返回值特点可知没有可以打开的文件
             if value[0] is None:
                 break
-            self.tw_missing_imports.setVerticalHeaderItem(
+            self.uiTableWidget_missing_imports.setVerticalHeaderItem(
                 index, QTableWidgetItem(f" {index + 1} ")
             )
             item1 = QTableWidgetItem(os.path.basename(value[0]))
@@ -1176,7 +1242,7 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):
             item1.setToolTip(value[0])
             item2.setToolTip("\n".join(value[1]))
             item3.setToolTip("\n".join(value[2]))
-            self.tw_missing_imports.setItem(index, 0, item1)
-            self.tw_missing_imports.setItem(index, 1, item2)
-            self.tw_missing_imports.setItem(index, 2, item3)
+            self.uiTableWidget_missing_imports.setItem(index, 0, item1)
+            self.uiTableWidget_missing_imports.setItem(index, 1, item2)
+            self.uiTableWidget_missing_imports.setItem(index, 2, item3)
         self.display_window()

@@ -31,29 +31,31 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.thread_repo = ThreadRepo(500)
 
     def signal_slot_connection(self):
-        self.cb_use_index_url.clicked.connect(self.change_le_index_url)
-        self.pb_load_from_text.clicked.connect(self.names_from_file)
-        self.pb_save_as_text.clicked.connect(self.save_names_to_file)
-        self.pb_save_to.clicked.connect(self.select_saved_dir)
-        self.pb_clear_package_names.clicked.connect(self.pte_package_names.clear)
-        self.pb_start_download.clicked.connect(self.start_download_package)
+        self.uiCheckBox_use_index_url.clicked.connect(self.change_le_index_url)
+        self.uiPushButton_load_from_text.clicked.connect(self.names_from_file)
+        self.uiPushButton_save_as_text.clicked.connect(self.save_names_to_file)
+        self.uiPushButton_save_to.clicked.connect(self.select_saved_dir)
+        self.uiPushButton_clear_package_names.clicked.connect(
+            self.uiPlainTextEdit_package_names.clear
+        )
+        self.uiPushButton_start_download.clicked.connect(self.start_download_package)
         self.download_completed.connect(self.check_download)
-        self.pb_show_dl_list.clicked.connect(self.__showdl_win.display)
+        self.uiPushButton_show_dllist.clicked.connect(self.__showdl_win.display)
         self.download_status.connect(self.__showdl_win.status_changed)
         self.set_download_table.connect(self.__showdl_win.setup_table)
 
     def change_le_index_url(self):
-        self.le_index_url.setEnabled(self.cb_use_index_url.isChecked())
+        self.uiLineEdit_index_url.setEnabled(self.uiCheckBox_use_index_url.isChecked())
 
     def names_from_file(self):
         text, _path = self.load_from_text(self.last_path)
         if _path:
             self.last_path = _path
         if text:
-            self.pte_package_names.setPlainText(text)
+            self.uiPlainTextEdit_package_names.setPlainText(text)
 
     def save_names_to_file(self):
-        data = self.pte_package_names.toPlainText()
+        data = self.uiPlainTextEdit_package_names.toPlainText()
         _path = self.save_as_text_file(data, self.last_path)
         if _path:
             self.last_path = _path
@@ -62,7 +64,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         dir_path = self.get_dir_path(self.last_path)
         if dir_path:
             self.last_path = dir_path
-            self.le_save_to.setText(dir_path)
+            self.uiLineEdit_save_to.setText(dir_path)
 
     def __store_window_size(self):
         if self.isMaximized() or self.isMinimized():
@@ -104,62 +106,68 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         text_list = [str(e) for e in self.environments]
         if index < 0 or index >= len(text_list):
             index = 0
-        self.cmb_derived_from.clear()
-        self.cmb_derived_from.addItems(text_list)
-        self.cmb_derived_from.setCurrentIndex(index)
+        self.uiComboBox_derived_from.clear()
+        self.uiComboBox_derived_from.addItems(text_list)
+        self.uiComboBox_derived_from.setCurrentIndex(index)
 
     def config_widgets_to_dict(self):
         self.config.package_names = [
-            s for s in self.pte_package_names.toPlainText().split("\n") if s
+            s for s in self.uiPlainTextEdit_package_names.toPlainText().split("\n") if s
         ]
-        self.config.derived_from = self.cmb_derived_from.currentIndex()
-        self.config.download_deps = self.cb_download_deps.isChecked()
+        self.config.derived_from = self.uiComboBox_derived_from.currentIndex()
+        self.config.download_deps = self.uiCheckBox_download_deps.isChecked()
         download_type = (
             "unlimited"
-            if self.rb_unlimited.isChecked()
+            if self.uiRadioButton_unlimited.isChecked()
             else "no_binary"
-            if self.rb_no_binary.isChecked()
+            if self.uiRadioButton_no_binary.isChecked()
             else "only_binary"
-            if self.rb_only_binary.isChecked()
+            if self.uiRadioButton_only_binary.isChecked()
             else "prefer_binary"
         )
         self.config.download_type = download_type
-        self.config.include_pre = self.cb_include_pre.isChecked()
-        self.config.ignore_requires_python = self.cb_ignore_requires_python.isChecked()
-        self.config.save_path = self.le_save_to.text()
-        self.config.platform = [s for s in self.le_platform.text().split() if s]
-        self.config.python_version = self.le_python_version.text()
-        self.config.implementation = self.cmb_implementation.currentText()
-        self.config.abis = [s for s in self.le_abis.text().split() if s]
-        self.config.index_url = self.le_index_url.text()
-        self.config.use_index_url = self.cb_use_index_url.isChecked()
+        self.config.include_pre = self.uiCheckBox_include_pre.isChecked()
+        self.config.ignore_requires_python = (
+            self.uiCheckBox_ignore_requires_python.isChecked()
+        )
+        self.config.save_path = self.uiLineEdit_save_to.text()
+        self.config.platform = [s for s in self.uiLineEdit_platform.text().split() if s]
+        self.config.python_version = self.uiLineEdit_python_version.text()
+        self.config.implementation = self.uiComboBox_implementation.currentText()
+        self.config.abis = [s for s in self.uiLineEdit_abis.text().split() if s]
+        self.config.index_url = self.uiLineEdit_index_url.text()
+        self.config.use_index_url = self.uiCheckBox_use_index_url.isChecked()
 
     def apply_config(self):
         self.update_envpaths_and_combobox()
-        self.pte_package_names.setPlainText("\n".join(self.config.package_names))
-        self.cb_download_deps.setChecked(self.config.download_deps)
+        self.uiPlainTextEdit_package_names.setPlainText(
+            "\n".join(self.config.package_names)
+        )
+        self.uiCheckBox_download_deps.setChecked(self.config.download_deps)
         download_type = self.config.download_type
         if download_type == "unlimited":
-            self.rb_unlimited.setChecked(True)
+            self.uiRadioButton_unlimited.setChecked(True)
         elif download_type == "no_binary":
-            self.rb_no_binary.setChecked(True)
+            self.uiRadioButton_no_binary.setChecked(True)
         elif download_type == "only_binary":
-            self.rb_only_binary.setChecked(True)
+            self.uiRadioButton_only_binary.setChecked(True)
         elif download_type == "prefer_binary":
-            self.rb_prefer_binary.setChecked(True)
+            self.uiRadioButton_prefer_binary.setChecked(True)
         else:
-            self.rb_unlimited.setChecked(True)
-        self.cb_include_pre.setChecked(self.config.include_pre)
-        self.cb_ignore_requires_python.setChecked(self.config.ignore_requires_python)
-        self.le_save_to.setText(self.config.save_path)
-        self.le_platform.setText(" ".join(self.config.platform))
-        self.le_python_version.setText(self.config.python_version)
-        self.cmb_implementation.setCurrentText(self.config.implementation)
-        self.le_abis.setText(" ".join(self.config.abis))
+            self.uiRadioButton_unlimited.setChecked(True)
+        self.uiCheckBox_include_pre.setChecked(self.config.include_pre)
+        self.uiCheckBox_ignore_requires_python.setChecked(
+            self.config.ignore_requires_python
+        )
+        self.uiLineEdit_save_to.setText(self.config.save_path)
+        self.uiLineEdit_platform.setText(" ".join(self.config.platform))
+        self.uiLineEdit_python_version.setText(self.config.python_version)
+        self.uiComboBox_implementation.setCurrentText(self.config.implementation)
+        self.uiLineEdit_abis.setText(" ".join(self.config.abis))
         use_index_url = self.config.use_index_url
-        self.cb_use_index_url.setChecked(use_index_url)
-        self.le_index_url.setEnabled(use_index_url)
-        self.le_index_url.setText(self.config.index_url)
+        self.uiCheckBox_use_index_url.setChecked(use_index_url)
+        self.uiLineEdit_index_url.setEnabled(use_index_url)
+        self.uiLineEdit_index_url.setText(self.config.index_url)
 
     @staticmethod
     def confirm_dest_path(dest):
@@ -208,7 +216,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         index = self.config.derived_from
         if index < 0 or index >= len(self.environments):
             index = 0
-            self.cmb_derived_from.setCurrentIndex(0)
+            self.uiComboBox_derived_from.setCurrentIndex(0)
         env = self.environments[index]
         if not env.env_path:
             return MessageBox(
@@ -239,10 +247,10 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
 
         thread_download = QThreadModel(do_download)
         thread_download.before_starting(
-            lambda: self.pb_start_download.setEnabled(False)
+            lambda: self.uiPushButton_start_download.setEnabled(False)
         )
         thread_download.after_completion(
-            lambda: self.pb_start_download.setEnabled(True),
+            lambda: self.uiPushButton_start_download.setEnabled(True),
         )
         thread_download.start()
         self.thread_repo.put(thread_download, 0)
@@ -349,14 +357,14 @@ class ShowDownloadWindow(Ui_show_download, QMainWindow):
         self._setup_other_widgets()
 
     def status_changed(self, index, status):
-        if index >= self.tw_downloading.rowCount():
+        if index >= self.uiTableWidget_downloading.rowCount():
             return False
         color_red = QColor(255, 0, 0)
         color_green = QColor(0, 170, 0)
-        item = self.tw_downloading.item(index, 1)
+        item = self.uiTableWidget_downloading.item(index, 1)
         if item is None:
             item = QTableWidgetItem("等待下载")
-            self.tw_downloading.setItem(index, 1, item)
+            self.uiTableWidget_downloading.setItem(index, 1, item)
         item.setText(status)
         if status == "下载失败":
             item.setForeground(color_red)
@@ -365,25 +373,25 @@ class ShowDownloadWindow(Ui_show_download, QMainWindow):
         return True
 
     def clear_table(self):
-        self.tw_downloading.clearContents()
-        self.tw_downloading.setRowCount(0)
+        self.uiTableWidget_downloading.clearContents()
+        self.uiTableWidget_downloading.setRowCount(0)
 
     def setup_table(self, iterable):
         color_gray = QColor(243, 243, 243)
         self.clear_table()
-        self.tw_downloading.setRowCount(len(iterable))
+        self.uiTableWidget_downloading.setRowCount(len(iterable))
         for index, pkg_name in enumerate(iterable):
             item1 = QTableWidgetItem(pkg_name)
             item2 = QTableWidgetItem("等待下载")
             if not index % 2:
                 item1.setBackground(color_gray)
                 item2.setBackground(color_gray)
-            self.tw_downloading.setItem(index, 0, item1)
-            self.tw_downloading.setItem(index, 1, item2)
+            self.uiTableWidget_downloading.setItem(index, 0, item1)
+            self.uiTableWidget_downloading.setItem(index, 1, item2)
         return True
 
     def _setup_other_widgets(self):
-        horiz_head = self.tw_downloading.horizontalHeader()
+        horiz_head = self.uiTableWidget_downloading.horizontalHeader()
         horiz_head.setSectionResizeMode(0, QHeaderView.Stretch)
         horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
 

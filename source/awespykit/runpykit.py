@@ -70,14 +70,14 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.showNormal()
 
     def __setup_other_widgets(self):
-        self.pb_pkg_mgr.setIcon(QIcon(":/manage.png"))
-        self.pb_pkg_mgr.clicked.connect(self.__pkgmgr_win.display)
-        self.pb_pyi_tool.setIcon(QIcon(":/bundle.png"))
-        self.pb_pyi_tool.clicked.connect(self.__pyitool_win.display)
-        self.pb_index_mgr.setIcon(QIcon(":/indexurl2.png"))
-        self.pb_index_mgr.clicked.connect(self.__indexmgr_win.display)
-        self.pb_pkg_dload.setIcon(QIcon(":/download.png"))
-        self.pb_pkg_dload.clicked.connect(self.__pkgdl_win.display)
+        self.uiPushButton_pkg_mgr.setIcon(QIcon(":/manage.png"))
+        self.uiPushButton_pkg_mgr.clicked.connect(self.__pkgmgr_win.display)
+        self.uiPushButton_pyi_tool.setIcon(QIcon(":/bundle.png"))
+        self.uiPushButton_pyi_tool.clicked.connect(self.__pyitool_win.display)
+        self.uiPushButton_index_mgr.setIcon(QIcon(":/indexurl2.png"))
+        self.uiPushButton_index_mgr.clicked.connect(self.__indexmgr_win.display)
+        self.uiPushButton_pkg_dload.setIcon(QIcon(":/download.png"))
+        self.uiPushButton_pkg_dload.clicked.connect(self.__pkgdl_win.display)
         self.uiPushButton_settings.setIcon(QIcon(":/settings.png"))
         # noinspection PyTypeChecker
         menu_setstyle = QMenu("风格", self)

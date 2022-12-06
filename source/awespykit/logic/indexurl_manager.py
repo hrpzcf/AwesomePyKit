@@ -57,33 +57,35 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         return item_widget
 
     def __list_widget_urls_update(self):
-        self.li_indexurls.clear()
+        self.uiListWidget_indexurls.clear()
         self.__ordered_urls = tuple(self.__config.index_urls.items())
         for name, url in self.__ordered_urls:
             item_widget = self.__widget_for_list_item(name, url)
             li_item = QListWidgetItem()
             li_item.setSizeHint(QSize(0, 32))
-            self.li_indexurls.addItem(li_item)
-            self.li_indexurls.setItemWidget(li_item, item_widget)
+            self.uiListWidget_indexurls.addItem(li_item)
+            self.uiListWidget_indexurls.setItemWidget(li_item, item_widget)
 
     def signal_slot_connection(self):
-        self.btn_clearle.clicked.connect(self.__clear_line_edit)
-        self.btn_saveurl.clicked.connect(self.__save_index_urls)
-        self.btn_delurl.clicked.connect(self.__del_index_url)
-        self.li_indexurls.clicked.connect(self.__set_url_line_edit)
-        self.btn_setindex.clicked.connect(self.__set_global_index_url)
-        self.btn_refresh_effective.clicked.connect(self.__display_effective_url)
+        self.uiPushButton_clear_edit.clicked.connect(self.__clear_line_edit)
+        self.uiPushButton_save_url.clicked.connect(self.__save_index_urls)
+        self.uiPushButton_delete_url.clicked.connect(self.__del_index_url)
+        self.uiListWidget_indexurls.clicked.connect(self.__set_url_line_edit)
+        self.uiPushButton_set_index.clicked.connect(self.__set_global_index_url)
+        self.uiPushButton_refresh_effective.clicked.connect(
+            self.__display_effective_url
+        )
 
     def __set_url_line_edit(self):
-        selected = self.li_indexurls.currentRow()
+        selected = self.uiListWidget_indexurls.currentRow()
         if selected == -1:
             return
-        self.le_urlname.setText(self.__ordered_urls[selected][0])
-        self.le_indexurl.setText(self.__ordered_urls[selected][1])
+        self.uiLineEdit_url_name.setText(self.__ordered_urls[selected][0])
+        self.uiLineEdit_index_url.setText(self.__ordered_urls[selected][1])
 
     def __clear_line_edit(self):
-        self.le_urlname.clear()
-        self.le_indexurl.clear()
+        self.uiLineEdit_url_name.clear()
+        self.uiLineEdit_index_url.clear()
 
     def __check_name_url(self, name, url):
         def error(m):
@@ -102,14 +104,14 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         return msgbox.exec_()  # 无论如何都返回 0
 
     def __save_index_urls(self):
-        name = self.le_urlname.text()
-        url = self.le_indexurl.text()
+        name = self.uiLineEdit_url_name.text()
+        url = self.uiLineEdit_index_url.text()
         if self.__check_name_url(name, url):
             self.__config.index_urls[name] = url
         self.__list_widget_urls_update()
 
     def __del_index_url(self):
-        selected = self.li_indexurls.currentRow()
+        selected = self.uiListWidget_indexurls.currentRow()
         if selected == -1:
             return MessageBox(
                 "提示",
@@ -117,10 +119,10 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
             ).exec_()
         del self.__config.index_urls[self.__ordered_urls[selected][0]]
         self.__list_widget_urls_update()
-        items_count = self.li_indexurls.count()
+        items_count = self.uiListWidget_indexurls.count()
         if items_count:
             if selected == -1:
-                self.li_indexurls.setCurrentRow(0)
+                self.uiListWidget_indexurls.setCurrentRow(0)
             else:
                 should_be_selected = (
                     0
@@ -129,7 +131,7 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
                     if selected < items_count
                     else items_count - 1
                 )
-                self.li_indexurls.setCurrentRow(should_be_selected)
+                self.uiListWidget_indexurls.setCurrentRow(should_be_selected)
 
     def __get_cur_environ(self):
         """
@@ -155,7 +157,7 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         def warning(m):
             return MessageBox("提示", m, QMessageBox.Warning)
 
-        url = self.le_indexurl.text()
+        url = self.uiLineEdit_index_url.text()
         if not url:
             warn_box = warning("要设置为全局镜像源的地址不能为空！")
         elif not check_index_url(url):
@@ -177,8 +179,8 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
     def __display_effective_url(self):
         environ = self.__get_cur_environ()
         if not environ:
-            self.le_effectiveurl.setText("没找到 Python 环境，无法获取镜像源地址。")
+            self.uiLineEdit_effective_url.setText("没找到 Python 环境，无法获取镜像源地址。")
             return
-        self.le_effectiveurl.setText(
+        self.uiLineEdit_effective_url.setText(
             environ.get_global_index() or "无效的 Python 环境或当前全局镜像源地址为空。"
         )
