@@ -65,7 +65,9 @@ class QThreadModel(QThread):
         self.__target(*self.__args, **self.__kwargs)
 
     def __repr__(self):
-        return f"{self.__target} with args: {self.__args}, kwargs: {self.__kwargs}"
+        return (
+            f"{self.__target} with args: {self.__args}, kwargs: {self.__kwargs}"
+        )
 
     __str__ = __repr__
 

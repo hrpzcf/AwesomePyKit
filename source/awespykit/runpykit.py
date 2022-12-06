@@ -36,7 +36,9 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
     def __init__(self, config: MainEntranceConfig):
         super().__init__()
         self.setupUi(self)
-        self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
+        self.setWindowFlags(
+            Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint
+        )
         self.setWindowTitle(NAME)
         self.__config = config
         self.__pkgmgr_win = PackageManagerWindow(self)

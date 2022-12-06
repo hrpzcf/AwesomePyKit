@@ -43,7 +43,9 @@ class GenericOutputWindow(Ui_generic_output, QMainWindow):
 
     def signal_slot_connection(self):
         self.uiPushButton_close_window.clicked.connect(self.hide)
-        self.signal_append_line.connect(self.uiPlainTextEdit_output.appendPlainText)
+        self.signal_append_line.connect(
+            self.uiPlainTextEdit_output.appendPlainText
+        )
         self.uiPushButton_clear_content.clicked.connect(
             self.uiPlainTextEdit_output.clear
         )

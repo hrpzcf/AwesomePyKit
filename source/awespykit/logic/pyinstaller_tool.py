@@ -131,7 +131,8 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             "仅当 Pyinstaller 无法自动找到模块时使用，支持将文件夹直接拖放到此处。"
         )
         self.verticalLayout_3.replaceWidget(
-            self.uiTextEdit_module_search_path_old, self.uiTextEdit_module_search_path
+            self.uiTextEdit_module_search_path_old,
+            self.uiTextEdit_module_search_path,
         )
         self.uiTextEdit_module_search_path_old.deleteLater()
         # 替换“非源代码资源文件”LineEdit控件
@@ -169,10 +170,18 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.after_task_completed)
         self.pyi_tool.stdout.connect(self.uiTextEdit_packtool_logging.append)
-        self.uiPushButton_select_pyenv.clicked.connect(self.__envch_win.initialize)
-        self.uiPushButton_create_venv.clicked.connect(lambda: self.check_createvenv())
-        self.uiPushButton_refresh_venv.clicked.connect(self.refresh_virtualenv_info)
-        self.uiLineEdit_program_entry.textChanged.connect(self.set_uilineedit_roots)
+        self.uiPushButton_select_pyenv.clicked.connect(
+            self.__envch_win.initialize
+        )
+        self.uiPushButton_create_venv.clicked.connect(
+            lambda: self.check_createvenv()
+        )
+        self.uiPushButton_refresh_venv.clicked.connect(
+            self.refresh_virtualenv_info
+        )
+        self.uiLineEdit_program_entry.textChanged.connect(
+            self.set_uilineedit_roots
+        )
         self.uiPushButton_select_module_search_path.clicked.connect(
             self.set_te_module_search_path
         )
@@ -188,22 +197,32 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiPushButton_clear_module_search_path.clicked.connect(
             self.uiTextEdit_module_search_path.clear
         )
-        self.uiPushButton_select_other_data.clicked.connect(self.set_te_other_data)
+        self.uiPushButton_select_other_data.clicked.connect(
+            self.set_te_other_data
+        )
         self.uiPushButton_clear_other_data.clicked.connect(
             self.uiTextEdit_other_data.clear
         )
-        self.uiPushButton_select_file_icon.clicked.connect(self.set_le_file_icon_path)
+        self.uiPushButton_select_file_icon.clicked.connect(
+            self.set_le_file_icon_path
+        )
         self.uiPushButton_select_spec_dir.clicked.connect(self.set_le_spec_dir)
         self.uiPushButton_select_temp_working_dir.clicked.connect(
             self.set_le_temp_working_dir
         )
-        self.uiPushButton_select_output_dir.clicked.connect(self.set_le_output_dir)
+        self.uiPushButton_select_output_dir.clicked.connect(
+            self.set_le_output_dir
+        )
         self.uiPushButton_select_upx_search_path.clicked.connect(
             self.set_le_upx_search_path
         )
         self.uiPushButton_start_packing.clicked.connect(self.build_executable)
-        self.uiPushButton_reinstall_packtool.clicked.connect(self.reinstall_pyinstaller)
-        self.uiPushButton_check_imports.clicked.connect(self.check_project_imports)
+        self.uiPushButton_reinstall_packtool.clicked.connect(
+            self.reinstall_pyinstaller
+        )
+        self.uiPushButton_check_imports.clicked.connect(
+            self.check_project_imports
+        )
         self.uiPushButton_clear_hidden_imports.clicked.connect(
             self.uiPlainTextEdit_hidden_imports.clear
         )
@@ -211,10 +230,16 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.uiPlainTextEdit_exclude_modules.clear
         )
         self.uiPushButton_save_config.clicked.connect(self.store_current_config)
-        self.uiPushButton_apply_config.clicked.connect(self.apply_selected_config)
-        self.uiPushButton_delete_config.clicked.connect(self.delete_selected_config)
+        self.uiPushButton_apply_config.clicked.connect(
+            self.apply_selected_config
+        )
+        self.uiPushButton_delete_config.clicked.connect(
+            self.delete_selected_config
+        )
         self.signal_update_pyinfo.connect(self.uiLabel_python_info.setText)
-        self.signal_update_packtoolinfo.connect(self.uiLabel_packtool_info.setText)
+        self.signal_update_packtoolinfo.connect(
+            self.uiLabel_packtool_info.setText
+        )
         self.signal_update_ptpbtext.connect(
             self.uiPushButton_reinstall_packtool.setText
         )
@@ -226,7 +251,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.listwidget_savedconfig_clicked
         )
         self.uiPushButton_clear_data.clicked.connect(self.clear_packing_data)
-        self.uiCheckBox_prioritize_venv.clicked.connect(self.refresh_virtualenv_info)
+        self.uiCheckBox_prioritize_venv.clicked.connect(
+            self.refresh_virtualenv_info
+        )
         self.uiPushButton_clear_log.clicked.connect(
             self.uiTextEdit_packtool_logging.clear
         )
@@ -387,7 +414,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiLineEdit_upx_search_path.setText(selected_dir)
 
     def __ask_file_or_dir_path(
-        self, title="", start="", ch=Accept.File, multi=False, ext_filter="所有文件 (*)"
+        self,
+        title="",
+        start="",
+        ch=Accept.File,
+        multi=False,
+        ext_filter="所有文件 (*)",
     ):
         file_dir_paths = []
         if ch == Accept.File and multi:
@@ -412,7 +444,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 file_dir_paths.append(os.path.realpath(path))
         elif ch == Accept.File and multi:
             paths = path_getter(self, title, start, ext_filter)[0]
-            file_dir_paths.extend(os.path.realpath(path) for path in paths if path)
+            file_dir_paths.extend(
+                os.path.realpath(path) for path in paths if path
+            )
             if not file_dir_paths:
                 file_dir_paths.append("")
         elif ch == Accept.Dir:
@@ -426,7 +460,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def __environ_call_back(self, env):
         """供环境选择窗口类使用的回调函数，在窗口选择环境后调用此方法"""
         self.main_environ = env
-        self.pyi_tool.initialize(self.main_environ, self.config.current.program_root)
+        self.pyi_tool.initialize(
+            self.main_environ, self.config.current.program_root
+        )
         self.load_version_information_lazily(False, False)
 
     def config_cfg_to_widgets(self, cfg_name):
@@ -451,29 +487,45 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiCheckBox_execute_with_console.setChecked(
             self.config.current.provide_console
         )
-        self.uiCheckBox_without_confirm.setChecked(self.config.current.no_confirm)
-        self.uiCheckBox_use_upx.setChecked(not self.config.current.donot_use_upx)
+        self.uiCheckBox_without_confirm.setChecked(
+            self.config.current.no_confirm
+        )
+        self.uiCheckBox_use_upx.setChecked(
+            not self.config.current.donot_use_upx
+        )
         self.uiCheckBox_clean_before_build.setChecked(
             self.config.current.clean_building
         )
-        self.uiCheckBox_write_info_to_exec.setChecked(self.config.current.add_verfile)
-        self.uiLineEdit_temp_working_dir.setText(self.config.current.working_dir)
+        self.uiCheckBox_write_info_to_exec.setChecked(
+            self.config.current.add_verfile
+        )
+        self.uiLineEdit_temp_working_dir.setText(
+            self.config.current.working_dir
+        )
         self.uiLineEdit_output_dir.setText(self.config.current.distribution_dir)
         self.uiLineEdit_spec_dir.setText(self.config.current.spec_dir)
         self.uiLineEdit_upx_search_path.setText(self.config.current.upx_dir)
         self.uiTextEdit_upx_exclude_files.setText(
             "\n".join(self.config.current.upx_excludes)
         )
-        self.uiLineEdit_output_name.setText(self.config.current.bundle_spec_name)
+        self.uiLineEdit_output_name.setText(
+            self.config.current.bundle_spec_name
+        )
         self.uiComboBox_log_level.setCurrentText(self.config.current.log_level)
         self.set_file_ver_info_text()
         self.set_pyi_debug_options()
-        self.uiLineEdit_runtime_tmpdir.setText(self.config.current.runtime_tmpdir)
-        self.uiCheckBox_prioritize_venv.setChecked(self.config.current.prioritize_venv)
+        self.uiLineEdit_runtime_tmpdir.setText(
+            self.config.current.runtime_tmpdir
+        )
+        self.uiCheckBox_prioritize_venv.setChecked(
+            self.config.current.prioritize_venv
+        )
         self.uiLineEdit_bytecode_encryption_key.setText(
             self.config.current.encryption_key
         )
-        self.uiCheckBox_explorer_show.setChecked(self.config.current.open_dist_folder)
+        self.uiCheckBox_explorer_show.setChecked(
+            self.config.current.open_dist_folder
+        )
         self.uiCheckBox_delete_working_dir.setChecked(
             self.config.current.delete_working_dir
         )
@@ -489,8 +541,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiCheckBox_uac_admin.setChecked(self.config.current.uac_admin)
 
     def config_widgets_to_cfg(self):
-        self.config.current.script_path = self.uiLineEdit_program_entry.local_path
-        self.config.current.bundle_spec_name = self.uiLineEdit_output_name.text()
+        self.config.current.script_path = (
+            self.uiLineEdit_program_entry.local_path
+        )
+        self.config.current.bundle_spec_name = (
+            self.uiLineEdit_output_name.text()
+        )
         program_root = self.uiLineEdit_program_root.text()
         self.config.current.program_root = program_root
         self.config.current.project_root = self.uiLineEdit_project_root.text()
@@ -498,39 +554,55 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.uiTextEdit_module_search_path.local_paths
         )
         self.config.current.other_datas = self.__gen_absrel_groups(program_root)
-        self.config.current.icon_path = self.uiLineEdit_file_icon_path.local_path
+        self.config.current.icon_path = (
+            self.uiLineEdit_file_icon_path.local_path
+        )
         self.config.current.onedir_bundle = (
             self.uiRadioButton_pack_to_one_dir.isChecked()
         )
         self.config.current.provide_console = (
             self.uiCheckBox_execute_with_console.isChecked()
         )
-        self.config.current.no_confirm = self.uiCheckBox_without_confirm.isChecked()
-        self.config.current.donot_use_upx = not self.uiCheckBox_use_upx.isChecked()
+        self.config.current.no_confirm = (
+            self.uiCheckBox_without_confirm.isChecked()
+        )
+        self.config.current.donot_use_upx = (
+            not self.uiCheckBox_use_upx.isChecked()
+        )
         self.config.current.clean_building = (
             self.uiCheckBox_clean_before_build.isChecked()
         )
-        self.config.current.add_verfile = self.uiCheckBox_write_info_to_exec.isChecked()
-        self.config.current.working_dir = self.uiLineEdit_temp_working_dir.text()
+        self.config.current.add_verfile = (
+            self.uiCheckBox_write_info_to_exec.isChecked()
+        )
+        self.config.current.working_dir = (
+            self.uiLineEdit_temp_working_dir.text()
+        )
         self.config.current.distribution_dir = self.uiLineEdit_output_dir.text()
         self.config.current.spec_dir = self.uiLineEdit_spec_dir.text()
         self.config.current.upx_dir = self.uiLineEdit_upx_search_path.text()
         self.config.current.upx_excludes = [
-            s for s in self.uiTextEdit_upx_exclude_files.toPlainText().split("\n") if s
+            s
+            for s in self.uiTextEdit_upx_exclude_files.toPlainText().split("\n")
+            if s
         ]
         if self.main_environ is not None:
             self.config.current.environ_path = self.main_environ.env_path
         self.config.current.log_level = self.uiComboBox_log_level.currentText()
         self.config.current.version_info = self.file_ver_info_text()
         self.config.current.debug_options = self.get_pyi_debug_options()
-        self.config.current.runtime_tmpdir = self.uiLineEdit_runtime_tmpdir.text()
+        self.config.current.runtime_tmpdir = (
+            self.uiLineEdit_runtime_tmpdir.text()
+        )
         self.config.current.prioritize_venv = (
             self.uiCheckBox_prioritize_venv.isChecked()
         )
         self.config.current.encryption_key = (
             self.uiLineEdit_bytecode_encryption_key.text()
         )
-        self.config.current.open_dist_folder = self.uiCheckBox_explorer_show.isChecked()
+        self.config.current.open_dist_folder = (
+            self.uiCheckBox_explorer_show.isChecked()
+        )
         self.config.current.delete_working_dir = (
             self.uiCheckBox_delete_working_dir.isChecked()
         )
@@ -540,12 +612,16 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.config.current.uac_admin = self.uiCheckBox_uac_admin.isChecked()
         self.config.current.hidden_imports = [
             s
-            for s in self.uiPlainTextEdit_hidden_imports.toPlainText().split("\n")
+            for s in self.uiPlainTextEdit_hidden_imports.toPlainText().split(
+                "\n"
+            )
             if s
         ]
         self.config.current.exclude_modules = [
             s
-            for s in self.uiPlainTextEdit_exclude_modules.toPlainText().split("\n")
+            for s in self.uiPlainTextEdit_exclude_modules.toPlainText().split(
+                "\n"
+            )
             if s
         ]
 
@@ -555,7 +631,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         abs_rel_path_groups = []
         for abs_path in other_data_local_paths:
             try:
-                rel_path = os.path.relpath(os.path.dirname(abs_path), starting_point)
+                rel_path = os.path.relpath(
+                    os.path.dirname(abs_path), starting_point
+                )
             except Exception:
                 continue
             abs_rel_path_groups.append((abs_path, rel_path))
@@ -575,8 +653,12 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiCheckBox_db_noarchive.setChecked(dbo.get("noarchive", False))
 
     def file_ver_info_text(self):
-        file_vers = tuple(int(x.text() or 0) for x in self.uiLineEdit_vers_group[:4])
-        prod_vers = tuple(int(x.text() or 0) for x in self.uiLineEdit_vers_group[4:])
+        file_vers = tuple(
+            int(x.text() or 0) for x in self.uiLineEdit_vers_group[:4]
+        )
+        prod_vers = tuple(
+            int(x.text() or 0) for x in self.uiLineEdit_vers_group[4:]
+        )
         return {
             "$filevers$": str(file_vers),
             "$prodvers$": str(prod_vers),
@@ -595,12 +677,16 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiLineEdit_file_description.setText(
             version_info.get("$FileDescription$", "")
         )
-        self.uiLineEdit_company_name.setText(version_info.get("$CompanyName$", ""))
+        self.uiLineEdit_company_name.setText(
+            version_info.get("$CompanyName$", "")
+        )
         for ind, val in enumerate(
             version_info.get("$FileVersion$", "0.0.0.0").split(".")
         ):
             self.uiLineEdit_vers_group[ind].setText(val)
-        self.uiLineEdit_product_name.setText(version_info.get("$ProductName$", ""))
+        self.uiLineEdit_product_name.setText(
+            version_info.get("$ProductName$", "")
+        )
         for ind, val in enumerate(
             version_info.get("$ProductVersion$", "0.0.0.0").split(".")
         ):
@@ -763,7 +849,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         if not dist_folder:
             dist_folder = os.path.join(self.config.current.program_root, "dist")
         elif not os.path.isabs(dist_folder):
-            dist_folder = os.path.join(self.config.current.program_root, dist_folder)
+            dist_folder = os.path.join(
+                self.config.current.program_root, dist_folder
+            )
         launch_explorer(
             os.path.join(dist_folder, sub_directory), [final_execfn + ".exe"]
         )
@@ -789,14 +877,18 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         program_name = self.__get_program_name()
         custom_working_dir = self.config.current.working_dir
         if not custom_working_dir:
-            working_dir_root = os.path.join(self.config.current.program_root, "build")
+            working_dir_root = os.path.join(
+                self.config.current.program_root, "build"
+            )
         elif not os.path.isabs(custom_working_dir):
             working_dir_root = os.path.join(
                 self.config.current.program_root, custom_working_dir
             )
         else:
             working_dir_root = os.path.join(custom_working_dir, program_name)
-        thread_delete_working = QThreadModel(shutil.rmtree, working_dir_root, True)
+        thread_delete_working = QThreadModel(
+            shutil.rmtree, working_dir_root, True
+        )
         thread_delete_working.start()
         self.thread_repo.put(thread_delete_working)
 
@@ -923,7 +1015,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                 environ_using = self.virt_environ
         else:
             environ_using = self.main_environ
-        self.pyi_tool.initialize(environ_using, self.config.current.program_root)
+        self.pyi_tool.initialize(
+            environ_using, self.config.current.program_root
+        )
         if not self.pyi_tool.pyi_is_ready:
             MessageBox(
                 "Pyinstaller 不可用",
@@ -939,7 +1033,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.__lock_widgets,
             lambda: self.__show_running("正在生成可执行文件..."),
         )
-        thread_build.after_completion(self.__hide_running, self.__release_widgets)
+        thread_build.after_completion(
+            self.__hide_running, self.__release_widgets
+        )
         thread_build.start()
         self.thread_repo.put(thread_build, 0)
 
@@ -1097,7 +1193,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             ):
                 btn_create = True
             self.__enabled_exception[self.uiPushButton_create_venv] = btn_create
-            self.pyi_tool.initialize(ptool_env, self.config.current.program_root)
+            self.pyi_tool.initialize(
+                ptool_env, self.config.current.program_root
+            )
             packtool_info = self.pyi_tool.pyi_info()
             if ptool_env is None or not ptool_env.env_is_valid:
                 btn_install = False
@@ -1108,7 +1206,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
                     button_text = "安装"
                 else:
                     button_text = "重新安装"
-            self.__enabled_exception[self.uiPushButton_reinstall_packtool] = btn_install
+            self.__enabled_exception[
+                self.uiPushButton_reinstall_packtool
+            ] = btn_install
             packtool_info = self.PYIVER_FMT.format(packtool_info, ptool_side)
             if self.main_environ is None or not self.main_environ.env_path:
                 python_info = ""
@@ -1124,7 +1224,9 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.signal_update_ptpbtext.emit(button_text)
 
         thread_load_info = QThreadModel(do_load_version_information)
-        thread_load_info.before_starting(self.importance_operation_start("正在读取环境信息..."))
+        thread_load_info.before_starting(
+            self.importance_operation_start("正在读取环境信息...")
+        )
         thread_load_info.after_completion(self.importance_operation_finished)
         thread_load_info.start()
         self.thread_repo.put(thread_load_info, 1)
@@ -1181,7 +1283,9 @@ class ImportsCheckWindow(Ui_imports_check, QMainWindow):
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self.__setup_other_widgets()
         self.uiPushButton_confirm.clicked.connect(self.close)
-        self.uiPushButton_install_missings.clicked.connect(self.__call_install_back)
+        self.uiPushButton_install_missings.clicked.connect(
+            self.__call_install_back
+        )
         self.__missing_modules = None
         self.__call_install = call_install
 

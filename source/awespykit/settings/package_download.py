@@ -71,7 +71,12 @@ class PackageDownloadConfig(AbstractConfig):
 
     @download_type.setter
     def download_type(self, value):
-        assert value in ("unlimited", "no_binary", "only_binary", "prefer_binary")
+        assert value in (
+            "unlimited",
+            "no_binary",
+            "only_binary",
+            "prefer_binary",
+        )
         self[self._key_download_type] = value
 
     @property

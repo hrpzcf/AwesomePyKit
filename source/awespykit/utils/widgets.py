@@ -126,12 +126,16 @@ class TextEdit(QTextEdit):
             self.__stash_from_urls(event.mimeData().urls())
         if self.__accept == Accept.File:
             self.setText(
-                cur_text + "\n".join(p for p in self.__drag_temp if os.path.isfile(p))
+                cur_text
+                + "\n".join(p for p in self.__drag_temp if os.path.isfile(p))
             )
         elif self.__accept == Accept.Dir:
             self.setText(
-                cur_text + "\n".join(p for p in self.__drag_temp if os.path.isdir(p))
+                cur_text
+                + "\n".join(p for p in self.__drag_temp if os.path.isdir(p))
             )
         else:
             self.setText("")
-        self.verticalScrollBar().setValue(self.verticalScrollBar().maximumHeight())
+        self.verticalScrollBar().setValue(
+            self.verticalScrollBar().maximumHeight()
+        )

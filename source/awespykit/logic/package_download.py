@@ -38,14 +38,18 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.uiPushButton_clear_package_names.clicked.connect(
             self.uiPlainTextEdit_package_names.clear
         )
-        self.uiPushButton_start_download.clicked.connect(self.start_download_package)
+        self.uiPushButton_start_download.clicked.connect(
+            self.start_download_package
+        )
         self.download_completed.connect(self.check_download)
         self.uiPushButton_show_dllist.clicked.connect(self.__showdl_win.display)
         self.download_status.connect(self.__showdl_win.status_changed)
         self.set_download_table.connect(self.__showdl_win.setup_table)
 
     def change_le_index_url(self):
-        self.uiLineEdit_index_url.setEnabled(self.uiCheckBox_use_index_url.isChecked())
+        self.uiLineEdit_index_url.setEnabled(
+            self.uiCheckBox_use_index_url.isChecked()
+        )
 
     def names_from_file(self):
         text, _path = self.load_from_text(self.last_path)
@@ -112,7 +116,11 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
 
     def config_widgets_to_dict(self):
         self.config.package_names = [
-            s for s in self.uiPlainTextEdit_package_names.toPlainText().split("\n") if s
+            s
+            for s in self.uiPlainTextEdit_package_names.toPlainText().split(
+                "\n"
+            )
+            if s
         ]
         self.config.derived_from = self.uiComboBox_derived_from.currentIndex()
         self.config.download_deps = self.uiCheckBox_download_deps.isChecked()
@@ -131,9 +139,13 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             self.uiCheckBox_ignore_requires_python.isChecked()
         )
         self.config.save_path = self.uiLineEdit_save_to.text()
-        self.config.platform = [s for s in self.uiLineEdit_platform.text().split() if s]
+        self.config.platform = [
+            s for s in self.uiLineEdit_platform.text().split() if s
+        ]
         self.config.python_version = self.uiLineEdit_python_version.text()
-        self.config.implementation = self.uiComboBox_implementation.currentText()
+        self.config.implementation = (
+            self.uiComboBox_implementation.currentText()
+        )
         self.config.abis = [s for s in self.uiLineEdit_abis.text().split() if s]
         self.config.index_url = self.uiLineEdit_index_url.text()
         self.config.use_index_url = self.uiCheckBox_use_index_url.isChecked()
@@ -162,7 +174,9 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.uiLineEdit_save_to.setText(self.config.save_path)
         self.uiLineEdit_platform.setText(" ".join(self.config.platform))
         self.uiLineEdit_python_version.setText(self.config.python_version)
-        self.uiComboBox_implementation.setCurrentText(self.config.implementation)
+        self.uiComboBox_implementation.setCurrentText(
+            self.config.implementation
+        )
         self.uiLineEdit_abis.setText(" ".join(self.config.abis))
         use_index_url = self.config.use_index_url
         self.uiCheckBox_use_index_url.setChecked(use_index_url)

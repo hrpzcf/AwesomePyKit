@@ -109,7 +109,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         if not (self.isMaximized() or self.isMinimized()):
             self.config.window_size = self.width(), self.height()
         if not (self.__output.isMaximized() or self.__output.isMinimized()):
-            self.config.output_winsize = self.__output.width(), self.__output.height()
+            self.config.output_winsize = (
+                self.__output.width(),
+                self.__output.height(),
+            )
 
     def closeEvent(self, event: QCloseEvent):
         if not self.thread_repo.is_empty():
@@ -147,8 +150,12 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.uiPushButton_autosearch.clicked.connect(self.auto_search_environ)
         self.uiPushButton_delselected.clicked.connect(self.del_selected_environ)
         self.uiPushButton_addmanully.clicked.connect(self.add_environ_manully)
-        self.uiCheckBox_check_uncheck_all.clicked.connect(self.selectall_unselectall)
-        self.uiListWidget_env_list.clicked.connect(lambda: self.get_pkgs_info(0))
+        self.uiCheckBox_check_uncheck_all.clicked.connect(
+            self.selectall_unselectall
+        )
+        self.uiListWidget_env_list.clicked.connect(
+            lambda: self.get_pkgs_info(0)
+        )
         self.uiListWidget_env_list.currentRowChanged.connect(
             self.environ_changed_clear_pkgs
         )
@@ -158,7 +165,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.uiPushButton_install_package.clicked.connect(
             self.set_win_install_package_envinfo
         )
-        self.uiPushButton_uninstall_package.clicked.connect(self.uninstall_packages)
+        self.uiPushButton_uninstall_package.clicked.connect(
+            self.uninstall_packages
+        )
         self.uiPushButton_upgrade_package.clicked.connect(self.upgrade_packages)
         self.uiPushButton_upgrade_all.clicked.connect(self.upgrade_all_packages)
         self.uiTableWidget_installed_info.horizontalHeader().sectionClicked[
@@ -173,9 +182,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.uiListWidget_env_list.customContextMenuRequested[QPoint].connect(
             self.environlist_contextmenu
         )
-        self.uiTableWidget_installed_info.customContextMenuRequested[QPoint].connect(
-            self.packagesinfo_contextmenu
-        )
+        self.uiTableWidget_installed_info.customContextMenuRequested[
+            QPoint
+        ].connect(self.packagesinfo_contextmenu)
         self.uiPushButton_show_output.clicked.connect(self.show_hide_output)
 
     def selected_envfolder(self):
@@ -203,7 +212,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         dir_path, name = path.split(fullpath)
         self.config.last_path = dir_path
         self.setCursor(Qt.WaitCursor)
-        thread_export = QThreadModel(environ.freeze, dir_path, name, no_path=True)
+        thread_export = QThreadModel(
+            environ.freeze, dir_path, name, no_path=True
+        )
         thread_export.after_completion(lambda: self.setCursor(Qt.ArrowCursor))
         thread_export.start()
         self.thread_repo.put(thread_export, 1)
@@ -265,7 +276,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         action.triggered.connect(self.del_selected_environ)
         contextmenu.addAction(action)
 
-        contextmenu.setStyleSheet("QMenu {padding: 10px; border: 1px solid black}")
+        contextmenu.setStyleSheet(
+            "QMenu {padding: 10px; border: 1px solid black}"
+        )
         contextmenu.exec_(QCursor.pos())
 
     def packagesinfo_contextmenu(self, point: QPoint):
@@ -303,7 +316,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         for action in action_list:
             action.setEnabled(not self.__exclusive_mode)
 
-        contextmenu.setStyleSheet("QMenu {padding: 10px; border: 1px solid black}")
+        contextmenu.setStyleSheet(
+            "QMenu {padding: 10px; border: 1px solid black}"
+        )
         contextmenu.exec_(QCursor.pos())
 
     def set_win_install_package_envinfo(self):
@@ -397,7 +412,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                     item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
                 if not even_num_row:
                     item.setBackground(color_gray)
-                self.uiTableWidget_installed_info.setItem(rowind, colind + 1, item)
+                self.uiTableWidget_installed_info.setItem(
+                    rowind, colind + 1, item
+                )
 
     def __sort_by_column(self, colind):
         if colind == 0:
@@ -654,7 +671,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         force_reinstall = QMessageBox(
             QMessageBox.Question,
             "重装",
-            "所选包的依赖包也会被重新安装为符合要求的版本，确定强制重装？",
+            "所选包会被重装为当前版本，如果没有当前版本号则重装为最新版本，"
+            "并且所选包的依赖包也会被重新安装为符合要求的版本，确定强制重装吗？",
         )
         force_reinstall.addButton("确定", QMessageBox.AcceptRole)
         reject = force_reinstall.addButton("取消", QMessageBox.RejectRole)
@@ -664,10 +682,14 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         def do_force_reinstall():
             for package_name in packages_names:
-                item = self.__cur_pkgs_info.setdefault(package_name, ["", "", ""])
+                item = self.__cur_pkgs_info.setdefault(
+                    package_name, ["", "", ""]
+                )
                 if item[0]:  # 当前版本号
                     package_name = f"{package_name}=={item[0]}"
-                pkgnames, result = cur_env.install(package_name, force_reinstall=True)
+                pkgnames, result = cur_env.install(
+                    package_name, force_reinstall=True
+                )
                 if not result:
                     item[0] = EMPTY_STR
                 item[2] = "安装成功" if result else "安装失败"
@@ -801,7 +823,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return
 
         def do_upgrade():
-            for pkg_name, code in loop_install(cur_env, upgradeable, upgrade=True):
+            for pkg_name, code in loop_install(
+                cur_env, upgradeable, upgrade=True
+            ):
                 item = self.__cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
                 if code and item[1]:
                     item[0] = item[1]
@@ -837,7 +861,8 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
     def __setup_other_widgets(self):
         self.uiPlainTextEdit_package_names = TextEdit(ext_filter={".whl"})
         self.uiHorizontalLayout_package_name.replaceWidget(
-            self.uiPlainTextEdit_package_names_old, self.uiPlainTextEdit_package_names
+            self.uiPlainTextEdit_package_names_old,
+            self.uiPlainTextEdit_package_names,
         )
         self.uiPlainTextEdit_package_names.show()
         self.uiPlainTextEdit_package_names_old.deleteLater()
@@ -867,17 +892,23 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.uiPlainTextEdit_package_names.setPlainText(
             "\n".join(self.__parent.config.package_names)
         )
-        self.uiCheckBox_including_pre.setChecked(self.__parent.config.include_pre)
+        self.uiCheckBox_including_pre.setChecked(
+            self.__parent.config.include_pre
+        )
         self.uiCheckBox_install_for_user.setChecked(
             self.__parent.config.install_for_user
         )
         self.uiLineEdit_use_index_url.setText(self.__parent.config.index_url)
-        self.uiCheckBox_use_index_url.setChecked(self.__parent.config.use_index_url)
+        self.uiCheckBox_use_index_url.setChecked(
+            self.__parent.config.use_index_url
+        )
         if self.uiCheckBox_use_index_url.isChecked():
             self.uiLineEdit_use_index_url.setEnabled(True)
         else:
             self.uiLineEdit_use_index_url.setEnabled(False)
-        self.uiCheckBox_force_reinstall.setChecked(self.__parent.config.force_reinstall)
+        self.uiCheckBox_force_reinstall.setChecked(
+            self.__parent.config.force_reinstall
+        )
 
     def config_widgets_to_dict(self):
         self.package_names.extend(
@@ -886,12 +917,16 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
             if s
         )
         self.__parent.config.package_names = self.package_names.copy()
-        self.__parent.config.include_pre = self.uiCheckBox_including_pre.isChecked()
+        self.__parent.config.include_pre = (
+            self.uiCheckBox_including_pre.isChecked()
+        )
         self.__parent.config.install_for_user = (
             self.uiCheckBox_install_for_user.isChecked()
         )
         self.__parent.config.index_url = self.uiLineEdit_use_index_url.text()
-        self.__parent.config.use_index_url = self.uiCheckBox_use_index_url.isChecked()
+        self.__parent.config.use_index_url = (
+            self.uiCheckBox_use_index_url.isChecked()
+        )
         self.__parent.config.force_reinstall = (
             self.uiCheckBox_force_reinstall.isChecked()
         )
@@ -922,7 +957,9 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
     def signal_slot_connection(self):
         self.uiPushButton_do_install.clicked.connect(self.call_installpkg_back)
         self.uiPushButton_save_as_text.clicked.connect(self.save_package_names)
-        self.uiPushButton_load_from_text.clicked.connect(self.load_package_names)
+        self.uiPushButton_load_from_text.clicked.connect(
+            self.load_package_names
+        )
         self.uiCheckBox_use_index_url.clicked.connect(self.set_le_use_index_url)
 
     def set_le_use_index_url(self):
@@ -1005,7 +1042,9 @@ class NameQueryPanel(Ui_query_panel, QMainWindow):
     def __initialize_widgets(self):
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self.uiLineEdit_input_name.installEventFilter(self)
-        self.signal_result.connect(self.uiPlainTextEdit_query_result.appendPlainText)
+        self.signal_result.connect(
+            self.uiPlainTextEdit_query_result.appendPlainText
+        )
         self.uiPushButton_query.clicked.connect(self.start_query_name)
 
     def __save_query_configure(self):
@@ -1014,7 +1053,9 @@ class NameQueryPanel(Ui_query_panel, QMainWindow):
             self.__parent.config.query_mode = QMode.Pkg2Imp
         elif self.uiRadioButton_import2pkg.isChecked():
             self.__parent.config.query_mode = QMode.Imp2Pkg
-        self.__parent.config.query_case = self.uiCheckBox_case_sensitive.isChecked()
+        self.__parent.config.query_case = (
+            self.uiCheckBox_case_sensitive.isChecked()
+        )
         if self.isMaximized() or self.isMinimized():
             return
         self.__parent.config.query_winsize = self.width(), self.height()
@@ -1071,7 +1112,9 @@ class NameQueryPanel(Ui_query_panel, QMainWindow):
         assert isinstance(mode, QMode)
         self.__environ = env
         self.uiLabel_query_environ.setText(str(env))
-        self.uiCheckBox_case_sensitive.setChecked(self.__parent.config.query_case)
+        self.uiCheckBox_case_sensitive.setChecked(
+            self.__parent.config.query_case
+        )
         if name is None:
             name = self.__parent.config.query_name
         self.uiLineEdit_input_name.setText(name)

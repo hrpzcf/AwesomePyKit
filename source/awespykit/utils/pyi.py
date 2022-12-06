@@ -231,7 +231,9 @@ VarFileInfo([VarStruct("Translation", [2052, 1200])]),
         if commands.add_verfile and info_path:
             self.__commands.extend(("--version-file", info_path))
         if commands.runtime_tmpdir:
-            self.__commands.extend(("--runtime-tmpdir", commands.runtime_tmpdir))
+            self.__commands.extend(
+                ("--runtime-tmpdir", commands.runtime_tmpdir)
+            )
         if commands.no_confirm:
             self.__commands.append("-y")
         if commands.clean_building:

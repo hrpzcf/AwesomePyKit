@@ -31,7 +31,9 @@ class MessageBox(QMessageBox):
             elif role == "destructive":
                 self.addButton(text, QMessageBox.DestructiveRole)
             elif role == "reject":
-                self.setDefaultButton(self.addButton(text, QMessageBox.RejectRole))
+                self.setDefaultButton(
+                    self.addButton(text, QMessageBox.RejectRole)
+                )
 
     def get_role(self):
         return self.exec_()
