@@ -3,7 +3,7 @@
 import os
 
 from chardet import detect
-from PyQt5.QtWidgets import *
+from PySide2.QtWidgets import *
 
 from .messagebox import MessageBox
 

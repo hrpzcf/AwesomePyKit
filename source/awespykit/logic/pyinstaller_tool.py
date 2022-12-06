@@ -7,9 +7,9 @@ from typing import *
 
 from com import *
 from fastpip import PyEnv
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 from settings import *
 from ui import *
 from utils import *
@@ -23,10 +23,10 @@ from .messagebox import MessageBox
 
 
 class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
-    signal_update_pyinfo = pyqtSignal(str)
-    signal_update_packtoolinfo = pyqtSignal(str)
-    signal_update_ptpbtext = pyqtSignal(str)
-    signal_update_venv_pyinfo = pyqtSignal(str)
+    signal_update_pyinfo = Signal(str)
+    signal_update_packtoolinfo = Signal(str)
+    signal_update_ptpbtext = Signal(str)
+    signal_update_venv_pyinfo = Signal(str)
     PYIVER_FMT = "Pyinstaller - {} @ {}"
     QREV_FNAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
     QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))

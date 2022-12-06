@@ -6,9 +6,9 @@ import sys
 from os import path
 
 from fastpip import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 
 sys.path.append(path.dirname(__file__))  # rpk.exe 入口点所需
 
@@ -79,6 +79,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.pb_pkg_dload.setIcon(QIcon(":/download.png"))
         self.pb_pkg_dload.clicked.connect(self.__pkgdl_win.display)
         self.uiPushButton_settings.setIcon(QIcon(":/settings.png"))
+        # noinspection PyTypeChecker
         menu_setstyle = QMenu("风格", self)
         self.action_native.triggered.connect(
             lambda: self.change_appstyle(AppStyle.Native)

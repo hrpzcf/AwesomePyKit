@@ -1,15 +1,15 @@
 # coding: utf-8
 
 from com import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
 from ui import *
 
 
 class GenericOutputWindow(Ui_generic_output, QMainWindow):
-    signal_clear_content = pyqtSignal()
-    signal_append_line = pyqtSignal(str)
+    signal_clear_content = Signal()
+    signal_append_line = Signal(str)
 
     def __init__(self, parent: QMainWindow, title=None, titlebar=True):
         self.__parent = parent
