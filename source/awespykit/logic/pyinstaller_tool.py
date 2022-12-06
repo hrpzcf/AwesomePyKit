@@ -5,7 +5,6 @@ import shutil
 from platform import machine, platform
 from typing import *
 
-import PyQt5.sip as sip
 from com import *
 from fastpip import PyEnv
 from PyQt5.QtCore import *
@@ -157,21 +156,11 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             self.le_file_icon_path_old, self.le_file_icon_path
         )
         self.le_file_icon_path_old.deleteLater()
-        if sip.isdeleted(self.QREV_NUMBER) or sip.isdeleted(self.QREV_FNAME):
-            PyinstallerToolWindow.rebuild_validators()
         for line_edit in self.le_vers_group:
             line_edit.setValidator(self.QREV_NUMBER)
         self.le_output_name.setValidator(self.QREV_FNAME)
         self.le_runtime_tmpdir.setValidator(self.QREV_FNAME)
         self.splitter.setSizes((10000, 10000))
-
-    @classmethod
-    def rebuild_validators(cls):
-        """
-        用于解决以编程方式第二次执行 run_pykit 函数出现 x deleted 的问题
-        """
-        cls.QREV_NUMBER = QRegExpValidator(QRegExp(r"[0-9]*"))
-        cls.QREV_FNAME = QRegExpValidator(QRegExp(r'[^\\/:*?"<>|]*'))
 
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.after_task_completed)
