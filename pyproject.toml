@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "Awespykit"
+version = "1.4.0"
+description = "一个关于 Python 的 GUI 工具箱：包管理器、程序打包、切换 pip 源、模块安装包下载。"
+authors = ["hrpzcf"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+PySide2 = "^5.15.2"
+fastpip = "^1.5.0"
+pywin32 = ">=224"
+chardet = ">=4.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 80
+target-version = ["py37"]
