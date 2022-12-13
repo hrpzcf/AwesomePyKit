@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from PySide2.QtWidgets import *
+from PyQt5.QtWidgets import *
 
 
 class MessageBox(QMessageBox):

@@ -8,7 +8,7 @@ from typing import *
 import re
 from com import *
 
-from PySide2.QtCore import QFile, QIODevice
+from PyQt5.QtCore import QFile, QIODevice
 from settings import themes_root
 
 

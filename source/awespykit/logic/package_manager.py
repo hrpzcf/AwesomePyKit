@@ -5,9 +5,9 @@ from typing import *
 
 from com import *
 from fastpip import *
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from settings import *
 from ui import *
 from utils import *
@@ -1018,7 +1018,7 @@ class AddEnvironDialog(Ui_input_dialog, QMainWindow):
 
 
 class NameQueryPanel(Ui_query_panel, QMainWindow):
-    signal_result = Signal(str)
+    signal_result = pyqtSignal(str)
 
     def __init__(self, parent: PackageManagerWindow):
         self.__parent = parent

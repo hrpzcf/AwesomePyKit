@@ -3,9 +3,9 @@
 import os
 
 from fastpip import *
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from settings import *
 from ui import *
 from utils import *
@@ -15,9 +15,9 @@ from .query_file_path import QueryFilePath
 
 
 class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
-    set_download_table = Signal(list)
-    download_completed = Signal(str)
-    download_status = Signal(int, str)
+    set_download_table = pyqtSignal(list)
+    download_completed = pyqtSignal(str)
+    download_status = pyqtSignal(int, str)
 
     def __init__(self, parent):
         super().__init__(parent)

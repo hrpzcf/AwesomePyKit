@@ -8,9 +8,9 @@ from os import path
 from typing import *
 
 from fastpip import *
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
 sys.path.append(path.dirname(__file__))  # rpk.exe 入口点所需
 

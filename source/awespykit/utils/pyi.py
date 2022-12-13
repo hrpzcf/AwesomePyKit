@@ -9,7 +9,7 @@ from typing import *
 from __info__ import *
 from com import *
 from fastpip import PyEnv
-from PySide2.QtCore import *
+from PyQt5.QtCore import *
 from settings import *
 
 from utils.main import get_cmd_out
@@ -21,9 +21,9 @@ class PyiTool(QObject):
     STARTUP = STARTUPINFO()
     STARTUP.dwFlags = STARTF_USESHOWWINDOW
     STARTUP.wShowWindow = SW_HIDE
-    stdout = Signal(str)
-    run_time = Signal(int)
-    completed = Signal(int)
+    stdout = pyqtSignal(str)
+    run_time = pyqtSignal(int)
+    completed = pyqtSignal(int)
     pyi_init = os.path.join("PyInstaller", "__init__.py")
     using_pyi = "-m", "PyInstaller"
     read_pyi_ver = "-m", "PyInstaller", "-v"

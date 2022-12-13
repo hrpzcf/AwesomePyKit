@@ -5,7 +5,7 @@
 import os
 import sys
 
-compile_cmd = "pyside2-uic -o {} {}"
+compile_cmd = "pyuic5 -o {} {}"
 ui_dir_path = "source/awespykit/ui"
 
 
@@ -27,7 +27,7 @@ def compile_ui(any_path):
             os.system(compile_cmd.format(src_name, ui_name))
             print(f"转换完成...\n")
         except Exception:
-            print(f"文件 <{ui_name}> 转换失败，请检查是否已安装 PySide2...\n")
+            print(f"文件 <{ui_name}> 转换失败，请检查是否已安装 PyQt5...\n")
             break
     print("转换结束...")
     os.chdir(current_dir)

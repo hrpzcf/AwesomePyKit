@@ -10,7 +10,7 @@ from typing import Match
 
 import win32api
 from fastpip import PyEnv
-from PySide2.QtCore import *
+from PyQt5.QtCore import *
 
 # noinspection PyUnresolvedReferences
 from win32com.shell import shell
