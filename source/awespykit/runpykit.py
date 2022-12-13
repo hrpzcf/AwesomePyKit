@@ -3,7 +3,9 @@
 __license__ = "GNU General Public License v3 (GPLv3)"
 
 import sys
+from functools import partial
 from os import path
+from typing import *
 
 from fastpip import *
 from PySide2.QtCore import *
@@ -18,6 +20,7 @@ from logic import *
 from res.res import *
 from settings import *
 from ui import *
+from utils.thmt import ThemeData, Themes
 
 if VERNUM[0] != REQ_FPVER[0]:
     raise Exception(f"当前环境的 fastpip 主版本号({VERNUM[0]})非本程序要求：{REQ_FPVER[0]}")
@@ -31,6 +34,8 @@ elif VERNUM[1] == REQ_FPVER[1] and VERNUM[2] < REQ_FPVER[2]:
 # 2. 如次版本号等于要求的次版本号，则修订号必须大于等于要求的修订号
 ################################################################
 
+_awespykit: Union[QApplication, None] = None
+
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
     def __init__(self, config: MainEntranceConfig):
@@ -41,35 +46,38 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         )
         self.setWindowTitle(NAME)
         self.__config = config
+        self.__themes: List[ThemeData] = Themes()
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
         self.__pkgdl_win = PackageDownloadWindow(self)
         self.__setup_other_widgets()
-        self.make_action_checked(config.app_style)
-
-    def make_action_checked(self, style: AppStyle):
-        if style == AppStyle.Windows:
-            self.action_fusion.setChecked(False)
-            self.action_native.setChecked(False)
-            self.action_windows.setChecked(True)
-        elif style == AppStyle.Native:
-            self.action_fusion.setChecked(False)
-            self.action_native.setChecked(True)
-            self.action_windows.setChecked(False)
-        elif style == AppStyle.Fusion:
-            self.action_fusion.setChecked(True)
-            self.action_native.setChecked(False)
-            self.action_windows.setChecked(False)
+        self.__theme_action(self.__config.selected_thm)
 
     def change_appstyle(self, style: AppStyle):
         self.__config.app_style = style
-        self.make_action_checked(style)
         MessageBox("提示", "界面风格设置成功，重启程序生效！").exec_()
 
     def display(self):
         self.resize(*self.__config.window_size)
         self.showNormal()
+
+    def __theme_action(self, thm: Union[int, ThemeData]):
+        if _awespykit is None:
+            return
+        if isinstance(thm, ThemeData):
+            self.__config.selected_thm = thm.index
+            if thm.index != -1:
+                sheet = thm.sheet
+            else:
+                sheet = EMPTY_STR
+            _awespykit.setStyleSheet(sheet)
+        elif isinstance(thm, int):
+            for theme in self.__themes:
+                if theme.index == thm:
+                    _awespykit.setStyleSheet(theme.sheet)
+                    return
+            _awespykit.setStyleSheet(EMPTY_STR)
 
     def __setup_other_widgets(self):
         self.uiPushButton_pkg_mgr.setIcon(QIcon(":/manage.png"))
@@ -82,19 +90,16 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.uiPushButton_pkg_dload.clicked.connect(self.__pkgdl_win.display)
         self.uiPushButton_settings.setIcon(QIcon(":/settings.png"))
         # noinspection PyTypeChecker
-        menu_setstyle = QMenu("风格", self)
-        self.action_native.triggered.connect(
-            lambda: self.change_appstyle(AppStyle.Native)
+        menu_setstyle = QMenu("主题", self)
+        native_style = QAction("原生风格", self)
+        native_style.triggered.connect(
+            partial(self.__theme_action, ThemeData())
         )
-        menu_setstyle.addAction(self.action_native)
-        self.action_fusion.triggered.connect(
-            lambda: self.change_appstyle(AppStyle.Fusion)
-        )
-        menu_setstyle.addAction(self.action_fusion)
-        self.action_windows.triggered.connect(
-            lambda: self.change_appstyle(AppStyle.Windows)
-        )
-        menu_setstyle.addAction(self.action_windows)
+        menu_setstyle.addAction(native_style)
+        for theme in self.__themes:
+            action = QAction(theme.name, self)
+            action.triggered.connect(partial(self.__theme_action, theme))
+            menu_setstyle.addAction(action)
         menu_main_settings = QMenu(self)
         menu_main_settings.addMenu(menu_setstyle)
         menu_main_settings.addAction("关于", self._show_about)
@@ -147,16 +152,17 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
 
 def run_pykit_sysexit_when_close():
-    awespykit = QApplication(sys.argv)
+    global _awespykit
+    _awespykit = QApplication(sys.argv)
     translator = QTranslator()
     translator.load(":/trans/widgets_zh-CN.qm")
-    awespykit.installTranslator(translator)
+    _awespykit.installTranslator(translator)
     config = MainEntranceConfig()
-    awespykit.setWindowIcon(QIcon(":/icon2_64.png"))
-    awespykit.setStyle(AppStyle(config.app_style).name)
+    _awespykit.setWindowIcon(QIcon(":/icon2_64.png"))
+    _awespykit.setStyle(AppStyle(config.app_style).name)
     main_entrance = MainEntrance(config)
     main_entrance.display()
-    sys.exit(awespykit.exec_())
+    sys.exit(_awespykit.exec_())
 
 
 if __name__ == "__main__":

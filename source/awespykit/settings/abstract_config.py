@@ -6,21 +6,22 @@ import os.path as op
 import sys
 from pathlib import Path
 
-_runs_in_bundle_mode = getattr(sys, "frozen", False)
-if _runs_in_bundle_mode:
+_frozen_program = getattr(sys, "frozen", False)
+if _frozen_program:
     # noinspection PyUnresolvedReferences
     _res_root = sys._MEIPASS
 else:
     _res_root = op.dirname(op.dirname(op.abspath(__file__)))
 _appdata_local_folder = os.getenv("LOCALAPPDATA")
 if not _appdata_local_folder:
-    if _runs_in_bundle_mode:
-        config_root = op.dirname(sys.executable)
+    if _frozen_program:
+        _user_data_root = op.dirname(sys.executable)
     else:
-        config_root = _res_root
+        _user_data_root = _res_root
 else:
-    config_root = op.join(_appdata_local_folder, "Awespykit")
-config_root = op.join(config_root, "config")
+    _user_data_root = op.join(_appdata_local_folder, "Awespykit")
+config_root = op.join(_user_data_root, "config")
+themes_root = op.join(_user_data_root, "themes")
 
 
 def generate_respath(*p):

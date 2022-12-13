@@ -27,4 +27,8 @@
     <qresource prefix="trans">
         <file>widgets_zh-CN.qm</file>
     </qresource>
+    <qresource prefix="themes">
+        <file>dark-theme.qss</file>
+        <file>light-theme.qss</file>
+    </qresource>
 </RCC>

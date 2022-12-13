@@ -10,6 +10,7 @@ from .abstract_config import AbstractConfig
 class MainEntranceConfig(AbstractConfig):
     _key_app_style = "app_style"
     _key_window_size = "window_size"
+    _key_selected_theme = "selected_theme"
 
     CONFIGFILE = "main_entrance.json"
 
@@ -27,9 +28,7 @@ class MainEntranceConfig(AbstractConfig):
 
     @property
     def window_size(self):
-        if self._key_window_size not in self:
-            self[self._key_window_size] = 260, 320
-        return self[self._key_window_size]
+        return self.setdefault(self._key_window_size, (260, 320))
 
     @window_size.setter
     def window_size(self, value):
@@ -37,3 +36,12 @@ class MainEntranceConfig(AbstractConfig):
         assert len(value) == 2
         assert isinstance(value[0], int) and isinstance(value[1], int)
         self[self._key_window_size] = value
+
+    @property
+    def selected_thm(self):
+        return self.setdefault(self._key_selected_theme, -1)
+
+    @selected_thm.setter
+    def selected_thm(self, value):
+        assert isinstance(value, int)
+        self[self._key_selected_theme] = value

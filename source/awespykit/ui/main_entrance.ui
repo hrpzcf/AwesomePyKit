@@ -158,25 +158,16 @@ QPushButton::menu-indicator{image:none}</string>
    </layout>
   </widget>
   <action name="action_fusion">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="text">
     <string>Fusion</string>
    </property>
   </action>
   <action name="action_windows">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="text">
     <string>经典风格</string>
    </property>
   </action>
   <action name="action_native">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="text">
     <string>原生风格</string>
    </property>
