@@ -173,7 +173,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.uiTableWidget_installed_info.horizontalHeader().sectionClicked[
             int
         ].connect(self.__sort_by_column)
-        self.uiTableWidget_installed_info.clicked.connect(
+        self.uiTableWidget_installed_info.itemSelectionChanged.connect(
             self.__show_label_selected_num
         )
         self.uiLineEdit_search_pkgs_kwd.textChanged.connect(
@@ -489,7 +489,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             self.uiTableWidget_installed_info.selectAll()
         else:
             self.uiTableWidget_installed_info.clearSelection()
-        self.__show_label_selected_num()
 
     def auto_search_environ(self):
         def search_environ():
