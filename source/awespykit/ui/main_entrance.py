@@ -25,9 +25,6 @@ class Ui_main_entrance(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPushButton_pkg_mgr.sizePolicy().hasHeightForWidth())
         self.uiPushButton_pkg_mgr.setSizePolicy(sizePolicy)
-        self.uiPushButton_pkg_mgr.setStyleSheet("QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}\n"
-"QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}\n"
-"QPushButton::menu-indicator{image:none}")
         self.uiPushButton_pkg_mgr.setIconSize(QtCore.QSize(32, 32))
         self.uiPushButton_pkg_mgr.setFlat(True)
         self.uiPushButton_pkg_mgr.setObjectName("uiPushButton_pkg_mgr")
@@ -38,9 +35,6 @@ class Ui_main_entrance(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPushButton_pyi_tool.sizePolicy().hasHeightForWidth())
         self.uiPushButton_pyi_tool.setSizePolicy(sizePolicy)
-        self.uiPushButton_pyi_tool.setStyleSheet("QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}\n"
-"QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}\n"
-"QPushButton::menu-indicator{image:none}")
         self.uiPushButton_pyi_tool.setIconSize(QtCore.QSize(32, 32))
         self.uiPushButton_pyi_tool.setFlat(True)
         self.uiPushButton_pyi_tool.setObjectName("uiPushButton_pyi_tool")
@@ -51,9 +45,6 @@ class Ui_main_entrance(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPushButton_index_mgr.sizePolicy().hasHeightForWidth())
         self.uiPushButton_index_mgr.setSizePolicy(sizePolicy)
-        self.uiPushButton_index_mgr.setStyleSheet("QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}\n"
-"QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}\n"
-"QPushButton::menu-indicator{image:none}")
         self.uiPushButton_index_mgr.setIconSize(QtCore.QSize(32, 32))
         self.uiPushButton_index_mgr.setFlat(True)
         self.uiPushButton_index_mgr.setObjectName("uiPushButton_index_mgr")
@@ -64,9 +55,6 @@ class Ui_main_entrance(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPushButton_pkg_dload.sizePolicy().hasHeightForWidth())
         self.uiPushButton_pkg_dload.setSizePolicy(sizePolicy)
-        self.uiPushButton_pkg_dload.setStyleSheet("QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}\n"
-"QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}\n"
-"QPushButton::menu-indicator{image:none}")
         self.uiPushButton_pkg_dload.setIconSize(QtCore.QSize(32, 32))
         self.uiPushButton_pkg_dload.setFlat(True)
         self.uiPushButton_pkg_dload.setObjectName("uiPushButton_pkg_dload")
@@ -77,20 +65,11 @@ class Ui_main_entrance(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.uiPushButton_settings.sizePolicy().hasHeightForWidth())
         self.uiPushButton_settings.setSizePolicy(sizePolicy)
-        self.uiPushButton_settings.setStyleSheet("QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}\n"
-"QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}\n"
-"QPushButton::menu-indicator{image:none}")
         self.uiPushButton_settings.setIconSize(QtCore.QSize(32, 32))
         self.uiPushButton_settings.setFlat(True)
         self.uiPushButton_settings.setObjectName("uiPushButton_settings")
         self.horizontalLayout.addWidget(self.uiPushButton_settings)
         main_entrance.setCentralWidget(self.centralwidget)
-        self.action_fusion = QtWidgets.QAction(main_entrance)
-        self.action_fusion.setObjectName("action_fusion")
-        self.action_windows = QtWidgets.QAction(main_entrance)
-        self.action_windows.setObjectName("action_windows")
-        self.action_native = QtWidgets.QAction(main_entrance)
-        self.action_native.setObjectName("action_native")
 
         self.retranslateUi(main_entrance)
         QtCore.QMetaObject.connectSlotsByName(main_entrance)
@@ -108,6 +87,3 @@ class Ui_main_entrance(object):
 "用于下载 Python 各种第三方包/库/模块的离线安装包"))
         self.uiPushButton_settings.setToolTip(_translate("main_entrance", "工具箱的设置菜单\n"
 "包含界面风格设置、关于菜单"))
-        self.action_fusion.setText(_translate("main_entrance", "Fusion"))
-        self.action_windows.setText(_translate("main_entrance", "经典风格"))
-        self.action_native.setText(_translate("main_entrance", "原生风格"))

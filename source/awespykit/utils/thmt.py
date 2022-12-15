@@ -53,10 +53,9 @@ class Themes(list):
         return cls.__theme_id
 
     def __load_builtin_themes(self):
-        # 明亮主题在前，读取设置使用中主题下标不存在则默认第一个主题
         for theme in (
-            QFile(":/themes/light-theme.qss"),
             QFile(":/themes/dark-theme.qss"),
+            QFile(":/themes/light-theme.qss"),
         ):
             if not theme.open(QIODevice.ReadOnly):
                 continue
@@ -93,7 +92,7 @@ class Themes(list):
         if len(lines) < 3:
             return EMPTY_STR, EMPTY_STR
         _, name_line, stylesheet = lines
-        theme_name = re.match(r"/\*\s*Theme Name:\s*(\S*)\s\*/", name_line)
+        theme_name = re.match(r"/\*\sTheme Name:\s?(.*)\s\*/", name_line)
         if not theme_name:
             return EMPTY_STR, EMPTY_STR
         return theme_name.group(1), stylesheet

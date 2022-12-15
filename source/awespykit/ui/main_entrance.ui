@@ -27,11 +27,6 @@
        <string>包管理器
 用于管理不同 Python 环境中的包/库/模块</string>
       </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
-QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
-QPushButton::menu-indicator{image:none}</string>
-      </property>
       <property name="iconSize">
        <size>
         <width>32</width>
@@ -54,11 +49,6 @@ QPushButton::menu-indicator{image:none}</string>
       <property name="toolTip">
        <string>程序打包工具
 使用 Pyinstaller 将 Python 程序打包成 exe 文件</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
-QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
-QPushButton::menu-indicator{image:none}</string>
       </property>
       <property name="iconSize">
        <size>
@@ -83,11 +73,6 @@ QPushButton::menu-indicator{image:none}</string>
        <string>Pip 源设置工具
 设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度</string>
       </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
-QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
-QPushButton::menu-indicator{image:none}</string>
-      </property>
       <property name="iconSize">
        <size>
         <width>32</width>
@@ -110,11 +95,6 @@ QPushButton::menu-indicator{image:none}</string>
       <property name="toolTip">
        <string>模块安装包下载器
 用于下载 Python 各种第三方包/库/模块的离线安装包</string>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
-QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
-QPushButton::menu-indicator{image:none}</string>
       </property>
       <property name="iconSize">
        <size>
@@ -139,11 +119,6 @@ QPushButton::menu-indicator{image:none}</string>
        <string>工具箱的设置菜单
 包含界面风格设置、关于菜单</string>
       </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton:hover{border-radius:4px;background-color:rgba(190, 190, 190, 160);}
-QPushButton:pressed{border-radius:4px;background-color:rgba(150, 150, 150, 160);}
-QPushButton::menu-indicator{image:none}</string>
-      </property>
       <property name="iconSize">
        <size>
         <width>32</width>
@@ -157,21 +132,6 @@ QPushButton::menu-indicator{image:none}</string>
     </item>
    </layout>
   </widget>
-  <action name="action_fusion">
-   <property name="text">
-    <string>Fusion</string>
-   </property>
-  </action>
-  <action name="action_windows">
-   <property name="text">
-    <string>经典风格</string>
-   </property>
-  </action>
-  <action name="action_native">
-   <property name="text">
-    <string>原生风格</string>
-   </property>
-  </action>
  </widget>
  <resources/>
  <connections/>

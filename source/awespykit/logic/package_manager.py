@@ -251,6 +251,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return
 
         contextmenu = QMenu(self)
+        contextmenu.setObjectName("envlst_menu")
 
         action = QAction(QIcon(":/openfd.png"), "打开目录（&O）", self)
         action.triggered.connect(self.selected_envfolder)
@@ -264,6 +265,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         action.triggered.connect(self.export_packages_info)
         contextmenu.addAction(action)
 
+        contextmenu.addSeparator()
+
         action = QAction(QIcon(":/search.png"), "自动搜索（&S）", self)
         action.triggered.connect(self.auto_search_environ)
         contextmenu.addAction(action)
@@ -276,9 +279,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         action.triggered.connect(self.del_selected_environ)
         contextmenu.addAction(action)
 
-        contextmenu.setStyleSheet(
-            "QMenu {padding: 10px; border: 1px solid black}"
-        )
+        contextmenu.setStyleSheet("QMenu {padding: 4px 8px;}")
         contextmenu.exec_(QCursor.pos())
 
     def packagesinfo_contextmenu(self, point: QPoint):
@@ -286,6 +287,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return
 
         contextmenu = QMenu(self)
+        contextmenu.setObjectName("pkginfo_menu")
         action_list = list()
 
         action = QAction(QIcon(":/upgrade.png"), "升级（&U）", self)
@@ -303,6 +305,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         action_list.append(action)
         contextmenu.addAction(action)
 
+        contextmenu.addSeparator()
+
         action = QAction(QIcon(":/query.png"), "查询（&Q）", self)
         action.triggered.connect(self.query_names)
         action_list.append(action)
@@ -316,9 +320,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         for action in action_list:
             action.setEnabled(not self.__exclusive_mode)
 
-        contextmenu.setStyleSheet(
-            "QMenu {padding: 10px; border: 1px solid black}"
-        )
+        contextmenu.setStyleSheet("QMenu {padding: 4px 8px;}")
         contextmenu.exec_(QCursor.pos())
 
     def set_win_install_package_envinfo(self):

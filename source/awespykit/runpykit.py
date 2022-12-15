@@ -35,6 +35,7 @@ elif VERNUM[1] == REQ_FPVER[1] and VERNUM[2] < REQ_FPVER[2]:
 ################################################################
 
 _awespykit: Union[QApplication, None] = None
+_stylesheet = "*{font-size:12px;font-family:'Microsoft YaHei UI';}"
 
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
@@ -70,14 +71,14 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
             if thm.index != -1:
                 sheet = thm.sheet
             else:
-                sheet = EMPTY_STR
+                sheet = _stylesheet
             _awespykit.setStyleSheet(sheet)
         elif isinstance(thm, int):
             for theme in self.__themes:
                 if theme.index == thm:
                     _awespykit.setStyleSheet(theme.sheet)
                     return
-            _awespykit.setStyleSheet(EMPTY_STR)
+            _awespykit.setStyleSheet(_stylesheet)
 
     def __setup_other_widgets(self):
         self.uiPushButton_pkg_mgr.setIcon(QIcon(":/manage.png"))
@@ -101,6 +102,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
             action.triggered.connect(partial(self.__theme_action, theme))
             menu_setstyle.addAction(action)
         menu_main_settings = QMenu(self)
+        menu_main_settings.setObjectName("settings_menu")
         menu_main_settings.addMenu(menu_setstyle)
         menu_main_settings.addAction("关于", self._show_about)
         self.uiPushButton_settings.setMenu(menu_main_settings)
