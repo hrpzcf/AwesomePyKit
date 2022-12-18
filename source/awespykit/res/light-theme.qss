@@ -402,6 +402,11 @@ QToolTip {
     padding: 2px 0;
 }
 
+/* 模块安装包下载器的下载列表按钮 */
+#uiPushButton_show_dllist {
+    margin-bottom: 4px;
+}
+
 /* 模块安装包下载器的开始下载按钮 */
 #uiPushButton_start_download {
     margin-bottom: 4px;
