@@ -222,7 +222,7 @@ class Ui_package_manager(object):
         self.uiPushButton_autosearch.setText(_translate("package_manager", "自动搜索"))
         self.uiPushButton_addmanully.setToolTip(_translate("package_manager", "手动将 Python 目录路径添加到本 Python 环境列表以便下次使用。"))
         self.uiPushButton_addmanully.setText(_translate("package_manager", "手动添加"))
-        self.uiPushButton_delselected.setToolTip(_translate("package_manager", "将 Python 环境列表中的选中项移除(不会删除本机 Python 目录)。"))
+        self.uiPushButton_delselected.setToolTip(_translate("package_manager", "将 Python 环境列表中的选中项移除(不会删除真实 Python 环境)。"))
         self.uiPushButton_delselected.setText(_translate("package_manager", "移除选中项"))
         self.lb_installed_pkgs_info.setToolTip(_translate("package_manager", "选中的 Python 环境中已安装的包名、当前版本、最新版本、安装状态信息。"))
         self.lb_installed_pkgs_info.setText(_translate("package_manager", "已安装的包信息："))

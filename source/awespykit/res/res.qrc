@@ -23,7 +23,11 @@
         <file>copy.png</file>
         <file>settings.png</file>
         <file>reinstall.png</file>
-    </qresource>
+        <file>down_arrow.png</file>
+        <file>up_arrow.png</file>
+        <file>right_arrow.png</file>
+        <file>left_arrow.png</file>
+</qresource>
     <qresource prefix="trans">
         <file>widgets_zh-CN.qm</file>
     </qresource>

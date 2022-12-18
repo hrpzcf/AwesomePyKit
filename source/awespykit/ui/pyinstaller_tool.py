@@ -685,7 +685,7 @@ class Ui_pyinstaller_tool(object):
         self.uiPushButton_check_imports = QtWidgets.QPushButton(self.layoutWidget)
         self.uiPushButton_check_imports.setMinimumSize(QtCore.QSize(0, 42))
         palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(255, 0, 0))
+        brush = QtGui.QBrush(QtGui.QColor(0, 170, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ButtonText, brush)
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
@@ -704,7 +704,7 @@ class Ui_pyinstaller_tool(object):
         self.uiPushButton_clear_data = QtWidgets.QPushButton(self.layoutWidget)
         self.uiPushButton_clear_data.setMinimumSize(QtCore.QSize(0, 42))
         palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 170, 0))
+        brush = QtGui.QBrush(QtGui.QColor(255, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ButtonText, brush)
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
@@ -739,9 +739,6 @@ class Ui_pyinstaller_tool(object):
         self.uiPushButton_start_packing.setFont(font)
         self.uiPushButton_start_packing.setObjectName("uiPushButton_start_packing")
         self.horizontalLayout_18.addWidget(self.uiPushButton_start_packing)
-        self.horizontalLayout_18.setStretch(0, 3)
-        self.horizontalLayout_18.setStretch(1, 2)
-        self.horizontalLayout_18.setStretch(2, 5)
         self.verticalLayout_16.addLayout(self.horizontalLayout_18)
         self.horizontalLayout_37.addWidget(self.splitter)
         pyinstaller_tool.setCentralWidget(self.centralwidget)
@@ -906,7 +903,8 @@ class Ui_pyinstaller_tool(object):
         self.uiPushButton_create_venv.setToolTip(_translate("pyinstaller_tool", "在项目根目录下创建一个 venv 虚拟环境并在其中安装你的程序的依赖。\n"
 "注意：创建环境后请勿对环境目录进行重命名等操作，否则可能会造成该环境 Scripts 目录下的命令无法执行。"))
         self.uiPushButton_create_venv.setText(_translate("pyinstaller_tool", "创建"))
-        self.uiPushButton_refresh_venv.setToolTip(_translate("pyinstaller_tool", "重新在项目根目录下查找虚拟环境并刷新版本信息。"))
+        self.uiPushButton_refresh_venv.setToolTip(_translate("pyinstaller_tool", "重新在项目根目录下查找虚拟环境并刷新版本信息。\n"
+"如果你确定存在虚拟环境但无法刷新出来，请确认“项目根目录”是否被正确设置为虚拟环境的父目录。"))
         self.uiPushButton_refresh_venv.setText(_translate("pyinstaller_tool", "刷新"))
         self.uiCheckBox_prioritize_venv.setToolTip(_translate("pyinstaller_tool", "选中此项后，将使用项目目录下的虚拟环境来打包程序。\n"
 "如果项目目录下没有虚拟环境，则弹出菜单询问：使用主环境、创建虚拟环境、取消。"))

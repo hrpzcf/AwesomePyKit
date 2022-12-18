@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>620</width>
-    <height>658</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="font">
@@ -529,13 +529,13 @@
          </spacer>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <widget class="QPushButton" name="uiPushButton_show_dllist">
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>50</height>
+              <height>42</height>
              </size>
             </property>
             <property name="font">
@@ -554,7 +554,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>50</height>
+              <height>42</height>
              </size>
             </property>
             <property name="palette">

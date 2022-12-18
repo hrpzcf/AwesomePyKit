@@ -172,7 +172,7 @@
             <item>
              <widget class="QPushButton" name="uiPushButton_delselected">
               <property name="toolTip">
-               <string>将 Python 环境列表中的选中项移除(不会删除本机 Python 目录)。</string>
+               <string>将 Python 环境列表中的选中项移除(不会删除真实 Python 环境)。</string>
               </property>
               <property name="text">
                <string>移除选中项</string>

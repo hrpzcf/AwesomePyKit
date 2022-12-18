@@ -15,7 +15,7 @@ class Ui_package_install(object):
     def setupUi(self, package_install):
         package_install.setObjectName("package_install")
         package_install.setWindowModality(QtCore.Qt.WindowModal)
-        package_install.resize(395, 438)
+        package_install.resize(395, 430)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         package_install.setFont(font)
@@ -71,7 +71,7 @@ class Ui_package_install(object):
         self.uiPushButton_save_as_text.setObjectName("uiPushButton_save_as_text")
         self.verticalLayout_2.addWidget(self.uiPushButton_save_as_text)
         self.uiPushButton_do_install = QtWidgets.QPushButton(self.centralwidget)
-        self.uiPushButton_do_install.setMinimumSize(QtCore.QSize(0, 50))
+        self.uiPushButton_do_install.setMinimumSize(QtCore.QSize(0, 42))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 255))
         brush.setStyle(QtCore.Qt.SolidPattern)
