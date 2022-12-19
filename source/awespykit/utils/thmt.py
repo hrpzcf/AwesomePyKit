@@ -2,12 +2,11 @@
 
 __doc__ = "主题相关工具"
 
-import json
+import re
 from pathlib import Path
 from typing import *
-import re
-from com import *
 
+from com import *
 from PyQt5.QtCore import QFile, QIODevice
 from settings import themes_root
 
@@ -54,7 +53,7 @@ class Themes(list):
 
     def __load_builtin_themes(self):
         for theme in (
-            QFile(":/themes/dark-theme.qss"),
+            # QFile(":/themes/dark-theme.qss"),  # 主题未完成
             QFile(":/themes/light-theme.qss"),
         ):
             if not theme.open(QIODevice.ReadOnly):
