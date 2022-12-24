@@ -19,16 +19,19 @@ QPushButton {
 /* 程序打包工具环境检查按钮 */
 #uiPushButton_check_imports {
     max-height: auto;
+    margin-bottom: 4px;
 }
 
 /* 程序打包工具清空数据按钮 */
 #uiPushButton_clear_data {
     max-height: auto;
+    margin-bottom: 4px;
 }
 
 /* 程序打包工具开始打包按钮 */
 #uiPushButton_start_packing {
     max-height: auto;
+    margin-bottom: 4px;
 }
 
 /* 包管理器器安装界面开始安装按钮 */
@@ -39,9 +42,11 @@ QPushButton {
 /* 模块安装包下载器的下载列表按钮 */
 #uiPushButton_show_dllist {
     max-height: auto;
+    margin-bottom: 4px;
 }
 
 /* 模块安装包下载器的开始下载按钮 */
 #uiPushButton_start_download {
     max-height: auto;
+    margin-bottom: 4px;
 }
