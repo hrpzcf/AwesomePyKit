@@ -1,0 +1,47 @@
+/* Note: Please save with utf-8 encoding */
+
+QPushButton {
+    max-height: 1em;
+    font-family: "Microsoft YaHei UI";
+    font-size: 9pt;
+    font-weight: normal;
+    padding: 4px 16px;
+}
+
+/* 主界面 5 个按钮的样式 */
+#uiPushButton_pkg_mgr, #uiPushButton_pyi_tool, #uiPushButton_index_mgr, #uiPushButton_pkg_dload,
+#uiPushButton_settings {
+    border: none;
+    padding: 4px 4px;
+    max-height: auto;
+}
+
+/* 程序打包工具环境检查按钮 */
+#uiPushButton_check_imports {
+    max-height: auto;
+}
+
+/* 程序打包工具清空数据按钮 */
+#uiPushButton_clear_data {
+    max-height: auto;
+}
+
+/* 程序打包工具开始打包按钮 */
+#uiPushButton_start_packing {
+    max-height: auto;
+}
+
+/* 包管理器器安装界面开始安装按钮 */
+#uiPushButton_do_install {
+    max-height: auto;
+}
+
+/* 模块安装包下载器的下载列表按钮 */
+#uiPushButton_show_dllist {
+    max-height: auto;
+}
+
+/* 模块安装包下载器的开始下载按钮 */
+#uiPushButton_start_download {
+    max-height: auto;
+}

@@ -1,0 +1,19 @@
+/* Note: Please save with utf-8 encoding */
+
+/* 主界面 5 个按钮的样式 */
+#uiPushButton_pkg_mgr, #uiPushButton_pyi_tool, #uiPushButton_index_mgr, #uiPushButton_pkg_dload,
+#uiPushButton_settings {
+    background-color: #D0D0D0;
+}
+#uiPushButton_pkg_mgr:hover, #uiPushButton_pyi_tool:hover, #uiPushButton_index_mgr:hover,
+#uiPushButton_pkg_dload:hover, #uiPushButton_settings:hover {
+    background-color: #C0C0C0;
+}
+#uiPushButton_pkg_mgr:pressed, #uiPushButton_pyi_tool:pressed, #uiPushButton_index_mgr:pressed,
+#uiPushButton_pkg_dload:pressed, #uiPushButton_settings:pressed {
+    background-color: #A0A0A0;
+}
+#uiPushButton_pkg_mgr::menu-indicator, #uiPushButton_pyi_tool::menu-indicator,
+#uiPushButton_index_mgr::menu-indicator, #uiPushButton_pkg_dload::menu-indicator, #uiPushButton_settings::menu-indicator {
+    image:none;
+}

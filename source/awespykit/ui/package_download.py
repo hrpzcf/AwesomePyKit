@@ -76,14 +76,14 @@ class Ui_package_download(object):
         self.line_8.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_8.setObjectName("line_8")
         self.verticalLayout_11.addWidget(self.line_8)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.uiLabel_pkgdownload_tips = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Consolas")
         font.setPointSize(8)
-        self.label_2.setFont(font)
-        self.label_2.setWordWrap(True)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout_11.addWidget(self.label_2)
+        self.uiLabel_pkgdownload_tips.setFont(font)
+        self.uiLabel_pkgdownload_tips.setWordWrap(True)
+        self.uiLabel_pkgdownload_tips.setObjectName("uiLabel_pkgdownload_tips")
+        self.verticalLayout_11.addWidget(self.uiLabel_pkgdownload_tips)
         self.horizontalLayout_6.addLayout(self.verticalLayout_11)
         self.verticalLayout_13 = QtWidgets.QVBoxLayout()
         self.verticalLayout_13.setObjectName("verticalLayout_13")
@@ -289,7 +289,7 @@ class Ui_package_download(object):
         self.label_8.setText(_translate("package_download", "下载条件默认派生自："))
         self.uiComboBox_derived_from.setToolTip(_translate("package_download", "下载安装包时需调用的 Python 环境。\n"
 "右侧留空的下载条件，下载时会使用从此环境派生的条件。"))
-        self.label_2.setText(_translate("package_download", "名称后支持跟随以下符号限定要下载的版本：\n"
+        self.uiLabel_pkgdownload_tips.setText(_translate("package_download", "名称后支持跟随以下符号限定要下载的版本：\n"
 "\"==\"、\">=\"、\"<=\"、\">\"、\"<\"、\",\"\n"
 "每行一个名称，名称和限定符中不允许出现空格。\n"
 "例如：fastpip>=0.6.2,<0.10.0\n"

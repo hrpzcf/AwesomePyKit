@@ -108,14 +108,14 @@ class Ui_package_install(object):
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.verticalLayout_3.addWidget(self.line)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.uiLabel_pkginstall_tips = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Consolas")
         font.setPointSize(8)
-        self.label_2.setFont(font)
-        self.label_2.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout_3.addWidget(self.label_2)
+        self.uiLabel_pkginstall_tips.setFont(font)
+        self.uiLabel_pkginstall_tips.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.uiLabel_pkginstall_tips.setObjectName("uiLabel_pkginstall_tips")
+        self.verticalLayout_3.addWidget(self.uiLabel_pkginstall_tips)
         package_install.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(package_install)
@@ -141,7 +141,7 @@ class Ui_package_install(object):
         self.uiPushButton_save_as_text.setText(_translate("package_install", "名称保存至文件"))
         self.uiPushButton_do_install.setText(_translate("package_install", "开始安装"))
         self.uiCheckBox_use_index_url.setText(_translate("package_install", "临时使用其他镜像源："))
-        self.label_2.setText(_translate("package_install", "名称后支持跟随以下符号限定要安装的版本：\n"
+        self.uiLabel_pkginstall_tips.setText(_translate("package_install", "名称后支持跟随以下符号限定要安装的版本：\n"
 "\"==\"、\">=\"、\"<=\"、\">\"、\"<\"、\",\"\n"
 "每行一个名称，名称和限定符中不允许出现空格。\n"
 "例如：fastpip>=0.6.2,<0.10.0\n"

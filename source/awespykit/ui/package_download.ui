@@ -145,7 +145,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="uiLabel_pkgdownload_tips">
           <property name="font">
            <font>
             <family>Consolas</family>

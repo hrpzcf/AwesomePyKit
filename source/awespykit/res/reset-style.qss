@@ -1,0 +1,34 @@
+/* Note: Please save with utf-8 encoding */
+
+* {
+    font-size: 9pt;
+    font-family:'Microsoft YaHei UI', 'Serif', 'Sans-serif';
+}
+
+/* 命令通用输出窗口 */
+#uiPlainTextEdit_output {
+    font-size: 10pt;
+    font-family: 'Consolas', 'Monospace', 'Microsoft YaHei UI';
+    font-weight: normal;
+}
+
+/* 程序打包工具命令输出窗口 */
+#uiTextEdit_packtool_logging {
+    font-size: 10pt;
+    font-family: 'Consolas', 'Monospace', 'Microsoft YaHei UI';
+    font-weight: normal;
+}
+
+/* 包管理器安装界面的提示字符 */
+#uiLabel_pkginstall_tips {
+    font-size: 8pt;
+    font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
+    font-weight: normal;
+}
+
+/* 模块安装包下载器的下载提示字符 */
+#uiLabel_pkgdownload_tips {
+    font-size: 8pt;
+    font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
+    font-weight: normal;
+}

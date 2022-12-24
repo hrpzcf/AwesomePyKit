@@ -32,7 +32,10 @@
         <file>widgets_zh-CN.qm</file>
     </qresource>
     <qresource prefix="themes">
-        <file>dark-theme.qss</file>
         <file>light-theme.qss</file>
-    </qresource>
+        <file>dark-theme.qss</file>
+        <file>reset-style.qss</file>
+        <file>qt_material_dark.qss</file>
+        <file>qt_material_all.qss</file>
+</qresource>
 </RCC>

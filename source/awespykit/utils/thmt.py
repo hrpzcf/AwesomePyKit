@@ -87,13 +87,6 @@ class Themes(list):
     __theme_dir = Path(themes_root)
     __theme_id = -1
     __id_increment = 1
-    __reset_sheet = "*{font-size:12px;font-family:'Microsoft YaHei UI';}"
-    __extra = {
-        "warning": "#ffc107",
-        "success": "#17a2b8",
-        "danger": "#dc3545",
-        "font_family": "Microsoft YaHei UI",
-    }
     __pat_pht = re.compile(
         r"QPlaceHolderText\s*{\s*color\s*:\s*([#\da-zA-Z]+)\s*;\s*}", re.S
     )
@@ -105,12 +98,37 @@ class Themes(list):
         r"QTable(?:View|Widget)::item:selected\s*{.*?background-color\s*:\s*([#\da-zA-Z]+)\s*;\s*}",
         re.S,
     )
+    __extra = {
+        "warning": "#ffc107",
+        "success": "#17a2b8",
+        "danger": "#dc3545",
+        "font_family": "Microsoft YaHei UI",
+    }
+
+    def __load_resetstyle_and_extra(self):
+        qt_material_dark = QFile(":/themes/qt_material_dark.qss")
+        if qt_material_dark.open(QIODevice.ReadOnly):
+            self.__qt_material_dark = (
+                qt_material_dark.readAll().data().decode("utf-8")
+            )
+        qt_material_all = QFile(":/themes/qt_material_all.qss")
+        if qt_material_all.open(QIODevice.ReadOnly):
+            self.__qt_material_all = (
+                qt_material_all.readAll().data().decode("utf-8")
+            )
+        reset_style = QFile(":/themes/reset-style.qss")
+        if reset_style.open(QIODevice.ReadOnly):
+            self.__resetsheet = reset_style.readAll().data().decode("utf-8")
 
     def __init__(self):
         super(Themes, self).__init__()
+        self.__resetsheet = EMPTY_STR
+        self.__qt_material_all = EMPTY_STR
+        self.__qt_material_dark = EMPTY_STR
+        self.__load_resetstyle_and_extra()
+        self.__current = 0
         self.__load_builtin_themes()
         self.__load_external_themes()
-        self.__current = 0
 
     def apply_theme(self, index: int, app: QApplication):
         assert isinstance(index, int)
@@ -135,7 +153,7 @@ class Themes(list):
             app.setStyleSheet(theme_data.data)
         elif theme_data.type == DataType.Style:
             app.setStyle(theme_data.data)
-            app.setStyleSheet(self.__reset_sheet)
+            app.setStyleSheet(self.__resetsheet)
         elif theme_data.type == DataType.XmlName:
             if apply_stylesheet is not None:
                 app.setStyle(AppStyle.WindowsVista.name)
@@ -148,6 +166,15 @@ class Themes(list):
                     )
                 else:
                     apply_stylesheet(app, theme_data.data, extra=self.__extra)
+                current_style_sheet = app.styleSheet()
+                current_style_sheet = (
+                    self.__resetsheet
+                    + current_style_sheet
+                    + self.__qt_material_all
+                )
+                if theme_data.data.startswith("dark_"):
+                    current_style_sheet += self.__qt_material_dark
+                app.setStyleSheet(current_style_sheet)
         return index
 
     @property
