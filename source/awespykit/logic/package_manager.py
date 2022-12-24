@@ -252,29 +252,29 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         contextmenu = QMenu(self)
         contextmenu.setObjectName("envlst_menu")
 
-        action = QAction(QIcon(":/openfd.png"), "打开目录（&O）", self)
+        action = QAction("打开目录（&O）", self)
         action.triggered.connect(self.selected_envfolder)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/copy.png"), "复制路径（&C）", self)
+        action = QAction("复制路径（&C）", self)
         action.triggered.connect(self.copy_environment_path)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/export.png"), "导出包列表（&E）", self)
+        action = QAction("导出包列表（&E）", self)
         action.triggered.connect(self.export_packages_info)
         contextmenu.addAction(action)
 
         contextmenu.addSeparator()
 
-        action = QAction(QIcon(":/search.png"), "自动搜索（&S）", self)
+        action = QAction("自动搜索（&S）", self)
         action.triggered.connect(self.auto_search_environ)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/add.png"), "手动添加（&A）", self)
+        action = QAction("手动添加（&A）", self)
         action.triggered.connect(self.add_environ_manully)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/delete.png"), "移除环境（&D）", self)
+        action = QAction("移除环境（&D）", self)
         action.triggered.connect(self.del_selected_environ)
         contextmenu.addAction(action)
 
@@ -289,29 +289,29 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         contextmenu.setObjectName("pkginfo_menu")
         action_list = list()
 
-        action = QAction(QIcon(":/upgrade.png"), "升级（&U）", self)
+        action = QAction("升级（&U）", self)
         action.triggered.connect(self.upgrade_packages)
         action_list.append(action)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/uninstall.png"), "卸载（&D）", self)
+        action = QAction("卸载（&D）", self)
         action.triggered.connect(self.uninstall_packages)
         action_list.append(action)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/reinstall.png"), "强制重装（&F）", self)
+        action = QAction("强制重装（&F）", self)
         action.triggered.connect(self.force_reinstall)
         action_list.append(action)
         contextmenu.addAction(action)
 
         contextmenu.addSeparator()
 
-        action = QAction(QIcon(":/query.png"), "查询（&Q）", self)
+        action = QAction("查询（&Q）", self)
         action.triggered.connect(self.query_names)
         action_list.append(action)
         contextmenu.addAction(action)
 
-        action = QAction(QIcon(":/refresh.png"), "刷新（&R）", self)
+        action = QAction("刷新（&R）", self)
         action.triggered.connect(lambda: self.get_pkgs_info(0))
         action_list.append(action)
         contextmenu.addAction(action)
