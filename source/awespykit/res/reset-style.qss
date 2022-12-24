@@ -32,3 +32,7 @@
     font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
     font-weight: normal;
 }
+
+QMenu[objectName="envlst_menu"], QMenu[objectName="pkginfo_menu"] {
+    padding: 4px 8px;
+}

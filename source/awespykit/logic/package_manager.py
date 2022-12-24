@@ -278,7 +278,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         action.triggered.connect(self.del_selected_environ)
         contextmenu.addAction(action)
 
-        contextmenu.setStyleSheet("QMenu {padding: 4px 8px;}")
         contextmenu.exec_(QCursor.pos())
 
     def packagesinfo_contextmenu(self, point: QPoint):
@@ -318,8 +317,6 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         for action in action_list:
             action.setEnabled(not self.__exclusive_mode)
-
-        contextmenu.setStyleSheet("QMenu {padding: 4px 8px;}")
         contextmenu.exec_(QCursor.pos())
 
     def set_win_install_package_envinfo(self):
