@@ -34,19 +34,18 @@ elif VERNUM[1] == REQ_FPVER[1] and VERNUM[2] < REQ_FPVER[2]:
 # 2. 如次版本号等于要求的次版本号，则修订号必须大于等于要求的修订号
 ################################################################
 
-_awespykit: Union[QApplication, None] = None
-_stylesheet = "*{font-size:12px;font-family:'Microsoft YaHei UI';}"
+_application_awespykit: Union[QApplication, None] = None
 
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
-    def __init__(self, config: MainEntranceConfig):
+    def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.setWindowFlags(
             Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint
         )
         self.setWindowTitle(NAME)
-        self.__config = config
+        self.__config = MainEntranceConfig()
         self.__themes: Themes[ThemeData] = PreThemeList
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
@@ -64,10 +63,10 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.showNormal()
 
     def __theme_action(self, index: int):
-        if _awespykit is None:
+        if _application_awespykit is None:
             return
         self.__config.selected_thm = self.__themes.apply_theme(
-            index, _awespykit
+            index, _application_awespykit
         )
 
     def __setup_other_widgets(self):
@@ -139,16 +138,15 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
 
 def run_pykit_sysexit_when_close():
-    global _awespykit
-    _awespykit = QApplication(sys.argv)
+    global _application_awespykit
+    _application_awespykit = QApplication(sys.argv)
     translator = QTranslator()
     translator.load(":/trans/widgets_zh-CN.qm")
-    _awespykit.installTranslator(translator)
-    config = MainEntranceConfig()
-    _awespykit.setWindowIcon(QIcon(":/icon2_64.png"))
-    main_entrance = MainEntrance(config)
+    _application_awespykit.installTranslator(translator)
+    _application_awespykit.setWindowIcon(QIcon(":/icon2_64.png"))
+    main_entrance = MainEntrance()
     main_entrance.display()
-    sys.exit(_awespykit.exec_())
+    sys.exit(_application_awespykit.exec_())
 
 
 if __name__ == "__main__":
