@@ -2,7 +2,10 @@
 
 __doc__ = "主题相关工具"
 
+__all__ = ["_App", "PreThemeList", "ThemeData", "Themes"]
+
 import re
+import sys
 from os import path
 from pathlib import Path
 from typing import *
@@ -14,6 +17,11 @@ from PyQt5.QtWidgets import *
 from res.res import *
 from settings import themes_root
 
+_App = QApplication(sys.argv)
+try:
+    from qdarkstyle import load_stylesheet_pyqt5
+except ImportError:
+    load_stylesheet_pyqt5 = None
 try:
     from qt_material import apply_stylesheet, list_themes
 except ImportError:
@@ -130,9 +138,9 @@ class Themes(list):
         self.__load_builtin_themes()
         self.__load_external_themes()
 
-    def apply_theme(self, index: int, app: QApplication):
+    def apply_theme(self, index: int):
         assert isinstance(index, int)
-        assert isinstance(app, QApplication)
+        assert isinstance(_App, QApplication)
         if index < 0 or index >= len(self):
             index = 0
         self.__current = index
@@ -149,24 +157,24 @@ class Themes(list):
             )
             QApplication.setPalette(palette)
         if theme_data.type == DataType.Sheet:
-            app.setStyle(AppStyle.WindowsVista.name)
-            app.setStyleSheet(theme_data.data)
+            _App.setStyle(AppStyle.WindowsVista.name)
+            _App.setStyleSheet(theme_data.data)
         elif theme_data.type == DataType.Style:
-            app.setStyle(theme_data.data)
-            app.setStyleSheet(self.__resetsheet)
+            _App.setStyle(theme_data.data)
+            _App.setStyleSheet(self.__resetsheet)
         elif theme_data.type == DataType.XmlName:
             if apply_stylesheet is not None:
-                app.setStyle(AppStyle.WindowsVista.name)
+                _App.setStyle(AppStyle.WindowsVista.name)
                 if theme_data.data.startswith("light_"):
                     apply_stylesheet(
-                        app,
+                        _App,
                         theme_data.data,
                         invert_secondary=True,
                         extra=self.__extra,
                     )
                 else:
-                    apply_stylesheet(app, theme_data.data, extra=self.__extra)
-                current_style_sheet = app.styleSheet()
+                    apply_stylesheet(_App, theme_data.data, extra=self.__extra)
+                current_style_sheet = _App.styleSheet()
                 current_style_sheet = (
                     self.__resetsheet
                     + current_style_sheet
@@ -174,7 +182,7 @@ class Themes(list):
                 )
                 if theme_data.data.startswith("dark_"):
                     current_style_sheet += self.__qt_material_dark
-                app.setStyleSheet(current_style_sheet)
+                _App.setStyleSheet(current_style_sheet)
         return index
 
     @property
@@ -239,7 +247,17 @@ class Themes(list):
             theme_data.itembg_normal = tibgn
             theme_data.itembg_selected = tibgs
             self.append(theme_data)
-        # 开源的第三方样式表：qt-material 主题
+        # 开源的第三方样式表：qdarkstyle
+        if load_stylesheet_pyqt5 is not None:
+            self.append(
+                ThemeData(
+                    self.__get_themeid(),
+                    "QDarkStyle",
+                    load_stylesheet_pyqt5(),
+                    DataType.Sheet,
+                )
+            )
+        # 开源的第三方样式表：qt-material
         if list_themes is not None and apply_stylesheet is not None:
             for xml_name in list_themes():
                 self.append(

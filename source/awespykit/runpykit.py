@@ -20,7 +20,7 @@ from logic import *
 from res.res import *
 from settings import *
 from ui import *
-from utils.thmt import PreThemeList, ThemeData, Themes
+from utils.thmt import *
 
 if VERNUM[0] != REQ_FPVER[0]:
     raise Exception(f"当前环境的 fastpip 主版本号({VERNUM[0]})非本程序要求：{REQ_FPVER[0]}")
@@ -33,8 +33,6 @@ elif VERNUM[1] == REQ_FPVER[1] and VERNUM[2] < REQ_FPVER[2]:
 # 1. 主版本号必须与要求一致，次版本号必须大于等于要求的次版本号
 # 2. 如次版本号等于要求的次版本号，则修订号必须大于等于要求的修订号
 ################################################################
-
-_application_awespykit: Union[QApplication, None] = None
 
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
@@ -63,11 +61,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.showNormal()
 
     def __theme_action(self, index: int):
-        if _application_awespykit is None:
-            return
-        self.__config.selected_thm = self.__themes.apply_theme(
-            index, _application_awespykit
-        )
+        self.__config.selected_thm = self.__themes.apply_theme(index)
 
     def __setup_other_widgets(self):
         self.uiPushButton_pkg_mgr.setIcon(QIcon(":/manage.png"))
@@ -138,15 +132,13 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
 
 
 def run_pykit_sysexit_when_close():
-    global _application_awespykit
-    _application_awespykit = QApplication(sys.argv)
     translator = QTranslator()
     translator.load(":/trans/widgets_zh-CN.qm")
-    _application_awespykit.installTranslator(translator)
-    _application_awespykit.setWindowIcon(QIcon(":/icon2_64.png"))
-    main_entrance = MainEntrance()
-    main_entrance.display()
-    sys.exit(_application_awespykit.exec_())
+    _App.installTranslator(translator)
+    _App.setWindowIcon(QIcon(":/icon2_64.png"))
+    main = MainEntrance()
+    main.display()
+    sys.exit(_App.exec_())
 
 
 if __name__ == "__main__":
