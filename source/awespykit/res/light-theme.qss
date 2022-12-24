@@ -193,11 +193,6 @@ QTableView::item:selected {
     background-color: #E0E0E0;
 }
 
-/* Pip 源设置工具列表项 */
-#uiListWidget_indexurls QWidget {
-    background-color: transparent;
-}
-
 /* 下拉框样式 */
 QComboBox {
     border: 2px solid #D9D9D9;

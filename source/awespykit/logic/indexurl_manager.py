@@ -16,8 +16,24 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.__config = IndexManagerConfig()
-        self.__ordered_urls = None
+        self.indexurls_model = QStandardItemModel()
+        self.__setup_indexurl_table()
         self.signal_slot_connection()
+
+    def __setup_indexurl_table(self):
+        self.uiTableView_indexurls.setModel(self.indexurls_model)
+        self.indexurls_model.setHorizontalHeaderLabels(("名称", "地址"))
+        horiz_header = self.uiTableView_indexurls.horizontalHeader()
+        horiz_header.setSectionResizeMode(0, QHeaderView.Interactive)
+        horiz_header.setSectionResizeMode(1, QHeaderView.Stretch)
+        self.uiTableView_indexurls.verticalHeader().setVisible(False)
+        for (index, (name, url)) in enumerate(self.__config.index_urls.items()):
+            self.indexurls_model.setItem(index, 0, QStandardItem(name))
+            self.indexurls_model.setItem(index, 1, QStandardItem(url))
+        if self.indexurls_model.rowCount() > 0:
+            self.uiTableView_indexurls.setCurrentIndex(
+                self.indexurls_model.index(0, 1)
+            )
 
     def display(self):
         # 首先 resize 为普通大小的窗口不可少，因为：
@@ -30,7 +46,6 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
             self.showMaximized()
         else:
             self.showNormal()
-        self.__list_widget_urls_update()
 
     def __store_window_size(self):
         if self.isMaximized() or self.isMinimized():
@@ -45,43 +60,25 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         if event.key() == Qt.Key_Escape:
             self.close()
 
-    @staticmethod
-    def __widget_for_list_item(name, url):
-        item_layout = QHBoxLayout()
-        item_layout.addWidget(QLabel(name))
-        item_layout.addWidget(QLabel(url))
-        item_layout.setStretch(0, 2)
-        item_layout.setStretch(1, 8)
-        item_widget = QWidget()
-        item_widget.setLayout(item_layout)
-        return item_widget
-
-    def __list_widget_urls_update(self):
-        self.uiListWidget_indexurls.clear()
-        self.__ordered_urls = tuple(self.__config.index_urls.items())
-        for name, url in self.__ordered_urls:
-            item_widget = self.__widget_for_list_item(name, url)
-            li_item = QListWidgetItem()
-            li_item.setSizeHint(QSize(0, 32))
-            self.uiListWidget_indexurls.addItem(li_item)
-            self.uiListWidget_indexurls.setItemWidget(li_item, item_widget)
-
     def signal_slot_connection(self):
         self.uiPushButton_clear_edit.clicked.connect(self.__clear_line_edit)
         self.uiPushButton_save_url.clicked.connect(self.__save_index_urls)
         self.uiPushButton_delete_url.clicked.connect(self.__del_index_url)
-        self.uiListWidget_indexurls.clicked.connect(self.__set_url_line_edit)
+        self.uiTableView_indexurls.clicked.connect(self.__set_url_line_edit)
         self.uiPushButton_set_index.clicked.connect(self.__set_global_index_url)
         self.uiPushButton_refresh_effective.clicked.connect(
             self.__display_effective_url
         )
 
     def __set_url_line_edit(self):
-        selected = self.uiListWidget_indexurls.currentRow()
-        if selected == -1:
+        model_index = self.uiTableView_indexurls.currentIndex()
+        selected_row = model_index.row()
+        if selected_row == -1:
             return
-        self.uiLineEdit_url_name.setText(self.__ordered_urls[selected][0])
-        self.uiLineEdit_index_url.setText(self.__ordered_urls[selected][1])
+        selected_name = self.indexurls_model.item(selected_row)
+        selected_url = self.indexurls_model.item(selected_row, 1)
+        self.uiLineEdit_url_name.setText(selected_name.text())
+        self.uiLineEdit_index_url.setText(selected_url.text())
 
     def __clear_line_edit(self):
         self.uiLineEdit_url_name.clear()
@@ -95,10 +92,10 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
             msgbox = error("名称不能为空！")
         elif not url:
             msgbox = error("地址不能为空！")
+        elif name in self.__config.index_urls:
+            msgbox = error(f"名称 '{name}' 已存在！")
         elif not check_index_url(url):
             msgbox = error("无效的镜像源地址！")
-        elif name in self.__config.index_urls:
-            msgbox = error(f"名称'{name}'已存在！")
         else:
             return True
         return msgbox.exec_()  # 无论如何都返回 0
@@ -108,30 +105,36 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
         url = self.uiLineEdit_index_url.text()
         if self.__check_name_url(name, url):
             self.__config.index_urls[name] = url
-        self.__list_widget_urls_update()
+            self.indexurls_model.appendRow(
+                (QStandardItem(name), QStandardItem(url))
+            )
 
     def __del_index_url(self):
-        selected = self.uiListWidget_indexurls.currentRow()
-        if selected == -1:
+        model_index = self.uiTableView_indexurls.currentIndex()
+        selected_row_index = model_index.row()
+        if selected_row_index == -1:
             return MessageBox(
                 "提示",
                 "没有选中列表内的任何条目。",
             ).exec_()
-        del self.__config.index_urls[self.__ordered_urls[selected][0]]
-        self.__list_widget_urls_update()
-        items_count = self.uiListWidget_indexurls.count()
-        if items_count:
-            if selected == -1:
-                self.uiListWidget_indexurls.setCurrentRow(0)
-            else:
-                should_be_selected = (
-                    0
-                    if selected == 0
-                    else selected
-                    if selected < items_count
-                    else items_count - 1
-                )
-                self.uiListWidget_indexurls.setCurrentRow(should_be_selected)
+        item_data = self.indexurls_model.item(selected_row_index)
+        indexurl_name = item_data.text()
+        assert bool(indexurl_name), "镜像源名称混入空字符或奇怪的东西"
+        assert indexurl_name in self.__config.index_urls, "镜像源字典没这名称"
+        del self.__config.index_urls[indexurl_name]
+        self.indexurls_model.removeRow(selected_row_index)
+        table_rowcount = self.indexurls_model.rowCount()
+        if not table_rowcount:
+            return
+        if selected_row_index == -1:
+            will_be_selected = self.indexurls_model.index(0, 0)
+        else:
+            will_be_selected = (
+                self.indexurls_model.index(selected_row_index, 0)
+                if selected_row_index < table_rowcount
+                else self.indexurls_model.index(table_rowcount - 1, 0)
+            )
+        self.uiTableView_indexurls.setCurrentIndex(will_be_selected)
 
     def __get_cur_environ(self):
         """

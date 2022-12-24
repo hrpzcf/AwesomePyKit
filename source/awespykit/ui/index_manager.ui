@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>520</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="font">
@@ -36,9 +36,9 @@
      <number>8</number>
     </property>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="9,1,1,1,1,1,1">
+     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0,0,0,0,0,0">
       <item>
-       <widget class="QListWidget" name="uiListWidget_indexurls">
+       <widget class="QTableView" name="uiTableView_indexurls">
         <property name="palette">
          <palette>
           <active>
@@ -76,6 +76,27 @@
           </disabled>
          </palette>
         </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::SingleSelection</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectRows</enum>
+        </property>
+        <property name="gridStyle">
+         <enum>Qt::NoPen</enum>
+        </property>
+        <attribute name="horizontalHeaderHighlightSections">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderHighlightSections">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
        </widget>
       </item>
       <item>
