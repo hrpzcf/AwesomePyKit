@@ -27,7 +27,7 @@
         <file>up_arrow.png</file>
         <file>right_arrow.png</file>
         <file>left_arrow.png</file>
-</qresource>
+    </qresource>
     <qresource prefix="trans">
         <file>widgets_zh-CN.qm</file>
     </qresource>

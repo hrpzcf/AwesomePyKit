@@ -20,7 +20,7 @@ from logic import *
 from res.res import *
 from settings import *
 from ui import *
-from utils.thmt import ThemeData, Themes
+from utils.thmt import PreThemeList, ThemeData, Themes
 
 if VERNUM[0] != REQ_FPVER[0]:
     raise Exception(f"当前环境的 fastpip 主版本号({VERNUM[0]})非本程序要求：{REQ_FPVER[0]}")
@@ -47,7 +47,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         )
         self.setWindowTitle(NAME)
         self.__config = config
-        self.__themes: List[ThemeData] = Themes()
+        self.__themes: Themes[ThemeData] = PreThemeList
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
@@ -63,22 +63,12 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.resize(*self.__config.window_size)
         self.showNormal()
 
-    def __theme_action(self, thm: Union[int, ThemeData]):
+    def __theme_action(self, index: int):
         if _awespykit is None:
             return
-        if isinstance(thm, ThemeData):
-            self.__config.selected_thm = thm.index
-            if thm.index != -1:
-                sheet = thm.sheet
-            else:
-                sheet = _stylesheet
-            _awespykit.setStyleSheet(sheet)
-        elif isinstance(thm, int):
-            for theme in self.__themes:
-                if theme.index == thm:
-                    _awespykit.setStyleSheet(theme.sheet)
-                    return
-            _awespykit.setStyleSheet(_stylesheet)
+        self.__config.selected_thm = self.__themes.apply_theme(
+            index, _awespykit
+        )
 
     def __setup_other_widgets(self):
         self.uiPushButton_pkg_mgr.setIcon(QIcon(":/manage.png"))
@@ -92,14 +82,9 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.uiPushButton_settings.setIcon(QIcon(":/settings.png"))
         # noinspection PyTypeChecker
         menu_setstyle = QMenu("主题", self)
-        native_style = QAction("原生风格", self)
-        native_style.triggered.connect(
-            partial(self.__theme_action, ThemeData())
-        )
-        menu_setstyle.addAction(native_style)
         for theme in self.__themes:
             action = QAction(theme.name, self)
-            action.triggered.connect(partial(self.__theme_action, theme))
+            action.triggered.connect(partial(self.__theme_action, theme.index))
             menu_setstyle.addAction(action)
         menu_main_settings = QMenu(self)
         menu_main_settings.setObjectName("settings_menu")
@@ -161,7 +146,6 @@ def run_pykit_sysexit_when_close():
     _awespykit.installTranslator(translator)
     config = MainEntranceConfig()
     _awespykit.setWindowIcon(QIcon(":/icon2_64.png"))
-    _awespykit.setStyle(AppStyle(config.app_style).name)
     main_entrance = MainEntrance(config)
     main_entrance.display()
     sys.exit(_awespykit.exec_())

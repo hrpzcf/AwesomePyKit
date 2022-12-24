@@ -3,15 +3,11 @@
 from os import path
 from typing import *
 
-from com import *
 from fastpip import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
 from settings import *
 from ui import *
 from utils import *
-from utils.widgets import TextEdit
+from utils.widgets import *
 
 from .generic_output import GenericOutputWindow
 from .messagebox import MessageBox
@@ -22,6 +18,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
+        self.uiTableWidget_installed_info.setItemDelegateForColumn(
+            3, ItemDelegate(self.uiTableWidget_installed_info)
+        )
         self.config = PackageManagerConfig()
         self.__output = GenericOutputWindow(self)
         self.__handle = PyEnv.register(self.__output.add_line)
@@ -390,30 +389,24 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.uiLabel_num_selected_items.clear()
         self.uiTableWidget_installed_info.clearContents()
         self.uiTableWidget_installed_info.setRowCount(len(self.__cur_pkgs_info))
-        color_green = QColor(0, 170, 0)
-        color_red = QColor(255, 0, 0)
-        color_gray = QColor(243, 243, 243)
         for rowind, pkg_name in enumerate(self.__cur_pkgs_info):
             self.uiTableWidget_installed_info.setVerticalHeaderItem(
                 rowind, QTableWidgetItem(f" {rowind + 1} ")
             )
-            item0 = QTableWidgetItem(f"{pkg_name}")
+            item0 = QTableWidgetItem(pkg_name)
             self.uiTableWidget_installed_info.setItem(rowind, 0, item0)
-            even_num_row = rowind % 2
-            if not even_num_row:
-                item0.setBackground(color_gray)
             for colind, item_text in enumerate(
                 self.__cur_pkgs_info.get(pkg_name, ["", "", ""])
             ):
-                item = QTableWidgetItem(f" {item_text} ")
+                item = QTableWidgetItem(item_text)
                 if colind == 2:
                     if item_text in ("升级成功", "安装成功", "卸载成功"):
-                        item.setForeground(color_green)
+                        item.setData(Qt.UserRole, RoleData.Success)
                     elif item_text in ("升级失败", "安装失败", "卸载失败"):
-                        item.setForeground(color_red)
+                        item.setData(Qt.UserRole, RoleData.Failed)
+                    else:
+                        item.setData(Qt.UserRole, RoleData.Unknown)
                     item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-                if not even_num_row:
-                    item.setBackground(color_gray)
                 self.uiTableWidget_installed_info.setItem(
                     rowind, colind + 1, item
                 )

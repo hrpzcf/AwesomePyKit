@@ -1,4 +1,417 @@
-/* Note: Please save with UTF-8 encoding */
-/* Theme Name: 黑暗主题 */
+/* Note: Please save with utf-8 encoding */
+/* Theme Name: 暗色主题 */
 
+/* 主题名必须在第二行且严格遵守以上示例格式，主题名中可以有空格 */
+/*
+The theme name must be on the second line and strictly follow
+the example format above, with Spaces allowed in the theme name.
+*/
 
+/* 所有控件的统一背景色和字体 */
+* {
+    font-family: "Microsoft YaHei UI";
+    font-size: 12px;
+    color: #ABB2BF;
+    background-color: #282C34;
+}
+
+/* 所有控件基本样式 */
+
+/* 按钮基本样式 */
+QPushButton {
+    border: 2px solid #D9D9D9;
+    border-radius: 4px;
+    background-color: #757982;
+    padding: 4px 16px;
+}
+QPushButton:hover {
+    border-radius: 4px;
+    background-color: #EAEAEA;
+}
+QPushButton:pressed {
+    border-radius: 4px;
+    background-color: #DADADA;
+}
+QPushButton:disabled {
+    color: #ABABAB;
+    border-radius: 4px;
+    background-color: #E6E6E6;
+}
+
+/* 单行输入框基本样式 */
+QLineEdit {
+    border: 2px solid #D9D9D9;
+    padding: 2px 1px;
+    background-color: #FBFBFB;
+    border-radius: 4px;
+}
+QLineEdit:hover {
+    border-color: #ABABAB;
+    background-color: #FFFFFF;
+}
+QLineEdit:focus {
+    border-color: #00ACFF;
+    background-color: #FFFFFF;
+}
+QLineEdit[readOnly="true"] {
+    border: 2px solid #EAEAEA;
+    padding: 2px 1px;
+    background-color: #FBFBFB;
+    border-radius: 4px;
+}
+
+/* 多行富文本输入框基本样式 */
+QTextEdit {
+    border: 2px solid #D9D9D9;
+    padding: 2px 1px;
+    background-color: #FBFBFB;
+    border-radius: 4px;
+}
+QTextEdit:hover {
+    border-color: #ABABAB;
+    background-color: #FFFFFF;
+}
+QTextEdit:focus {
+    border-color: #00ACFF;
+    background-color: #FFFFFF;
+}
+QTextEdit[readOnly="true"] {
+    border: 2px solid #EAEAEA;
+    padding: 2px 1px;
+    background-color: #FBFBFB;
+    border-radius: 4px;
+}
+
+/* 多行文本输入框基本样式 */
+QPlainTextEdit {
+    border: 2px solid #D9D9D9;
+    padding: 2px 1px;
+    background-color: #FBFBFB;
+    border-radius: 4px;
+}
+QPlainTextEdit:hover {
+    border-color: #ABABAB;
+    background-color: #FFFFFF;
+}
+QPlainTextEdit:focus {
+    border-color: #00ACFF;
+    background-color: #FFFFFF;
+}
+QPlainTextEdit[readOnly="true"] {
+    border: 2px solid #EAEAEA;
+    padding: 2px 1px;
+    background-color: #FBFBFB;
+    border-radius: 4px;
+}
+
+/* 弹出型菜单样式 */
+QMenu {
+    border: 2px solid #9A9A9A;
+    border-radius: 2px;
+    padding: 4px;
+    background-color: #21252B;
+}
+QMenu::item {
+    border-radius: 2px;
+    padding: 4px 8px;
+}
+QMenu::icon {
+    padding-left: 8px;
+}
+QMenu::item:selected {
+    background-color: #495160;
+}
+QMenu::item[objectName="settings_menu"] {
+    border-radius: 2px;
+    padding: 4px 16px 4px 8px;
+}
+QMenu[objectName="envlst_menu"], QMenu[objectName="pkginfo_menu"] {
+    padding: 4px 8px;
+}
+
+/* 列表控件样式 */
+QListView {
+    outline-style: none;
+    border: 2px solid #D9D9D9;
+    border-radius: 4px;
+    background-color: #FFFFFF;
+}
+QListView::item {
+    margin: 1px;
+    color: #1A1B1B;
+}
+QListView::item:hover {
+    margin: 1px 1px 1px 4px;
+    background-color: #EAEAEA;
+}
+QListView::item:selected {
+    background-color: #EAEAEA;
+}
+QListView::item:disabled {
+    color: #ABABAB;
+}
+
+/* 表格控件样式 */
+QTableView {
+    outline-style: none;
+    border: 2px solid #D9D9D9;
+    border-radius: 4px;
+    color: #1A1B1B;
+    background-color: #FFFFFF;
+}
+QHeaderView::section {
+    background-color: transparent;
+    border-left: 0px solid transparent;
+    border-top: 0px solid transparent;
+    border-right: 1px solid #D8D8D8;
+    border-bottom: 1px solid #D8D8D8;
+}
+QHeaderView::section:hover {
+    background-color: #ABABAB;
+}
+QTableView QTableCornerButton::section {
+    background-color: #F3F3F3;
+    border-left: 0px solid transparent;
+    border-top: 0px solid transparent;
+    border-right: 1px solid #D8D8D8;
+    border-bottom: 1px solid #D8D8D8;
+}
+QTableView::item {
+    color: #1A1B1B;
+    background-color: transparent;
+}
+QTableView::item:hover {
+    background-color: #EAEAEA;
+}
+QTableView::item:selected {
+    background-color: #E0E0E0;
+}
+
+/* Pip 源设置工具列表项 */
+#uiListWidget_indexurls QWidget {
+    background-color: transparent;
+}
+
+/* 下拉框样式 */
+QComboBox {
+    border: 2px solid #D9D9D9;
+    border-radius: 4px;
+    background-color: #FBFBFB;
+}
+QComboBox:disabled {
+    color: #ABABAB;
+    background-color: #E6E6E6;
+}
+QComboBox::down-arrow:disabled {
+    image: none;
+}
+QComboBox:hover {
+    background-color: #EAEAEA;
+}
+QComboBox::drop-down {
+	border:none;
+}
+QComboBox::down-arrow {
+    width: 0.8em;
+    height: 0.8em;
+    image: url(:/down_arrow.png);
+}
+QComboBox::down-arrow:on {
+    width: 0.8em;
+    height: 0.8em;
+    image: url(:/up_arrow.png);
+}
+QComboBox QAbstractItemView
+{
+    outline: 0px solid #FFFFFF;
+    border: 2px solid #D9D9D9;
+    background-color: #FFFFFF;
+    selection-background-color: #EAEAEA;
+    selection-color: #1A1B1B;
+}
+
+/* 滚动条样式 */
+QScrollBar {
+    background-color: #FFFFFF;
+    width: 12px;
+}
+QScrollBar::handle {
+    background-color: #E6E6E6;
+}
+QScrollBar::handle:hover {
+    background-color: #D0D0D0;
+}
+
+/* 标签页控件相关 */
+QTabBar::scroller {
+    border: 2px solid #D9D9D9;
+}
+QTabBar QToolButton {
+    border-radius: 4px;
+    border: 2px solid #D9D9D9;
+}
+QTabBar QToolButton:hover {
+    background-color: #E0E0E0;
+}
+
+/* 悬浮提示样式 */
+QToolTip {
+    border: 2px solid #D1D4D9;
+    background-color: #F3F3F3;
+    padding: 4px;
+}
+
+/* 具体控件样式 */
+
+/* 主界面 5 个按钮的样式 */
+#uiPushButton_pkg_mgr, #uiPushButton_pyi_tool, #uiPushButton_index_mgr, #uiPushButton_pkg_dload,
+#uiPushButton_settings {
+    border: none;
+    border-radius:4px;
+    background-color: #9A9A9A;
+    padding: 4px 4px;
+}
+#uiPushButton_pkg_mgr:hover, #uiPushButton_pyi_tool:hover, #uiPushButton_index_mgr:hover,
+#uiPushButton_pkg_dload:hover, #uiPushButton_settings:hover {
+    border-radius:4px;
+    background-color: #C0C0C0;
+}
+#uiPushButton_pkg_mgr:pressed, #uiPushButton_pyi_tool:pressed, #uiPushButton_index_mgr:pressed,
+#uiPushButton_pkg_dload:pressed, #uiPushButton_settings:pressed {
+    border-radius:4px;
+    background-color: #A0A0A0;
+}
+#uiPushButton_pkg_mgr::menu-indicator, #uiPushButton_pyi_tool::menu-indicator,
+#uiPushButton_index_mgr::menu-indicator, #uiPushButton_pkg_dload::menu-indicator, #uiPushButton_settings::menu-indicator {
+    image: none;
+}
+
+/* 包管理器器删除环境按钮 */
+#uiPushButton_delselected {
+    border-color: #B62A8F;
+}
+#uiPushButton_delselected:hover {
+    color: #FFFFFF;
+    background-color: #B62A8F;
+}
+#uiPushButton_delselected:pressed {
+    color: #FFFFFF;
+    background-color: #902171;
+}
+
+/* 包管理器器安装界面开始安装按钮 */
+#uiPushButton_do_install {
+    border-color: #007A3B;
+}
+#uiPushButton_do_install:hover {
+    color: #FFFFFF;
+    background-color: #007A3B;
+}
+#uiPushButton_do_install:pressed {
+    color: #FFFFFF;
+    background-color: #005429;
+}
+
+/* 镜像源管理工具的启用镜像源按钮 */
+#uiPushButton_set_index {
+    border-color: #007A3B;
+}
+#uiPushButton_set_index:hover {
+    color: #FFFFFF;
+    background-color: #007A3B;
+}
+#uiPushButton_set_index:pressed {
+    color: #FFFFFF;
+    background-color: #005429;
+}
+
+/* 镜像源管理工具的删除镜像源按钮 */
+#uiPushButton_delete_url {
+    border-color: #B62A8F;
+}
+#uiPushButton_delete_url:hover {
+    color: #FFFFFF;
+    background-color: #B62A8F;
+}
+#uiPushButton_delete_url:pressed {
+    color: #FFFFFF;
+    background-color: #902171;
+}
+
+/* 程序打包工具环境检查按钮 */
+#uiPushButton_check_imports {
+    margin-bottom: 4px;
+    border-color: #8685EF;
+}
+#uiPushButton_check_imports:hover {
+    color: #FFFFFF;
+    background-color: #8685EF;
+}
+#uiPushButton_check_imports:pressed {
+    color: #FFFFFF;
+    background-color: #7170C9;
+}
+
+/* 程序打包工具清空数据按钮 */
+#uiPushButton_clear_data {
+    margin-bottom: 4px;
+    border-color: #F85E00;
+}
+#uiPushButton_clear_data:hover {
+    color: #FFFFFF;
+    background-color: #F85E00;
+}
+#uiPushButton_clear_data:pressed {
+    color: #FFFFFF;
+    background-color: #D25000;
+}
+
+/* 程序打包工具开始打包按钮 */
+#uiPushButton_start_packing {
+    margin-bottom: 4px;
+    border-color: #008B69;
+}
+#uiPushButton_start_packing:hover {
+    color: #FFFFFF;
+    background-color: #008B69;
+}
+#uiPushButton_start_packing:pressed {
+    color: #FFFFFF;
+    background-color: #00654C;
+}
+
+/* 命令通用输出窗口 */
+#uiPlainTextEdit_output {
+    font-size: 13px;
+    font-family: 'Consolas';
+    font-weight: normal;
+}
+
+/* 程序打包工具命令输出窗口 */
+#uiTextEdit_packtool_logging {
+    font-size: 13px;
+    font-family: 'Consolas';
+    font-weight: normal;
+}
+
+/* 程序打包工具右上角几个版本信息标签及包管理器安装界面环境标签 */
+#uiLabel_python_info, #uiLabel_venv_info, #uiLabel_packtool_info,
+#uiLabel_platform_info, #uiLabel_target_environment {
+    border-radius: 4px;
+    border: 1px solid #AEAEAE;
+    padding: 2px 0;
+}
+
+/* 模块安装包下载器的开始下载按钮 */
+#uiPushButton_start_download {
+    margin-bottom: 4px;
+    border-color: #008B69;
+}
+#uiPushButton_start_download:hover {
+    color: #FFFFFF;
+    background-color: #008B69;
+}
+#uiPushButton_start_download:pressed {
+    color: #FFFFFF;
+    background-color: #00654C;
+}

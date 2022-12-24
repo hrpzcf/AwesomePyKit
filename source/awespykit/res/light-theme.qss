@@ -15,8 +15,12 @@ the example format above, with Spaces allowed in the theme name.
     background-color: #F3F3F3;
 }
 
-/* 所有控件基本样式 */
+/* 无效 Qt 样式表，由本程序解析，需单独写 */
+QPlaceHolderText {
+    color: #ADB4B4;
+}
 
+/* 所有控件基本样式 */
 /* 按钮基本样式 */
 QPushButton {
     border: 2px solid #D9D9D9;
@@ -25,6 +29,7 @@ QPushButton {
     padding: 4px 16px;
 }
 QPushButton:hover {
+    border-color: #00ACFF;
     border-radius: 4px;
     background-color: #EAEAEA;
 }
@@ -152,13 +157,7 @@ QListView::item:disabled {
 }
 
 /* 表格控件样式 */
-QTableView {
-    outline-style: none;
-    border: 2px solid #D9D9D9;
-    border-radius: 4px;
-    color: #1A1B1B;
-    background-color: #FFFFFF;
-}
+/* 表头区域 */
 QHeaderView::section {
     background-color: transparent;
     border-left: 0px solid transparent;
@@ -167,7 +166,15 @@ QHeaderView::section {
     border-bottom: 1px solid #D8D8D8;
 }
 QHeaderView::section:hover {
-    background-color: #ABABAB;
+    background-color: #E0E0E0;
+}
+/* 表格区域 */
+QTableView {
+    outline-style: none;
+    border: 2px solid #D9D9D9;
+    border-radius: 4px;
+    color: #1A1B1B;
+    background-color: #FFFFFF;
 }
 QTableView QTableCornerButton::section {
     background-color: #F3F3F3;
@@ -176,14 +183,13 @@ QTableView QTableCornerButton::section {
     border-right: 1px solid #D8D8D8;
     border-bottom: 1px solid #D8D8D8;
 }
+/* 以下两项也会被本程序解析，需单独写 */
 QTableView::item {
     color: #1A1B1B;
     background-color: transparent;
 }
-QTableView::item:hover {
-    background-color: #EAEAEA;
-}
 QTableView::item:selected {
+    color: #1A1B1B;
     background-color: #E0E0E0;
 }
 
@@ -197,6 +203,8 @@ QComboBox {
     border: 2px solid #D9D9D9;
     border-radius: 4px;
     background-color: #FBFBFB;
+    padding-left: 2px;
+    margin-bottom: 2px;
 }
 QComboBox:disabled {
     color: #ABABAB;
@@ -206,6 +214,7 @@ QComboBox::down-arrow:disabled {
     image: none;
 }
 QComboBox:hover {
+    border-color: #00ACFF;
     background-color: #EAEAEA;
 }
 QComboBox::drop-down {
@@ -419,4 +428,18 @@ QToolTip {
 #uiPushButton_start_download:pressed {
     color: #FFFFFF;
     background-color: #00654C;
+}
+
+/* 程序打包工具的工具设置标签页的删除按钮 */
+#uiPushButton_delete_config {
+    margin-top: 12px;
+    border-color: #B62A8F;
+}
+#uiPushButton_delete_config:hover {
+    color: #FFFFFF;
+    background-color: #B62A8F;
+}
+#uiPushButton_delete_config:pressed {
+    color: #FFFFFF;
+    background-color: #902171;
 }

@@ -14,8 +14,8 @@ class Accept(Enum):
 
 
 class AppStyle(IntEnum):
-    Native = 0  # 原生风格
-    Fusion = 1  # Fusion 风格
+    Fusion = 0  # Fusion 风格
+    WindowsVista = 1  # 原生风格
     Windows = 2  # 经典风格
 
 
@@ -34,3 +34,19 @@ class QMode(IntEnum):
     NotSPCF = 0  # 未指定查询方式
     Pkg2Imp = 1  # 以包名查导入名
     Imp2Pkg = 2  # 以导入名查包名
+
+
+class DataType(IntEnum):
+    """ThemeData 类的 data_type 参数类型"""
+
+    Sheet = 0
+    Style = 1
+    XmlName = 2
+
+
+class RoleData(IntEnum):
+    """供控件的 setData 方法和 utils.widgets.ItemDelegate 类使用"""
+
+    Success = 0
+    Failed = 1
+    Unknown = 3

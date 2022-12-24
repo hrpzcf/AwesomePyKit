@@ -5,10 +5,12 @@ __doc__ = """包含一些继承自默认Qt控件的自定义行为控件。"""
 import os
 from typing import List
 
-from com.enums import Accept
+from com import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
+from utils.thmt import PreThemeList
 
 
 class LineEdit(QLineEdit):
@@ -139,3 +141,48 @@ class TextEdit(QTextEdit):
         self.verticalScrollBar().setValue(
             self.verticalScrollBar().maximumHeight()
         )
+
+
+class ItemDelegate(QItemDelegate):
+    """表格 QTableWidget 的 item 委托"""
+
+    def __init__(self, parent: QTableWidget):
+        self.__parent = parent
+        super(ItemDelegate, self).__init__()
+
+    def paint(
+        self,
+        painter: QPainter,
+        option: QStyleOptionViewItem,
+        index: QModelIndex,
+    ):
+        phtc, tibgn, tibgs = PreThemeList.current.getColors()
+        if phtc and tibgn and tibgs:
+            if option.state & QStyle.State_Selected:
+                background_color = QColor(tibgs)
+            else:
+                background_color = QColor(tibgn)
+        else:
+            if option.state & QStyle.State_Selected:
+                if option.state & QStyle.State_Active:
+                    color_group = QPalette.Active
+                else:
+                    color_group = QPalette.Inactive
+                background_color = self.__parent.palette().color(
+                    color_group, QPalette.Highlight
+                )
+            else:
+                background_color = QColor("transparent")
+        painter.fillRect(option.rect, background_color)
+        display_str = index.data(Qt.DisplayRole)
+        if not display_str:
+            return
+        execution_results = index.data(Qt.UserRole)
+        if execution_results == RoleData.Success:
+            foreground_color = QColor("green")
+        elif execution_results == RoleData.Failed:
+            foreground_color = QColor("red")
+        else:
+            foreground_color = QColor("black")
+        painter.setPen(foreground_color)
+        painter.drawText(option.rect, Qt.AlignCenter, display_str)
