@@ -81,7 +81,7 @@ class QThreadModel(QThread):
             self.finished.connect(cab)
         self.__at_finish.extend(callable_objs)
 
-    def broken_signal(self):
+    def no_signal(self):
         for cab in self.__at_start:
             self.started.disconnect(cab)
         for cab in self.__at_finish:
@@ -127,7 +127,7 @@ class ThreadRepo:
         其他：未知等级，安全退出。
         """
         for thread, level in self._thread_repo:
-            thread.broken_signal()
+            thread.no_signal()
             if level == 0:
                 thread.quit()
             elif level == 1:
@@ -138,7 +138,7 @@ class ThreadRepo:
     def kill_all(self):
         """立即终止所有线程。"""
         for thread, _ in self._thread_repo:
-            thread.broken_signal()
+            thread.no_signal()
             thread.terminate()
 
     def is_empty(self):

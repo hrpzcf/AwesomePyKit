@@ -14,6 +14,74 @@ from .messagebox import MessageBox
 from .query_file_path import QueryFilePath
 
 
+class EnvDisplayPair(QObject):
+    __signal_setinfo = pyqtSignal(str)
+
+    def __init__(self, environ: PyEnv):
+        super().__init__()
+        self.__environ = environ
+        self.__discard = False
+        self.__thread: Union[QThreadModel, None] = None
+        self.__display = None
+        self.__mutex = QMutex()
+        self.__prevcallback = None
+
+    def signal_connect(self, callback: Callable):
+        if self.__prevcallback is not None:
+            self.__signal_setinfo.disconnect(self.__prevcallback)
+        self.__prevcallback = callback
+        self.__signal_setinfo.connect(self.__prevcallback)
+
+    def discard(self):
+        self.__mutex.lock()
+        self.__discard = True
+        if self.__thread is not None and self.__thread.isRunning():
+            self.__thread.terminate()
+        self.__mutex.unlock()
+
+    def load_display(self):
+        self.__mutex.lock()
+        current_display_name = self.__display
+        self.__mutex.unlock()
+        if current_display_name is not None:
+            return current_display_name
+
+        def load_display_name():
+            __display = str(self.__environ)
+            self.__mutex.lock()
+            self.__display = __display
+            if not self.__discard:
+                self.__signal_setinfo.emit(__display)
+            self.__mutex.unlock()
+
+        self.__mutex.lock()
+        if not self.__discard:
+            self.__thread = QThreadModel(load_display_name)
+            self.__thread.start()
+        self.__mutex.unlock()
+
+    @property
+    def display(self):
+        self.__mutex.lock()
+        __display = self.__display
+        self.__mutex.unlock()
+        if __display is None:
+            __display = f"loading info... @ {self.__environ.path}"
+        return __display
+
+    @property
+    def env_path(self):
+        return self.__environ.env_path
+
+    @property
+    def environ(self):
+        return self.__environ
+
+    @property
+    def completed(self):
+        return self.__display is not None
+
+
 class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
@@ -26,7 +94,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.__handle = PyEnv.register(self.__output.add_line)
         self.__setup_other_widgets()
         self.signal_slot_connection()
-        self.env_list = [PyEnv(p) for p in self.config.pypaths]
+        self.envpair_list = [
+            EnvDisplayPair(PyEnv(p)) for p in self.config.pypaths
+        ]
         self.__cur_pkgs_info = dict()
         self.__reverseds = [True, True, True, True]
         self.selected_index = -1
@@ -188,7 +258,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
     def selected_envfolder(self):
         index = self.uiListWidget_env_list.currentRow()
-        environ_path = self.env_list[index].env_path
+        environ_path = self.envpair_list[index].env_path
         if not path.isdir(environ_path):
             return MessageBox("提示", "所选环境目录不存在！").exec_()
         launch_explorer(environ_path)
@@ -197,7 +267,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         index = self.uiListWidget_env_list.currentRow()
         if index == -1:
             return
-        environ = self.env_list[index]
+        environ = self.envpair_list[index].environ
         if not environ.pip_ready:
             return MessageBox("提示", "所选环境不是有效环境！").exec_()
         fullpath = QFileDialog.getSaveFileName(
@@ -222,7 +292,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         index = self.uiListWidget_env_list.currentRow()
         if index == -1:
             return
-        environment = self.env_list[index]
+        environment = self.envpair_list[index].environ
         if not environment.env_path:
             return MessageBox("提示", "无效的 Python 环境！").exec_()
         clipboard = QApplication.clipboard()
@@ -238,7 +308,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         else:
             pkg_name = pkg_names[0]
             mode = QMode.Pkg2Imp
-        environ = self.env_list[self.selected_index]
+        environ = self.envpair_list[self.selected_index].environ
         query_window = NameQueryPanel(self)
         query_window.initialize(environ, pkg_name, mode=mode)
         query_window.display()
@@ -320,14 +390,14 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         contextmenu.exec_(QCursor.pos())
 
     def set_win_install_package_envinfo(self):
-        if not self.env_list:
+        if not self.envpair_list:
             return MessageBox("提示", "没有可选的 Python 环境。").exec_()
         if self.selected_index <= -1:
             return MessageBox("提示", "没有选择任何 Python 环境。").exec_()
-        if self.selected_index >= len(self.env_list):
+        if self.selected_index >= len(self.envpair_list):
             return MessageBox("错误", "异常：当前选择下标超出范围。").exec_()
         PackageInstallWindow(self, self.install_packages).set_target_environ(
-            self.env_list[self.selected_index]
+            self.envpair_list[self.selected_index].environ
         )
 
     @staticmethod
@@ -374,9 +444,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def list_widget_pyenvs_update(self):
         cur_py_env_index = self.uiListWidget_env_list.currentRow()
         self.uiListWidget_env_list.clear()
-        for env in self.env_list:
-            item = QListWidgetItem(QIcon(":/python.png"), str(env))
+        for env in self.envpair_list:
+            item = QListWidgetItem(QIcon(":/python.png"), env.display)
+            env.signal_connect(item.setText)
             self.uiListWidget_env_list.addItem(item)
+            env.load_display()
         if cur_py_env_index != -1:
             self.uiListWidget_env_list.setCurrentRow(cur_py_env_index)
 
@@ -440,7 +512,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return None
 
         def do_get_pkgs_info():
-            pkgs_info = self.env_list[self.selected_index].pkgs_info()
+            pkgs_info = self.envpair_list[
+                self.selected_index
+            ].environ.pkgs_info()
             self.__cur_pkgs_info.clear()
             for pkg_info in pkgs_info:
                 self.__cur_pkgs_info[pkg_info[0]] = [pkg_info[1], "", ""]
@@ -484,11 +558,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 if _path.lower() in path_list_lower:
                     continue
                 try:
-                    env = PyEnv(_path)
+                    envpair = EnvDisplayPair(PyEnv(_path))
                 except Exception:
                     continue
-                self.env_list.append(env)
-                self.config.pypaths.append(env.env_path)
+                self.envpair_list.append(envpair)
+                self.config.pypaths.append(envpair.env_path)
 
         path_list_lower = [p.lower() for p in self.config.pypaths]
         thread_search_envs = QThreadModel(search_environ)
@@ -509,7 +583,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         cur_index = self.uiListWidget_env_list.currentRow()
         if cur_index == -1:
             return
-        del self.env_list[cur_index]
+        self.envpair_list[cur_index].discard()
+        del self.envpair_list[cur_index]
         del self.config.pypaths[cur_index]
         self.uiListWidget_env_list.removeItemWidget(
             self.uiListWidget_env_list.takeItem(cur_index)
@@ -532,9 +607,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 QMessageBox.Warning,
             ).exec_()
         try:
-            env = PyEnv(_path)
-            self.env_list.append(env)
-            self.config.pypaths.append(env.env_path)
+            envpair = EnvDisplayPair(PyEnv(_path))
+            self.envpair_list.append(envpair)
+            self.config.pypaths.append(envpair.env_path)
         except Exception:
             return MessageBox(
                 "警告",
@@ -556,7 +631,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         def do_get_outdated():
             thread_get_info.wait()
-            outdateds = self.env_list[cur_row].outdated()
+            outdateds = self.envpair_list[cur_row].environ.outdated()
             for outdated_info in outdateds:
                 self.__cur_pkgs_info.setdefault(outdated_info[0], ["", "", ""])[
                     1
@@ -656,7 +731,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             if not packages_names:
                 MessageBox("提示", "没有选中任何项！").exec_()
             return
-        cur_env = self.env_list[self.uiListWidget_env_list.currentRow()]
+        cur_env = self.envpair_list[
+            self.uiListWidget_env_list.currentRow()
+        ].environ
         force_reinstall = QMessageBox(
             QMessageBox.Question,
             "重装",
@@ -702,7 +779,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         pkg_names = [pkgs_info_keys[index] for index in pkg_indexs]
         if not pkg_names:
             return MessageBox("提示", "没有选中任何项！").exec_()
-        cur_env = self.env_list[self.uiListWidget_env_list.currentRow()]
+        cur_env = self.envpair_list[
+            self.uiListWidget_env_list.currentRow()
+        ].environ
         names_text = (
             "\n".join(pkg_names)
             if len(pkg_names) <= 10
@@ -743,7 +822,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         names = [pkgs_info_keys[index] for index in pkg_indexs]
         if not names:
             return MessageBox("提示", "没有选中任何项！").exec_()
-        cur_env = self.env_list[self.uiListWidget_env_list.currentRow()]
+        cur_env = self.envpair_list[
+            self.uiListWidget_env_list.currentRow()
+        ].environ
         names_text = (
             "\n".join(names)
             if len(names) <= 10
@@ -794,7 +875,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                 QMessageBox.Information,
             ).exec_()
             return
-        cur_env = self.env_list[self.uiListWidget_env_list.currentRow()]
+        cur_env = self.envpair_list[
+            self.uiListWidget_env_list.currentRow()
+        ].environ
         names_text = (
             "\n".join(upgradeable)
             if len(upgradeable) <= 10
