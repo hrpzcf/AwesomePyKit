@@ -372,12 +372,10 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.uiLabel_num_selected_items.setText(f"选中数量：{selected}")
 
     def list_widget_pyenvs_update(self):
-        row_size = QSize(0, 28)
         cur_py_env_index = self.uiListWidget_env_list.currentRow()
         self.uiListWidget_env_list.clear()
         for env in self.env_list:
             item = QListWidgetItem(QIcon(":/python.png"), str(env))
-            item.setSizeHint(row_size)
             self.uiListWidget_env_list.addItem(item)
         if cur_py_env_index != -1:
             self.uiListWidget_env_list.setCurrentRow(cur_py_env_index)
