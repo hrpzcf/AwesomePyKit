@@ -142,11 +142,10 @@ QListView {
     background-color: #FFFFFF;
 }
 QListView::item {
-    margin: 1px;
+    padding: 2px 0;
     color: #1A1B1B;
 }
 QListView::item:hover {
-    margin: 1px 1px 1px 4px;
     background-color: #EAEAEA;
 }
 QListView::item:selected {
