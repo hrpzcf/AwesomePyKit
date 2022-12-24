@@ -1103,11 +1103,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def update_listwidget_configure_items(self):
         self.uiListWidget_saved_config.clear()
         for item_title in self.config.multicfg.keys():
-            if item_title != self.uiLineEdit_config_remark.placeholderText():
-                item_icon = QIcon(":/config.png")
-            else:
-                item_icon = QIcon(":/default.png")
-            item = QListWidgetItem(item_icon, item_title)
+            item = QListWidgetItem(item_title)
             self.uiListWidget_saved_config.addItem(item)
 
     def lineedit_remark_textchanged(self):
