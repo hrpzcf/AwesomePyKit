@@ -174,15 +174,22 @@ class ItemDelegate(QItemDelegate):
             else:
                 background_color = QColor("transparent")
         painter.fillRect(option.rect, background_color)
-        display_str = index.data(Qt.DisplayRole)
-        if not display_str:
+        text_data = index.data(Qt.DisplayRole)
+        if not text_data:
             return
         execution_results = index.data(Qt.UserRole)
+        if execution_results is None:
+            execution_results = RoleData.Unknown
         if execution_results == RoleData.Success:
             foreground_color = QColor("green")
         elif execution_results == RoleData.Failed:
             foreground_color = QColor("red")
+        elif execution_results == RoleData.Warning:
+            foreground_color = QColor("orange")
         else:
             foreground_color = QColor("black")
         painter.setPen(foreground_color)
-        painter.drawText(option.rect, Qt.AlignCenter, display_str)
+        alignment = index.data(Qt.TextAlignmentRole)
+        if alignment is None:
+            alignment = Qt.AlignCenter
+        painter.drawText(option.rect, alignment, text_data)

@@ -10,6 +10,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from settings import *
 from ui import *
+from utils import *
 
 from .messagebox import MessageBox
 from .query_file_path import QueryFilePath
@@ -23,13 +24,12 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
-        self.environments: Union[List[EnvDisplayPair], None] = None
         self.config = PackageDownloadConfig()
+        self.environments: Union[List[EnvDisplayPair], None] = None
         self.__showdl_win = ShowDownloadWindow(self)
         self.signal_slot_connection()
         self.last_path = None
         self.thread_repo = ThreadRepo(500)
-        self.uiComboBox_derived_from.setInsertPolicy(QComboBox.InsertAtCurrent)
 
     def signal_slot_connection(self):
         self.uiCheckBox_use_index_url.clicked.connect(self.change_le_index_url)
@@ -76,12 +76,6 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             return
         self.config.window_size = self.width(), self.height()
 
-    def __clear_environs_closing(self):
-        if self.environments is not None:
-            for envpd in self.environments:
-                envpd.discard()
-        self.environments = None
-
     def closeEvent(self, event: QCloseEvent):
         if not self.thread_repo.is_empty():
             MessageBox(
@@ -92,7 +86,6 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.__store_window_size()
         self.config_widgets_to_dict()
         self.config.save_config()
-        self.__clear_environs_closing()
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Escape:
@@ -107,20 +100,26 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         if self.thread_repo.is_empty():
             self.apply_config()
 
-    def update_envpaths_and_combobox(self):
+    def environs_combobox_update(self):
         if not self.config.cur_pypaths:
             return
+        if self.environments:
+            return
+        self.uiComboBox_derived_from.clear()
         self.environments = [
             EnvDisplayPair(PyEnv(p)) for p in self.config.cur_pypaths
         ]
-        self.uiComboBox_derived_from.clear()
-        for envdp in self.environments:
-            self.uiComboBox_derived_from.addItem(envdp.display)
-        for index, envdp in enumerate(self.environments):
-            envdp.signal_connect(
-                self.uiComboBox_derived_from.setItemText, index
-            )
-            envdp.load_display()
+        item_number = len(self.environments)
+        if not item_number:
+            return
+        for i, envp in enumerate(self.environments):
+            self.uiComboBox_derived_from.addItem(envp.display)
+            envp.signal_connect(self.uiComboBox_derived_from.setItemText, i)
+            envp.load_real_display()
+        current_index = self.config.derived_from
+        if current_index < 0 or current_index >= item_number:
+            self.config.derived_from = current_index = 0
+        self.uiComboBox_derived_from.setCurrentIndex(current_index)
 
     def config_widgets_to_dict(self):
         self.config.package_names = [
@@ -159,7 +158,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.config.use_index_url = self.uiCheckBox_use_index_url.isChecked()
 
     def apply_config(self):
-        self.update_envpaths_and_combobox()
+        self.environs_combobox_update()
         self.uiPlainTextEdit_package_names.setPlainText(
             "\n".join(self.config.package_names)
         )
@@ -223,7 +222,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         if not self.environments:
             return MessageBox(
                 "提示",
-                "没有任何 Python 环境，请到'包管理器'中自动或手动添加 Python 环境路径。",
+                "没有可用 Python 环境，请到'包管理器'中自动或手动添加环境。",
             ).exec_()
         self.config_widgets_to_dict()
         destination = self.config.save_path
@@ -381,41 +380,35 @@ class ShowDownloadWindow(Ui_show_download, QMainWindow):
     def status_changed(self, index, status):
         if index >= self.uiTableWidget_downloading.rowCount():
             return False
-        color_red = QColor(255, 0, 0)
-        color_green = QColor(0, 170, 0)
         item = self.uiTableWidget_downloading.item(index, 1)
         if item is None:
             item = QTableWidgetItem("等待下载")
             self.uiTableWidget_downloading.setItem(index, 1, item)
         item.setText(status)
-        if status == "下载失败":
-            item.setForeground(color_red)
-        elif status == "下载完成":
-            item.setForeground(color_green)
+        if "下载中" in status:
+            item.setData(Qt.UserRole, RoleData.Warning)
+        elif "失败" in status:
+            item.setData(Qt.UserRole, RoleData.Failed)
+        elif "完成" in status:
+            item.setData(Qt.UserRole, RoleData.Success)
         return True
 
-    def clear_table(self):
-        self.uiTableWidget_downloading.clearContents()
-        self.uiTableWidget_downloading.setRowCount(0)
-
     def setup_table(self, iterable):
-        color_gray = QColor(243, 243, 243)
-        self.clear_table()
+        self.uiTableWidget_downloading.clearContents()
         self.uiTableWidget_downloading.setRowCount(len(iterable))
         for index, pkg_name in enumerate(iterable):
             item1 = QTableWidgetItem(pkg_name)
             item2 = QTableWidgetItem("等待下载")
-            if not index % 2:
-                item1.setBackground(color_gray)
-                item2.setBackground(color_gray)
             self.uiTableWidget_downloading.setItem(index, 0, item1)
             self.uiTableWidget_downloading.setItem(index, 1, item2)
-        return True
 
     def _setup_other_widgets(self):
         horiz_head = self.uiTableWidget_downloading.horizontalHeader()
         horiz_head.setSectionResizeMode(0, QHeaderView.Stretch)
         horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        self.uiTableWidget_downloading.setItemDelegateForColumn(
+            1, ItemDelegate(self.uiTableWidget_downloading)
+        )
 
     def __store_window_size(self):
         if self.isMaximized() or self.isMinimized():

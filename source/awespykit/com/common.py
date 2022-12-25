@@ -164,7 +164,7 @@ class EnvDisplayPair(QObject):
             self.__thread.terminate()
         self.__mutex.unlock()
 
-    def load_display(self):
+    def load_real_display(self):
         self.__mutex.lock()
         current_display_name = self.__display
         self.__mutex.unlock()

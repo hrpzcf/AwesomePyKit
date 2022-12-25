@@ -383,7 +383,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             item = QListWidgetItem(QIcon(":/python.png"), env.display)
             env.signal_connect(item.setText)
             self.uiListWidget_env_list.addItem(item)
-            env.load_display()
+            env.load_real_display()
         if cur_py_env_index != -1:
             self.uiListWidget_env_list.setCurrentRow(cur_py_env_index)
 

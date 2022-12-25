@@ -49,4 +49,5 @@ class RoleData(IntEnum):
 
     Success = 0
     Failed = 1
-    Unknown = 3
+    Warning = 3
+    Unknown = 4
