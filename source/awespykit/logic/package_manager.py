@@ -872,7 +872,7 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.last_path = self.__parent.config.last_path
 
     def __setup_other_widgets(self):
-        self.uiPlainTextEdit_package_names = TextEdit(ext_filter={".whl"})
+        self.uiPlainTextEdit_package_names = PlainTextEdit(ext_filter={".whl"})
         self.uiHorizontalLayout_package_name.replaceWidget(
             self.uiPlainTextEdit_package_names_old,
             self.uiPlainTextEdit_package_names,

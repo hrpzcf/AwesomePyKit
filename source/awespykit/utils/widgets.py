@@ -143,6 +143,87 @@ class TextEdit(QTextEdit):
         )
 
 
+class PlainTextEdit(QPlainTextEdit):
+    def __init__(self, accept=None, ext_filter=None):
+        super().__init__()
+        self.setLineWrapMode(QPlainTextEdit.NoWrap)
+        if accept is None:
+            self.__accept = Accept.File
+        else:
+            self.__accept = accept
+        if ext_filter is None:
+            self.__filter = set()
+        else:
+            self.__filter = ext_filter
+            assert isinstance(ext_filter, set)
+        self.__drag_temp = list()
+
+    @property
+    def local_paths(self):
+        file_dir_paths = self.toPlainText().split("\n")
+        if self.__accept == Accept.Dir:
+            return [p for p in file_dir_paths if os.path.isdir(p)]
+        if self.__accept == Accept.File:
+            return [p for p in file_dir_paths if os.path.isfile(p)]
+        return list()
+
+    def __stash_from_urls(self, urls: List[QUrl]):
+        self.__drag_temp.clear()
+        for file_or_dir in (path.toLocalFile() for path in urls):
+            file_or_dir = os.path.realpath(file_or_dir)
+            if os.path.isfile(file_or_dir):
+                self.__drag_temp.append(file_or_dir)
+                continue
+            self.__drag_temp.append(file_or_dir)
+            for root, _, files in os.walk(file_or_dir):
+                self.__drag_temp.extend(
+                    os.path.join(root, filename) for filename in files
+                )
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        self.__drag_temp.clear()
+        if event.mimeData().hasUrls():
+            if self.__accept == Accept.File:
+                self.__stash_from_urls(event.mimeData().urls())
+                if not self.__filter or set(
+                    os.path.splitext(fp)[1]
+                    for fp in self.__drag_temp
+                    if os.path.isfile(fp)
+                ).issubset(self.__filter):
+                    event.accept()
+                else:
+                    event.ignore()
+            elif self.__accept == Accept.Dir:
+                event.accept()
+            else:
+                event.ignore()
+            if not self.toPlainText().endswith("\n"):
+                self.appendPlainText("")
+        else:
+            event.ignore()
+
+    def dropEvent(self, event: QDropEvent):
+        cur_text = self.toPlainText()
+        super().dropEvent(event)
+        if not self.__drag_temp:
+            self.__stash_from_urls(event.mimeData().urls())
+        if self.__accept == Accept.File:
+            self.setPlainText(
+                cur_text
+                + "\n".join(p for p in self.__drag_temp if os.path.isfile(p))
+            )
+        elif self.__accept == Accept.Dir:
+            self.setPlainText(
+                cur_text
+                + "\n".join(p for p in self.__drag_temp if os.path.isdir(p))
+            )
+        else:
+            self.setPlainText("")
+        self.verticalScrollBar().setValue(
+            self.verticalScrollBar().maximumHeight()
+        )
+
+
 class ItemDelegate(QItemDelegate):
     """表格 QTableWidget 的 item 委托"""
 
