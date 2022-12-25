@@ -1,8 +1,6 @@
 # coding: utf-8
 
 from .main import (
-    QThreadModel,
-    ThreadRepo,
     check_index_url,
     check_py_path,
     clean_index_urls,
@@ -15,8 +13,6 @@ from .main import (
 from .widgets import ItemDelegate, LineEdit, TextEdit
 
 __all__ = [
-    "QThreadModel",
-    "ThreadRepo",
     "check_index_url",
     "check_py_path",
     "clean_index_urls",

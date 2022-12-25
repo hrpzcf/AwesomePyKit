@@ -926,7 +926,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
             missings: Set[str] = {"pyinstaller"}
             for ms in import_inspect.get_missing_items():
                 for m in ms[2]:
-                    missings.add(import_install.get(m, m))
+                    missings.add(PKGNAME_MAP.get(m, m))
             if self.config.current.encryption_key:
                 missings.add("tinyaes>=1.0.0")
             self.virt_environ.install("wheel")
@@ -1064,7 +1064,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         def install_pkgs():
             names_for_install = set()
             for imp in missings:
-                names_for_install.add(import_install.get(imp, imp))
+                names_for_install.add(PKGNAME_MAP.get(imp, imp))
             for imp in names_for_install:
                 environ.install(imp)
 

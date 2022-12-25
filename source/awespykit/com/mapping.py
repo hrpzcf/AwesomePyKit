@@ -2,7 +2,7 @@
 
 __doc__ = "模块的 import 使用名与模块的发布名对照表"
 
-import_install = {
+PKGNAME_MAP = {
     "IPython": "ipython",
     "OpenSSL": "pyOpenSSL",
     "PIL": "Pillow",

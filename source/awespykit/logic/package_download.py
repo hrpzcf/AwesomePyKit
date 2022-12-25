@@ -2,13 +2,13 @@
 
 import os
 
+from com import *
 from fastpip import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from settings import *
 from ui import *
-from utils import *
 
 from .messagebox import MessageBox
 from .query_file_path import QueryFilePath

@@ -1,19 +1,22 @@
 # coding: utf-8
 
-from .common import EMPTY_STR, VerInfo
+from .common import EMPTY_STR, EnvDisplayPair, QThreadModel, ThreadRepo, VerInfo
 from .enums import Accept, AppStyle, DataType, Linkage, QMode, RoleData
-from .mapping import import_install
+from .mapping import PKGNAME_MAP
 from .requires import REQ_FPVER
 
 __all__ = [
-    "EMPTY_STR",
-    "VerInfo",
     "Accept",
     "AppStyle",
     "DataType",
-    "import_install",
+    "EMPTY_STR",
+    "EnvDisplayPair",
     "Linkage",
     "QMode",
-    "RoleData",
+    "QThreadModel",
     "REQ_FPVER",
+    "RoleData",
+    "ThreadRepo",
+    "VerInfo",
+    "PKGNAME_MAP",
 ]

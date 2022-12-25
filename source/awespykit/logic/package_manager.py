@@ -3,83 +3,18 @@
 from os import path
 from typing import *
 
+from com import *
 from fastpip import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from settings import *
 from ui import *
 from utils import *
-from utils.widgets import *
 
 from .generic_output import GenericOutputWindow
 from .messagebox import MessageBox
 from .query_file_path import QueryFilePath
-
-
-class EnvDisplayPair(QObject):
-    __signal_setinfo = pyqtSignal(str)
-
-    def __init__(self, environ: PyEnv):
-        super().__init__()
-        self.__environ = environ
-        self.__discard = False
-        self.__thread: Union[QThreadModel, None] = None
-        self.__display = None
-        self.__mutex = QMutex()
-        self.__prevcallback = None
-
-    def signal_connect(self, callback: Callable):
-        if self.__prevcallback is not None:
-            self.__signal_setinfo.disconnect(self.__prevcallback)
-        self.__prevcallback = callback
-        self.__signal_setinfo.connect(self.__prevcallback)
-
-    def discard(self):
-        self.__mutex.lock()
-        self.__discard = True
-        if self.__thread is not None and self.__thread.isRunning():
-            self.__thread.terminate()
-        self.__mutex.unlock()
-
-    def load_display(self):
-        self.__mutex.lock()
-        current_display_name = self.__display
-        self.__mutex.unlock()
-        if current_display_name is not None:
-            return current_display_name
-
-        def load_display_name():
-            __display = str(self.__environ)
-            self.__mutex.lock()
-            self.__display = __display
-            if not self.__discard:
-                self.__signal_setinfo.emit(__display)
-            self.__mutex.unlock()
-
-        self.__mutex.lock()
-        if not self.__discard:
-            self.__thread = QThreadModel(load_display_name)
-            self.__thread.start()
-        self.__mutex.unlock()
-
-    @property
-    def display(self):
-        self.__mutex.lock()
-        __display = self.__display
-        self.__mutex.unlock()
-        if __display is None:
-            __display = f"loading info ... @ {self.__environ.path}"
-        return __display
-
-    @property
-    def env_path(self):
-        return self.__environ.env_path
-
-    @property
-    def environ(self):
-        return self.__environ
-
-    @property
-    def completed(self):
-        return self.__display is not None
 
 
 class PackageManagerWindow(Ui_package_manager, QMainWindow):
