@@ -251,23 +251,29 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             query_window.start_query_name()
 
     def environlist_contextmenu(self, point: QPoint):
-        if not self.uiListWidget_env_list.itemAt(point):
-            return
-
+        env_actions: List[QAction] = list()
         contextmenu = QMenu(self)
         contextmenu.setObjectName("envlst_menu")
 
         action = QAction("打开目录（&O）", self)
         action.triggered.connect(self.selected_envfolder)
         contextmenu.addAction(action)
+        env_actions.append(action)
 
         action = QAction("复制路径（&C）", self)
         action.triggered.connect(self.copy_environment_path)
         contextmenu.addAction(action)
+        env_actions.append(action)
 
         action = QAction("导出包列表（&E）", self)
         action.triggered.connect(self.export_packages_info)
         contextmenu.addAction(action)
+        env_actions.append(action)
+
+        action = QAction("移除环境（&D）", self)
+        action.triggered.connect(self.del_selected_environ)
+        contextmenu.addAction(action)
+        env_actions.append(action)
 
         contextmenu.addSeparator()
 
@@ -279,34 +285,34 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         action.triggered.connect(self.add_environ_manully)
         contextmenu.addAction(action)
 
-        action = QAction("移除环境（&D）", self)
-        action.triggered.connect(self.del_selected_environ)
-        contextmenu.addAction(action)
-
+        if not self.uiListWidget_env_list.itemAt(point):
+            for action in env_actions:
+                action.setEnabled(False)
         contextmenu.exec_(QCursor.pos())
 
     def packagesinfo_contextmenu(self, point: QPoint):
-        if not self.uiTableWidget_installed_info.itemAt(point):
-            return
-
         contextmenu = QMenu(self)
         contextmenu.setObjectName("pkginfo_menu")
-        action_list = list()
+        action_list: List[QAction] = list()
+        pkgname_actions: List[QAction] = list()
 
         action = QAction("升级（&U）", self)
         action.triggered.connect(self.upgrade_packages)
-        action_list.append(action)
         contextmenu.addAction(action)
+        action_list.append(action)
+        pkgname_actions.append(action)
 
         action = QAction("卸载（&D）", self)
         action.triggered.connect(self.uninstall_packages)
-        action_list.append(action)
         contextmenu.addAction(action)
+        action_list.append(action)
+        pkgname_actions.append(action)
 
         action = QAction("强制重装（&F）", self)
         action.triggered.connect(self.force_reinstall)
-        action_list.append(action)
         contextmenu.addAction(action)
+        action_list.append(action)
+        pkgname_actions.append(action)
 
         contextmenu.addSeparator()
 
@@ -322,6 +328,9 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         for action in action_list:
             action.setEnabled(not self.__exclusive_mode)
+        if not self.uiTableWidget_installed_info.itemAt(point):
+            for action in pkgname_actions:
+                action.setEnabled(False)
         contextmenu.exec_(QCursor.pos())
 
     def set_win_install_package_envinfo(self):
@@ -661,19 +670,22 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.thread_repo.put(thread_install_pkgs, 0)
 
     def force_reinstall(self):
-        packages_names = self.package_names_selected()
-        if not packages_names:
-            if not packages_names:
+        pkg_names = self.package_names_selected()
+        if not pkg_names:
+            if not pkg_names:
                 MessageBox("提示", "没有选中任何项！").exec_()
             return
         cur_env = self.envpair_list[
             self.uiListWidget_env_list.currentRow()
         ].environ
+        names_text = "\n".join(pkg_names[:10])
+        if len(pkg_names) > 10:
+            names_text = f"{names_text}\n......"
         force_reinstall = QMessageBox(
             QMessageBox.Question,
-            "重装",
-            "所选包会被重装为当前版本，如果没有当前版本号则重装为最新版本，"
-            "并且所选包的依赖包也会被重新安装为符合要求的版本，确定强制重装吗？",
+            "强制重装",
+            f"确定强制重装以下包吗？\n{names_text}\n\n此操作会重装所选包的当前版本，"
+            f"如果没有当前版本号则重装为最新版本，并且所选包的依赖包也会被重新安装为符合要求的版本。",
         )
         force_reinstall.addButton("确定", QMessageBox.AcceptRole)
         reject = force_reinstall.addButton("取消", QMessageBox.RejectRole)
@@ -682,7 +694,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return
 
         def do_force_reinstall():
-            for package_name in packages_names:
+            for package_name in pkg_names:
                 item = self.__cur_pkgs_info.setdefault(
                     package_name, ["", "", ""]
                 )
@@ -717,13 +729,11 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         cur_env = self.envpair_list[
             self.uiListWidget_env_list.currentRow()
         ].environ
-        names_text = (
-            "\n".join(pkg_names)
-            if len(pkg_names) <= 10
-            else "\n".join(("\n".join(pkg_names[:10]), "......"))
-        )
+        names_text = "\n".join(pkg_names[:10])
+        if len(pkg_names) > 10:
+            names_text = f"{names_text}\n......"
         uninstall_msg_box = QMessageBox(
-            QMessageBox.Question, "卸载", f"确认卸载？\n{names_text}"
+            QMessageBox.Question, "卸载", f"确认卸载以下包吗？\n{names_text}"
         )
         uninstall_msg_box.addButton("确定", QMessageBox.AcceptRole)
         reject = uninstall_msg_box.addButton("取消", QMessageBox.RejectRole)
@@ -754,21 +764,19 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
     def upgrade_packages(self):
         pkgs_info_keys = tuple(self.__cur_pkgs_info.keys())
         pkg_indexs = self.indexs_of_selected_rows()
-        names = [pkgs_info_keys[index] for index in pkg_indexs]
-        if not names:
+        pkg_names = [pkgs_info_keys[index] for index in pkg_indexs]
+        if not pkg_names:
             return MessageBox("提示", "没有选中任何项！").exec_()
         cur_env = self.envpair_list[
             self.uiListWidget_env_list.currentRow()
         ].environ
-        names_text = (
-            "\n".join(names)
-            if len(names) <= 10
-            else "\n".join(("\n".join(names[:10]), "......"))
-        )
+        names_text = "\n".join(pkg_names[:10])
+        if len(pkg_names) > 10:
+            names_text = f"{names_text}\n......"
         if (
             MessageBox(
                 "升级",
-                f"确认升级？\n{names_text}",
+                f"确认升级以下包吗？\n{names_text}",
                 QMessageBox.Question,
                 (("accept", "确定"), ("reject", "取消")),
             ).exec_()
@@ -777,7 +785,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
             return
 
         def do_upgrade():
-            for pkg, res in loop_install(cur_env, names, upgrade=True):
+            for pkg, res in loop_install(cur_env, pkg_names, upgrade=True):
                 item = self.__cur_pkgs_info.setdefault(pkg, ["", "", ""])
                 if res:
                     item[2] = "升级成功"
@@ -802,8 +810,8 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         self.thread_repo.put(thread_upgrade_pkgs, 0)
 
     def upgrade_all_packages(self):
-        upgradeable = [i[0] for i in self.__cur_pkgs_info.items() if i[1][1]]
-        if not upgradeable:
+        pkg_names = [i[0] for i in self.__cur_pkgs_info.items() if i[1][1]]
+        if not pkg_names:
             MessageBox(
                 "提示",
                 "请检查更新确认是否有可更新的包。",
@@ -813,15 +821,13 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         cur_env = self.envpair_list[
             self.uiListWidget_env_list.currentRow()
         ].environ
-        names_text = (
-            "\n".join(upgradeable)
-            if len(upgradeable) <= 10
-            else "\n".join(("\n".join(upgradeable[:10]), "......"))
-        )
+        names_text = "\n".join(pkg_names[:10])
+        if len(pkg_names) > 10:
+            names_text = f"{names_text}\n......"
         if (
             MessageBox(
                 "全部升级",
-                f"确认升级？\n{names_text}",
+                f"确认升级以下包吗？\n{names_text}",
                 QMessageBox.Question,
                 (("accept", "确定"), ("reject", "取消")),
             ).exec_()
@@ -831,7 +837,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
 
         def do_upgrade():
             for pkg_name, code in loop_install(
-                cur_env, upgradeable, upgrade=True
+                cur_env, pkg_names, upgrade=True
             ):
                 item = self.__cur_pkgs_info.setdefault(pkg_name, ["", "", ""])
                 if code and item[1]:
