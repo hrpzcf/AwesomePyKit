@@ -28,18 +28,18 @@ QPushButton {
     background-color: #FBFBFB;
     padding: 4px 16px;
 }
+QPushButton:default {
+    border-color: #DDDE3F;
+}
 QPushButton:hover {
     border-color: #00ACFF;
-    border-radius: 4px;
     background-color: #EAEAEA;
 }
 QPushButton:pressed {
-    border-radius: 4px;
     background-color: #DADADA;
 }
 QPushButton:disabled {
     color: #ABABAB;
-    border-radius: 4px;
     background-color: #E6E6E6;
 }
 
