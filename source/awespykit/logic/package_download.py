@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+from typing import *
 
 from com import *
 from fastpip import *
@@ -22,13 +23,13 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
-        self.env_paths = None
-        self.environments = None
+        self.environments: Union[List[EnvDisplayPair], None] = None
         self.config = PackageDownloadConfig()
         self.__showdl_win = ShowDownloadWindow(self)
         self.signal_slot_connection()
         self.last_path = None
         self.thread_repo = ThreadRepo(500)
+        self.uiComboBox_derived_from.setInsertPolicy(QComboBox.InsertAtCurrent)
 
     def signal_slot_connection(self):
         self.uiCheckBox_use_index_url.clicked.connect(self.change_le_index_url)
@@ -75,6 +76,12 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             return
         self.config.window_size = self.width(), self.height()
 
+    def __clear_environs_closing(self):
+        if self.environments is not None:
+            for envpd in self.environments:
+                envpd.discard()
+        self.environments = None
+
     def closeEvent(self, event: QCloseEvent):
         if not self.thread_repo.is_empty():
             MessageBox(
@@ -85,6 +92,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         self.__store_window_size()
         self.config_widgets_to_dict()
         self.config.save_config()
+        self.__clear_environs_closing()
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Escape:
@@ -100,19 +108,19 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
             self.apply_config()
 
     def update_envpaths_and_combobox(self):
-        if self.env_paths is None:
-            self.env_paths = list()
-        else:
-            self.env_paths.clear()
-        self.env_paths.extend(self.config.cur_pypaths)
-        self.environments = [PyEnv(p) for p in self.env_paths]
-        index = self.config.derived_from
-        text_list = [str(e) for e in self.environments]
-        if index < 0 or index >= len(text_list):
-            index = 0
+        if not self.config.cur_pypaths:
+            return
+        self.environments = [
+            EnvDisplayPair(PyEnv(p)) for p in self.config.cur_pypaths
+        ]
         self.uiComboBox_derived_from.clear()
-        self.uiComboBox_derived_from.addItems(text_list)
-        self.uiComboBox_derived_from.setCurrentIndex(index)
+        for envdp in self.environments:
+            self.uiComboBox_derived_from.addItem(envdp.display)
+        for index, envdp in enumerate(self.environments):
+            envdp.signal_connect(
+                self.uiComboBox_derived_from.setItemText, index
+            )
+            envdp.load_display()
 
     def config_widgets_to_dict(self):
         self.config.package_names = [
@@ -231,7 +239,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
         if index < 0 or index >= len(self.environments):
             index = 0
             self.uiComboBox_derived_from.setCurrentIndex(0)
-        env = self.environments[index]
+        env = self.environments[index].environ
         if not env.env_path:
             return MessageBox(
                 "提示",

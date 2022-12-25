@@ -131,22 +131,31 @@ class ThreadRepo:
 
 
 class EnvDisplayPair(QObject):
-    __signal_setinfo = pyqtSignal(str)
+    __signal_setinfo = pyqtSignal([str], [int, str])
 
     def __init__(self, environ: PyEnv):
         super().__init__()
         self.__environ = environ
+        self.__i = None
         self.__discard = False
         self.__thread: Union[QThreadModel, None] = None
         self.__display = None
         self.__mutex = QMutex()
-        self.__prevcallback = None
+        self.__callback = None
 
-    def signal_connect(self, callback: Callable):
-        if self.__prevcallback is not None:
-            self.__signal_setinfo.disconnect(self.__prevcallback)
-        self.__prevcallback = callback
-        self.__signal_setinfo.connect(self.__prevcallback)
+    def signal_connect(self, callback: Callable, index: int = None):
+        """同 EnvDisplayPair 实例不能混用 signal_connect 的 1、2 参数调用"""
+        self.__i = index
+        if self.__callback is not None:
+            if index is None:
+                self.__signal_setinfo[str].disconnect(self.__callback)
+            else:
+                self.__signal_setinfo[int, str].disconnect(self.__callback)
+        self.__callback = callback
+        if index is None:
+            self.__signal_setinfo[str].connect(self.__callback)
+        else:
+            self.__signal_setinfo[int, str].connect(self.__callback)
 
     def discard(self):
         self.__mutex.lock()
@@ -167,7 +176,10 @@ class EnvDisplayPair(QObject):
             self.__mutex.lock()
             self.__display = __display
             if not self.__discard:
-                self.__signal_setinfo.emit(__display)
+                if self.__i is None:
+                    self.__signal_setinfo[str].emit(__display)
+                else:
+                    self.__signal_setinfo[int, str].emit(self.__i, __display)
             self.__mutex.unlock()
 
         self.__mutex.lock()
