@@ -120,6 +120,9 @@ QMenu::item {
     border-radius: 2px;
     padding: 4px 8px;
 }
+QMenu::item:disabled {
+    color: #ABABAB;
+}
 QMenu::icon {
     padding-left: 8px;
 }
