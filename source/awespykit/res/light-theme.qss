@@ -315,6 +315,18 @@ QToolTip {
     background-color: #005429;
 }
 
+/* 包管理器安装界面的提示字符 */
+#uiLabel_pkginstall_tips {
+    font-size: 8pt;
+    font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
+    font-weight: normal;
+}
+
+/* 包管理器右下角的运行提示字符 */
+#uiLabel_loading_tip {
+    font-size: 8pt;
+}
+
 /* 镜像源管理工具的启用镜像源按钮 */
 #uiPushButton_set_index {
     border-color: #007A3B;
@@ -383,31 +395,10 @@ QToolTip {
     background-color: #00654C;
 }
 
-/* 命令通用输出窗口 */
-#uiPlainTextEdit_output {
-    font-size: 10pt;
-    font-family: 'Consolas', 'Monospace', 'Microsoft YaHei UI';
-    font-weight: normal;
-}
-
 /* 程序打包工具命令输出窗口 */
 #uiTextEdit_packtool_logging {
     font-size: 10pt;
     font-family: 'Consolas', 'Monospace', 'Microsoft YaHei UI';
-    font-weight: normal;
-}
-
-/* 包管理器安装界面的提示字符 */
-#uiLabel_pkginstall_tips {
-    font-size: 8pt;
-    font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
-    font-weight: normal;
-}
-
-/* 模块安装包下载器的下载提示字符 */
-#uiLabel_pkgdownload_tips {
-    font-size: 8pt;
-    font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
     font-weight: normal;
 }
 
@@ -417,6 +408,40 @@ QToolTip {
     border-radius: 4px;
     border: 1px solid #AEAEAE;
     padding: 2px 0;
+}
+
+/* 程序打包工具右下角的运行提示字符 */
+#uiLabel_running_tip {
+    font-size: 8pt;
+}
+
+/* 程序打包工具的工具设置标签页的删除按钮 */
+#uiPushButton_delete_config {
+    margin-top: 12px;
+    border-color: #B62A8F;
+}
+#uiPushButton_delete_config:hover {
+    color: #FFFFFF;
+    background-color: #B62A8F;
+}
+#uiPushButton_delete_config:pressed {
+    color: #FFFFFF;
+    background-color: #902171;
+}
+
+
+/* 命令通用输出窗口 */
+#uiPlainTextEdit_output {
+    font-size: 10pt;
+    font-family: 'Consolas', 'Monospace', 'Microsoft YaHei UI';
+    font-weight: normal;
+}
+
+/* 模块安装包下载器的下载提示字符 */
+#uiLabel_pkgdownload_tips {
+    font-size: 8pt;
+    font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
+    font-weight: normal;
 }
 
 /* 模块安装包下载器的下载列表按钮 */
@@ -436,18 +461,4 @@ QToolTip {
 #uiPushButton_start_download:pressed {
     color: #FFFFFF;
     background-color: #00654C;
-}
-
-/* 程序打包工具的工具设置标签页的删除按钮 */
-#uiPushButton_delete_config {
-    margin-top: 12px;
-    border-color: #B62A8F;
-}
-#uiPushButton_delete_config:hover {
-    color: #FFFFFF;
-    background-color: #B62A8F;
-}
-#uiPushButton_delete_config:pressed {
-    color: #FFFFFF;
-    background-color: #902171;
 }

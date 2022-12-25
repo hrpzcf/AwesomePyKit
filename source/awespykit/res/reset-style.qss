@@ -19,6 +19,11 @@
     font-weight: normal;
 }
 
+/* 程序打包工具右下角的运行提示字符 */
+#uiLabel_running_tip {
+    font-size: 8pt;
+}
+
 /* 包管理器安装界面的提示字符 */
 #uiLabel_pkginstall_tips {
     font-size: 8pt;
@@ -26,13 +31,20 @@
     font-weight: normal;
 }
 
+/* 包管理器的环境列表和包列表右键菜单 */
+QMenu[objectName="envlst_menu"], QMenu[objectName="pkginfo_menu"] {
+    padding: 4px 8px;
+}
+
+/* 包管理器右下角的运行提示字符 */
+#uiLabel_loading_tip {
+    font-size: 8pt;
+}
+
+
 /* 模块安装包下载器的下载提示字符 */
 #uiLabel_pkgdownload_tips {
     font-size: 8pt;
     font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
     font-weight: normal;
-}
-
-QMenu[objectName="envlst_menu"], QMenu[objectName="pkginfo_menu"] {
-    padding: 4px 8px;
 }

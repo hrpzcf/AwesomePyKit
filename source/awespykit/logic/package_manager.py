@@ -66,7 +66,7 @@ class EnvDisplayPair(QObject):
         __display = self.__display
         self.__mutex.unlock()
         if __display is None:
-            __display = f"loading info... @ {self.__environ.path}"
+            __display = f"loading info ... @ {self.__environ.path}"
         return __display
 
     @property
