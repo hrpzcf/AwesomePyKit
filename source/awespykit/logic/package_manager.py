@@ -341,7 +341,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
         if self.selected_index >= len(self.envpair_list):
             return MessageBox("错误", "异常：当前选择下标超出范围。").exec_()
         PackageInstallWindow(self, self.install_packages).set_target_environ(
-            self.envpair_list[self.selected_index].environ
+            self.envpair_list[self.selected_index]
         )
 
     @staticmethod
@@ -865,6 +865,7 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
         self.__setup_other_widgets()
         self.environment = None
+        self.__environpair: Union[None, EnvDisplayPair] = None
         self.package_names = list()
         self.signal_slot_connection()
         self.__parent = parent
@@ -948,10 +949,14 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.close()  # 触发 closeEvent 更新配置
         self.__callback(self.environment, self.package_names)
 
-    def set_target_environ(self, env):
-        self.environment = env
+    def set_target_environ(self, environpair: EnvDisplayPair):
+        self.environment = environpair.environ
+        self.__environpair = environpair
         self.config_dict_to_widgets()
-        self.uiLabel_target_environment.setText(str(env))
+        self.uiLabel_target_environment.setText(environpair.display)
+        environpair.signal_connect(
+            self.uiLabel_target_environment.setText, clean=False
+        )
         self.display()
 
     def __save_window_size(self):
@@ -960,6 +965,10 @@ class PackageInstallWindow(Ui_package_install, QMainWindow, QueryFilePath):
         self.__parent.config.install_winsize = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
+        if self.__environpair is not None:
+            self.__environpair.disconnect_1(
+                self.uiLabel_target_environment.setText
+            )
         self.__save_window_size()
         self.config_widgets_to_dict()
 

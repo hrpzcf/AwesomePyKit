@@ -141,21 +141,32 @@ class EnvDisplayPair(QObject):
         self.__thread: Union[QThreadModel, None] = None
         self.__display = None
         self.__mutex = QMutex()
-        self.__callback = None
 
-    def signal_connect(self, callback: Callable, index: int = None):
-        """同 EnvDisplayPair 实例不能混用 signal_connect 的 1、2 参数调用"""
+    def signal_connect(self, callback, index=None, clean=True):
         self.__i = index
-        if self.__callback is not None:
+        if clean:
             if index is None:
-                self.__signal_setinfo[str].disconnect(self.__callback)
+                if self.receivers(self.__signal_setinfo[str]):
+                    self.__signal_setinfo[str].disconnect()
             else:
-                self.__signal_setinfo[int, str].disconnect(self.__callback)
-        self.__callback = callback
+                if self.receivers(self.__signal_setinfo[int, str]):
+                    self.__signal_setinfo[int, str].disconnect()
         if index is None:
-            self.__signal_setinfo[str].connect(self.__callback)
+            self.__signal_setinfo[str].connect(callback)
         else:
-            self.__signal_setinfo[int, str].connect(self.__callback)
+            self.__signal_setinfo[int, str].connect(callback)
+
+    def disconnect_all(self):
+        if self.receivers(self.__signal_setinfo[str]):
+            self.__signal_setinfo[str].disconnect()
+        if self.receivers(self.__signal_setinfo[int, str]):
+            self.__signal_setinfo[int, str].disconnect()
+
+    def disconnect_1(self, callback):
+        self.__signal_setinfo[str].disconnect(callback)
+
+    def disconnect_2(self, callback):
+        self.__signal_setinfo[int, str].disconnect(callback)
 
     def discard(self):
         self.__mutex.lock()
