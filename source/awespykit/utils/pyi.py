@@ -8,7 +8,7 @@ from typing import *
 
 from __info__ import *
 from com import *
-from fastpip import PyEnv
+from fastpip import PyEnv, decode_bytes
 from PyQt5.QtCore import *
 from settings import *
 
@@ -86,11 +86,12 @@ class PyiTool(QObject):
     def __line_division_emit(self):
         while self.__process.poll() is None:
             try:
-                line = self.__process.stdout.readline()
-                if line is not None:
-                    line = line.strip(os.linesep)
-                    if line:
-                        self.stdout.emit(line)
+                line_bytes = self.__process.stdout.readline()
+                decoded_line = decode_bytes(line_bytes)
+                if decoded_line is not None:
+                    decoded_line = decoded_line.strip(os.linesep)
+                    if decoded_line:
+                        self.stdout.emit(decoded_line)
             except Exception as e:
                 self.stdout.emit(f"[{NAME}] 信息流读取异常(不影响打包)：\n    {e}")
         self.completed.emit(self.__process.wait())
@@ -100,11 +101,12 @@ class PyiTool(QObject):
         lines = list()
         while self.__process.poll() is None:
             try:
-                line = self.__process.stdout.readline()
-                if line is not None:
-                    line = line.strip(os.linesep)
-                    if line:
-                        lines.append(line)
+                line_bytes = self.__process.stdout.readline()
+                decoded_line = decode_bytes(line_bytes)
+                if decoded_line is not None:
+                    decoded_line = decoded_line.strip(os.linesep)
+                    if decoded_line:
+                        lines.append(decoded_line)
                 if self.cumulative > 100:
                     self.stdout.emit("\n".join(lines))
                     lines.clear()
@@ -124,7 +126,6 @@ class PyiTool(QObject):
             stdout=PIPE,
             stderr=STDOUT,
             startupinfo=self.STARTUP,
-            text=True,
             cwd=self.__cwd,
         )
         if self.__commands and self.__process:
