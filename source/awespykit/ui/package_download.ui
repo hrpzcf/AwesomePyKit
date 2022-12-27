@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>620</width>
-    <height>650</height>
+    <height>605</height>
    </rect>
   </property>
   <property name="font">
@@ -307,13 +307,6 @@
               </layout>
              </item>
              <item>
-              <widget class="Line" name="line_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
               <layout class="QVBoxLayout" name="verticalLayout">
                <property name="spacing">
                 <number>2</number>
@@ -336,13 +329,6 @@
                 </widget>
                </item>
               </layout>
-             </item>
-             <item>
-              <widget class="Line" name="line_3">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,9">
@@ -376,13 +362,6 @@
                 </widget>
                </item>
               </layout>
-             </item>
-             <item>
-              <widget class="Line" name="line_4">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,9">
@@ -448,13 +427,6 @@
               </layout>
              </item>
              <item>
-              <widget class="Line" name="line_5">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
               <layout class="QVBoxLayout" name="verticalLayout_3">
                <property name="spacing">
                 <number>2</number>
@@ -477,13 +449,6 @@
                 </widget>
                </item>
               </layout>
-             </item>
-             <item>
-              <widget class="Line" name="line_6">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
              </item>
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_4">
