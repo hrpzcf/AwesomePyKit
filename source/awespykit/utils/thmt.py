@@ -209,27 +209,10 @@ class Themes(list):
         return pht, tibgn, tibgs
 
     def __load_builtin_themes(self):
-        # Qt 内置的 2 种界面风格：系统原生风格、Fusion 风格
-        self.append(
-            ThemeData(
-                self.__get_themeid(),
-                "原生风格",
-                AppStyle.WindowsVista.name,
-                DataType.Style,
-            )
-        )
-        self.append(
-            ThemeData(
-                self.__get_themeid(),
-                "Fusion",
-                AppStyle.Fusion.name,
-                DataType.Style,
-            )
-        )
         # 本工具箱内置的 Qt 样式表，有浅灰和暗色两套
         for theme in (
+            QFile(":/themes/gray-theme.qss"),
             QFile(":/themes/dark-theme.qss"),
-            QFile(":/themes/light-theme.qss"),
         ):
             if not theme.open(QIODevice.ReadOnly):
                 continue
@@ -247,6 +230,23 @@ class Themes(list):
             theme_data.itembg_normal = tibgn
             theme_data.itembg_selected = tibgs
             self.append(theme_data)
+        # Qt 内置的 2 种界面风格：系统原生风格、Fusion 风格
+        self.append(
+            ThemeData(
+                self.__get_themeid(),
+                "Fusion",
+                AppStyle.Fusion.name,
+                DataType.Style,
+            )
+        )
+        self.append(
+            ThemeData(
+                self.__get_themeid(),
+                "原生风格",
+                AppStyle.WindowsVista.name,
+                DataType.Style,
+            )
+        )
         # 开源的第三方样式表：qdarkstyle
         if load_stylesheet_pyqt5 is not None:
             self.append(
