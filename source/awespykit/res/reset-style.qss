@@ -48,3 +48,23 @@ QMenu[objectName="envlst_menu"], QMenu[objectName="pkginfo_menu"] {
     font-family: 'Consolas', 'Microsoft YaHei UI', 'Monospace';
     font-weight: normal;
 }
+
+/* 关于窗口的相关样式 */
+QMainWindow[objectName="about_window"] QLabel {
+    font-size: 9pt;
+}
+#uiGroupBox_app_name {
+    font-size: 22pt;
+    font-weight: bold;
+}
+#label_app_description {
+    font-size: 8pt;
+}
+
+#uiLabel_app_version, #uiLabel_license, #uiLabel_source_github,
+#uiLabel_source_gitee, #uiLabel_issue_github, #uiLabel_issue_gitee {
+    color: blue;
+}
+#uiPlainTextEdit_open_packages {
+    font-size: 8pt;
+}

@@ -17,3 +17,9 @@
 #uiPushButton_index_mgr::menu-indicator, #uiPushButton_pkg_dload::menu-indicator, #uiPushButton_settings::menu-indicator {
     image:none;
 }
+
+/* 关于窗口的相关样式 */
+#uiLabel_app_version, #uiLabel_license, #uiLabel_source_github,
+#uiLabel_source_gitee, #uiLabel_issue_github, #uiLabel_issue_gitee {
+    color: orange;
+}
