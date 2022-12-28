@@ -23,8 +23,10 @@
         <file>copy.png</file>
         <file>settings.png</file>
         <file>reinstall.png</file>
-        <file>down_arrow.png</file>
-        <file>up_arrow.png</file>
+        <file>down_arrow_dark.png</file>
+        <file>down_arrow_light.png</file>
+        <file>up_arrow_dark.png</file>
+        <file>up_arrow_light.png</file>
         <file>right_arrow.png</file>
         <file>left_arrow.png</file>
     </qresource>

@@ -228,7 +228,7 @@ class Themes(list):
         )
         # 本工具箱内置的 Qt 样式表，有浅灰和暗色两套
         for theme in (
-            # QFile(":/themes/dark-theme.qss"),  # 主题未完成
+            QFile(":/themes/dark-theme.qss"),
             QFile(":/themes/light-theme.qss"),
         ):
             if not theme.open(QIODevice.ReadOnly):

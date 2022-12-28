@@ -215,17 +215,17 @@ QComboBox:hover {
     background-color: #EAEAEA;
 }
 QComboBox::drop-down {
-	border:none;
+	border: none;
 }
 QComboBox::down-arrow {
     width: 0.8em;
     height: 0.8em;
-    image: url(:/down_arrow.png);
+    image: url(:/down_arrow_dark.png);
 }
 QComboBox::down-arrow:on {
     width: 0.8em;
     height: 0.8em;
-    image: url(:/up_arrow.png);
+    image: url(:/up_arrow_dark.png);
 }
 QComboBox QAbstractItemView
 {
@@ -239,7 +239,7 @@ QComboBox QAbstractItemView
 /* 滚动条样式 */
 QScrollBar {
     background-color: #FFFFFF;
-    width: 12px;
+    width: 6px;
 }
 QScrollBar::handle {
     background-color: #E6E6E6;
