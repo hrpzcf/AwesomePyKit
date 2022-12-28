@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from .about_window import Ui_about_window
 from .addenv_dialog import Ui_input_dialog
 from .environ_chosen import Ui_environ_chosen
 from .generic_output import Ui_generic_output
@@ -14,6 +15,7 @@ from .query_panel import Ui_query_panel
 from .show_download import Ui_show_download
 
 __all__ = [
+    "Ui_about_window",
     "Ui_environ_chosen",
     "Ui_generic_output",
     "Ui_imports_check",

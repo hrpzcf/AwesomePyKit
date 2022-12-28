@@ -45,6 +45,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.setWindowTitle(NAME)
         self.__config = MainEntranceConfig()
         self.__themes: Themes[ThemeData] = PreThemeList
+        self.__about_window = AboutWindow(self, VERSION)
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
@@ -52,38 +53,9 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__setup_other_widgets()
         self.__theme_action(self.__config.selected_thm)
 
-    def change_appstyle(self, style: AppStyle):
-        self.__config.app_style = style
-        MessageBox("提示", "界面风格设置成功，重启程序生效！").exec_()
-
     def display(self):
         self.resize(*self.__config.window_size)
         self.showNormal()
-
-    def __theme_action(self, index: int):
-        self.__config.selected_thm = self.__themes.apply_theme(index)
-
-    def __setup_other_widgets(self):
-        self.uiPushButton_pkg_mgr.setIcon(QIcon(":/manage.png"))
-        self.uiPushButton_pkg_mgr.clicked.connect(self.__pkgmgr_win.display)
-        self.uiPushButton_pyi_tool.setIcon(QIcon(":/bundle.png"))
-        self.uiPushButton_pyi_tool.clicked.connect(self.__pyitool_win.display)
-        self.uiPushButton_index_mgr.setIcon(QIcon(":/indexurl2.png"))
-        self.uiPushButton_index_mgr.clicked.connect(self.__indexmgr_win.display)
-        self.uiPushButton_pkg_dload.setIcon(QIcon(":/download.png"))
-        self.uiPushButton_pkg_dload.clicked.connect(self.__pkgdl_win.display)
-        self.uiPushButton_settings.setIcon(QIcon(":/settings.png"))
-        # noinspection PyTypeChecker
-        menu_setstyle = QMenu("主题", self)
-        for theme in self.__themes:
-            action = QAction(theme.name, self)
-            action.triggered.connect(partial(self.__theme_action, theme.index))
-            menu_setstyle.addAction(action)
-        menu_main_settings = QMenu(self)
-        menu_main_settings.setObjectName("settings_menu")
-        menu_main_settings.addMenu(menu_setstyle)
-        menu_main_settings.addAction("关于", self._show_about)
-        self.uiPushButton_settings.setMenu(menu_main_settings)
 
     def __store_window_size(self):
         if self.isMaximized() or self.isMinimized():
@@ -118,17 +90,33 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         if event.key() == Qt.Key_Escape:
             self.close()
 
-    @staticmethod
-    def _show_about():
-        about_path = generate_respath("help", "About.html")
-        try:
-            with open(about_path, encoding="utf-8") as h:
-                info = h.read().replace("0.0.0", VERSION)
-                icon = QMessageBox.Information
-        except Exception:
-            info = f"无法打开<关于>文件：{about_path}，文件已丢失或损坏。"
-            icon = QMessageBox.Critical
-        MessageBox("关于", info, icon).exec_()
+    def _show_about(self):
+        self.__about_window.display()
+
+    def __setup_other_widgets(self):
+        self.uiPushButton_pkg_mgr.setIcon(QIcon(":/manage.png"))
+        self.uiPushButton_pkg_mgr.clicked.connect(self.__pkgmgr_win.display)
+        self.uiPushButton_pyi_tool.setIcon(QIcon(":/bundle.png"))
+        self.uiPushButton_pyi_tool.clicked.connect(self.__pyitool_win.display)
+        self.uiPushButton_index_mgr.setIcon(QIcon(":/indexurl2.png"))
+        self.uiPushButton_index_mgr.clicked.connect(self.__indexmgr_win.display)
+        self.uiPushButton_pkg_dload.setIcon(QIcon(":/download.png"))
+        self.uiPushButton_pkg_dload.clicked.connect(self.__pkgdl_win.display)
+        self.uiPushButton_settings.setIcon(QIcon(":/settings.png"))
+        # noinspection PyTypeChecker
+        menu_setstyle = QMenu("主题", self)
+        for theme in self.__themes:
+            action = QAction(theme.name, self)
+            action.triggered.connect(partial(self.__theme_action, theme.index))
+            menu_setstyle.addAction(action)
+        menu_main_settings = QMenu(self)
+        menu_main_settings.setObjectName("settings_menu")
+        menu_main_settings.addMenu(menu_setstyle)
+        menu_main_settings.addAction("关于", self._show_about)
+        self.uiPushButton_settings.setMenu(menu_main_settings)
+
+    def __theme_action(self, index: int):
+        self.__config.selected_thm = self.__themes.apply_theme(index)
 
 
 def run_pykit_sysexit_when_close():
