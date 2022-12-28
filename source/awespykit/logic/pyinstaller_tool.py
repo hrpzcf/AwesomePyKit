@@ -170,9 +170,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
     def signal_slot_connection(self):
         self.pyi_tool.completed.connect(self.after_task_completed)
         self.pyi_tool.stdout.connect(self.uiTextEdit_packtool_logging.append)
-        self.uiPushButton_select_pyenv.clicked.connect(
-            self.__envch_win.initialize
-        )
+        self.uiPushButton_select_pyenv.clicked.connect(self.__envch_win.display)
         self.uiPushButton_create_venv.clicked.connect(
             lambda: self.check_createvenv()
         )
@@ -1234,25 +1232,35 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
-        self.__envlist = None
+        self.__envpairlist: Union[None, List[EnvDisplayPair]] = None
         self.__call_back = callback
         self.uiListWidget_environ_list.clicked.connect(self.__call_environ_back)
 
+    def display(self):
+        self.resize(*self.__parent.config.envch_winsize)
+        self.showNormal()
+        self.__env_list_update()
+
     def __env_list_update(self):
         self.uiListWidget_environ_list.clear()
-        row_size = QSize(0, 28)
-        for env in self.__envlist:
-            item = QListWidgetItem(QIcon(":/python.png"), str(env))
-            item.setSizeHint(row_size)
+        self.__envpairlist = [
+            EnvDisplayPair(PyEnv(p)) for p in self.__parent.config.pypaths
+        ]
+        for envp in self.__envpairlist:
+            item = QListWidgetItem(QIcon(":/python.png"), envp.display)
             self.uiListWidget_environ_list.addItem(item)
+            envp.signal_connect(item.setText)
+            envp.load_real_display()
 
-    def __save_window_size(self):
-        if self.isMaximized() or self.isMinimized():
+    def __clear_envpairlist(self):
+        if self.__envpairlist is None:
             return
-        self.__parent.config.envch_winsize = self.width(), self.height()
+        for envp in self.__envpairlist:
+            envp.discard()
 
     def closeEvent(self, event: QCloseEvent):
         self.__save_window_size()
+        self.__clear_envpairlist()
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Escape:
@@ -1262,13 +1270,12 @@ class EnvironChosenWindow(Ui_environ_chosen, QMainWindow):
         self.close()
         selected = self.uiListWidget_environ_list.currentRow()
         if selected != -1:
-            self.__call_back(self.__envlist[selected])
+            self.__call_back(self.__envpairlist[selected].environ)
 
-    def initialize(self):
-        self.resize(*self.__parent.config.envch_winsize)
-        self.showNormal()
-        self.__envlist = [PyEnv(p) for p in self.__parent.config.pypaths]
-        self.__env_list_update()
+    def __save_window_size(self):
+        if self.isMaximized() or self.isMinimized():
+            return
+        self.__parent.config.envch_winsize = self.width(), self.height()
 
 
 class ImportsCheckWindow(Ui_imports_check, QMainWindow):
