@@ -12,7 +12,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from settings import *
 from ui import *
-from utils import *
 from utils.cip import ImportInspector
 from utils.main import launch_explorer
 from utils.pyi import PyiTool
