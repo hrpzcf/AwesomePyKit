@@ -119,7 +119,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__config.selected_thm = self.__themes.apply_theme(index)
 
 
-def run_pykit_sysexit_when_close():
+def runpykit_sysexit_when_closes():
     translator = QTranslator()
     translator.load(":/trans/widgets_zh-CN.qm")
     _App.installTranslator(translator)
@@ -130,4 +130,4 @@ def run_pykit_sysexit_when_close():
 
 
 if __name__ == "__main__":
-    run_pykit_sysexit_when_close()
+    runpykit_sysexit_when_closes()

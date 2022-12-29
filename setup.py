@@ -45,10 +45,9 @@ setup(
         "Operating System :: Microsoft :: Windows :: Windows 11",
         "Environment :: Win32 (MS Windows)",
     ],
-    package_data={"awespykit": ["help/About.html"]},
     entry_points={
         "console_scripts": [
-            "rpk = awespykit.runpykit:run_pykit_sysexit_when_close"
+            "rpk = awespykit.runpykit:runpykit_sysexit_when_closes"
         ]
     },
 )
