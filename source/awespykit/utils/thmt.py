@@ -30,7 +30,11 @@ except ImportError:
 
 
 class ThemeData:
-    def __init__(self, index, name, data, dtype=DataType.Sheet):
+    Transparent = "transparent"
+    PlaceHolderLight = "#ADB4B4"
+    PlaceHolderDark = "#4F535B"
+
+    def __init__(self, index, name, data, dtype=DataType.StyleSheet):
         self.__index = index
         self.__name = name
         self.__data = data
@@ -124,47 +128,66 @@ class Themes(list):
             self.__qt_material_all = (
                 qt_material_all.readAll().data().decode("utf-8")
             )
-        reset_style = QFile(":/themes/reset-style.qss")
-        if reset_style.open(QIODevice.ReadOnly):
-            self.__resetsheet = reset_style.readAll().data().decode("utf-8")
+        base_stylesheet = QFile(":/themes/base-stylesheet.qss")
+        if base_stylesheet.open(QIODevice.ReadOnly):
+            self.__base_stylesheet = (
+                base_stylesheet.readAll().data().decode("utf-8")
+            )
+        qdarkstyle_extra = QFile(":/themes/qdarkstyle-extra.qss")
+        if qdarkstyle_extra.open(QIODevice.ReadOnly):
+            self.__qdarkstyle_extra = (
+                qdarkstyle_extra.readAll().data().decode("utf-8")
+            )
 
     def __init__(self):
         super(Themes, self).__init__()
-        self.__resetsheet = EMPTY_STR
+        self.__base_stylesheet = EMPTY_STR
         self.__qt_material_all = EMPTY_STR
         self.__qt_material_dark = EMPTY_STR
+        self.__qdarkstyle_extra = EMPTY_STR
         self.__load_resetstyle_and_extra()
         self.__current = 0
         self.__load_builtin_themes()
         self.__load_external_themes()
 
     def apply_theme(self, index: int):
-        assert isinstance(index, int)
         assert isinstance(_App, QApplication)
+        assert isinstance(index, int)
         if index < 0 or index >= len(self):
             index = 0
         self.__current = index
         theme_data: ThemeData = self[index]
-        if (
-            theme_data.type == DataType.Sheet
-            or theme_data.type == DataType.Style
+        if not theme_data.type & DataType.QtMaterial and (
+            theme_data.type & DataType.QtPreStyle
+            or theme_data.type & DataType.StyleSheet
         ):
             palette = QApplication.palette()
             if theme_data.place_holder is None:
-                theme_data.place_holder = "#ADB4B4"
+                if theme_data.type & DataType.DarkTheme:
+                    theme_data.place_holder = theme_data.PlaceHolderDark
+                elif theme_data.type & DataType.LightTheme:
+                    theme_data.place_holder = theme_data.PlaceHolderLight
+                else:
+                    theme_data.place_holder = theme_data.Transparent
             palette.setColor(
                 QPalette.PlaceholderText, QColor(theme_data.place_holder)
             )
             QApplication.setPalette(palette)
-        if theme_data.type == DataType.Sheet:
+        # ResetStyle 优先级比 QtPreStyle 优先级高
+        if theme_data.type & DataType.ResetStyle:
             _App.setStyle(AppStyle.WindowsVista.name)
-            _App.setStyleSheet(theme_data.data)
-        elif theme_data.type == DataType.Style:
+        elif theme_data.type & DataType.QtPreStyle:
             _App.setStyle(theme_data.data)
-            _App.setStyleSheet(self.__resetsheet)
-        elif theme_data.type == DataType.XmlName:
+        # ResetSheet 优先级比 StyleSheet 优先级高
+        if theme_data.type & DataType.ResetSheet:
+            _App.setStyleSheet(self.__base_stylesheet)
+        elif theme_data.type & DataType.StyleSheet:
+            final_stylesheet = theme_data.data
+            if theme_data.type & DataType.QDarkStyle:
+                final_stylesheet += self.__qdarkstyle_extra
+            _App.setStyleSheet(final_stylesheet)
+        if theme_data.type & DataType.QtMaterial:
             if apply_stylesheet is not None:
-                _App.setStyle(AppStyle.WindowsVista.name)
                 if theme_data.data.startswith("light_"):
                     apply_stylesheet(
                         _App,
@@ -176,7 +199,7 @@ class Themes(list):
                     apply_stylesheet(_App, theme_data.data, extra=self.__extra)
                 current_style_sheet = _App.styleSheet()
                 current_style_sheet = (
-                    self.__resetsheet
+                    self.__base_stylesheet
                     + current_style_sheet
                     + self.__qt_material_all
                 )
@@ -195,7 +218,7 @@ class Themes(list):
         return cls.__theme_id
 
     @classmethod
-    def __det_extra(cls, string: str):
+    def __detect_extra(cls, string: str):
         pht, tibgn, tibgs = None, None, None
         sch_pht = cls.__pat_pht.search(string)
         if sch_pht:
@@ -216,15 +239,18 @@ class Themes(list):
         ):
             if not theme.open(QIODevice.ReadOnly):
                 continue
-            theme_name, stylesheet = self.__detach_text_content(
+            theme_name, stylesheet = self.__detach(
                 theme.readAll().data().decode("utf-8")
             )
             theme.close()
             if not (theme_name and stylesheet):
                 continue
-            phtc, tibgn, tibgs = self.__det_extra(stylesheet)
+            phtc, tibgn, tibgs = self.__detect_extra(stylesheet)
             theme_data = ThemeData(
-                self.__get_themeid(), theme_name, stylesheet, DataType.Sheet
+                self.__get_themeid(),
+                theme_name,
+                stylesheet,
+                DataType.ResetStyle | DataType.StyleSheet,
             )
             theme_data.place_holder = phtc
             theme_data.itembg_normal = tibgn
@@ -236,7 +262,7 @@ class Themes(list):
                 self.__get_themeid(),
                 "Fusion",
                 AppStyle.Fusion.name,
-                DataType.Style,
+                DataType.QtPreStyle | DataType.ResetSheet | DataType.LightTheme,
             )
         )
         self.append(
@@ -244,17 +270,20 @@ class Themes(list):
                 self.__get_themeid(),
                 "原生风格",
                 AppStyle.WindowsVista.name,
-                DataType.Style,
+                DataType.QtPreStyle | DataType.ResetSheet | DataType.LightTheme,
             )
         )
-        # 开源的第三方样式表：qdarkstyle
+        # 开源的第三方样式表：QDarkStyle
         if load_stylesheet_pyqt5 is not None:
             self.append(
                 ThemeData(
                     self.__get_themeid(),
                     "QDarkStyle",
                     load_stylesheet_pyqt5(),
-                    DataType.Sheet,
+                    DataType.ResetStyle
+                    | DataType.StyleSheet
+                    | DataType.QDarkStyle
+                    | DataType.DarkTheme,
                 )
             )
         # 开源的第三方样式表：qt-material
@@ -265,7 +294,7 @@ class Themes(list):
                         self.__get_themeid(),
                         path.splitext(xml_name)[0],
                         xml_name,
-                        DataType.XmlName,
+                        DataType.ResetStyle | DataType.QtMaterial,
                     )
                 )
 
@@ -278,24 +307,29 @@ class Themes(list):
         for theme in self.__theme_dir.glob("*.qss"):
             try:
                 with open(theme, "rt", encoding="utf-8") as fobj:
-                    theme_name, stylesheet = self.__detach_text_content(
-                        fobj.read()
-                    )
-                if not (theme_name and stylesheet):
+                    theme_name, sheet = self.__detach(fobj.read())
+                if not (theme_name and sheet):
                     continue
-                phtc, tibgn, tibgs = self.__det_extra(stylesheet)
+                (
+                    placeholder_color,
+                    tabitembg_normal,
+                    tabitembg_selected,
+                ) = self.__detect_extra(sheet)
                 theme_data = ThemeData(
-                    self.__get_themeid(), theme_name, stylesheet, DataType.Sheet
+                    self.__get_themeid(),
+                    theme_name,
+                    sheet,
+                    DataType.ResetStyle | DataType.StyleSheet,
                 )
-                theme_data.place_holder = phtc
-                theme_data.itembg_normal = tibgn
-                theme_data.itembg_selected = tibgs
+                theme_data.place_holder = placeholder_color
+                theme_data.itembg_normal = tabitembg_normal
+                theme_data.itembg_selected = tabitembg_selected
                 self.append(theme_data)
             except Exception:
                 continue
 
     @staticmethod
-    def __detach_text_content(string: str) -> Tuple[str, str]:
+    def __detach(string: str) -> Tuple[str, str]:
         lines = string.split("\n", 2)
         if len(lines) < 3:
             return EMPTY_STR, EMPTY_STR

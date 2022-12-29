@@ -37,11 +37,17 @@ class QMode(IntEnum):
 
 
 class DataType(IntEnum):
-    """ThemeData 类的 data_type 参数类型"""
+    """ThemeData 类的 dtype 参数类型"""
 
-    Sheet = 0
-    Style = 1
-    XmlName = 2
+    StyleSheet = 0x00000001  # 此 ThemeData 携带的是 QSS 样式表文本
+    QtPreStyle = 0x00000002  # 此 ThemeData 携带的是 Qt 内置风格
+    QDarkStyle = 0x00000004  # 此 ThemeData 携带的是 QDarkStyle 包样式表
+    QtMaterial = 0x00000008  # 此 ThemeData 携带的是 qt_material 包样式信息
+    ResetStyle = 0x00000010  # 重置界面风格为系统原生风格 AppStyle.WindowsVista
+    ResetSheet = 0x00000020  # 应用基础样式表 base-stylesheet.qss
+    # 以下两项影响此类主题：不设置 PlaceHolderText 颜色且没有写其样式
+    DarkTheme = 0x00000040  # 表示此主题是深色类型的主题
+    LightTheme = 0x00000080  # 表示此主题是浅色类型的主题
 
 
 class RoleData(IntEnum):

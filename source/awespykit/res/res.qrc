@@ -39,5 +39,6 @@
         <file>reset-style.qss</file>
         <file>qt_material_dark.qss</file>
         <file>qt_material_all.qss</file>
+        <file>qdarkstyle-extra.qss</file>
 </qresource>
 </RCC>
