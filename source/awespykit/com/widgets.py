@@ -5,12 +5,12 @@ __doc__ = """包含一些继承自默认Qt控件的自定义行为控件。"""
 import os
 from typing import List
 
-from com import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-
 from utils.thmt import PreThemeList
+
+from .enums import Accept, RoleData
 
 
 class LineEdit(QLineEdit):

@@ -16,7 +16,6 @@ from utils.cip import ImportInspector
 from utils.main import launch_explorer
 from utils.pyi import PyiTool
 from utils.venv import VtEnv
-from utils.widgets import LineEdit, TextEdit
 
 from .messagebox import MessageBox
 
