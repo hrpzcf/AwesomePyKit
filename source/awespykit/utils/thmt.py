@@ -119,25 +119,25 @@ class Themes(list):
 
     def __load_resetstyle_and_extra(self):
         qt_material_dark = QFile(":/themes/qt_material_dark.qss")
-        if qt_material_dark.open(QIODevice.ReadOnly):
-            self.__qt_material_dark = (
-                qt_material_dark.readAll().data().decode("utf-8")
-            )
+        assert qt_material_dark.open(QIODevice.ReadOnly)
+        self.__qt_material_dark = (
+            qt_material_dark.readAll().data().decode("utf-8")
+        )
         qt_material_all = QFile(":/themes/qt_material_all.qss")
-        if qt_material_all.open(QIODevice.ReadOnly):
-            self.__qt_material_all = (
-                qt_material_all.readAll().data().decode("utf-8")
-            )
+        assert qt_material_all.open(QIODevice.ReadOnly)
+        self.__qt_material_all = (
+            qt_material_all.readAll().data().decode("utf-8")
+        )
         base_stylesheet = QFile(":/themes/base-stylesheet.qss")
-        if base_stylesheet.open(QIODevice.ReadOnly):
-            self.__base_stylesheet = (
-                base_stylesheet.readAll().data().decode("utf-8")
-            )
+        assert base_stylesheet.open(QIODevice.ReadOnly)
+        self.__base_stylesheet = (
+            base_stylesheet.readAll().data().decode("utf-8")
+        )
         qdarkstyle_extra = QFile(":/themes/qdarkstyle-extra.qss")
-        if qdarkstyle_extra.open(QIODevice.ReadOnly):
-            self.__qdarkstyle_extra = (
-                qdarkstyle_extra.readAll().data().decode("utf-8")
-            )
+        assert qdarkstyle_extra.open(QIODevice.ReadOnly)
+        self.__qdarkstyle_extra = (
+            qdarkstyle_extra.readAll().data().decode("utf-8")
+        )
 
     def __init__(self):
         super(Themes, self).__init__()

@@ -36,7 +36,7 @@
     <qresource prefix="themes">
         <file>gray-theme.qss</file>
         <file>dark-theme.qss</file>
-        <file>reset-style.qss</file>
+        <file>base-stylesheet.qss</file>
         <file>qt_material_dark.qss</file>
         <file>qt_material_all.qss</file>
         <file>qdarkstyle-extra.qss</file>
