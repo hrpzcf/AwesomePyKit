@@ -5,7 +5,6 @@ __license__ = "GNU General Public License v3 (GPLv3)"
 import sys
 from functools import partial
 from os import path
-from typing import *
 
 from fastpip import *
 from PyQt5.QtCore import *

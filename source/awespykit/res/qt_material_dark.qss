@@ -3,15 +3,20 @@
 /* 主界面 5 个按钮的样式 */
 #uiPushButton_pkg_mgr, #uiPushButton_pyi_tool, #uiPushButton_index_mgr, #uiPushButton_pkg_dload,
 #uiPushButton_settings {
-    background-color: #D0D0D0;
+    border: none;
+    border-radius:4px;
+    background-color: #626C80;
+    padding: 4px 4px;
 }
 #uiPushButton_pkg_mgr:hover, #uiPushButton_pyi_tool:hover, #uiPushButton_index_mgr:hover,
 #uiPushButton_pkg_dload:hover, #uiPushButton_settings:hover {
-    background-color: #C0C0C0;
+    border-radius:4px;
+    background-color: #565F70;
 }
 #uiPushButton_pkg_mgr:pressed, #uiPushButton_pyi_tool:pressed, #uiPushButton_index_mgr:pressed,
 #uiPushButton_pkg_dload:pressed, #uiPushButton_settings:pressed {
-    background-color: #A0A0A0;
+    border-radius:4px;
+    background-color: #49505F;
 }
 #uiPushButton_pkg_mgr::menu-indicator, #uiPushButton_pyi_tool::menu-indicator,
 #uiPushButton_index_mgr::menu-indicator, #uiPushButton_pkg_dload::menu-indicator, #uiPushButton_settings::menu-indicator {
@@ -21,5 +26,5 @@
 /* 关于窗口的相关样式 */
 #uiLabel_app_version, #uiLabel_license, #uiLabel_source_github,
 #uiLabel_source_gitee, #uiLabel_issue_github, #uiLabel_issue_gitee {
-    color: orange;
+    color: #3282F6;
 }

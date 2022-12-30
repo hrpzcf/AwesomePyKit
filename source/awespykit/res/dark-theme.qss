@@ -123,7 +123,7 @@ QPlainTextEdit:disabled {
 
 /* 横向或纵向分隔线 */
 QFrame[objectName^="line"] {
-    background-color: #484C51;
+    background-color: #515868;
 }
 
 /* 弹出型菜单样式 */
@@ -288,9 +288,10 @@ QScrollBar::handle:hover {
 /* 标签页控件相关 */
 QTabWidget::pane {
     border: 2px solid #515868;
+    border-radius: 4px;
 }
 QTabWidget::tab-bar {
-    left: 4px;
+    left: 8px;
 }
 QTabBar::tab {
     background-color: #333842;
@@ -298,16 +299,18 @@ QTabBar::tab {
     padding: 6px 8px 2px 8px;
 }
 QTabBar::tab:first {
+    padding-left: 8px;
     border-top-left-radius: 4px;
 }
 QTabBar::tab:last {
+    padding-right: 8px;
     border-top-right-radius: 4px;
 }
 QTabBar::tab:hover {
     border-bottom-color: #00ACFF;
 }
 QTabBar::tab:selected {
-    border-color: #DFA01F;
+    border-bottom-color: #DFA01F;
 }
 QTabBar QToolButton {
     border-radius: 4px;
@@ -343,18 +346,18 @@ QGroupBox::title {
 #uiPushButton_settings {
     border: none;
     border-radius:4px;
-    background-color: #A2A2A2;
+    background-color: #626C80;
     padding: 4px 4px;
 }
 #uiPushButton_pkg_mgr:hover, #uiPushButton_pyi_tool:hover, #uiPushButton_index_mgr:hover,
 #uiPushButton_pkg_dload:hover, #uiPushButton_settings:hover {
     border-radius:4px;
-    background-color: #888888;
+    background-color: #565F70;
 }
 #uiPushButton_pkg_mgr:pressed, #uiPushButton_pyi_tool:pressed, #uiPushButton_index_mgr:pressed,
 #uiPushButton_pkg_dload:pressed, #uiPushButton_settings:pressed {
     border-radius:4px;
-    background-color: #6F6F6F;
+    background-color: #49505F;
 }
 #uiPushButton_pkg_mgr::menu-indicator, #uiPushButton_pyi_tool::menu-indicator,
 #uiPushButton_index_mgr::menu-indicator, #uiPushButton_pkg_dload::menu-indicator, #uiPushButton_settings::menu-indicator {
@@ -556,7 +559,7 @@ QMainWindow[objectName="about_window"] QLabel {
 }
 #uiLabel_app_version, #uiLabel_license, #uiLabel_source_github,
 #uiLabel_source_gitee, #uiLabel_issue_github, #uiLabel_issue_gitee {
-    color: orange;
+    color: #3282F6;
 }
 #uiPlainTextEdit_open_packages {
     font-size: 8pt;

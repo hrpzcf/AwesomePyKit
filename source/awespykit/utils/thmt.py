@@ -117,26 +117,25 @@ class Themes(list):
         "font_family": "Microsoft YaHei UI",
     }
 
-    def __load_resetstyle_and_extra(self):
-        qt_material_dark = QFile(":/themes/qt_material_dark.qss")
-        assert qt_material_dark.open(QIODevice.ReadOnly)
-        self.__qt_material_dark = (
-            qt_material_dark.readAll().data().decode("utf-8")
+    @staticmethod
+    def __read_builtin_file(builtin_qfile_path: str):
+        qfile_obj = QFile(builtin_qfile_path)
+        result = qfile_obj.open(QIODevice.ReadOnly)
+        assert result, f"Failed to open file: {builtin_qfile_path}"
+        return qfile_obj.readAll().data().decode("utf-8")
+
+    def __load_extra_stylesheets(self):
+        self.__qt_material_dark = self.__read_builtin_file(
+            ":/themes/qt_material_dark.qss"
         )
-        qt_material_all = QFile(":/themes/qt_material_all.qss")
-        assert qt_material_all.open(QIODevice.ReadOnly)
-        self.__qt_material_all = (
-            qt_material_all.readAll().data().decode("utf-8")
+        self.__qt_material_all = self.__read_builtin_file(
+            ":/themes/qt_material_all.qss"
         )
-        base_stylesheet = QFile(":/themes/base-stylesheet.qss")
-        assert base_stylesheet.open(QIODevice.ReadOnly)
-        self.__base_stylesheet = (
-            base_stylesheet.readAll().data().decode("utf-8")
+        self.__base_stylesheet = self.__read_builtin_file(
+            ":/themes/base-stylesheet.qss"
         )
-        qdarkstyle_extra = QFile(":/themes/qdarkstyle-extra.qss")
-        assert qdarkstyle_extra.open(QIODevice.ReadOnly)
-        self.__qdarkstyle_extra = (
-            qdarkstyle_extra.readAll().data().decode("utf-8")
+        self.__qdarkstyle_extra = self.__read_builtin_file(
+            ":/themes/qdarkstyle-extra.qss"
         )
 
     def __init__(self):
@@ -145,8 +144,8 @@ class Themes(list):
         self.__qt_material_all = EMPTY_STR
         self.__qt_material_dark = EMPTY_STR
         self.__qdarkstyle_extra = EMPTY_STR
-        self.__load_resetstyle_and_extra()
-        self.__current = 0
+        self.__load_extra_stylesheets()
+        self.__current_index = 0
         self.__load_builtin_themes()
         self.__load_external_themes()
 
@@ -155,7 +154,7 @@ class Themes(list):
         assert isinstance(index, int)
         if index < 0 or index >= len(self):
             index = 0
-        self.__current = index
+        self.__current_index = index
         theme_data: ThemeData = self[index]
         if not theme_data.type & DataType.QtMaterial and (
             theme_data.type & DataType.QtPreStyle
@@ -210,7 +209,7 @@ class Themes(list):
 
     @property
     def current(self) -> ThemeData:
-        return self[self.__current]
+        return self[self.__current_index]
 
     @classmethod
     def __get_themeid(cls):
