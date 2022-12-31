@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
+    <width>433</width>
     <height>476</height>
    </rect>
   </property>
@@ -26,6 +26,9 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
+    <property name="spacing">
+     <number>12</number>
+    </property>
     <item>
      <widget class="QGroupBox" name="uiGroupBox_app_name">
       <property name="font">
@@ -41,11 +44,11 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="label_app_description">
+        <widget class="QLabel" name="uiLabel_app_description">
          <property name="font">
           <font>
            <family>Microsoft YaHei UI</family>
-           <pointsize>8</pointsize>
+           <pointsize>9</pointsize>
            <weight>50</weight>
            <bold>false</bold>
           </font>
@@ -172,7 +175,7 @@
             </font>
            </property>
            <property name="text">
-            <string>hrpzcf</string>
+            <string>hrpzcf / hrp</string>
            </property>
           </widget>
          </item>
@@ -520,8 +523,19 @@
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>2</number>
+      </property>
       <item>
        <widget class="QLabel" name="label_11">
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI</family>
+          <pointsize>9</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="text">
          <string>使用的开源库：</string>
         </property>
@@ -532,7 +546,7 @@
         <property name="font">
          <font>
           <family>Microsoft YaHei UI</family>
-          <pointsize>8</pointsize>
+          <pointsize>9</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -542,38 +556,32 @@
         </property>
         <property name="plainText">
          <string>名称：chardet
-版本：&gt;=4.0.0
-开源协议：LGPL-2.1 license
+开源协议：LGPL-2.1 License
 主页：https://github.com/chardet/chardet
 描述：用于探测编码不明的文本文件的正确编码
 
 名称：PyQt5
-版本：&gt;=5.15.2,&lt;6.0
 开源协议：GPL v3
 主页：https://www.riverbankcomputing.com/software/pyqt/
 描述：用于构建本程序界面的图形界面库
 
 名称：fastpip
-版本：&gt;=1.6.0,&lt;2.0
 开源协议：MIT License
 主页：https://github.com/hrpzcf/fastpip
 描述：封装 Python 环境及包管理工具 Pip
 
 名称：pywin32
-版本：&gt;=224
 开源协议：Python Software Foundation License
 主页：https://github.com/mhammond/pywin32
 描述：用于在 Windows 系统上调用系统接口打开资源管理器
 
 名称：qt-material
-版本：&gt;=2.12
 开源协议：BSD-2-Clause License
 主页：https://github.com/UN-GCPDS/qt-material
 描述：PyQt 样式库（本程序主题菜单中名称以 'dark_' 和 'light_' 起始的主题的出处）
 如果您以 pip 命令的方式安装本程序，主题菜单中没有以上括号内描述的主题，请安装 qt-material 包到本程序的运行环境中后重启本程序
 
 名称：QDarkStyle
-版本：&gt;=3.1
 开源协议：MIT License
 主页：https://github.com/ColinDuquesnoy/QDarkStyleSheet
 描述：PyQt 样式库（本程序主题菜单中名称 QDarkStyle 主题的出处）

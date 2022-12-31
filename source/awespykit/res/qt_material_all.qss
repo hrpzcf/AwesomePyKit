@@ -8,6 +8,10 @@ QPushButton {
     padding: 4px 16px;
 }
 
+QScrollBar::add-page, QScrollBar::sub-page {
+    background: none;
+}
+
 /* 主界面 5 个按钮的样式 */
 #uiPushButton_pkg_mgr, #uiPushButton_pyi_tool, #uiPushButton_index_mgr, #uiPushButton_pkg_dload,
 #uiPushButton_settings {
@@ -50,3 +54,5 @@ QPushButton {
     max-height: auto;
     margin-bottom: 4px;
 }
+
+

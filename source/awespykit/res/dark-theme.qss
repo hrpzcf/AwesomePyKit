@@ -554,13 +554,13 @@ QMainWindow[objectName="about_window"] QLabel {
     subcontrol-position: top left;
     left: 16px;
 }
-#label_app_description {
-    font-size: 8pt;
+#uiLabel_app_description {
+    font-size: 9pt;
 }
 #uiLabel_app_version, #uiLabel_license, #uiLabel_source_github,
 #uiLabel_source_gitee, #uiLabel_issue_github, #uiLabel_issue_gitee {
     color: #3282F6;
 }
 #uiPlainTextEdit_open_packages {
-    font-size: 8pt;
+    font-size: 9pt;
 }
