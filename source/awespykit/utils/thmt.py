@@ -299,7 +299,7 @@ class Themes(list):
 
     def __load_external_themes(self):
         if not self.__theme_dir.exists():
-            self.__theme_dir.mkdir(exist_ok=True)
+            self.__theme_dir.mkdir(parents=True, exist_ok=True)
             return
         elif not self.__theme_dir.is_dir():
             return
