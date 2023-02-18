@@ -185,26 +185,27 @@ class Themes(list):
             if theme_data.type & DataType.QDarkStyle:
                 final_stylesheet += self.__qdarkstyle_extra
             _App.setStyleSheet(final_stylesheet)
-        if theme_data.type & DataType.QtMaterial:
-            if apply_stylesheet is not None:
-                if theme_data.data.startswith("light_"):
-                    apply_stylesheet(
-                        _App,
-                        theme_data.data,
-                        invert_secondary=True,
-                        extra=self.__extra,
-                    )
-                else:
-                    apply_stylesheet(_App, theme_data.data, extra=self.__extra)
-                current_style_sheet = _App.styleSheet()
-                current_style_sheet = (
-                    self.__base_stylesheet
-                    + current_style_sheet
-                    + self.__qt_material_all
+        if theme_data.type & DataType.QtMaterial and isinstance(
+            apply_stylesheet, Callable
+        ):
+            if theme_data.data.startswith("light_"):
+                apply_stylesheet(
+                    _App,
+                    theme_data.data,
+                    invert_secondary=True,
+                    extra=self.__extra,
                 )
-                if theme_data.data.startswith("dark_"):
-                    current_style_sheet += self.__qt_material_dark
-                _App.setStyleSheet(current_style_sheet)
+            else:
+                apply_stylesheet(_App, theme_data.data, extra=self.__extra)
+            current_style_sheet = _App.styleSheet()
+            current_style_sheet = (
+                self.__base_stylesheet
+                + current_style_sheet
+                + self.__qt_material_all
+            )
+            if theme_data.data.startswith("dark_"):
+                current_style_sheet += self.__qt_material_dark
+            _App.setStyleSheet(current_style_sheet)
         return index
 
     @property
@@ -273,7 +274,7 @@ class Themes(list):
             )
         )
         # 开源的第三方样式表：QDarkStyle
-        if load_stylesheet_pyqt5 is not None:
+        if isinstance(load_stylesheet_pyqt5, Callable):
             self.append(
                 ThemeData(
                     self.__get_themeid(),
@@ -286,7 +287,9 @@ class Themes(list):
                 )
             )
         # 开源的第三方样式表：qt-material
-        if list_themes is not None and apply_stylesheet is not None:
+        if isinstance(list_themes, Callable) and isinstance(
+            apply_stylesheet, Callable
+        ):
             for xml_name in list_themes():
                 self.append(
                     ThemeData(

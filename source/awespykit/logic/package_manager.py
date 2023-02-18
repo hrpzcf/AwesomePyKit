@@ -417,6 +417,7 @@ class PackageManagerWindow(Ui_package_manager, QMainWindow):
                         item.setData(Qt.UserRole, RoleData.Failed)
                     else:
                         item.setData(Qt.UserRole, RoleData.Unknown)
+                    # noinspection PyTypeChecker
                     item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
                 self.uiTableWidget_installed_info.setItem(
                     rowind, colind + 1, item
