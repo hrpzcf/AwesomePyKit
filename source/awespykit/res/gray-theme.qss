@@ -26,7 +26,7 @@ QPushButton {
     border: 2px solid #D9D9D9;
     border-radius: 4px;
     background-color: #FBFBFB;
-    padding: 4px 16px;
+    padding: 3px 16px;
 }
 QPushButton:default {
     border-color: #DDDE3F;
@@ -58,10 +58,17 @@ QLineEdit:focus {
     border-color: #00ACFF;
     background-color: #FFFFFF;
 }
-QLineEdit[readOnly="true"] {
+QLineEdit:read-only {
     border: 2px solid #EAEAEA;
     padding: 2px 1px;
     background-color: #FBFBFB;
+    border-radius: 4px;
+}
+QLineEdit:disabled {
+    color: #ABABAB;
+    border: 2px solid #EAEAEA;
+    padding: 2px 1px;
+    background-color: #EDEDED;
     border-radius: 4px;
 }
 
@@ -80,10 +87,17 @@ QTextEdit:focus {
     border-color: #00ACFF;
     background-color: #FFFFFF;
 }
-QTextEdit[readOnly="true"] {
+QTextEdit[readOnly=true] {
     border: 2px solid #EAEAEA;
     padding: 2px 1px;
     background-color: #FBFBFB;
+    border-radius: 4px;
+}
+QTextEdit:disabled {
+    color: #ABABAB;
+    border: 2px solid #EAEAEA;
+    padding: 2px 1px;
+    background-color: #EDEDED;
     border-radius: 4px;
 }
 
@@ -102,10 +116,17 @@ QPlainTextEdit:focus {
     border-color: #00ACFF;
     background-color: #FFFFFF;
 }
-QPlainTextEdit[readOnly="true"] {
+QPlainTextEdit[readOnly=true] {
     border: 2px solid #EAEAEA;
     padding: 2px 1px;
     background-color: #FBFBFB;
+    border-radius: 4px;
+}
+QPlainTextEdit:disabled {
+    color: #ABABAB;
+    border: 2px solid #EAEAEA;
+    padding: 2px 1px;
+    background-color: #EDEDED;
     border-radius: 4px;
 }
 
@@ -200,8 +221,15 @@ QComboBox {
     border: 2px solid #D9D9D9;
     border-radius: 4px;
     background-color: #FBFBFB;
-    padding-left: 2px;
+    padding: 2px;
     margin-bottom: 2px;
+}
+QComboBox:hover {
+    border-color: #00ACFF;
+    background-color: #EAEAEA;
+}
+QComboBox:focus {
+    border-color: #00ACFF;
 }
 QComboBox:disabled {
     color: #ABABAB;
@@ -209,10 +237,6 @@ QComboBox:disabled {
 }
 QComboBox::down-arrow:disabled {
     image: none;
-}
-QComboBox:hover {
-    border-color: #00ACFF;
-    background-color: #EAEAEA;
 }
 QComboBox::drop-down {
 	border: none;
@@ -230,7 +254,7 @@ QComboBox::down-arrow:on {
 QComboBox QAbstractItemView
 {
     outline: 0px solid #FFFFFF;
-    border: 2px solid #D9D9D9;
+    border: 2px solid #00ACFF;
     background-color: #FFFFFF;
     selection-background-color: #EAEAEA;
     selection-color: #1A1B1B;
@@ -269,25 +293,25 @@ QToolTip {
 
 /* 具体控件样式 */
 
-/* 主界面 5 个按钮的样式 */
+/* 主界面 6 个按钮的样式 */
 #uiPushButton_pkg_mgr, #uiPushButton_pyi_tool, #uiPushButton_index_mgr, #uiPushButton_pkg_dload,
-#uiPushButton_settings {
+#uiPushButton_cloudfunction, #uiPushButton_settings {
     border: none;
-    border-radius:4px;
+    border-radius: 4px;
     background-color: #F3F3F3;
     padding: 4px 4px;
 }
 #uiPushButton_pkg_mgr:hover, #uiPushButton_pyi_tool:hover, #uiPushButton_index_mgr:hover,
-#uiPushButton_pkg_dload:hover, #uiPushButton_settings:hover {
+#uiPushButton_cloudfunction:hover, #uiPushButton_pkg_dload:hover, #uiPushButton_settings:hover {
     border-radius:4px;
     background-color: #C0C0C0;
 }
 #uiPushButton_pkg_mgr:pressed, #uiPushButton_pyi_tool:pressed, #uiPushButton_index_mgr:pressed,
-#uiPushButton_pkg_dload:pressed, #uiPushButton_settings:pressed {
+#uiPushButton_cloudfunction:pressed, #uiPushButton_pkg_dload:pressed, #uiPushButton_settings:pressed {
     border-radius:4px;
     background-color: #A0A0A0;
 }
-#uiPushButton_pkg_mgr::menu-indicator, #uiPushButton_pyi_tool::menu-indicator,
+#uiPushButton_pkg_mgr::menu-indicator, #uiPushButton_pyi_tool::menu-indicator, #uiPushButton_cloudfunction::menu-indicator,
 #uiPushButton_index_mgr::menu-indicator, #uiPushButton_pkg_dload::menu-indicator, #uiPushButton_settings::menu-indicator {
     image:none;
 }
@@ -396,6 +420,38 @@ QToolTip {
 #uiPushButton_start_packing:pressed {
     color: #FFFFFF;
     background-color: #00654C;
+}
+
+/* 云函数打包工具开始按钮 */
+#uiPushButton_start_scfpacking {
+    border-color: #008B69;
+}
+#uiPushButton_start_scfpacking:hover {
+    color: #FFFFFF;
+    background-color: #008B69;
+}
+#uiPushButton_start_scfpacking:pressed {
+    color: #FFFFFF;
+    background-color: #00654C;
+}
+
+/* 云函数打包工具删除按钮 */
+#uiPushButton_delete_line {
+    border-color: #B62A8F;
+}
+#uiPushButton_delete_line:hover {
+    color: #FFFFFF;
+    background-color: #B62A8F;
+}
+#uiPushButton_delete_line:pressed {
+    color: #FFFFFF;
+    background-color: #902171;
+}
+
+/* 云函数打包工具的超链接 */
+#uiLabel_whatis_cloudfunction {
+    color: blue;
+    font-size: 8pt;
 }
 
 /* 程序打包工具命令输出窗口 */

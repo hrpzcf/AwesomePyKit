@@ -49,6 +49,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
         self.__pkgdl_win = PackageDownloadWindow(self)
+        self.__cloudfunction_win = CloudFunctionWindow(self)
         self.__setup_other_widgets()
         self.__theme_action(self.__config.selected_thm)
 
@@ -101,6 +102,10 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.uiPushButton_index_mgr.clicked.connect(self.__indexmgr_win.display)
         self.uiPushButton_pkg_dload.setIcon(QIcon(":/download.png"))
         self.uiPushButton_pkg_dload.clicked.connect(self.__pkgdl_win.display)
+        self.uiPushButton_cloudfunction.setIcon(QIcon(":/cloudfunction.png"))
+        self.uiPushButton_cloudfunction.clicked.connect(
+            self.__cloudfunction_win.display
+        )
         self.uiPushButton_settings.setIcon(QIcon(":/settings.png"))
         # noinspection PyTypeChecker
         menu_setstyle = QMenu("主题", self)

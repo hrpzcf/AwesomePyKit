@@ -56,13 +56,14 @@ QLineEdit:hover {
 QLineEdit:focus {
     border-color: #DFA01F;
 }
-QLineEdit[readOnly="true"] {
+QLineEdit:read-only {
     border: 2px solid #3D434F;
     padding: 2px 1px;
     background-color: #282C34;
     border-radius: 4px;
 }
 QLineEdit:disabled {
+    color: #676E77;
     border: 2px solid #3D434F;
     padding: 2px 1px;
     background-color: #282C34;
@@ -82,13 +83,14 @@ QTextEdit:hover {
 QTextEdit:focus {
     border-color: #DFA01F;
 }
-QTextEdit[readOnly="true"] {
+QTextEdit[readOnly=true] {
     border: 2px solid #3D434F;
     padding: 2px 1px;
     background-color: #282C34;
     border-radius: 4px;
 }
 QTextEdit:disabled {
+    color: #676E77;
     border: 2px solid #3D434F;
     padding: 2px 1px;
     background-color: #282C34;
@@ -108,13 +110,14 @@ QPlainTextEdit:hover {
 QPlainTextEdit:focus {
     border-color: #DFA01F;
 }
-QPlainTextEdit[readOnly="true"] {
+QPlainTextEdit[readOnly=true] {
     border: 2px solid #3D434F;
     padding: 2px 1px;
     background-color: #282C34;
     border-radius: 4px;
 }
 QPlainTextEdit:disabled {
+    color: #676E77;
     border: 2px solid #3D434F;
     padding: 2px 1px;
     background-color: #282C34;
@@ -229,8 +232,14 @@ QComboBox {
     border: 2px solid #515868;
     border-radius: 4px;
     background-color: #1A1C22;
-    padding-left: 2px;
+    padding: 2px;
     margin-bottom: 2px;
+}
+QComboBox:hover {
+    border-color: #00ACFF;
+}
+QComboBox:focus {
+    border-color: #DFA01F;
 }
 QComboBox:disabled {
     color: #676E77;
@@ -238,9 +247,6 @@ QComboBox:disabled {
 }
 QComboBox::down-arrow:disabled {
     image: none;
-}
-QComboBox:hover {
-    border-color: #00ACFF;
 }
 QComboBox::drop-down {
 	border:none;
@@ -258,7 +264,7 @@ QComboBox::down-arrow:on {
 QComboBox QAbstractItemView
 {
     outline: 0px solid transparent;
-    border: 2px solid #515868;
+    border: 2px solid #00ACFF;
     background-color: #1A1C22;
     selection-background-color: #383E49;
     selection-color: #A8B1C1;
@@ -341,25 +347,25 @@ QGroupBox::title {
 
 /* 具体控件样式 */
 
-/* 主界面 5 个按钮的样式 */
+/* 主界面 6 个按钮的样式 */
 #uiPushButton_pkg_mgr, #uiPushButton_pyi_tool, #uiPushButton_index_mgr, #uiPushButton_pkg_dload,
-#uiPushButton_settings {
+#uiPushButton_cloudfunction, #uiPushButton_settings {
     border: none;
     border-radius:4px;
     background-color: #626C80;
     padding: 4px 4px;
 }
 #uiPushButton_pkg_mgr:hover, #uiPushButton_pyi_tool:hover, #uiPushButton_index_mgr:hover,
-#uiPushButton_pkg_dload:hover, #uiPushButton_settings:hover {
+#uiPushButton_cloudfunction:hover, #uiPushButton_pkg_dload:hover, #uiPushButton_settings:hover {
     border-radius:4px;
     background-color: #565F70;
 }
 #uiPushButton_pkg_mgr:pressed, #uiPushButton_pyi_tool:pressed, #uiPushButton_index_mgr:pressed,
-#uiPushButton_pkg_dload:pressed, #uiPushButton_settings:pressed {
+#uiPushButton_cloudfunction:pressed, #uiPushButton_pkg_dload:pressed, #uiPushButton_settings:pressed {
     border-radius:4px;
     background-color: #49505F;
 }
-#uiPushButton_pkg_mgr::menu-indicator, #uiPushButton_pyi_tool::menu-indicator,
+#uiPushButton_pkg_mgr::menu-indicator, #uiPushButton_pyi_tool::menu-indicator, #uiPushButton_cloudfunction::menu-indicator,
 #uiPushButton_index_mgr::menu-indicator, #uiPushButton_pkg_dload::menu-indicator, #uiPushButton_settings::menu-indicator {
     image:none;
 }
@@ -468,6 +474,38 @@ QGroupBox::title {
 #uiPushButton_start_packing:pressed {
     color: #FFFFFF;
     background-color: #00654C;
+}
+
+/* 云函数打包工具开始按钮 */
+#uiPushButton_start_scfpacking {
+    border-color: #008B69;
+}
+#uiPushButton_start_scfpacking:hover {
+    color: #FFFFFF;
+    background-color: #008B69;
+}
+#uiPushButton_start_scfpacking:pressed {
+    color: #FFFFFF;
+    background-color: #00654C;
+}
+
+/* 云函数打包工具删除按钮 */
+#uiPushButton_delete_line {
+    border-color: #B62A8F;
+}
+#uiPushButton_delete_line:hover {
+    color: #FFFFFF;
+    background-color: #B62A8F;
+}
+#uiPushButton_delete_line:pressed {
+    color: #FFFFFF;
+    background-color: #902171;
+}
+
+/* 云函数打包工具的超链接 */
+#uiLabel_whatis_cloudfunction {
+    color: #3282F6;
+    font-size: 8pt;
 }
 
 /* 程序打包工具命令输出窗口 */

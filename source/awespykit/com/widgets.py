@@ -227,16 +227,33 @@ class PlainTextEdit(QPlainTextEdit):
 class ItemDelegate(QItemDelegate):
     """表格 QTableWidget 的 item 委托"""
 
-    def __init__(self, parent: QTableWidget):
+    def __init__(self, parent: QTableWidget, editable: bool = True):
         self.__parent = parent
         super(ItemDelegate, self).__init__()
+        self.__editable = editable
+
+    @property
+    def Editable(self):
+        return self.__editable
+
+    @Editable.setter
+    def Editable(self, value):
+        assert isinstance(value, bool)
+        self.__editable = value
+
+    def createEditor(
+        self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
+    ) -> QWidget:
+        if self.__editable:
+            return super().createEditor(parent, option, index)
+        return None
 
     def paint(
         self,
         painter: QPainter,
         option: QStyleOptionViewItem,
         index: QModelIndex,
-    ):
+    ) -> None:
         phtc, tibgn, tibgs = PreThemeList.current.getColors()
         if phtc and tibgn and tibgs:
             if option.state & QStyle.State_Selected:

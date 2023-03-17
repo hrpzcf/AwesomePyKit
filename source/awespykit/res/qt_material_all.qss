@@ -12,9 +12,9 @@ QScrollBar::add-page, QScrollBar::sub-page {
     background: none;
 }
 
-/* 主界面 5 个按钮的样式 */
+/* 主界面 6 个按钮的样式 */
 #uiPushButton_pkg_mgr, #uiPushButton_pyi_tool, #uiPushButton_index_mgr, #uiPushButton_pkg_dload,
-#uiPushButton_settings {
+#uiPushButton_cloudfunction, #uiPushButton_settings {
     border: none;
     padding: 4px 4px;
     max-height: auto;
@@ -55,4 +55,7 @@ QScrollBar::add-page, QScrollBar::sub-page {
     margin-bottom: 4px;
 }
 
-
+/* 云函数打包工具的开始打包按钮 */
+#uiPushButton_start_scfpacking {
+    max-height: auto;
+}

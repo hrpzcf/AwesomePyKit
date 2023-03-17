@@ -1162,7 +1162,7 @@ class PyinstallerToolWindow(Ui_pyinstaller_tool, QMainWindow):
         self.uiListWidget_saved_config.setCurrentRow(-1)
 
     def load_version_information_lazily(self, refresh_pyenv, refresh_venv):
-        """延迟执行显示 Python 和 Pyinstaller 版本信息这两个耗时操"""
+        """延迟执行显示 Python 和 Pyinstaller 版本信息这两个耗时操做"""
 
         def do_load_version_information():
             if refresh_pyenv:

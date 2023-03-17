@@ -9,10 +9,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.7"
 PyQt5 = "^5.15.2"
-fastpip = "^1.5.0"
+fastpip = "^1.7.0"
 pywin32 = ">=224"
 chardet = ">=4.0.0"
-
 
 [build-system]
 requires = ["poetry-core"]

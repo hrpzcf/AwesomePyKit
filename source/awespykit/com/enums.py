@@ -59,6 +59,14 @@ class RoleData(IntEnum):
     Unknown = 4
 
 
+class WorkDir(IntEnum):
+    """云函数打包工具的‘工作目录’对应的枚举"""
+
+    TmpDir = 0  # 使用临时目录
+    Project = 1  # 使用项目目录
+    Custom = 2  # 使用自定义目录
+
+
 class DWMWINDOWATTRIBUTE(IntEnum):
     DWMWA_NCRENDERING_ENABLED = 0
     DWMWA_NCRENDERING_POLICY = 1

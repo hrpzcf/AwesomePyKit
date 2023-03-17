@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>202</width>
+    <width>240</width>
     <height>41</height>
    </rect>
   </property>
@@ -95,6 +95,29 @@
       <property name="toolTip">
        <string>模块安装包下载器
 用于下载 Python 各种第三方包/库/模块的离线安装包</string>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="uiPushButton_cloudfunction">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>云函数部署包打包工具
+用于将云函数项目打包为云函数部署包</string>
       </property>
       <property name="iconSize">
        <size>

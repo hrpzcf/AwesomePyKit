@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_main_entrance(object):
     def setupUi(self, main_entrance):
         main_entrance.setObjectName("main_entrance")
-        main_entrance.resize(202, 41)
+        main_entrance.resize(240, 41)
         self.centralwidget = QtWidgets.QWidget(main_entrance)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -59,6 +59,16 @@ class Ui_main_entrance(object):
         self.uiPushButton_pkg_dload.setFlat(True)
         self.uiPushButton_pkg_dload.setObjectName("uiPushButton_pkg_dload")
         self.horizontalLayout.addWidget(self.uiPushButton_pkg_dload)
+        self.uiPushButton_cloudfunction = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.uiPushButton_cloudfunction.sizePolicy().hasHeightForWidth())
+        self.uiPushButton_cloudfunction.setSizePolicy(sizePolicy)
+        self.uiPushButton_cloudfunction.setIconSize(QtCore.QSize(32, 32))
+        self.uiPushButton_cloudfunction.setFlat(True)
+        self.uiPushButton_cloudfunction.setObjectName("uiPushButton_cloudfunction")
+        self.horizontalLayout.addWidget(self.uiPushButton_cloudfunction)
         self.uiPushButton_settings = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -85,5 +95,7 @@ class Ui_main_entrance(object):
 "设置不同的镜像源为 pip 全局索引源，加快 pip 下载速度"))
         self.uiPushButton_pkg_dload.setToolTip(_translate("main_entrance", "模块安装包下载器\n"
 "用于下载 Python 各种第三方包/库/模块的离线安装包"))
+        self.uiPushButton_cloudfunction.setToolTip(_translate("main_entrance", "云函数部署包打包工具\n"
+"用于将云函数项目打包为云函数部署包"))
         self.uiPushButton_settings.setToolTip(_translate("main_entrance", "工具箱的设置菜单\n"
 "包含界面风格设置、关于菜单"))
