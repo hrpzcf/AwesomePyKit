@@ -35,8 +35,6 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.__config = CloudFunctionConfig()
         self.thread_repo = ThreadRepo(500)
         self.environments: Optional[List[EnvDisplayPair]] = None
-        self.__previous_path = ""
-        self.__requirements = list()
         self.__signal_connection()
         self.__path_ctrlgroup = (
             self.uiComboBox_preject_path,
@@ -123,7 +121,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.uiRadioButton_using_projectdir.toggled.connect(
             self.__working_tmpdir_clicked
         )
-        self.uiRadioButton_using_customdir.toggled.connect(
+        self.uiRadioButton_using_customtemp.toggled.connect(
             self.__working_tmpdir_clicked
         )
         self.uiRadioButton_using_autotempdir.toggled.connect(
@@ -275,7 +273,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             self.__config.current.working_tmpdir = WorkDir.TmpDir
         elif self.uiRadioButton_using_projectdir.isChecked():
             self.__config.current.working_tmpdir = WorkDir.Project
-        elif self.uiRadioButton_using_customdir.isChecked():
+        elif self.uiRadioButton_using_customtemp.isChecked():
             self.__config.current.working_tmpdir = WorkDir.Custom
         else:
             self.__config.current.working_tmpdir = WorkDir.TmpDir
@@ -317,7 +315,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         elif working_dir == WorkDir.Project:
             self.uiRadioButton_using_projectdir.setChecked(True)
         elif working_dir == WorkDir.Custom:
-            self.uiRadioButton_using_customdir.setChecked(True)
+            self.uiRadioButton_using_customtemp.setChecked(True)
         else:
             self.uiRadioButton_using_autotempdir.setChecked(True)
         custom_ischecked = working_dir == WorkDir.Custom
@@ -347,7 +345,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.__config.current.previous_path = _path
 
     def __get_table_requirement_items(self):
-        self.__requirements.clear()
+        requirements = list()
         for i in range(self.uiTableWidget_reqirement_lines.rowCount()):
             item = self.uiTableWidget_reqirement_lines.item(i, 0)
             if not item:
@@ -355,8 +353,8 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             require = item.text()
             if not require:
                 continue
-            self.__requirements.append(require)
-        return self.__requirements
+            requirements.append(require)
+        return requirements
 
     def __on_packing_completed(self, succeeded, message):
         if succeeded:
@@ -371,16 +369,17 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 "打包失败", message, QMessageBox.Critical, parent=self
             ).exec_()
 
-    def __clear_requirements_result(self):
+    def __cleartable_requirments(self):
         for i in range(self.uiTableWidget_reqirement_lines.rowCount()):
             item = self.uiTableWidget_reqirement_lines.item(i, 1)
             if item:
                 item.setText("")
 
     def __start_cloud_function_packing(self):
-        self.__clear_requirements_result()
+        self.__cleartable_requirments()
+        requirements = self.__get_table_requirement_items()
         if self.uiCheckBox_overwrite_requirement.isChecked():
-            self.__overwrite_requirement_file()
+            self.__refresh_requirements_file(requirements)
         env_index = self.uiComboBox_python_envs.currentIndex()
         if env_index == -1 or not self.environments:
             MessageBox(
@@ -390,15 +389,14 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 parent=self,
             ).exec_()
             return
-        projectdir = self.uiComboBox_preject_path.currentText()
         upgrade = self.uiCheckBox_upgrade_requires.isChecked()
-        requirements = self.__get_table_requirement_items()
-        environment: PyEnv = self.environments[env_index].environ
+        environment = self.environments[env_index].environ
+        projectdir = self.uiComboBox_preject_path.currentText()
         if self.uiRadioButton_using_autotempdir.isChecked():
             workingdir_type = WorkDir.TmpDir
         elif self.uiRadioButton_using_projectdir.isChecked():
             workingdir_type = WorkDir.Project
-        elif self.uiRadioButton_using_customdir.isChecked():
+        elif self.uiRadioButton_using_customtemp.isChecked():
             workingdir_type = WorkDir.Custom
         else:
             MessageBox(
@@ -568,8 +566,8 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             return
         self.uiTableWidget_reqirement_lines.removeRow(row)
 
-    def __overwrite_requirement_file(self):
-        if self.__requirements:
+    def __refresh_requirements_file(self, requirements):
+        if requirements:
             try:
                 with open(
                     os.path.join(
@@ -579,7 +577,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                     "wt",
                     encoding="utf-8",
                 ) as f:
-                    for line in self.__requirements:
+                    for line in requirements:
                         f.write(f"{line}\n")
             except Exception as e:
                 MessageBox(
@@ -594,7 +592,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.uiCheckBox_confirm_project_path.setEnabled(False)
         self.uiPushButton_add_line.setEnabled(False)
         self.uiPushButton_delete_line.setEnabled(False)
-        self.uiRadioButton_using_customdir.setEnabled(False)
+        self.uiRadioButton_using_customtemp.setEnabled(False)
         self.uiRadioButton_using_autotempdir.setEnabled(False)
         self.uiRadioButton_using_projectdir.setEnabled(False)
         self.uiCheckBox_overwrite_samefile.setEnabled(False)
@@ -609,7 +607,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.uiCheckBox_confirm_project_path.setEnabled(True)
         self.uiPushButton_add_line.setEnabled(True)
         self.uiPushButton_delete_line.setEnabled(True)
-        self.uiRadioButton_using_customdir.setEnabled(True)
+        self.uiRadioButton_using_customtemp.setEnabled(True)
         self.uiRadioButton_using_autotempdir.setEnabled(True)
         self.uiRadioButton_using_projectdir.setEnabled(True)
         self.uiCheckBox_overwrite_samefile.setEnabled(True)
@@ -706,6 +704,6 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.uiListWidget_config_list.setCurrentRow(-1)
 
     def __working_tmpdir_clicked(self):
-        ischecked = self.uiRadioButton_using_customdir.isChecked()
+        ischecked = self.uiRadioButton_using_customtemp.isChecked()
         self.uiLineEdit_customdir_path.setEnabled(ischecked)
         self.uiPushButton_select_customdir.setEnabled(ischecked)

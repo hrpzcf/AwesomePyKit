@@ -467,7 +467,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="uiRadioButton_using_customdir">
+            <widget class="QRadioButton" name="uiRadioButton_using_customtemp">
              <property name="text">
               <string>自定义目录</string>
              </property>
