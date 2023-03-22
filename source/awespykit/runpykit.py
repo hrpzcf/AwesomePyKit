@@ -67,19 +67,22 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
             self.__pkgmgr_win.thread_repo.is_empty()
             and self.__pyitool_win.thread_repo.is_empty()
             and self.__pkgdl_win.thread_repo.is_empty()
+            and self.__cloudfunction_win.thread_repo.is_empty()
         ):
             event.accept()
         else:
-            role = MessageBox(
+            user_messagebox_role = MessageBox(
                 "警告",
-                "有任务正在运行...",
+                "有后台任务正在运行，是否强制结束任务？",
                 QMessageBox.Warning,
                 (("accept", "强制退出"), ("reject", "取消")),
+                self,
             ).exec_()
-            if role == 0:
+            if user_messagebox_role == 0:
                 self.__pkgdl_win.thread_repo.kill_all()
                 self.__pkgmgr_win.thread_repo.kill_all()
                 self.__pyitool_win.thread_repo.kill_all()
+                self.__cloudfunction_win.thread_repo.kill_all()
                 event.accept()
             else:
                 event.ignore()

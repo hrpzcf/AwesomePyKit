@@ -66,6 +66,13 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.__config.window_size = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
+        if not self.thread_repo.is_empty():
+            MessageBox(
+                "提示",
+                "打包任务正在进行，关闭此窗口不会结束任务，但关闭启动窗口可能会强行结束任务！",
+                QMessageBox.Warning,
+                parent=self,
+            ).exec_()
         self.__save_window_size()
         self.config_widgets_to_dict()
         self.__config.save_config()
