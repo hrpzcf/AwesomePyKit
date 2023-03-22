@@ -26,6 +26,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
     REQUIRE_FILE = "requirements.txt"
     signal_packing = pyqtSignal(bool, str)
     signal_reqinstalled = pyqtSignal(int, str, bool)
+    signal_show_workingtips = pyqtSignal(str)
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -133,6 +134,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         )
         self.signal_packing.connect(self.__on_packing_completed)
         self.signal_reqinstalled.connect(self.__set_requirement_install_result)
+        self.signal_show_workingtips.connect(self.uiLabel_working_tips.setText)
 
     def __setup_other_widgets(self):
         self.uiComboBox_python_envs.setView(QListView())
@@ -149,6 +151,20 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.uiComboBox_preject_path.lineEdit().clear()
         self.uiLabel_whatis_cloudfunction.installEventFilter(self)
+        self.__working_movie = QMovie(":/loading.gif")
+        self.__working_movie.setScaledSize(QSize(16, 16))
+        self.uiLabel_working_movie.setMovie(self.__working_movie)
+        self.uiLabel_working_movie.hide()
+
+    def __show_working(self):
+        self.uiLabel_working_tips.clear()
+        self.__working_movie.start()
+        self.uiLabel_working_movie.show()
+
+    def __hide_working(self):
+        self.uiLabel_working_tips.clear()
+        self.__working_movie.stop()
+        self.uiLabel_working_movie.hide()
 
     def __load_requirements_update_table(self, is_checked: bool):
         if is_checked:
@@ -415,7 +431,8 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             generated_file = generated_file.with_suffix(".zip")
         overwrite_samefile = self.uiCheckBox_overwrite_samefile.isChecked()
 
-        def start_scfpackaging_operation():
+        def start_scfpackaging():
+            self.signal_show_workingtips.emit("开始检查打包条件...")
             if not overwrite_samefile and generated_file.exists():
                 self.signal_packing.emit(
                     False, f"已存在<{generated_file}>文件且不允许覆盖..."
@@ -460,6 +477,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                     False, f"未知的工作目录类型：{workingdir_type!r}"
                 )
                 return
+            self.signal_show_workingtips.emit("开始安装项目的依赖包...")
             # 本来设计是每个包独立安装的，但是发现一起安装能节省很多时间
             # 所以就砍掉了每个依赖包安装完成就更新安装结果的功能，改为一次性更新
             _, result = environment.install(
@@ -472,6 +490,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 return
             for index, name in enumerate(requirements):
                 self.signal_reqinstalled.emit(index, name, result)
+            self.signal_show_workingtips.emit("开始创建压缩文件...")
             compressed_arcnames: Dict[Path, Path] = dict()
             try:
                 with zipfile.ZipFile(
@@ -503,12 +522,17 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 return
             finally:
                 if isinstance(working_directory, TemporaryDirectory):
+                    self.signal_show_workingtips.emit("正在清理临时文件夹...")
                     working_directory.cleanup()
             self.signal_packing.emit(True, EMPTY_STR)
 
-        packaging_thread = QThreadModel(start_scfpackaging_operation)
-        packaging_thread.before_starting(self.__lock_critical_widgets)
-        packaging_thread.after_completion(self.__release_critical_widgets)
+        packaging_thread = QThreadModel(start_scfpackaging)
+        packaging_thread.before_starting(
+            self.__lock_critical_widgets, self.__show_working
+        )
+        packaging_thread.after_completion(
+            self.__release_critical_widgets, self.__hide_working
+        )
         packaging_thread.start()
         self.thread_repo.put(packaging_thread, 0)
 
