@@ -147,6 +147,9 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.signal_packing.connect(self.__on_packing_completed)
         self.signal_reqinstalled.connect(self.__set_requirement_install_result)
         self.signal_show_workingtips.connect(self.uiLabel_working_tips.setText)
+        self.uiListWidget_config_list.clicked.connect(
+            self.__scfconfig_list_clicked
+        )
 
     def __setup_other_widgets(self):
         self.uiComboBox_python_envs.setView(QListView())
@@ -675,6 +678,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 != 0
             ):
                 return
+        self.uiLineEdit_config_name.clear()
         self.config_widgets_to_dict()
         self.config.store_curcfg(config_name)
         self.__update_configuration_list(force=True)
@@ -736,6 +740,15 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         ischecked = self.uiRadioButton_using_customtemp.isChecked()
         self.uiLineEdit_customdir_path.setEnabled(ischecked)
         self.uiPushButton_select_customdir.setEnabled(ischecked)
+
+    def __scfconfig_list_clicked(self):
+        index = self.uiListWidget_config_list.currentRow()
+        print(index)
+        if index == -1:
+            return
+        self.uiLineEdit_config_name.setText(
+            self.uiListWidget_config_list.item(index).text()
+        )
 
 
 class CloudExcludesWindow(Ui_cloud_excludes, QMainWindow, QueryFilePath):
