@@ -364,7 +364,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="uiPushButton_delete_config">
+                <widget class="QPushButton" name="uiPushButton_del_scfconfig">
                  <property name="palette">
                   <palette>
                    <active>

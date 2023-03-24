@@ -152,7 +152,7 @@ QListView {
     background-color: #FFFFFF;
 }
 QListView::item {
-    padding: 2px 0;
+    padding: 1px 0;
     color: #1A1B1B;
 }
 QListView::item:hover {
@@ -421,14 +421,14 @@ QToolTip {
 }
 
 /* 云函数打包工具删除按钮 */
-#uiPushButton_delete_line {
+#uiPushButton_delete_line, #uiPushButton_del_scfconfig {
     border-color: #B62A8F;
 }
-#uiPushButton_delete_line:hover {
+#uiPushButton_delete_line:hover, #uiPushButton_del_scfconfig:hover {
     color: #FFFFFF;
     background-color: #B62A8F;
 }
-#uiPushButton_delete_line:pressed {
+#uiPushButton_delete_line:pressed, #uiPushButton_del_scfconfig:pressed {
     color: #FFFFFF;
     background-color: #902171;
 }
@@ -494,7 +494,6 @@ QToolTip {
     color: #FFFFFF;
     background-color: #902171;
 }
-
 
 /* 命令通用输出窗口 */
 #uiPlainTextEdit_output {

@@ -119,7 +119,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.uiPushButton_save_config.clicked.connect(
             self.__save_current_configs
         )
-        self.uiPushButton_delete_config.clicked.connect(
+        self.uiPushButton_del_scfconfig.clicked.connect(
             self.__delete_selected_config
         )
         self.uiPushButton_switch_config.clicked.connect(

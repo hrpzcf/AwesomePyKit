@@ -24,6 +24,7 @@ class PackageDownloadWindow(Ui_package_download, QMainWindow, QueryFilePath):
     def __init__(self, parent):
         super().__init__(parent)
         self.setupUi(self)
+        self.uiComboBox_derived_from.setView(QListView())
         self.config = PackageDownloadConfig()
         self.environments: Union[List[EnvDisplayPair], None] = None
         self.__showdl_win = ShowDownloadWindow(self)
