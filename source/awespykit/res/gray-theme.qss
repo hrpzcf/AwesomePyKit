@@ -26,7 +26,7 @@ QPushButton {
     border: 2px solid #D9D9D9;
     border-radius: 4px;
     background-color: #FBFBFB;
-    padding: 3px 16px;
+    padding: 2px 16px;
 }
 QPushButton:default {
     border-color: #DDDE3F;
@@ -46,7 +46,7 @@ QPushButton:disabled {
 /* 单行输入框基本样式 */
 QLineEdit {
     border: 2px solid #D9D9D9;
-    padding: 2px 1px;
+    padding: 1px 1px;
     background-color: #FBFBFB;
     border-radius: 4px;
 }
@@ -60,22 +60,17 @@ QLineEdit:focus {
 }
 QLineEdit:read-only {
     border: 2px solid #EAEAEA;
-    padding: 2px 1px;
     background-color: #FBFBFB;
-    border-radius: 4px;
 }
 QLineEdit:disabled {
     color: #ABABAB;
     border: 2px solid #EAEAEA;
-    padding: 2px 1px;
     background-color: #EDEDED;
-    border-radius: 4px;
 }
 
 /* 多行富文本输入框基本样式 */
 QTextEdit {
     border: 2px solid #D9D9D9;
-    padding: 2px 1px;
     background-color: #FBFBFB;
     border-radius: 4px;
 }
@@ -89,22 +84,17 @@ QTextEdit:focus {
 }
 QTextEdit[readOnly=true] {
     border: 2px solid #EAEAEA;
-    padding: 2px 1px;
     background-color: #FBFBFB;
-    border-radius: 4px;
 }
 QTextEdit:disabled {
     color: #ABABAB;
     border: 2px solid #EAEAEA;
-    padding: 2px 1px;
     background-color: #EDEDED;
-    border-radius: 4px;
 }
 
 /* 多行文本输入框基本样式 */
 QPlainTextEdit {
     border: 2px solid #D9D9D9;
-    padding: 2px 1px;
     background-color: #FBFBFB;
     border-radius: 4px;
 }
@@ -118,16 +108,12 @@ QPlainTextEdit:focus {
 }
 QPlainTextEdit[readOnly=true] {
     border: 2px solid #EAEAEA;
-    padding: 2px 1px;
     background-color: #FBFBFB;
-    border-radius: 4px;
 }
 QPlainTextEdit:disabled {
     color: #ABABAB;
     border: 2px solid #EAEAEA;
-    padding: 2px 1px;
     background-color: #EDEDED;
-    border-radius: 4px;
 }
 
 /* 弹出型菜单样式 */
@@ -221,8 +207,7 @@ QComboBox {
     border: 2px solid #D9D9D9;
     border-radius: 4px;
     background-color: #FBFBFB;
-    padding: 2px;
-    margin-bottom: 2px;
+    padding: 1px;
 }
 QComboBox:hover {
     border-color: #00ACFF;
@@ -449,9 +434,31 @@ QToolTip {
 }
 
 /* 云函数打包工具的超链接 */
-#uiLabel_whatis_cloudfunction {
+#uiLabel_whatis_cloudfunction, #uiLabel_set_excludes {
     color: blue;
     font-size: 8pt;
+}
+
+/* 云函数打包工具排除目录和文件窗口按钮 */
+#uiPushButton_add_filepath, #uiPushButton_add_dirpath,
+#uiPushButton_del_line, #uiPushButton_clear_items, #uiPushButton_new_line {
+    padding: 2px;
+    background-color: #F3F3F3;
+    border: 0px solid transparent;
+}
+#uiPushButton_add_filepath:hover, #uiPushButton_add_dirpath:hover,
+#uiPushButton_del_line:hover, #uiPushButton_clear_items:hover, #uiPushButton_new_line:hover {
+    border: 1px solid #00ACFF;
+    background-color: #EAEAEA;
+}
+#uiPushButton_add_filepath:pressed, #uiPushButton_add_dirpath:pressed,
+#uiPushButton_del_line:pressed, #uiPushButton_clear_items:pressed, #uiPushButton_new_line:pressed {
+    background-color: #DADADA;
+}
+/* 云函数打包工具排除文件窗口的提示 */
+#uiLabel_exclude_tips {
+    font-size: 8pt;
+    color: #909090;
 }
 
 /* 程序打包工具命令输出窗口 */
@@ -465,8 +472,8 @@ QToolTip {
 #uiLabel_python_info, #uiLabel_venv_info, #uiLabel_packtool_info,
 #uiLabel_platform_info, #uiLabel_target_environment {
     border-radius: 4px;
-    border: 1px solid #AEAEAE;
-    padding: 2px 0;
+    border: 2px solid #D0D0D0;
+    padding: 1px 1px;
 }
 
 /* 程序打包工具右下角的运行提示字符 */

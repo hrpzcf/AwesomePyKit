@@ -26,7 +26,7 @@ QPushButton {
     border: 2px solid #515868;
     border-radius: 4px;
     background-color: #21252B;
-    padding: 3px 16px;
+    padding: 2px 16px;
 }
 QPushButton:default {
     border-color: #0F8C93;
@@ -46,7 +46,7 @@ QPushButton:disabled {
 /* 单行输入框基本样式 */
 QLineEdit {
     border: 2px solid #656E82;
-    padding: 2px 1px;
+    padding: 1px 1px;
     background-color: #1A1C22;
     border-radius: 4px;
 }
@@ -58,22 +58,17 @@ QLineEdit:focus {
 }
 QLineEdit:read-only {
     border: 2px solid #3D434F;
-    padding: 2px 1px;
     background-color: #282C34;
-    border-radius: 4px;
 }
 QLineEdit:disabled {
     color: #676E77;
     border: 2px solid #3D434F;
-    padding: 2px 1px;
     background-color: #282C34;
-    border-radius: 4px;
 }
 
 /* 多行富文本输入框基本样式 */
 QTextEdit {
     border: 2px solid #656E82;
-    padding: 2px 1px;
     background-color: #1A1C22;
     border-radius: 4px;
 }
@@ -85,22 +80,17 @@ QTextEdit:focus {
 }
 QTextEdit[readOnly=true] {
     border: 2px solid #3D434F;
-    padding: 2px 1px;
     background-color: #282C34;
-    border-radius: 4px;
 }
 QTextEdit:disabled {
     color: #676E77;
     border: 2px solid #3D434F;
-    padding: 2px 1px;
     background-color: #282C34;
-    border-radius: 4px;
 }
 
 /* 多行文本输入框基本样式 */
 QPlainTextEdit {
     border: 2px solid #656E82;
-    padding: 2px 1px;
     background-color: #1A1C22;
     border-radius: 4px;
 }
@@ -112,16 +102,12 @@ QPlainTextEdit:focus {
 }
 QPlainTextEdit[readOnly=true] {
     border: 2px solid #3D434F;
-    padding: 2px 1px;
     background-color: #282C34;
-    border-radius: 4px;
 }
 QPlainTextEdit:disabled {
     color: #676E77;
     border: 2px solid #3D434F;
-    padding: 2px 1px;
     background-color: #282C34;
-    border-radius: 4px;
 }
 
 /* 横向或纵向分隔线 */
@@ -232,8 +218,7 @@ QComboBox {
     border: 2px solid #515868;
     border-radius: 4px;
     background-color: #1A1C22;
-    padding: 2px;
-    margin-bottom: 2px;
+    padding: 1px;
 }
 QComboBox:hover {
     border-color: #00ACFF;
@@ -503,9 +488,31 @@ QGroupBox::title {
 }
 
 /* 云函数打包工具的超链接 */
-#uiLabel_whatis_cloudfunction {
+#uiLabel_whatis_cloudfunction, #uiLabel_set_excludes {
     color: #3282F6;
     font-size: 8pt;
+}
+
+/* 云函数打包工具排除目录和文件窗口按钮、提示 */
+#uiPushButton_add_filepath, #uiPushButton_add_dirpath,
+#uiPushButton_del_line, #uiPushButton_clear_items, #uiPushButton_new_line {
+    padding: 2px;
+    background-color: #565F70;
+    border: 0px solid transparent;
+}
+#uiPushButton_add_filepath:hover, #uiPushButton_add_dirpath:hover,
+#uiPushButton_del_line:hover, #uiPushButton_clear_items:hover, #uiPushButton_new_line:hover {
+    border: 1px solid #00ACFF;
+    background-color: #626C80;
+}
+#uiPushButton_add_filepath:pressed, #uiPushButton_add_dirpath:pressed,
+#uiPushButton_del_line:pressed, #uiPushButton_clear_items:pressed, #uiPushButton_new_line:pressed {
+    background-color: #49505F;
+}
+/* 云函数打包工具排除文件窗口的提示 */
+#uiLabel_exclude_tips {
+    font-size: 8pt;
+    color: #646E82;
 }
 
 /* 程序打包工具命令输出窗口 */
@@ -521,7 +528,7 @@ QGroupBox::title {
     border-radius: 4px;
     border: 2px solid #3D434F;
     background-color: #20232A;
-    padding: 4px 1px;
+    padding: 1px 1px;
 }
 
 /* 程序打包工具右下角的运行提示字符 */

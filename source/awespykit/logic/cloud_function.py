@@ -12,6 +12,7 @@ from fastpip import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from res.res import *
 from settings import *
 from ui import *
 
@@ -32,7 +33,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         super().__init__(parent)
         self.setupUi(self)
         self.__setup_other_widgets()
-        self.__config = CloudFunctionConfig()
+        self.config = CloudFunctionConfig()
         self.thread_repo = ThreadRepo(500)
         self.environments: Optional[List[EnvDisplayPair]] = None
         self.__signal_connection()
@@ -50,7 +51,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.__checkbox_confirm_projectpath_click()
 
     def display(self):
-        self.resize(*self.__config.window_size)
+        self.resize(*self.config.window_size)
         if self.isMaximized():
             self.showMaximized()
         else:
@@ -61,7 +62,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
     def __save_window_size(self):
         if self.isMinimized() or self.isMinimized():
             return
-        self.__config.window_size = self.width(), self.height()
+        self.config.window_size = self.width(), self.height()
 
     def closeEvent(self, event: QCloseEvent):
         if not self.thread_repo.is_empty():
@@ -73,7 +74,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             ).exec_()
         self.__save_window_size()
         self.config_widgets_to_dict()
-        self.__config.save_config()
+        self.config.save_config()
 
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Escape:
@@ -87,6 +88,12 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             QDesktopServices.openUrl(
                 QUrl("https://cloud.tencent.com/product/scf")
             )
+            return True
+        elif (
+            sender == self.uiLabel_set_excludes
+            and event.type() == QEvent.MouseButtonRelease
+        ):
+            CloudExcludesWindow(self).display()
             return True
         return super().eventFilter(sender, event)
 
@@ -155,6 +162,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         horiz_head.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         horiz_head.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.uiComboBox_preject_path.lineEdit().clear()
+        self.uiLabel_set_excludes.installEventFilter(self)
         self.uiLabel_whatis_cloudfunction.installEventFilter(self)
         self.__working_movie = QMovie(":/loading.gif")
         self.__working_movie.setScaledSize(QSize(16, 16))
@@ -222,23 +230,23 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
     def __remove_combo_project_path(self):
         cur_index = self.uiComboBox_preject_path.currentIndex()
         if cur_index != -1:
-            del self.__config.current.project_paths[cur_index]
+            del self.config.current.project_paths[cur_index]
             self.uiComboBox_preject_path.removeItem(cur_index)
 
     def __check_add_projectpath(self, project: str):
-        if project and project not in self.__config.current.project_paths:
+        if project and project not in self.config.current.project_paths:
             self.uiComboBox_preject_path.addItem(project)
-            self.__config.current.project_paths.append(project)
+            self.config.current.project_paths.append(project)
 
     def __environs_combobox_update(self):
         if self.uiComboBox_python_envs.count() != 0:
             return
-        if not self.__config.cur_pypaths:
+        if not self.config.cur_pypaths:
             return
         if self.environments:
             return
         self.environments = [
-            EnvDisplayPair(PyEnv(p)) for p in self.__config.cur_pypaths
+            EnvDisplayPair(PyEnv(p)) for p in self.config.cur_pypaths
         ]
         item_number = len(self.environments)
         if not item_number:
@@ -247,69 +255,65 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             self.uiComboBox_python_envs.addItem(envp.display)
             envp.signal_connect(self.uiComboBox_python_envs.setItemText, i)
             envp.load_real_display()
-        current_index = self.__config.current.selected_env
+        current_index = self.config.current.selected_env
         if current_index < 0 or current_index >= item_number:
-            self.__config.current.selected_env = current_index = 0
+            self.config.current.selected_env = current_index = 0
         self.uiComboBox_python_envs.setCurrentIndex(current_index)
 
     def __project_paths_combobox_update(self):
         if self.uiComboBox_preject_path.count() != 0:
             return
-        self.uiComboBox_preject_path.addItems(
-            self.__config.current.project_paths
-        )
+        self.uiComboBox_preject_path.addItems(self.config.current.project_paths)
 
     def config_widgets_to_dict(self):
-        self.__config.current.selected_env = (
+        self.config.current.selected_env = (
             self.uiComboBox_python_envs.currentIndex()
         )
-        self.__config.current.overwrite_reqfile = (
+        self.config.current.overwrite_reqfile = (
             self.uiCheckBox_overwrite_requirement.isChecked()
         )
-        self.__config.current.projectpath_index = (
+        self.config.current.projectpath_index = (
             self.uiComboBox_preject_path.currentIndex()
         )
         if self.uiRadioButton_using_autotempdir.isChecked():
-            self.__config.current.working_tmpdir = WorkDir.TmpDir
+            self.config.current.working_tmpdir = WorkDir.TmpDir
         elif self.uiRadioButton_using_projectdir.isChecked():
-            self.__config.current.working_tmpdir = WorkDir.Project
+            self.config.current.working_tmpdir = WorkDir.Project
         elif self.uiRadioButton_using_customtemp.isChecked():
-            self.__config.current.working_tmpdir = WorkDir.Custom
+            self.config.current.working_tmpdir = WorkDir.Custom
         else:
-            self.__config.current.working_tmpdir = WorkDir.TmpDir
-        self.__config.current.custom_tempdir = (
+            self.config.current.working_tmpdir = WorkDir.TmpDir
+        self.config.current.custom_tempdir = (
             self.uiLineEdit_customdir_path.text()
         )
-        self.__config.current.generated_dir = (
-            self.uiLineEdit_generateddir.text()
-        )
-        self.__config.current.generated_name = (
+        self.config.current.generated_dir = self.uiLineEdit_generateddir.text()
+        self.config.current.generated_name = (
             self.uiLineEdit_generatedname.text()
         )
-        self.__config.current.overwrite_samefile = (
+        self.config.current.overwrite_samefile = (
             self.uiCheckBox_overwrite_samefile.isChecked()
         )
-        self.__config.current.upgrade_requires = (
+        self.config.current.upgrade_requires = (
             self.uiCheckBox_upgrade_requires.isChecked()
         )
 
     def config_dict_to_widgets(self, config_name=None):
         self.__update_configuration_list()
         if config_name:
-            self.__config.checkout_cfg(config_name)
+            self.config.checkout_cfg(config_name)
         else:
             self.__environs_combobox_update()
         self.uiComboBox_python_envs.setCurrentIndex(
-            self.__config.current.selected_env
+            self.config.current.selected_env
         )
         self.__project_paths_combobox_update()
         self.uiCheckBox_overwrite_requirement.setChecked(
-            self.__config.current.overwrite_reqfile
+            self.config.current.overwrite_reqfile
         )
         self.uiComboBox_preject_path.setCurrentIndex(
-            self.__config.current.projectpath_index
+            self.config.current.projectpath_index
         )
-        working_dir = self.__config.current.working_tmpdir
+        working_dir = self.config.current.working_tmpdir
         if working_dir == WorkDir.TmpDir:
             self.uiRadioButton_using_autotempdir.setChecked(True)
         elif working_dir == WorkDir.Project:
@@ -322,27 +326,25 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.uiLineEdit_customdir_path.setEnabled(custom_ischecked)
         self.uiPushButton_select_customdir.setEnabled(custom_ischecked)
         self.uiLineEdit_customdir_path.setText(
-            self.__config.current.custom_tempdir
+            self.config.current.custom_tempdir
         )
-        self.uiLineEdit_generateddir.setText(
-            self.__config.current.generated_dir
-        )
+        self.uiLineEdit_generateddir.setText(self.config.current.generated_dir)
         self.uiLineEdit_generatedname.setText(
-            self.__config.current.generated_name
+            self.config.current.generated_name
         )
         self.uiCheckBox_overwrite_samefile.setChecked(
-            self.__config.current.overwrite_samefile
+            self.config.current.overwrite_samefile
         )
         self.uiCheckBox_upgrade_requires.setChecked(
-            self.__config.current.upgrade_requires
+            self.config.current.upgrade_requires
         )
 
     def __select_dirpath_settext(self, settextFunc: Callable[[str], None]):
-        _path = self.get_dir_path(self.__config.current.previous_path)
+        _path = self.get_dir_path(self.config.current.previous_path)
         if not _path:
             return
         settextFunc(_path)
-        self.__config.current.previous_path = _path
+        self.config.current.previous_path = _path
 
     def __get_table_requirement_items(self):
         requirements = list()
@@ -497,20 +499,21 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 self.signal_reqinstalled.emit(index, name, result)
             self.signal_show_workingtips.emit("开始创建压缩文件...")
             compressed_arcnames: Dict[Path, Path] = dict()
+            prev_excludeds = [Path(generated_dir).resolve()]
             try:
                 with zipfile.ZipFile(
                     generated_file, "w", zipfile.ZIP_DEFLATED
                 ) as binary_file:
-                    for _path in Path(projectdir).glob("**/*"):
-                        if not _path.is_file():
-                            continue
+                    for _path in self.__get_specified_files(
+                        Path(projectdir), prev_excludeds
+                    ):
                         arcfilename = _path.relative_to(projectdir)
                         binary_file.write(_path, arcfilename)
                         compressed_arcnames[arcfilename] = _path
                     if workingdir_type != WorkDir.Project:
-                        for _path in Path(requires_install_path).glob("**/*"):
-                            if not _path.is_file():
-                                continue
+                        for _path in self.__get_specified_files(
+                            Path(requires_install_path), prev_excludeds
+                        ):
                             arcfilename = _path.relative_to(
                                 requires_install_path
                             )
@@ -541,17 +544,40 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         packaging_thread.start()
         self.thread_repo.put(packaging_thread, 0)
 
+    def __get_specified_files(
+        self, _path: Path, prev_excludeds: List[Path]
+    ) -> Generator[Path, None, None]:
+        previous_cwd = os.getcwd()
+        try:
+            os.chdir(_path)
+            prev_excludeds.extend(
+                Path(apath).resolve()
+                for apath in self.config.current.excluded_paths
+            )
+            for afile in _path.rglob("*"):
+                if not afile.is_file():
+                    continue
+                for excluded in prev_excludeds:
+                    if excluded.is_file() and afile.samefile(excluded):
+                        break
+                    elif excluded.is_dir() and excluded in afile.parents:
+                        break
+                else:
+                    yield afile
+        finally:
+            os.chdir(previous_cwd)
+
     def __set_requirement_install_result(
-        self, index: int, name: str, result: bool
+        self, index: int, name: str, res: bool
     ):
         if index < 0 or index >= self.uiTableWidget_reqirement_lines.rowCount():
             return
         item = self.uiTableWidget_reqirement_lines.item(index, 0)
         if item is None or item.text() != name:
             return
-        result_item = QTableWidgetItem("安装成功" if result else "安装失败")
+        result_item = QTableWidgetItem("安装成功" if res else "安装失败")
         result_item.setData(
-            Qt.UserRole, RoleData.Success if result else RoleData.Failed
+            Qt.UserRole, RoleData.Success if res else RoleData.Failed
         )
         self.uiTableWidget_reqirement_lines.setItem(index, 1, result_item)
 
@@ -622,7 +648,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             self.uiListWidget_config_list.clear()
         elif self.uiListWidget_config_list.count() != 0:
             return
-        self.uiListWidget_config_list.addItems(self.__config.multicfg)
+        self.uiListWidget_config_list.addItems(self.config.multicfg)
 
     def __save_current_configs(self):
         config_name = (
@@ -637,7 +663,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 parent=self,
             ).exec_()
             return
-        if config_name in self.__config.multicfg:
+        if config_name in self.config.multicfg:
             if (
                 MessageBox(
                     "询问",
@@ -650,11 +676,11 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             ):
                 return
         self.config_widgets_to_dict()
-        self.__config.store_curcfg(config_name)
+        self.config.store_curcfg(config_name)
         self.__update_configuration_list(force=True)
 
     def __delete_selected_config(self):
-        if not len(self.__config.multicfg):
+        if not len(self.config.multicfg):
             MessageBox(
                 "提示",
                 "没有任何已保存的配置方案。",
@@ -666,7 +692,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         if not selected_item:
             return MessageBox("提示", "没有选择任何配置。").exec_()
         config_name = selected_item.text()
-        if config_name not in self.__config.multicfg:
+        if config_name not in self.config.multicfg:
             return
         if (
             MessageBox(
@@ -679,11 +705,11 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             != 0
         ):
             return
-        del self.__config.multicfg[config_name]
+        del self.config.multicfg[config_name]
         self.__update_configuration_list(force=True)
 
     def __checkout_saved_config(self):
-        if not len(self.__config.multicfg):
+        if not len(self.config.multicfg):
             MessageBox(
                 "提示",
                 "没有已保存的配置。",
@@ -702,8 +728,127 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             return
         self.config_dict_to_widgets(config_item.text())
         self.uiListWidget_config_list.setCurrentRow(-1)
+        MessageBox(
+            "提示", "配置数据切换成功...", QMessageBox.Information, parent=self
+        ).exec_()
 
     def __working_tmpdir_clicked(self):
         ischecked = self.uiRadioButton_using_customtemp.isChecked()
         self.uiLineEdit_customdir_path.setEnabled(ischecked)
         self.uiPushButton_select_customdir.setEnabled(ischecked)
+
+
+class CloudExcludesWindow(Ui_cloud_excludes, QMainWindow, QueryFilePath):
+    def __init__(self, parent: CloudFunctionWindow = None):
+        self.__parent = parent
+        super().__init__(parent)
+        self.setupUi(self)
+        self.__setup_widgets()
+        self.uiPushButton_add_dirpath.clicked.connect(self.__add_dirpath)
+        self.uiPushButton_add_filepath.clicked.connect(self.__add_filepath)
+        self.uiPushButton_del_line.clicked.connect(self.__delete_line)
+        self.uiPushButton_clear_items.clicked.connect(self.__clear_table_items)
+        self.uiPushButton_new_line.clicked.connect(self.__add_new_line)
+
+    def __setup_widgets(self):
+        self.uiPushButton_add_dirpath.setIcon(QIcon(":/add_dir.png"))
+        self.uiPushButton_add_filepath.setIcon(QIcon(":/add_file.png"))
+        self.uiPushButton_new_line.setIcon(QIcon(":/new_line.png"))
+        self.uiPushButton_del_line.setIcon(QIcon(":/del_line.png"))
+        self.uiPushButton_clear_items.setIcon(QIcon(":/clear.png"))
+        self.uiTableWidget_exclude_paths = DropableTableWidget(
+            self,
+            tooltip=self.uiTableWidget_exclude_paths_old.toolTip(),
+        )
+        self.uiTableWidget_exclude_paths.setObjectName(
+            "uiTableWidget_exclude_paths"
+        )
+        self.horizontalLayout.replaceWidget(
+            self.uiTableWidget_exclude_paths_old,
+            self.uiTableWidget_exclude_paths,
+        )
+        self.uiTableWidget_exclude_paths_old.deleteLater()
+        self.uiTableWidget_exclude_paths.setRowCount(
+            len(self.__parent.config.current.excluded_paths)
+        )
+        for row, text in enumerate(self.__parent.config.current.excluded_paths):
+            self.uiTableWidget_exclude_paths.setItem(
+                row, 0, QTableWidgetItem(text)
+            )
+
+    def display(self):
+        self.resize(*self.__parent.config.exc_windowsize)
+        if self.isMaximized():
+            self.showMaximized()
+        else:
+            self.showNormal()
+
+    def __save_window_size(self):
+        if self.isMinimized() or self.isMinimized():
+            return
+        self.__parent.config.exc_windowsize = self.width(), self.height()
+
+    def closeEvent(self, event: QCloseEvent):
+        self.__parent.config.current.excluded_paths = (
+            self.uiTableWidget_exclude_paths.getItemsText()
+        )
+        self.__save_window_size()
+
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Escape:
+            self.close()
+
+    def __add_filepath(self):
+        paths, previous = self.get_file_paths(
+            self.__parent.config.current.previous_path
+        )
+        if paths:
+            row = self.uiTableWidget_exclude_paths.rowCount()
+            self.uiTableWidget_exclude_paths.setRowCount(row + len(paths))
+            for increase, _path in enumerate(paths):
+                self.uiTableWidget_exclude_paths.setItem(
+                    row + increase, 0, QTableWidgetItem(_path)
+                )
+
+    def __add_dirpath(self):
+        _path = self.get_dir_path(self.__parent.config.current.previous_path)
+        if _path:
+            row = self.uiTableWidget_exclude_paths.rowCount()
+            self.uiTableWidget_exclude_paths.setRowCount(row + 1)
+            self.uiTableWidget_exclude_paths.setItem(
+                row, 0, QTableWidgetItem(_path)
+            )
+            self.__parent.config.current.previous_path = _path
+
+    def __delete_line(self):
+        selected_row_indexes = [
+            r.row() for r in self.uiTableWidget_exclude_paths.selectedIndexes()
+        ]
+        if not selected_row_indexes:
+            MessageBox(
+                "提示", "没有选中任何项目...", QMessageBox.Information, parent=self
+            ).exec_()
+            return
+        selected_row_indexes.sort()
+        top_row = selected_row_indexes[0]
+        selected_count = len(selected_row_indexes)
+        for ii, row in enumerate(selected_row_indexes):
+            self.uiTableWidget_exclude_paths.removeRow(row)
+            for remain_i in range(ii + 1, selected_count):
+                # 因为表格只有一列，行索引不会有重复的，所以这里不做进一步判断
+                selected_row_indexes[remain_i] -= 1
+        remain_row_count = self.uiTableWidget_exclude_paths.rowCount()
+        if remain_row_count:
+            if top_row >= remain_row_count:
+                top_row = remain_row_count - 1
+            self.uiTableWidget_exclude_paths.setRangeSelected(
+                QTableWidgetSelectionRange(top_row, 0, top_row, 0), True
+            )
+
+    def __add_new_line(self):
+        self.uiTableWidget_exclude_paths.setRowCount(
+            self.uiTableWidget_exclude_paths.rowCount() + 1
+        )
+
+    def __clear_table_items(self):
+        self.uiTableWidget_exclude_paths.setRowCount(0)

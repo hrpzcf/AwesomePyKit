@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+from typing import *
 
 from chardet import detect
 from PyQt5.QtWidgets import *
@@ -43,8 +44,30 @@ class QueryFilePath(QWidget):
             ).exec_()
         return os.path.dirname(save_path)
 
-    def get_dir_path(self, last_path):
-        _path = QFileDialog.getExistingDirectory(self, "选择目录", last_path)
-        if _path:
-            return os.path.normpath(_path)
-        return ""
+    def get_dir_path(self, previous_path):
+        _path = QFileDialog.getExistingDirectory(self, "选择目录", previous_path)
+        return _path if _path is not None else ""
+
+    def get_file_paths(self, previous_path):
+        paths, _ = QFileDialog.getOpenFileNames(self, "选择文件", previous_path)
+        if paths:
+            previous_path = os.path.dirname(paths[0])
+        return paths, previous_path
+
+    def select_dirpath_settext(
+        self,
+        settextFunc: Callable[[str], None],
+        previous_path: str = "",
+        obj: object = None,
+        attrname: str = None,
+    ):
+        _path = self.get_dir_path(previous_path)
+        if not _path:
+            return
+        settextFunc(_path)
+        if obj is None or not attrname:
+            return
+        objattr = getattr(obj, attrname, None)
+        if objattr is not None and not isinstance(objattr, str):
+            return
+        object.__setattr__(obj, attrname, _path)

@@ -52,7 +52,7 @@ class IndexUrlManagerWindow(Ui_index_manager, QMainWindow):
             return
         self.__config.window_size = self.width(), self.height()
 
-    def closeEvent(self, event: QResizeEvent):
+    def closeEvent(self, event: QCloseEvent):
         self.__store_window_size()
         self.__config.save_config()
 

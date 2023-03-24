@@ -3,7 +3,7 @@
 __doc__ = """包含一些继承自默认Qt控件的自定义行为控件。"""
 
 import os
-from typing import List
+from typing import *
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -14,7 +14,7 @@ from .enums import Accept, RoleData
 
 
 class LineEdit(QLineEdit):
-    def __init__(self, accept=None, ext_filter=None):
+    def __init__(self, accept: Accept = None, ext_filter: set = None):
         super().__init__()
         if accept is None:
             self.__accept = Accept.Dir
@@ -23,8 +23,8 @@ class LineEdit(QLineEdit):
         if ext_filter is None:
             self.__filter = set()
         else:
-            self.__filter = ext_filter
             assert isinstance(ext_filter, set)
+            self.__filter = ext_filter
         self.__drag_temp = ""
 
     @property
@@ -63,7 +63,7 @@ class LineEdit(QLineEdit):
 
 
 class TextEdit(QTextEdit):
-    def __init__(self, accept=None, ext_filter=None):
+    def __init__(self, accept: Accept = None, ext_filter: set = None):
         super().__init__()
         self.setLineWrapMode(QTextEdit.NoWrap)
         if accept is None:
@@ -73,8 +73,8 @@ class TextEdit(QTextEdit):
         if ext_filter is None:
             self.__filter = set()
         else:
-            self.__filter = ext_filter
             assert isinstance(ext_filter, set)
+            self.__filter = ext_filter
         self.__drag_temp = list()
 
     @property
@@ -144,7 +144,7 @@ class TextEdit(QTextEdit):
 
 
 class PlainTextEdit(QPlainTextEdit):
-    def __init__(self, accept=None, ext_filter=None):
+    def __init__(self, accept: Accept = None, ext_filter: set = None):
         super().__init__()
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
         if accept is None:
@@ -154,8 +154,8 @@ class PlainTextEdit(QPlainTextEdit):
         if ext_filter is None:
             self.__filter = set()
         else:
-            self.__filter = ext_filter
             assert isinstance(ext_filter, set)
+            self.__filter = ext_filter
         self.__drag_temp = list()
 
     @property
@@ -243,7 +243,7 @@ class ItemDelegate(QItemDelegate):
 
     def createEditor(
         self, parent: QWidget, option: QStyleOptionViewItem, index: QModelIndex
-    ) -> QWidget:
+    ) -> Optional[QWidget]:
         if self.__editable:
             return super().createEditor(parent, option, index)
         return None
@@ -291,3 +291,105 @@ class ItemDelegate(QItemDelegate):
         if alignment is None:
             alignment = Qt.AlignCenter
         painter.drawText(option.rect, alignment, text_data)
+
+
+class DropableTableWidget(QTableWidget):
+    def __init__(
+        self,
+        parent: QWidget,
+        row_headers: List[str] = None,
+        column_headers: List[str] = None,
+        tooltip: str = None,
+    ):
+        self.__row_headers = row_headers
+        self.__col_headers = column_headers
+        super().__init__(parent)
+        self.setAcceptDrops(True)
+        self.__setup_widgets()
+        isinstance(tooltip, str) and self.setToolTip(tooltip)
+
+    def __setup_widgets(self):
+        if self.__col_headers and all(
+            isinstance(i, str) for i in self.__col_headers
+        ):
+            self.setColumnCount(len(self.__col_headers))
+            self.setHorizontalHeaderLabels(self.__col_headers)
+            horizontal_header = self.horizontalHeader()
+            horizontal_header.setHighlightSections(False)
+        else:
+            self.horizontalHeader().setVisible(False)
+        self.columnCount() == 0 and self.setColumnCount(1)
+        self.horizontalHeader().setStretchLastSection(True)
+        if self.__row_headers and all(
+            isinstance(i, str) for i in self.__row_headers
+        ):
+            self.setRowCount(len(self.__row_headers))
+            self.setVerticalHeaderLabels(self.__row_headers)
+            self.verticalHeader().setHighlightSections(False)
+        else:
+            self.verticalHeader().setVisible(False)
+
+    def getItemsText(self) -> List[str]:
+        cur_items = list()
+        for i in range(self.rowCount()):
+            item: QTableWidgetItem = self.item(i, 0)
+            if item:
+                item_text = item.text()
+                item_text and cur_items.append(item_text)
+        return cur_items
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event: QDropEvent):
+        droped_urls = event.mimeData().urls()
+        new_start = self.rowCount()
+        self.setRowCount(new_start + len(droped_urls))
+        for index, url in enumerate(droped_urls):
+            self.setItem(
+                new_start + index, 0, QTableWidgetItem(url.toLocalFile())
+            )
+
+    def dragMoveEvent(self, event: QDragMoveEvent):
+        event.accept()
+
+
+class EditableListItem(QListWidgetItem):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setFlags(self.flags() | Qt.ItemIsEditable)
+
+
+class DropableListWidget(QListWidget):
+    def __init__(self, *args, **kwargs):
+        tooltip = kwargs.get("tooltip", None)
+        if tooltip is not None:
+            del kwargs["tooltip"]
+        super().__init__(*args, **kwargs)
+        self.setAcceptDrops(True)
+        tooltip and self.setToolTip(tooltip)
+
+    def getItemsText(self):
+        cur_items = list()
+        for i in range(self.count()):
+            item: QListWidgetItem = self.item(i)
+            if item:
+                item_text = item.text()
+                item_text and cur_items.append(item_text)
+        return cur_items
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event: QDropEvent):
+        for url in event.mimeData().urls():
+            self.addItem(EditableListItem(url.toLocalFile()))
+
+    def dragMoveEvent(self, event: QDragMoveEvent):
+        event.accept()

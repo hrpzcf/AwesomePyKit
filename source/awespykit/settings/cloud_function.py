@@ -21,6 +21,7 @@ class CloudFunctionCFG(dict):
     _key_generated_name = "generated_name"
     _key_overwrite_samefile = "overwrite_samefile"
     _key_upgrade_requires = "upgrade_requires"
+    _key_excluded_paths = "excluded_paths"
 
     def __init__(self):
         super().__init__()
@@ -132,11 +133,21 @@ class CloudFunctionCFG(dict):
         assert isinstance(value, bool)
         self[self._key_upgrade_requires] = value
 
+    @property
+    def excluded_paths(self) -> List[str]:
+        return self.setdefault(self._key_excluded_paths, [])
+
+    @excluded_paths.setter
+    def excluded_paths(self, value):
+        assert isinstance(value, list)
+        self[self._key_excluded_paths] = value
+
 
 class CloudFunctionConfig(AbstractConfig):
     _key_current = "current"
     _key_multi_cfg = "multicfg"
     _key_window_size = "window_size"
+    _key_exc_windowsize = "exc_windowsize"
 
     CONFIGFILE = "cloud_function.json"
 
@@ -161,6 +172,17 @@ class CloudFunctionConfig(AbstractConfig):
         assert len(value) == 2
         assert isinstance(value[0], int) and isinstance(value[1], int)
         self[self._key_window_size] = value
+
+    @property
+    def exc_windowsize(self):
+        return self.setdefault(self._key_exc_windowsize, (500, 400))
+
+    @exc_windowsize.setter
+    def exc_windowsize(self, value):
+        assert isinstance(value, Sequence)
+        assert len(value) == 2
+        assert isinstance(value[0], int) and isinstance(value[1], int)
+        self[self._key_exc_windowsize] = value
 
     def checkout_cfg(self, name: str) -> bool:
         if name not in self.multicfg:

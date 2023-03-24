@@ -30,6 +30,11 @@
         <file>right_arrow.png</file>
         <file>left_arrow.png</file>
         <file>cloudfunction.png</file>
+        <file>add_dir.png</file>
+        <file>add_file.png</file>
+        <file>del_line.png</file>
+        <file>clear.png</file>
+        <file>new_line.png</file>
     </qresource>
     <qresource prefix="trans">
         <file>widgets_zh-CN.qm</file>

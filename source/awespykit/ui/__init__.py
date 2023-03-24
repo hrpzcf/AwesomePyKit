@@ -2,6 +2,7 @@
 
 from .about_window import Ui_about_window
 from .addenv_dialog import Ui_input_dialog
+from .cloud_excludes import Ui_cloud_excludes
 from .cloud_function import Ui_cloud_function
 from .environ_chosen import Ui_environ_chosen
 from .generic_output import Ui_generic_output
@@ -17,6 +18,7 @@ from .show_download import Ui_show_download
 
 __all__ = [
     "Ui_about_window",
+    "Ui_cloud_excludes",
     "Ui_cloud_function",
     "Ui_environ_chosen",
     "Ui_generic_output",

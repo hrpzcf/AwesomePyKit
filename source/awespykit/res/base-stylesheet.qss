@@ -12,6 +12,12 @@
     font-weight: normal;
 }
 
+/* 程序打包工具右上角几个版本信息标签及包管理器安装界面环境标签 */
+#uiLabel_python_info, #uiLabel_venv_info, #uiLabel_packtool_info,
+#uiLabel_platform_info, #uiLabel_target_environment {
+    border: 1px solid #A0A0A0;
+}
+
 /* 程序打包工具命令输出窗口 */
 #uiTextEdit_packtool_logging {
     font-size: 10pt;
@@ -67,4 +73,15 @@ QMainWindow[objectName="about_window"] QLabel {
 }
 #uiPlainTextEdit_open_packages {
     font-size: 9pt;
+}
+
+/* 云函数打包工具的超链接 */
+#uiLabel_whatis_cloudfunction, #uiLabel_set_excludes {
+    font-size: 8pt;
+}
+
+/* 云函数打包工具排除文件窗口的提示 */
+#uiLabel_exclude_tips {
+    color: gray;
+    font-size: 8pt;
 }
