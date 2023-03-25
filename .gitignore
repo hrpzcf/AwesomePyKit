@@ -142,10 +142,9 @@ cython_debug/
 # others
 /.vs/
 /.idea/
+/.venv_*/
 /.vscode/
 /upx/
 /config/
-/venv_*/
 /Debug/
 /Release/
-test.py
