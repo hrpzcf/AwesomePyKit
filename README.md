@@ -61,7 +61,7 @@ Python 工具箱 - Awespykit
    ```
 5. 找到 runpykit.py 运行。如果不想显示控制台，可以将 runpykit.py 重命名为 runpykit.pyw。
 6. *注意*：由于更改了项目目录结构，使用 Pycharm 的同学，Pycharm 打开 Awespykit 目录后，请右键 Awespykit
-   -> source -> awespykit 目录，选择菜单末尾的 `将目录标记为->源代码根目录` 把 `awespykit`
+   -> src -> awespykit 目录，选择菜单末尾的 `将目录标记为->源代码根目录` 把 `awespykit`
    目录标记为源码根目录，否则影响编程体验。
 
 <br />
@@ -71,7 +71,7 @@ Python 工具箱 - Awespykit
 1. 假设你的计算机已经安装了 Python 环境，且版本 >=3.7（如果不符合要求则不能使用这个方法）。
 2. 使用以下命令安装开发版：
    ```cmd
-   pip install https://github.com/hrpzcf/AwesomePyKit/tarball/main
+   pip install git+https://github.com/hrpzcf/AwesomePyKit.git@main
    ```
 注意：开发版可能含有许多 BUG，无法保证程序一定能正常运行，也无法保证所有功能都正常。
 
@@ -81,7 +81,7 @@ Python 工具箱 - Awespykit
 
 > ### 工具箱启动窗口
 
-![启动窗口](./images/MainEntrance.png)
+![启动窗口](img/MainEntrance.png)
 
 <br/>
 
@@ -94,7 +94,7 @@ Python 工具箱 - Awespykit
 - 支持批量安装模块、按版本号安装等
 - 支持检查更新、批量卸载、批量升级(不了解各包的互相依赖则请慎用批量功能)
 
-![包管理器](./images/PackageManager.png)
+![包管理器](img/PackageManager.png)
 
 <br/>
 
@@ -105,7 +105,7 @@ Python 工具箱 - Awespykit
 - 支持一键在项目下创建 venv 虚拟环境
 - 支持项目所使用的 Python 环境的检查，检查出未安装的模块可一键安装
 
-![程序打包工具](./images/PyinstallerTool.png)
+![程序打包工具](img/PyinstallerTool.png)
 
 <br/>
 
@@ -114,7 +114,7 @@ Python 工具箱 - Awespykit
 - 使用 pip 时网络不佳，用此工具一键切换 pip 所使用的镜像源
 - 支持保存你自己常用的镜像源地址
 
-![镜像源设置工具](./images/IndexUrlTool.png)
+![镜像源设置工具](img/IndexUrlTool.png)
 
 <br/>
 
@@ -124,7 +124,7 @@ Python 工具箱 - Awespykit
 - 支持同时下载要下载的包/库/模块的依赖
 - 支持从 requirement.txt 批量读取并一键下载
 
-![模块安装包下载器](./images/PackageDownloader.png)
+![模块安装包下载器](img/PackageDownloader.png)
 
 <br/>
 

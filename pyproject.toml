@@ -1,22 +1,45 @@
-[tool.poetry]
-name = "Awespykit"
-version = "1.4.0"
-description = "一个关于 Python 的 GUI 工具箱：包管理器、程序打包、切换 pip 源、模块安装包下载。"
-authors = ["hrpzcf"]
-license = "MIT License"
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.7"
-PyQt5 = "^5.15.2"
-fastpip = "^1.7.0"
-pywin32 = ">=224"
-chardet = ">=4.0.0"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools-scm[toml]>=7.1", "setuptools>=67.6"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Awespykit"
+authors = [
+    { name = "hrp", email = "pphrp@qq.com" },
+    { name = "hrpzcf", email = "pphrp@qq.com" },
+]
+readme = "README.md"
+license = { text = "GPLv3" }
+classifiers = [
+    "Intended Audience :: Developers",
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Environment :: Win32 (MS Windows)",
+    "Operating System :: Microsoft :: Windows :: Windows 7",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
+]
+description = "关于 Python 的 GUI 工具箱：包管理、程序打包、切换 Pip 源、模块安装包下载"
+requires-python = ">=3.7"
+dynamic = ["dependencies", "version"]
+
+[project.scripts]
+rpk = "awespykit.runpykit:runpykit_sysexit_when_closes"
 
 [tool.black]
 line-length = 80
 target-version = ["py37"]
+
+[tool.setuptools_scm]
+local_scheme = "no-local-version"
+
+[tool.setuptools]
+platforms = ["win32", "win_amd64"]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}

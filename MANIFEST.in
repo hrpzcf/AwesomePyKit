@@ -1,0 +1,4 @@
+exclude .gitignore TODO.md
+exclude dist img
+global-exclude *.qrc *.ui *.qss *.ts *.qm
+global-exclude *.gif *.png *.ico

@@ -286,7 +286,7 @@ class Ui_about_window(object):
         self.label.setText(_translate("about_window", "程序版本："))
         self.uiLabel_app_version.setText(_translate("about_window", "Awespykit - 1.0.0"))
         self.label_3.setText(_translate("about_window", "作者："))
-        self.uiLabel_authors.setText(_translate("about_window", "hrpzcf / hrp"))
+        self.uiLabel_authors.setText(_translate("about_window", "hrp/hrpzcf"))
         self.label_2.setText(_translate("about_window", "开源协议："))
         self.uiLabel_license.setText(_translate("about_window", "GNU General Public License v3"))
         self.label_7.setText(_translate("about_window", "源代码："))

@@ -140,12 +140,12 @@ dmypy.json
 cython_debug/
 
 # others
-.vs/
-.idea/
-.vscode/
-upx/
-config/
+/.vs/
+/.idea/
+/.vscode/
+/upx/
+/config/
+/venv_*/
+/Debug/
+/Release/
 test.py
-venv_*/
-Debug/
-Release/
