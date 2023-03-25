@@ -93,7 +93,7 @@ class PyiTool(QObject):
                     if decoded_line:
                         self.stdout.emit(decoded_line)
             except Exception as e:
-                self.stdout.emit(f"[{NAME}] 信息流读取异常(不影响打包)：\n    {e}")
+                self.stdout.emit(f"[{APP_NAME}] 信息流读取异常(不影响打包)：\n    {e}")
         self.completed.emit(self.__process.wait())
 
     def __time_division_emit(self):
@@ -112,7 +112,7 @@ class PyiTool(QObject):
                     lines.clear()
                     self.cumulative = 0
             except Exception as e:
-                self.stdout.emit(f"[{NAME}] 信息流读取异常(不影响打包)：\n    {e}")
+                self.stdout.emit(f"[{APP_NAME}] 信息流读取异常(不影响打包)：\n    {e}")
         if lines:
             self.stdout.emit("\n".join(lines))
         self.run_time.emit(0)

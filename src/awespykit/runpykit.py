@@ -33,6 +33,8 @@ elif VERNUM[1] == REQ_FPVER[1] and VERNUM[2] < REQ_FPVER[2]:
 # 2. 如次版本号等于要求的次版本号，则修订号必须大于等于要求的修订号
 ################################################################
 
+LAUNCH_BUNDLED_AWESPYKIT = False
+
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
     def __init__(self):
@@ -41,10 +43,13 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.setWindowFlags(
             Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint
         )
-        self.setWindowTitle(NAME)
         self.__config = MainEntranceConfig()
         self.__themes: Themes[ThemeData] = PreThemeList
-        self.__about_window = AboutWindow(self, VERSION)
+        self.setWindowTitle(APP_NAME)
+        if LAUNCH_BUNDLED_AWESPYKIT:
+            self.__about_window = AboutWindow(self, FIXED_VER)
+        else:
+            self.__about_window = AboutWindow(self, VERSION)
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
@@ -137,4 +142,5 @@ def runpykit_sysexit_when_closes():
 
 
 if __name__ == "__main__":
+    LAUNCH_BUNDLED_AWESPYKIT = True
     runpykit_sysexit_when_closes()

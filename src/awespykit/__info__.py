@@ -5,13 +5,12 @@ try:
 except ImportError:
     import importlib_metadata as metadata
 
-__PRESET_VERSION = "2.0.1"
-
-NAME = "Awespykit"
+APP_NAME = "Awespykit"
+FIXED_VER = "2.0.1"
 try:
-    VERSION = metadata.version(NAME)
+    VERSION = metadata.version(APP_NAME)
 except:
-    VERSION = __PRESET_VERSION
+    VERSION = FIXED_VER
 AUTHOR = "hrp/hrpzcf"
 
-__all__ = ["AUTHOR", "NAME", "VERSION"]
+__all__ = ["APP_NAME", "AUTHOR", "FIXED_VER", "VERSION"]
