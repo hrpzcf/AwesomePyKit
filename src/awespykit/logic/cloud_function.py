@@ -19,8 +19,9 @@ from ui import *
 from .messagebox import MessageBox
 from .query_file_path import QueryFilePath
 
+DEFAULT_GENERATED_DIR = "scf_dist"
+DEFAULT_CUSTOMDIR_DIR = "scf_build"
 EMPTY_STR = ""
-DEFAULT_GENERATED_DIR = "scf_packaged"
 
 
 class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
@@ -205,7 +206,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         is_checked = self.uiCheckBox_confirm_project_path.isChecked()
         project = self.uiComboBox_preject_path.currentText()
         if is_checked:
-            if os.path.isdir(project):
+            if os.path.isabs(project) and os.path.isdir(project):
                 self.__check_add_projectpath(project)
                 self.uiLineEdit_generatedname.setPlaceholderText(
                     os.path.basename(project)
@@ -216,8 +217,9 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             else:
                 MessageBox(
                     "提示",
-                    "当前的项目路径不是一个有效目录路径！",
+                    "当前的项目路径不是绝对路径或不是一个目录路径！",
                     QMessageBox.Warning,
+                    parent=self,
                 ).exec_()
                 self.uiCheckBox_confirm_project_path.setChecked(False)
                 return
@@ -349,7 +351,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         settextFunc(_path)
         self.config.current.previous_path = _path
 
-    def __get_table_requirement_items(self):
+    def __get_table_requirement_items(self) -> List[str]:
         requirements = list()
         for i in range(self.uiTableWidget_reqirement_lines.rowCount()):
             item = self.uiTableWidget_reqirement_lines.item(i, 0)
@@ -382,9 +384,6 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
 
     def __start_cloud_function_packing(self):
         self.__cleartable_requirments()
-        requirements = self.__get_table_requirement_items()
-        if self.uiCheckBox_overwrite_requirement.isChecked():
-            self.__refresh_requirements_file(requirements)
         env_index = self.uiComboBox_python_envs.currentIndex()
         if env_index == -1 or not self.environments:
             MessageBox(
@@ -397,11 +396,34 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         upgrade = self.uiCheckBox_upgrade_requires.isChecked()
         environment = self.environments[env_index].environ
         projectdir = self.uiComboBox_preject_path.currentText()
+        if not (os.path.isabs(projectdir) and os.path.isdir(projectdir)):
+            MessageBox(
+                "错误",
+                "项目目录路径不是绝对路径或路径不是一个目录路径...",
+                QMessageBox.Critical,
+                parent=self,
+            ).exec_()
+            return
+        requirements = self.__get_table_requirement_items()
+        if self.uiCheckBox_overwrite_requirement.isChecked():
+            self.__write_requirements(projectdir, requirements)
+        customtmpdir_text = (
+            self.uiLineEdit_customdir_path.text()
+            or self.uiLineEdit_customdir_path.placeholderText()
+        )
         if self.uiRadioButton_using_autotempdir.isChecked():
             workingdir_type = WorkDir.TmpDir
         elif self.uiRadioButton_using_projectdir.isChecked():
             workingdir_type = WorkDir.Project
         elif self.uiRadioButton_using_customtemp.isChecked():
+            if not customtmpdir_text:
+                MessageBox(
+                    "错误",
+                    "没有输入自定义工作目录路径...",
+                    QMessageBox.Critical,
+                    parent=self,
+                ).exec_()
+                return
             workingdir_type = WorkDir.Custom
         else:
             MessageBox(
@@ -411,7 +433,6 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 parent=self,
             ).exec_()
             return
-        customdir_text = self.uiLineEdit_customdir_path.text()
         generated_name = (
             self.uiLineEdit_generatedname.text()
             or self.uiLineEdit_generatedname.placeholderText()
@@ -457,31 +478,36 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             elif not os.path.isdir(generated_dir):
                 self.signal_packing.emit(False, "打包文件保存路径不是一个目录...")
                 return
+            workingdir_handle = EMPTY_STR
             if workingdir_type == WorkDir.TmpDir:
                 try:
-                    working_directory = TemporaryDirectory()
+                    workingdir_handle = TemporaryDirectory()
                 except Exception as e:
                     self.signal_packing.emit(False, f"临时工作目录创建失败：\n{e}")
                     return
-                requires_install_path = working_directory.name
+                requires_install_path = workingdir_handle.name
             elif workingdir_type == WorkDir.Custom:
-                working_directory = Path(customdir_text)
-                if not working_directory.exists():
+                if os.path.isabs(customtmpdir_text):
+                    workingdir_handle = customtmpdir_text
+                else:
+                    workingdir_handle = os.path.join(
+                        projectdir, customtmpdir_text
+                    )
+                if not os.path.exists(workingdir_handle):
                     try:
-                        os.makedirs(working_directory)
+                        os.makedirs(workingdir_handle, exist_ok=True)
                     except Exception as e:
                         self.signal_packing.emit(False, f"自定义工作目录创建失败：\n{e}")
                         return
-                elif not working_directory.is_dir():
+                elif not os.path.isdir(workingdir_handle):
                     self.signal_packing.emit(False, "自定义工作路径不是目录...")
                     return
-                requires_install_path = str(working_directory)
+                requires_install_path = workingdir_handle
             elif workingdir_type == WorkDir.Project:
-                working_directory = Path(projectdir)
-                if not working_directory.is_dir():
+                if not os.path.isdir(projectdir):
                     self.signal_packing.emit(False, "作为工作目录的项目目录不可用...")
                     return
-                requires_install_path = str(working_directory)
+                requires_install_path = projectdir
             else:
                 self.signal_packing.emit(
                     False, f"未知的工作目录类型：{workingdir_type!r}"
@@ -490,32 +516,40 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             self.signal_show_workingtips.emit("开始安装项目的依赖包...")
             # 本来设计是每个包独立安装的，但是发现一起安装能节省很多时间
             # 所以就砍掉了每个依赖包安装完成就更新安装结果的功能，改为一次性更新
-            _, result = environment.install(
-                *requirements, target=requires_install_path, upgrade=upgrade
-            )
-            if not result:
-                self.signal_packing.emit(False, f"一个或多个依赖包安装失败，打包中断...")
-                if isinstance(working_directory, TemporaryDirectory):
-                    working_directory.cleanup()
-                return
-            for index, name in enumerate(requirements):
-                self.signal_reqinstalled.emit(index, name, result)
+            if requirements:
+                _, result = environment.install(
+                    *requirements, target=requires_install_path, upgrade=upgrade
+                )
+                if not result:
+                    self.signal_packing.emit(False, f"一个或多个依赖包安装失败，打包中断...")
+                    if isinstance(workingdir_handle, TemporaryDirectory):
+                        workingdir_handle.cleanup()
+                    return
+                for index, name in enumerate(requirements):
+                    self.signal_reqinstalled.emit(index, name, result)
             self.signal_show_workingtips.emit("开始创建压缩文件...")
             compressed_arcnames: Dict[Path, Path] = dict()
-            prev_excludeds = [Path(generated_dir).resolve()]
+            exclude_paths = [Path(generated_dir).resolve()]
             try:
                 with zipfile.ZipFile(
                     generated_file, "w", zipfile.ZIP_DEFLATED
                 ) as binary_file:
-                    for _path in self.__get_specified_files(
-                        Path(projectdir), prev_excludeds
-                    ):
+                    if os.path.isabs(customtmpdir_text):
+                        filtered_filepaths = self.__filtered_files(
+                            Path(projectdir), exclude_paths
+                        )
+                    else:
+                        filtered_filepaths = self.__filtered_files(
+                            Path(projectdir),
+                            exclude_paths + [Path(requires_install_path)],
+                        )
+                    for _path in filtered_filepaths:
                         arcfilename = _path.relative_to(projectdir)
                         binary_file.write(_path, arcfilename)
                         compressed_arcnames[arcfilename] = _path
                     if workingdir_type != WorkDir.Project:
-                        for _path in self.__get_specified_files(
-                            Path(requires_install_path), prev_excludeds
+                        for _path in self.__filtered_files(
+                            Path(requires_install_path), exclude_paths
                         ):
                             arcfilename = _path.relative_to(
                                 requires_install_path
@@ -532,9 +566,9 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 self.signal_packing.emit(False, f"创建压缩文件出错：\n{e}")
                 return
             finally:
-                if isinstance(working_directory, TemporaryDirectory):
+                if isinstance(workingdir_handle, TemporaryDirectory):
                     self.signal_show_workingtips.emit("正在清理临时文件夹...")
-                    working_directory.cleanup()
+                    workingdir_handle.cleanup()
             self.signal_packing.emit(True, EMPTY_STR)
 
         packaging_thread = QThreadModel(start_scfpackaging)
@@ -547,7 +581,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         packaging_thread.start()
         self.thread_repo.put(packaging_thread, 0)
 
-    def __get_specified_files(
+    def __filtered_files(
         self, _path: Path, prev_excludeds: List[Path]
     ) -> Generator[Path, None, None]:
         previous_cwd = os.getcwd()
@@ -595,26 +629,23 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             return
         self.uiTableWidget_reqirement_lines.removeRow(row)
 
-    def __refresh_requirements_file(self, requirements):
-        if requirements:
-            try:
-                with open(
-                    os.path.join(
-                        self.uiComboBox_preject_path.currentText(),
-                        self.REQUIRE_FILE,
-                    ),
-                    "wt",
-                    encoding="utf-8",
-                ) as f:
-                    for line in requirements:
-                        f.write(f"{line}\n")
-            except Exception as e:
-                MessageBox(
-                    "错误",
-                    f"无法重写‘{self.REQUIRE_FILE}’文件：\n{e}",
-                    QMessageBox.Critical,
-                    parent=self,
-                ).exec_()
+    def __write_requirements(self, parent, requirements):
+        if not requirements:
+            return
+        try:
+            with open(
+                os.path.join(parent, self.REQUIRE_FILE),
+                "wt",
+                encoding="utf-8",
+            ) as f:
+                f.write(os.linesep.join(requirements))
+        except Exception as e:
+            MessageBox(
+                "错误",
+                f"无法重写‘{self.REQUIRE_FILE}’文件：\n{e}",
+                QMessageBox.Critical,
+                parent=self,
+            ).exec_()
 
     def __lock_critical_widgets(self):
         self.uiPushButton_start_scfpacking.setEnabled(False)
@@ -822,6 +853,7 @@ class CloudExcludesWindow(Ui_cloud_excludes, QMainWindow, QueryFilePath):
                 self.uiTableWidget_exclude_paths.setItem(
                     row + increase, 0, QTableWidgetItem(_path)
                 )
+            self.__parent.config.current.previous_path = previous
 
     def __add_dirpath(self):
         _path = self.get_dir_path(self.__parent.config.current.previous_path)
