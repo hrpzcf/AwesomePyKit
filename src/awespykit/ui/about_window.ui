@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>433</width>
-    <height>476</height>
+    <width>350</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="font">
@@ -26,8 +26,17 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
-    <property name="spacing">
-     <number>12</number>
+    <property name="leftMargin">
+     <number>4</number>
+    </property>
+    <property name="topMargin">
+     <number>4</number>
+    </property>
+    <property name="rightMargin">
+     <number>4</number>
+    </property>
+    <property name="bottomMargin">
+     <number>4</number>
     </property>
     <item>
      <widget class="QGroupBox" name="uiGroupBox_app_name">
@@ -54,7 +63,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Awespykit 是一个关于 Python 的工具箱程序，主要是为 Python 的包管理工具 pip 和 Python 程序打包工具 PyInstaller 封装图形用户界面，目前提供了 4 个工具：Python 包管理器、程序打包工具、Pip 源设置工具、模块安装包下载器。</string>
+          <string>Awespykit 是一个关于 Python 的工具箱程序，主要是为 Python 的包管理工具 pip 和 Python 程序打包工具 PyInstaller 封装图形用户界面，目前提供了 5 个工具：Python 包管理器、程序打包工具、Pip 源设置工具、模块安装包下载器、云函数部署包打包工具。</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>

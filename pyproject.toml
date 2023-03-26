@@ -23,7 +23,7 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 10",
     "Operating System :: Microsoft :: Windows :: Windows 11",
 ]
-description = "关于 Python 的 GUI 工具箱：包管理、程序打包、切换 Pip 源、模块安装包下载"
+description = "关于Python的GUI工具箱：包管理、程序打包、切换Pip源、分发包下载、云函数打包"
 requires-python = ">=3.7"
 dynamic = ["dependencies", "version"]
 
