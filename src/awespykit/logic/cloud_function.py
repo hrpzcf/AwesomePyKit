@@ -19,7 +19,7 @@ from ui import *
 from .messagebox import MessageBox
 from .query_file_path import QueryFilePath
 
-DEFAULT_CUSTOM_TMPDIR = "scf_deps"
+DEFAULT_CUSTOM_TMPDIR = "scf_reqs"
 DEFAULT_GENERATED_DIR = "scf_dist"
 
 
@@ -406,7 +406,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         if not (os.path.isabs(projectdir) and os.path.isdir(projectdir)):
             MessageBox(
                 "错误",
-                "项目目录路径不是绝对路径或路径不是一个目录路径...",
+                "项目目录路径不是绝对路径，或者路径不是一个目录路径...",
                 QMessageBox.Critical,
                 parent=self,
             ).exec_()
@@ -541,14 +541,14 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 with zipfile.ZipFile(
                     generated_file, "w", zipfile.ZIP_DEFLATED
                 ) as binary_file:
-                    if os.path.isabs(customtmpdir_text):
-                        filtered_filepaths = self.__filtered_files(
-                            Path(projectdir), exclude_paths
-                        )
-                    else:
+                    if workingdir_type != WorkDir.Project:
                         filtered_filepaths = self.__filtered_files(
                             Path(projectdir),
                             exclude_paths + [Path(requires_install_path)],
+                        )
+                    else:
+                        filtered_filepaths = self.__filtered_files(
+                            Path(projectdir), exclude_paths
                         )
                     for _path in filtered_filepaths:
                         arcfilename = _path.relative_to(projectdir)
@@ -564,7 +564,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                             if arcfilename in compressed_arcnames:
                                 self.signal_packing.emit(
                                     False,
-                                    f"以下文件如果打包将发生覆盖，请处理：\n"
+                                    f"继续打包将使以下文件将在压缩包内重复，请处理：\n"
                                     f"{compressed_arcnames[arcfilename]!s}\n{_path!s}",
                                 )
                                 return
