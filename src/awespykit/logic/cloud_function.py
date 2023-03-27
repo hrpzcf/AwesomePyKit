@@ -19,9 +19,8 @@ from ui import *
 from .messagebox import MessageBox
 from .query_file_path import QueryFilePath
 
+DEFAULT_CUSTOM_TMPDIR = "scf_deps"
 DEFAULT_GENERATED_DIR = "scf_dist"
-DEFAULT_CUSTOMDIR_DIR = "scf_build"
-EMPTY_STR = ""
 
 
 class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
@@ -49,7 +48,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             self.uiPushButton_delete_line,
             self.uiPushButton_start_scfpacking,
         )
-        self.__checkbox_confirm_projectpath_click()
+        self.__change_ctrlgroups_state(False)
 
     def display(self):
         self.resize(*self.config.window_size)
@@ -111,7 +110,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             self.__start_cloud_function_packing
         )
         self.uiCheckBox_confirm_project_path.clicked.connect(
-            self.__checkbox_confirm_projectpath_click
+            self.__checkbox_confirm_projectpath
         )
         self.uiPushButton_add_line.clicked.connect(self.__add_requirement_line)
         self.uiPushButton_delete_line.clicked.connect(
@@ -126,14 +125,14 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.uiPushButton_switch_config.clicked.connect(
             self.__checkout_saved_config
         )
-        self.uiRadioButton_using_projectdir.toggled.connect(
-            self.__working_tmpdir_clicked
+        self.uiRadioButton_using_projectdir.clicked.connect(
+            self.__workingdir_option_changed
         )
-        self.uiRadioButton_using_customtemp.toggled.connect(
-            self.__working_tmpdir_clicked
+        self.uiRadioButton_using_customtemp.clicked.connect(
+            self.__workingdir_option_changed
         )
-        self.uiRadioButton_using_autotempdir.toggled.connect(
-            self.__working_tmpdir_clicked
+        self.uiRadioButton_using_autotempdir.clicked.connect(
+            self.__workingdir_option_changed
         )
         self.uiPushButton_select_customdir.clicked.connect(
             lambda: self.__select_dirpath_settext(
@@ -145,7 +144,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 self.uiLineEdit_generateddir.setText
             )
         )
-        self.signal_packing.connect(self.__on_packing_completed)
+        self.signal_packing.connect(self.__on_scfpacking_completed)
         self.signal_reqinstalled.connect(self.__set_requirement_install_result)
         self.signal_show_workingtips.connect(self.uiLabel_working_tips.setText)
         self.uiListWidget_config_list.clicked.connect(
@@ -183,8 +182,8 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         self.__working_movie.stop()
         self.uiLabel_working_movie.hide()
 
-    def __load_requirements_update_table(self, is_checked: bool):
-        if is_checked:
+    def __load_requirements_update_table(self, confirm: bool):
+        if confirm:
             project = self.uiComboBox_preject_path.currentText()
             requirements = os.path.join(project, self.REQUIRE_FILE)
             if not os.path.isfile(requirements):
@@ -202,11 +201,17 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
         else:
             self.uiTableWidget_reqirement_lines.setRowCount(0)
 
-    def __checkbox_confirm_projectpath_click(self):
-        is_checked = self.uiCheckBox_confirm_project_path.isChecked()
+    def __change_ctrlgroups_state(self, confirm: bool):
+        for ctrl in self.__work_ctrlgroup:
+            ctrl.setEnabled(confirm)
+        for ctrl in self.__path_ctrlgroup:
+            ctrl.setEnabled(not confirm)
+
+    def __checkbox_confirm_projectpath(self):
         project = self.uiComboBox_preject_path.currentText()
-        if is_checked:
-            if os.path.isabs(project) and os.path.isdir(project):
+        confirm = self.uiCheckBox_confirm_project_path.isChecked()
+        if os.path.isabs(project) and os.path.isdir(project):
+            if confirm:
                 self.__check_add_projectpath(project)
                 self.uiLineEdit_generatedname.setPlaceholderText(
                     os.path.basename(project)
@@ -214,23 +219,23 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 self.uiLineEdit_generateddir.setPlaceholderText(
                     os.path.join(project, DEFAULT_GENERATED_DIR)
                 )
+                self.uiLineEdit_customdir_path.setPlaceholderText(
+                    os.path.join(project, DEFAULT_CUSTOM_TMPDIR)
+                )
             else:
-                MessageBox(
-                    "提示",
-                    "当前的项目路径不是绝对路径或不是一个目录路径！",
-                    QMessageBox.Warning,
-                    parent=self,
-                ).exec_()
-                self.uiCheckBox_confirm_project_path.setChecked(False)
-                return
+                self.uiLineEdit_generateddir.setPlaceholderText("")
+                self.uiLineEdit_generatedname.setPlaceholderText("")
+                self.uiLineEdit_customdir_path.setPlaceholderText("")
+            self.__change_ctrlgroups_state(confirm)
+            self.__load_requirements_update_table(confirm)
         else:
-            self.uiLineEdit_generateddir.setPlaceholderText("")
-            self.uiLineEdit_generatedname.setPlaceholderText("")
-        for ctrl in self.__work_ctrlgroup:
-            ctrl.setEnabled(is_checked)
-        for ctrl in self.__path_ctrlgroup:
-            ctrl.setEnabled(not is_checked)
-        self.__load_requirements_update_table(is_checked)
+            MessageBox(
+                "提示",
+                "当前的项目路径不是绝对路径或者不是一个目录路径！",
+                QMessageBox.Warning,
+                parent=self,
+            ).exec_()
+            self.uiCheckBox_confirm_project_path.setChecked(False)
 
     def __remove_combo_project_path(self):
         cur_index = self.uiComboBox_preject_path.currentIndex()
@@ -319,17 +324,16 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             self.config.current.projectpath_index
         )
         working_dir = self.config.current.working_tmpdir
-        if working_dir == WorkDir.TmpDir:
-            self.uiRadioButton_using_autotempdir.setChecked(True)
-        elif working_dir == WorkDir.Project:
-            self.uiRadioButton_using_projectdir.setChecked(True)
-        elif working_dir == WorkDir.Custom:
-            self.uiRadioButton_using_customtemp.setChecked(True)
-        else:
-            self.uiRadioButton_using_autotempdir.setChecked(True)
-        custom_ischecked = working_dir == WorkDir.Custom
-        self.uiLineEdit_customdir_path.setEnabled(custom_ischecked)
-        self.uiPushButton_select_customdir.setEnabled(custom_ischecked)
+        self.uiRadioButton_using_projectdir.setChecked(
+            working_dir == WorkDir.Project
+        )
+        self.uiRadioButton_using_customtemp.setChecked(
+            working_dir == WorkDir.Custom
+        )
+        self.uiRadioButton_using_autotempdir.setChecked(
+            working_dir == WorkDir.TmpDir
+        )
+        self.__workingdir_option_changed()
         self.uiLineEdit_customdir_path.setText(
             self.config.current.custom_tempdir
         )
@@ -363,7 +367,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             requirements.append(require)
         return requirements
 
-    def __on_packing_completed(self, succeeded, message):
+    def __on_scfpacking_completed(self, succeeded, message):
         if succeeded:
             MessageBox(
                 "打包成功",
@@ -373,7 +377,10 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             ).exec_()
         else:
             MessageBox(
-                "打包失败", message, QMessageBox.Critical, parent=self
+                "打包失败",
+                message or "在打包过程中出现了错误...",
+                QMessageBox.Critical,
+                parent=self,
             ).exec_()
 
     def __cleartable_requirments(self):
@@ -478,7 +485,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             elif not os.path.isdir(generated_dir):
                 self.signal_packing.emit(False, "打包文件保存路径不是一个目录...")
                 return
-            workingdir_handle = EMPTY_STR
+            workingdir_handle = ""
             if workingdir_type == WorkDir.TmpDir:
                 try:
                     workingdir_handle = TemporaryDirectory()
@@ -569,7 +576,7 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
                 if isinstance(workingdir_handle, TemporaryDirectory):
                     self.signal_show_workingtips.emit("正在清理临时文件夹...")
                     workingdir_handle.cleanup()
-            self.signal_packing.emit(True, EMPTY_STR)
+            self.signal_packing.emit(True, None)
 
         packaging_thread = QThreadModel(start_scfpackaging)
         packaging_thread.before_starting(
@@ -767,14 +774,13 @@ class CloudFunctionWindow(Ui_cloud_function, QMainWindow, QueryFilePath):
             "提示", "配置数据切换成功...", QMessageBox.Information, parent=self
         ).exec_()
 
-    def __working_tmpdir_clicked(self):
-        ischecked = self.uiRadioButton_using_customtemp.isChecked()
-        self.uiLineEdit_customdir_path.setEnabled(ischecked)
-        self.uiPushButton_select_customdir.setEnabled(ischecked)
+    def __workingdir_option_changed(self):
+        custom = self.uiRadioButton_using_customtemp.isChecked()
+        self.uiLineEdit_customdir_path.setEnabled(custom)
+        self.uiPushButton_select_customdir.setEnabled(custom)
 
     def __scfconfig_list_clicked(self):
         index = self.uiListWidget_config_list.currentRow()
-        print(index)
         if index == -1:
             return
         self.uiLineEdit_config_name.setText(
