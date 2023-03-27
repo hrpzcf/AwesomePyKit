@@ -39,7 +39,7 @@ Python 工具箱 - Awespykit
 
 `推荐原因：程序开发者经常与各种命令窗口打交道，直接在命令窗口输入 'rpk + 回车' 是运行 Awespykit 最快捷的方式。`
 
-`需要注意的是：当通过以上方式安装的 Awespykit 或者是通过源代码运行 Awespykit 时，请勿使用 Awespykit 安装、卸载、升级 Awespykit 所在 Python 环境的 Awespykit 自己(包括 Awespykit 的依赖：PyQt5、chardet、importlib-metadata[python<3.8]、fastpip、pywin32)，否则可能造成文件残留或者 Awespykit 意外退出。运行打包好的 Awespykit(从 Awespykit.exe 或 runpykit.exe 文件运行) 则没有这些限制。`
+`需要注意的是：当通过以上方式安装的 Awespykit 或者是通过源代码运行 Awespykit 时，请勿使用 Awespykit 安装、卸载、升级 Awespykit 所在 Python 环境的 Awespykit 自己(包括 Awespykit 的依赖 PyQt5)，否则可能造成文件残留或者 Awespykit 意外退出。运行打包好的 Awespykit(从 Awespykit.exe 或 runpykit.exe 文件运行) 则没有这些限制。`
 
 <br/>
 
