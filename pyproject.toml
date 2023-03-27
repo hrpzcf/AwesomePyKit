@@ -28,7 +28,7 @@ requires-python = ">=3.7"
 dynamic = ["dependencies", "version"]
 
 [project.scripts]
-rpk = "awespykit.runpykit:runpykit_sysexit_when_closes"
+rpk = "awespykit.runpykit:runpykit_and_sysexit"
 
 [tool.black]
 line-length = 80

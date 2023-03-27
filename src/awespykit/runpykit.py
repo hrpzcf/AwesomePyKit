@@ -6,7 +6,7 @@ import sys
 from functools import partial
 from os import path
 
-from fastpip import *
+from fastpip import VERNUM
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -33,7 +33,7 @@ elif VERNUM[1] == REQ_FPVER[1] and VERNUM[2] < REQ_FPVER[2]:
 # 2. 如次版本号等于要求的次版本号，则修订号必须大于等于要求的修订号
 ################################################################
 
-LAUNCH_BUNDLED_AWESPYKIT = False
+_IS_MAIN_MODULE = False
 
 
 class MainEntrance(Ui_main_entrance, QMainWindow):
@@ -46,10 +46,9 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__config = MainEntranceConfig()
         self.__themes: Themes[ThemeData] = PreThemeList
         self.setWindowTitle(APP_NAME)
-        if LAUNCH_BUNDLED_AWESPYKIT:
-            self.__about_window = AboutWindow(self, FIXED_VER)
-        else:
-            self.__about_window = AboutWindow(self, VERSION)
+        self.__about_window = AboutWindow(
+            self, PRE_VER if _IS_MAIN_MODULE else VERSION
+        )
         self.__pkgmgr_win = PackageManagerWindow(self)
         self.__pyitool_win = PyinstallerToolWindow(self)
         self.__indexmgr_win = IndexUrlManagerWindow(self)
@@ -131,7 +130,7 @@ class MainEntrance(Ui_main_entrance, QMainWindow):
         self.__config.selected_thm = self.__themes.apply_theme(index)
 
 
-def runpykit_sysexit_when_closes():
+def runpykit_and_sysexit():
     translator = QTranslator()
     translator.load(":/trans/widgets_zh-CN.qm")
     _App.installTranslator(translator)
@@ -142,5 +141,5 @@ def runpykit_sysexit_when_closes():
 
 
 if __name__ == "__main__":
-    LAUNCH_BUNDLED_AWESPYKIT = True
-    runpykit_sysexit_when_closes()
+    _IS_MAIN_MODULE = True
+    runpykit_and_sysexit()
