@@ -4,17 +4,20 @@ Python 工具箱 - Awespykit
 
 <div align="center">
 
-[![GitHub stars](https://img.shields.io/github/stars/hrpzcf/AwesomePyKit?label=Stars&logo=github)](https://github.com/hrpzcf/AwesomePyKit/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/hrpzcf/AwesomePyKit?label=Forks&logo=github)](https://github.com/hrpzcf/AwesomePyKit/network)
-[![GitHub issues](https://img.shields.io/github/issues/hrpzcf/AwesomePyKit?label=Issues&logo=github)](https://github.com/hrpzcf/AwesomePyKit/issues)
-[![GitHub license](https://img.shields.io/github/license/hrpzcf/AwesomePyKit?color=red&label=License)](https://github.com/hrpzcf/AwesomePyKit/blob/main/LICENSE)
-[![GitHub license](https://img.shields.io/github/v/release/hrpzcf/AwesomePyKit?label=Release&logo=github)](https://github.com/hrpzcf/AwesomePyKit/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/hrpzcf/AwesomePyKit?label=Stars&logo=github)](https://github.com/hrpzcf/AwesomePyKit/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/hrpzcf/AwesomePyKit?label=Forks&logo=github)](https://github.com/hrpzcf/AwesomePyKit/network)
+[![GitHub Issues](https://img.shields.io/github/issues/hrpzcf/AwesomePyKit?label=Issues&logo=github)](https://github.com/hrpzcf/AwesomePyKit/issues)
+[![GitHub License](https://img.shields.io/github/license/hrpzcf/AwesomePyKit?color=red&label=License)](https://github.com/hrpzcf/AwesomePyKit/blob/main/LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/hrpzcf/AwesomePyKit?label=Release&logo=github)](https://github.com/hrpzcf/AwesomePyKit/releases)
+[![PyPI Release](https://img.shields.io/pypi/v/Awespykit?label=PyPi)](https://pypi.org/project/Awespykit/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Awespykit?label=Python)](https://pypi.org/project/Awespykit/)
+[![PyPI - Wheel](https://img.shields.io/pypi/wheel/Awespykit?label=Wheel)](https://pypi.org/project/Awespykit/)
 
 </div>
 
 ## 快速跳转
 
-[程序简介](#程序简介) **·** [如何运行](#如何运行) **·** [程序截图](#程序截图) **·** [源码仓库](#源码仓库) **·** [TODO 列表](#todo-列表)
+[程序简介](#程序简介) **·** [如何安装和运行](#如何安装和运行) **·** [程序截图](#程序截图) **·** [源码仓库](#源码仓库)
 
 <br />
 
@@ -22,11 +25,11 @@ Python 工具箱 - Awespykit
 
 这是一个关于 Python 的工具箱，有包管理器、程序打包工具、镜像源设置工具、模块安装包下载器可用。
 
-`注：仅支持在 Windows 系统上运行`
+`注：仅支持在 Windows 系统上使用`
 
 <br />
 
-## 如何运行
+## 如何安装和运行
 
 > #### 安装 Python 分发包后运行（推荐）
 
@@ -55,7 +58,7 @@ Python 工具箱 - Awespykit
 > #### 下载源代码并从源代码运行：
 
 1. 假设你的计算机已经安装了 Python 环境，且版本 >=3.7。
-2. `git clone` 克隆源代码到你的计算机或下载源代码包 Source code.zip 解压。
+2. `git clone` 克隆源代码到你的计算机(需要计算机上已经安装了 git)或下载源代码包 Source code.zip 解压。
 3. 在 Awespykit 目录内打开 PowerShell 或 Cmd。
 4. 使用以下命令安装 Awespykit 的依赖，有多个 Python 环境的请自行选择环境：
    ```cmd
@@ -71,7 +74,7 @@ Python 工具箱 - Awespykit
 > #### 使用 pip 命令从 GitHub 安装开发版
 
 1. 假设你的计算机已经安装了 Python 环境，且版本 >=3.7（如果不符合要求则不能使用这个方法）。
-2. 使用以下命令安装开发版：
+2. 使用以下命令安装开发版（可能需要你的计算机上已经安装了 git）：
    ```cmd
    pip install git+https://github.com/hrpzcf/AwesomePyKit.git@main
    ```
@@ -136,8 +139,8 @@ Python 工具箱 - Awespykit
 
 <br/>
 
-## TODO 列表
+## 任务列表
 
-[可能会添加或删除的功能列表](./TODO.md)
+[可能会添加或删除的功能](./TODO.md)
 
 <br/>
