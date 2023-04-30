@@ -345,7 +345,7 @@ class Ui_cloud_function(object):
         _translate = QtCore.QCoreApplication.translate
         cloud_function.setWindowTitle(_translate("cloud_function", "云函数部署程序打包工具"))
         self.groupBox_2.setTitle(_translate("cloud_function", "打包环境与项目路径"))
-        self.label.setText(_translate("cloud_function", "选择打包环境(调用 pip 库)："))
+        self.label.setText(_translate("cloud_function", "选择打包环境(调用 pip 模块)："))
         self.label_3.setText(_translate("cloud_function", "云函数项目目录路径："))
         self.uiCheckBox_confirm_project_path.setText(_translate("cloud_function", "确认项目路径"))
         self.uiPushButton_clear_path.setText(_translate("cloud_function", "清除"))

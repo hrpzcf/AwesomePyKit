@@ -51,7 +51,7 @@
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>选择打包环境(调用 pip 库)：</string>
+              <string>选择打包环境(调用 pip 模块)：</string>
              </property>
             </widget>
            </item>
