@@ -2,14 +2,14 @@
 
 <h1>Python 工具箱 - Awespykit</h1>
 
-[![GitHub Stars](https://img.shields.io/github/stars/hrpzcf/AwesomePyKit?label=Stars&logo=github)](https://github.com/hrpzcf/AwesomePyKit/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/hrpzcf/AwesomePyKit?label=Forks&logo=github)](https://github.com/hrpzcf/AwesomePyKit/network)
-[![GitHub Issues](https://img.shields.io/github/issues/hrpzcf/AwesomePyKit?label=Issues&logo=github)](https://github.com/hrpzcf/AwesomePyKit/issues)
-[![GitHub License](https://img.shields.io/github/license/hrpzcf/AwesomePyKit?color=red&label=License)](https://github.com/hrpzcf/AwesomePyKit/blob/main/LICENSE)
-[![GitHub Release](https://img.shields.io/github/v/release/hrpzcf/AwesomePyKit?label=Release&logo=github)](https://github.com/hrpzcf/AwesomePyKit/releases)
-[![PyPI Release](https://img.shields.io/pypi/v/Awespykit?label=PyPi)](https://pypi.org/project/Awespykit/)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Awespykit?label=Python)](https://pypi.org/project/Awespykit/)
-[![PyPI - Wheel](https://img.shields.io/pypi/wheel/Awespykit?label=Wheel)](https://pypi.org/project/Awespykit/)
+![GitHub stars](https://img.shields.io/github/stars/hrpzcf/AwesomePyKit?style=flat)
+![GitHub forks](https://img.shields.io/github/forks/hrpzcf/AwesomePyKit?style=flat)
+![GitHub issues](https://img.shields.io/github/issues/hrpzcf/AwesomePyKit)
+![GitHub license](https://img.shields.io/github/license/hrpzcf/AwesomePyKit)
+![GitHub release](https://img.shields.io/github/v/release/hrpzcf/AwesomePyKit)
+![PyPI Release](https://img.shields.io/pypi/v/Awespykit?label=PyPi)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/Awespykit?label=Python)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/Awespykit?label=Wheel)
 
 </div>
 
@@ -43,15 +43,6 @@
 `需要注意的是：当通过以上方式安装的 Awespykit 或者是通过源代码运行 Awespykit 时，请勿使用 Awespykit 安装、卸载、升级 Awespykit 所在 Python 环境的 Awespykit 自己(包括 Awespykit 的依赖 PyQt5)，否则可能造成文件残留或者 Awespykit 意外退出。运行打包好的 Awespykit(从 Awespykit.exe 或 runpykit.exe 文件运行) 则没有这些限制。`
 
 <br/>
-
-> #### 下载打包好的文件并从可执行文件运行：
-
-1. 打开 Awespykit 新版本发布页面 [GitHub](https://github.com/hrpzcf/AwesomePyKit/releases)
-   或 [Gitee](https://gitee.com/hrpzcf/AwesomePyKit/releases) 。
-2. 下载 Awespykit-x.x.x.7z 或 .zip 或 .exe（每次发布的文件类型都可能不一样）。
-3. 对于下载的 .7z、.zip 压缩包，请将压缩包解压，找到 runpykit.exe 双击运行；对于 exe 文件，请直接双击运行。
-
-<br />
 
 > #### 下载源代码并从源代码运行：
 
